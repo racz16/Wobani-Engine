@@ -739,6 +739,11 @@ public class Fbo implements Resource {
         }
     }
 
+    /**
+     * Returns the FBO's width and height.
+     *
+     * @return the FBO's width and height
+     */
     @ReadOnly @NotNull
     public Vector2i getSize() {
         return new Vector2i(size);
