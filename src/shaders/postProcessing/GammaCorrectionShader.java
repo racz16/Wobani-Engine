@@ -1,6 +1,7 @@
 package shaders.postProcessing;
 
 import core.*;
+import resources.*;
 import shaders.*;
 import toolbox.annotations.*;
 
@@ -21,6 +22,7 @@ public class GammaCorrectionShader extends Shader {
      */
     private GammaCorrectionShader() {
         super("res/shaders/postProcessing/gammaCorrection/vertexShader.glsl", "res/shaders/postProcessing/gammaCorrection/fragmentShader.glsl", null, null, null);
+        ResourceManager.addShader("." + ResourceManager.getNextId(), this);
     }
 
     /**

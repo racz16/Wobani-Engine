@@ -1,6 +1,7 @@
 package shaders;
 
 import org.joml.*;
+import resources.*;
 import toolbox.annotations.*;
 
 /**
@@ -18,6 +19,7 @@ public class SolidColorShader extends Shader {
      */
     private SolidColorShader() {
         super("res/shaders/solidColor/vertexShader.glsl", "res/shaders/solidColor/fragmentShader.glsl", null, null, null);
+        ResourceManager.addShader("." + ResourceManager.getNextId(), this);
     }
 
     /**

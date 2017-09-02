@@ -34,10 +34,15 @@ public class InvertRenderer extends PostProcessingBase {
      */
     @NotNull
     public static InvertRenderer getInstance() {
-        if (instance == null || !instance.isUsable()) {
+        if (instance == null) {
             instance = new InvertRenderer();
         }
         return instance;
+    }
+
+    @Override
+    public boolean isUsable() {
+        return true;
     }
 
 }

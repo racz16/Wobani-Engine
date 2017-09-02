@@ -1,6 +1,7 @@
 package shaders;
 
 import org.joml.*;
+import resources.*;
 import toolbox.annotations.*;
 
 /**
@@ -18,6 +19,7 @@ public class ShadowShader extends Shader {
      */
     private ShadowShader() {
         super("res/shaders/shadow/vertexShader.glsl", "res/shaders/shadow/fragmentShader.glsl", null, null, null);
+        ResourceManager.addShader("." + ResourceManager.getNextId(), this);
     }
 
     /**

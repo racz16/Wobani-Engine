@@ -1,6 +1,6 @@
 package renderers.postProcessing;
 
-import shaders.postProcessing.GrayscaleShader;
+import shaders.postProcessing.*;
 import toolbox.annotations.*;
 
 /**
@@ -34,10 +34,15 @@ public class GrayscaleRenderer extends PostProcessingBase {
      */
     @NotNull
     public static GrayscaleRenderer getInstance() {
-        if (instance == null || !instance.isUsable()) {
+        if (instance == null) {
             instance = new GrayscaleRenderer();
         }
         return instance;
+    }
+
+    @Override
+    public boolean isUsable() {
+        return true;
     }
 
 }

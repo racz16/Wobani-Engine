@@ -4,6 +4,7 @@ import components.camera.*;
 import components.light.*;
 import core.*;
 import java.util.*;
+import org.joml.*;
 import renderers.*;
 import resources.meshes.*;
 import resources.splines.*;
@@ -157,10 +158,10 @@ public class ResourceManager {
     //textures------------------------------------------------------------------
     //
     /**
-     * Returns the specified texture.
+     * Returns the specified mesh.
      *
-     * @param key texture's key
-     * @return texture
+     * @param key mesh's key
+     * @return mesh
      *
      * @throws NullPointerException key can't be null
      */
@@ -173,10 +174,10 @@ public class ResourceManager {
     }
 
     /**
-     * Adds the given texture to the list of textures.
+     * Adds the given mesh to the list of textures.
      *
-     * @param key texture's key
-     * @param texture texture
+     * @param key mesh's key
+     * @param texture mesh
      *
      * @throws NullPointerException arguments can't be null
      */
@@ -190,7 +191,7 @@ public class ResourceManager {
     }
 
     /**
-     * Changes all texture's (that implements EasyFiltering) filtering based on
+     * Changes all mesh's (that implements EasyFiltering) filtering based on
      * what you set in Settings.
      *
      * @see EasyFiltering
@@ -208,7 +209,7 @@ public class ResourceManager {
     }
 
     /**
-     * Changes all texture's (that implements ChangableColorSpace) color space
+     * Changes all mesh's (that implements ChangableColorSpace) color space
      * based on what you set in Settings.
      *
      * @see ChangableColorSpace
@@ -222,6 +223,21 @@ public class ResourceManager {
                 texture.setsRgb(sRgb);
             }
         }
+    }
+
+    @NotNull @ReadOnly
+    public static Vector3i getTextureData() {
+        int ram = 0;
+        int vram = 0;
+        int count = 0;
+        for (Texture2D texture : textures.values()) {
+            if (texture.isUsable()) {
+                count++;
+                ram += texture.getDataSizeInRam();
+                vram += texture.getDataSizeInVram();
+            }
+        }
+        return new Vector3i(count, ram, vram);
     }
 
     //
@@ -260,6 +276,21 @@ public class ResourceManager {
         }
     }
 
+    @NotNull @ReadOnly
+    public static Vector3i getMeshData() {
+        int ram = 0;
+        int vram = 0;
+        int count = 0;
+        for (Mesh mesh : meshes.values()) {
+            if (mesh.isUsable()) {
+                count++;
+                ram += mesh.getDataSizeInRam();
+                vram += mesh.getDataSizeInVram();
+            }
+        }
+        return new Vector3i(count, ram, vram);
+    }
+
     //
     //splines-------------------------------------------------------------------
     //
@@ -294,6 +325,21 @@ public class ResourceManager {
         if (!splines.containsKey(key)) {
             splines.put(key, spline);
         }
+    }
+
+    @NotNull @ReadOnly
+    public static Vector3i getSplineData() {
+        int ram = 0;
+        int vram = 0;
+        int count = 0;
+        for (Spline spline : splines.values()) {
+            if (spline.isUsable()) {
+                count++;
+                ram += spline.getDataSizeInRam();
+                vram += spline.getDataSizeInVram();
+            }
+        }
+        return new Vector3i(count, ram, vram);
     }
 
     //
@@ -332,6 +378,17 @@ public class ResourceManager {
         }
     }
 
+    @NotNull @ReadOnly
+    public static Vector3i getFboData() {
+        int count = 0;
+        for (Fbo fbo : fbos.values()) {
+            if (fbo.isUsable()) {
+                count++;
+            }
+        }
+        return new Vector3i(count, 0, 0);
+    }
+
     //
     //UBOs----------------------------------------------------------------------
     //
@@ -366,6 +423,21 @@ public class ResourceManager {
         if (!ubos.containsKey(key)) {
             ubos.put(key, ubo);
         }
+    }
+
+    @NotNull @ReadOnly
+    public static Vector3i getUboData() {
+        int ram = 0;
+        int vram = 0;
+        int count = 0;
+        for (Ubo ubo : ubos.values()) {
+            if (ubo.isUsable()) {
+                count++;
+                ram += ubo.getDataSizeInRam();
+                vram += ubo.getDataSizeInVram();
+            }
+        }
+        return new Vector3i(count, ram, vram);
     }
 
     //
@@ -404,6 +476,17 @@ public class ResourceManager {
         }
     }
 
+    @NotNull @ReadOnly
+    public static Vector3i getVaoData() {
+        int count = 0;
+        for (Vao vao : vaos.values()) {
+            if (vao.isUsable()) {
+                count++;
+            }
+        }
+        return new Vector3i(count, 0, 0);
+    }
+
     //
     //shaders----------------------------------------------------------------------
     //
@@ -438,6 +521,17 @@ public class ResourceManager {
         if (!shaders.containsKey(key)) {
             shaders.put(key, shader);
         }
+    }
+
+    @NotNull @ReadOnly
+    public static Vector3i getShaderData() {
+        int count = 0;
+        for (Shader shader : shaders.values()) {
+            if (shader.isUsable()) {
+                count++;
+            }
+        }
+        return new Vector3i(count, 0, 0);
     }
 
     //

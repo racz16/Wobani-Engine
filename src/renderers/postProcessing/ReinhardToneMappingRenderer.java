@@ -1,6 +1,6 @@
 package renderers.postProcessing;
 
-import shaders.postProcessing.ReinhardToneMappingShader;
+import shaders.postProcessing.*;
 import toolbox.annotations.*;
 
 /**
@@ -34,9 +34,14 @@ public class ReinhardToneMappingRenderer extends PostProcessingBase {
      */
     @NotNull
     public static ReinhardToneMappingRenderer getInstance() {
-        if (instance == null || !instance.isUsable()) {
+        if (instance == null) {
             instance = new ReinhardToneMappingRenderer();
         }
         return instance;
+    }
+
+    @Override
+    public boolean isUsable() {
+        return true;
     }
 }

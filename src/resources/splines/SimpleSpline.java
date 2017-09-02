@@ -474,8 +474,13 @@ public class SimpleSpline implements Spline {
     //misc----------------------------------------------------------------------
     //
     @Override
-    public int getDataSize() {
+    public int getDataSizeInRam() {
         return dataSize;
+    }
+
+    @Override
+    public int getDataSizeInVram() {
+        return vao == null || !vao.isUsable() ? 0 : dataSize;
     }
 
     @Override

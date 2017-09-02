@@ -34,10 +34,15 @@ public class FxaaRenderer extends PostProcessingBase {
      */
     @NotNull
     public static FxaaRenderer getInstance() {
-        if (instance == null || !instance.isUsable()) {
+        if (instance == null) {
             instance = new FxaaRenderer();
         }
         return instance;
+    }
+
+    @Override
+    public boolean isUsable() {
+        return true;
     }
 
 }

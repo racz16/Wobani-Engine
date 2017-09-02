@@ -6,11 +6,18 @@ package resources;
 public interface Resource {
 
     /**
-     * Returns the resource's data size.
+     * Returns the resource's data size in RAM.
      *
-     * @return the resource's data size (in bytes)
+     * @return the resource's data size in RAM (in bytes)
      */
-    public int getDataSize();
+    public int getDataSizeInRam();
+
+    /**
+     * Returns the resource's data size in VRAM.
+     *
+     * @return the resource's data size in VRAM (in bytes)
+     */
+    public int getDataSizeInVram();
 
     /**
      * Updates the resource.

@@ -6,6 +6,7 @@ import org.joml.*;
 import renderers.Renderer;
 import renderers.*;
 import renderers.postProcessing.*;
+import resources.*;
 import resources.textures.EasyFiltering.TextureFiltering;
 import toolbox.*;
 import window.*;
@@ -49,19 +50,79 @@ public class Example1Window extends javax.swing.JFrame {
         }
     }
 
-    public void setRenderedModels(int mod) {
-        renderedModels.setText(mod + " models");
-    }
-
-    public void setRenderedTriangles(int tri) {
-        renderedTriangles.setText(tri + " triangles");
-    }
-
     public void update() {
         if (openGLRelatedSettingsChanged) {
             changeOpenGLRelatedSettings();
             openGLRelatedSettingsChanged = false;
         }
+
+    }
+
+    public void updateStats() {
+        getTextureData();
+        getMeshData();
+        getSplineData();
+        getFboData();
+        getVaoData();
+        getUboData();
+        getShaderData();
+        updateImportant();
+    }
+
+    private void getTextureData() {
+        Vector3i data = ResourceManager.getTextureData();
+        lblTextureNumber.setText(data.x + "");
+        float size = data.z;
+        float sizeM = size / (1024 * 1024);
+        lblTextureSize.setText(size + " B  (" + sizeM + " MB)");
+        size = data.y;
+        sizeM = size / (1024 * 1024);
+        lblTextureSizeMega.setText(size + " B  (" + sizeM + " MB)");
+    }
+
+    private void getMeshData() {
+        Vector3i data = ResourceManager.getMeshData();
+        lblMeshNumber.setText(data.x + "");
+        float size = data.z;
+        float sizeM = size / (1024 * 1024);
+        lblMeshSize.setText(size + " B  (" + sizeM + " MB)");
+        size = data.y;
+        sizeM = size / (1024 * 1024);
+        lblMeshSizeMega.setText(size + " B  (" + sizeM + " MB)");
+    }
+
+    private void getSplineData() {
+        Vector3i data = ResourceManager.getSplineData();
+        lblSplineNumber.setText(data.x + "");
+        float size = data.z;
+        float sizeM = size / (1024 * 1024);
+        lblSplineSize.setText(size + " B  (" + sizeM + " MB)");
+        size = data.y;
+        sizeM = size / (1024 * 1024);
+        lblSplineSizeMega.setText(size + " B  (" + sizeM + " MB)");
+    }
+
+    private void getFboData() {
+        lblFboNumber.setText(ResourceManager.getFboData().x + "");
+    }
+
+    private void getVaoData() {
+        lblVaoNumber.setText(ResourceManager.getVaoData().x + "");
+    }
+
+    private void getUboData() {
+        Vector3i data = ResourceManager.getUboData();
+        lblUboNumber.setText(data.x + "");
+        float size = data.z;
+        float sizeM = size / (1024 * 1024);
+        lblUboSize.setText(size + " B  (" + sizeM + " MB)");
+        size = data.y;
+        sizeM = size / (1024 * 1024);
+        lblUboSizeMega.setText(size + " B  (" + sizeM + " MB)");
+    }
+
+    private void getShaderData() {
+        lblShaderNumber.setText(ResourceManager.getShaderData().x + "");
     }
 
     private void changeOpenGLRelatedSettings() {
@@ -119,17 +180,59 @@ public class Example1Window extends javax.swing.JFrame {
         }
     }
 
-    public void updateFps() {
+    private void updateImportant() {
         lblFPS.setText(Time.getFps() + " FPS");
+        float milisecs = 1.0f / Time.getFps();
+        lblMilisec.setText(milisecs + " msec");
+
+        int triangles = 0;
+        int meshes = 0;
+        for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(true); i++) {
+            Renderer renderer = RenderingPipeline.getRenderer(true, i);
+            if (renderer.isActive()) {
+                triangles += renderer.getNumberOfRenderedFaces();
+                meshes += renderer.getNumberOfRenderedElements();
+            }
+        }
+        renderedModels.setText(meshes + " meshes/splines");
+        renderedTriangles.setText(triangles + " triangles");
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
         lblFPS = new javax.swing.JLabel();
         renderedModels = new javax.swing.JLabel();
         renderedTriangles = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        lblTextureNumber = new javax.swing.JLabel();
+        lblTextureSize = new javax.swing.JLabel();
+        lblTextureSizeMega = new javax.swing.JLabel();
+        lblMeshNumber = new javax.swing.JLabel();
+        lblMeshSize = new javax.swing.JLabel();
+        lblMeshSizeMega = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        lblSplineNumber = new javax.swing.JLabel();
+        lblSplineSize = new javax.swing.JLabel();
+        lblSplineSizeMega = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        lblFboNumber = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        lblVaoNumber = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        lblUboNumber = new javax.swing.JLabel();
+        lblUboSize = new javax.swing.JLabel();
+        lblUboSizeMega = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        lblShaderNumber = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        lblTextureSize1 = new javax.swing.JLabel();
+        lblTextureSizeMega1 = new javax.swing.JLabel();
+        lblMilisec = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         cWireframeMode = new javax.swing.JCheckBox();
         cFrustumCulling = new javax.swing.JCheckBox();
@@ -157,6 +260,7 @@ public class Example1Window extends javax.swing.JFrame {
         grayscale = new javax.swing.JCheckBox();
         fxaa = new javax.swing.JCheckBox();
 
+        setTitle("Example");
         setResizable(false);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentMoved(java.awt.event.ComponentEvent evt) {
@@ -170,18 +274,235 @@ public class Example1Window extends javax.swing.JFrame {
         });
 
         lblFPS.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        lblFPS.setText("FPS");
+        lblFPS.setText(" ");
         lblFPS.setToolTipText("Frame per sec");
 
         renderedModels.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        renderedModels.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        renderedModels.setText("MODEL");
+        renderedModels.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        renderedModels.setText(" ");
         renderedModels.setToolTipText("Rendered models");
 
         renderedTriangles.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         renderedTriangles.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        renderedTriangles.setText("TRI");
+        renderedTriangles.setText(" ");
         renderedTriangles.setToolTipText("Rendered triangles");
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setText("Textures");
+
+        lblTextureNumber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblTextureNumber.setText(" ");
+
+        lblTextureSize.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        lblTextureSizeMega.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblTextureSizeMega.setText(" ");
+
+        lblMeshNumber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblMeshNumber.setText(" ");
+
+        lblMeshSize.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        lblMeshSizeMega.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblMeshSizeMega.setText(" ");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setText("Meshes");
+
+        lblSplineNumber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblSplineNumber.setText(" ");
+
+        lblSplineSize.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        lblSplineSizeMega.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblSplineSizeMega.setText(" ");
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel8.setText("Splines");
+
+        lblFboNumber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblFboNumber.setText(" ");
+
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel12.setText("FBOs");
+
+        lblVaoNumber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblVaoNumber.setText(" ");
+
+        jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel13.setText("VAOs");
+
+        lblUboNumber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblUboNumber.setText(" ");
+
+        lblUboSize.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        lblUboSizeMega.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblUboSizeMega.setText(" ");
+
+        jLabel14.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel14.setText("UBOs");
+
+        lblShaderNumber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel15.setText("Shaders");
+
+        lblTextureSize1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblTextureSize1.setText("IN VRAM");
+
+        lblTextureSizeMega1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblTextureSizeMega1.setText("IN RAM");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel12)
+                    .addComponent(jLabel14)
+                    .addComponent(jLabel13)
+                    .addComponent(jLabel15))
+                .addGap(39, 39, 39)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(lblShaderNumber, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblUboNumber, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                            .addComponent(lblVaoNumber, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblFboNumber, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblSplineNumber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblSplineSize, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblUboSize, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 253, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addGap(68, 68, 68)
+                                .addComponent(lblTextureSize1, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lblTextureNumber, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                                    .addComponent(lblMeshNumber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lblTextureSize, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                                    .addComponent(lblMeshSize, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblMeshSizeMega, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblTextureSizeMega, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblTextureSizeMega1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblSplineSizeMega, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblUboSizeMega, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTextureSize1)
+                    .addComponent(lblTextureSizeMega1))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel15))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblTextureNumber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblTextureSize, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblTextureSizeMega))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblMeshNumber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblMeshSize, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblMeshSizeMega))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(lblSplineSize, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel3Layout.createSequentialGroup()
+                                    .addComponent(lblSplineSizeMega)
+                                    .addGap(13, 13, 13))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                    .addComponent(lblSplineNumber)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))))
+                        .addComponent(lblFboNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblVaoNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lblUboSize, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblUboSizeMega))
+                            .addComponent(lblUboNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblShaderNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        lblMilisec.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        lblMilisec.setText(" ");
+        lblMilisec.setToolTipText("Frame per sec");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblFPS, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblMilisec, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(renderedModels, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                            .addComponent(renderedTriangles, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblFPS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(renderedTriangles)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(renderedModels)
+                    .addComponent(lblMilisec, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(67, 67, 67))
+        );
+
+        jTabbedPane1.addTab("Statistics", jPanel1);
 
         cWireframeMode.setText("Wireframe mode");
         cWireframeMode.addItemListener(new java.awt.event.ItemListener() {
@@ -330,7 +651,7 @@ public class Example1Window extends javax.swing.JFrame {
                     .addComponent(grayscale)
                     .addComponent(hdr, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fxaa))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -358,7 +679,7 @@ public class Example1Window extends javax.swing.JFrame {
                                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(shadowMapSize, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(cFullscreen, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(9, 9, 9)
@@ -425,33 +746,17 @@ public class Example1Window extends javax.swing.JFrame {
                 .addGap(43, 43, 43))
         );
 
+        jTabbedPane1.addTab("Settings", jPanel2);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblFPS, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(renderedModels, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(renderedTriangles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 673, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblFPS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(renderedModels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(renderedTriangles))
-                .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jTabbedPane1)
         );
 
         pack();
@@ -583,17 +888,45 @@ public class Example1Window extends javax.swing.JFrame {
     private javax.swing.JCheckBox hdr;
     private javax.swing.JSpinner height;
     private javax.swing.JCheckBox invert;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lblFPS;
+    private javax.swing.JLabel lblFboNumber;
+    private javax.swing.JLabel lblMeshNumber;
+    private javax.swing.JLabel lblMeshSize;
+    private javax.swing.JLabel lblMeshSizeMega;
+    private javax.swing.JLabel lblMilisec;
+    private javax.swing.JLabel lblShaderNumber;
+    private javax.swing.JLabel lblSplineNumber;
+    private javax.swing.JLabel lblSplineSize;
+    private javax.swing.JLabel lblSplineSizeMega;
+    private javax.swing.JLabel lblTextureNumber;
+    private javax.swing.JLabel lblTextureSize;
+    private javax.swing.JLabel lblTextureSize1;
+    private javax.swing.JLabel lblTextureSizeMega;
+    private javax.swing.JLabel lblTextureSizeMega1;
+    private javax.swing.JLabel lblUboNumber;
+    private javax.swing.JLabel lblUboSize;
+    private javax.swing.JLabel lblUboSizeMega;
+    private javax.swing.JLabel lblVaoNumber;
     private javax.swing.JComboBox<String> msaa;
     private javax.swing.JLabel renderedModels;
     private javax.swing.JLabel renderedTriangles;

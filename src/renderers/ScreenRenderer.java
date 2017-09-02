@@ -42,7 +42,7 @@ public class ScreenRenderer extends Renderer {
      */
     @NotNull
     public static ScreenRenderer getInstance() {
-        if (instance == null || !instance.isUsable()) {
+        if (instance == null) {
             instance = new ScreenRenderer();
         }
         return instance;
@@ -105,7 +105,7 @@ public class ScreenRenderer extends Renderer {
 
     @Override
     public boolean isUsable() {
-        return shader != null && shader.isUsable();
+        return true;
     }
 
     @Override

@@ -486,8 +486,13 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     }
 
     @Override
-    public int getDataSize() {
-        return meta.getDataSize();
+    public int getDataSizeInRam() {
+        return getState() == ResourceState.HDD ? 0 : meta.getDataSize();
+    }
+
+    @Override
+    public int getDataSizeInVram() {
+        return getState() == ResourceState.VRAM ? meta.getDataSize() : 0;
     }
 
     @Override

@@ -55,7 +55,7 @@ public class BlinnPhongRenderer extends Renderer {
      */
     @NotNull
     public static BlinnPhongRenderer getInstance() {
-        if (instance == null || !instance.isUsable()) {
+        if (instance == null) {
             instance = new BlinnPhongRenderer();
         }
         return instance;
@@ -199,7 +199,7 @@ public class BlinnPhongRenderer extends Renderer {
 
     @Override
     public boolean isUsable() {
-        return shader != null && shader.isUsable();
+        return true;
     }
 
     @Override

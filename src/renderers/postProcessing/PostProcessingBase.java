@@ -80,11 +80,6 @@ public abstract class PostProcessingBase extends Renderer {
     }
 
     @Override
-    public boolean isUsable() {
-        return shader != null && shader.isUsable();
-    }
-
-    @Override
     public boolean isGeometryRenderer() {
         return false;
     }

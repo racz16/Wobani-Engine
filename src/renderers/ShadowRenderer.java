@@ -49,7 +49,7 @@ public class ShadowRenderer extends Renderer {
      */
     @NotNull
     public static ShadowRenderer getInstance() {
-        if (instance == null || !instance.isUsable()) {
+        if (instance == null) {
             instance = new ShadowRenderer();
         }
         return instance;
@@ -67,6 +67,8 @@ public class ShadowRenderer extends Renderer {
                 generateFbo();
             }
         } else {
+            numberOfRenderedFaces = 0;
+            numberOfRenderedElements = 0;
             releaseFbo();
         }
 
@@ -256,7 +258,7 @@ public class ShadowRenderer extends Renderer {
 
     @Override
     public boolean isUsable() {
-        return shader != null && shader.isUsable();
+        return true;
     }
 
     @Override

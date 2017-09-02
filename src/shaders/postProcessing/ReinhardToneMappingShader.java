@@ -1,5 +1,6 @@
 package shaders.postProcessing;
 
+import resources.*;
 import shaders.*;
 import toolbox.annotations.*;
 
@@ -18,6 +19,7 @@ public class ReinhardToneMappingShader extends Shader {
      */
     private ReinhardToneMappingShader() {
         super("res/shaders/postProcessing/reinhardToneMapping/vertexShader.glsl", "res/shaders/postProcessing/reinhardToneMapping/fragmentShader.glsl", null, null, null);
+        ResourceManager.addShader("." + ResourceManager.getNextId(), this);
     }
 
     /**

@@ -750,7 +750,12 @@ public class Fbo implements Resource {
     }
 
     @Override
-    public int getDataSize() {
+    public int getDataSizeInRam() {
+        return 0;
+    }
+
+    @Override
+    public int getDataSizeInVram() {
         int attachmentSize = size.x * size.y * 4 * 4 * samples;
         int size = 0;
         for (int i = 0; i < color.length; i++) {

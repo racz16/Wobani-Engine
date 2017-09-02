@@ -1,5 +1,6 @@
 package shaders.postProcessing;
 
+import resources.*;
 import shaders.*;
 import toolbox.annotations.*;
 
@@ -18,6 +19,7 @@ public class FxaaShader extends Shader {
      */
     private FxaaShader() {
         super("res/shaders/postProcessing/fxaa/vertexShader.glsl", "res/shaders/postProcessing/fxaa/fragmentShader.glsl", null, null, null);
+        ResourceManager.addShader("." + ResourceManager.getNextId(), this);
     }
 
     /**

@@ -1,7 +1,7 @@
 package renderers.postProcessing;
 
-import shaders.postProcessing.GammaCorrectionShader;
 import core.*;
+import shaders.postProcessing.*;
 import toolbox.annotations.*;
 
 /**
@@ -37,7 +37,7 @@ public class GammaCorrectionRenderer extends PostProcessingBase {
      */
     @NotNull
     public static GammaCorrectionRenderer getInstance() {
-        if (instance == null || !instance.isUsable()) {
+        if (instance == null) {
             instance = new GammaCorrectionRenderer();
         }
         return instance;
@@ -47,6 +47,11 @@ public class GammaCorrectionRenderer extends PostProcessingBase {
     protected void beforeDrawQuad() {
         super.beforeDrawQuad();
         ((GammaCorrectionShader) shader).loadGammaUniform();
+    }
+
+    @Override
+    public boolean isUsable() {
+        return true;
     }
 
 }

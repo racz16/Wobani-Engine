@@ -3,6 +3,7 @@ package shaders;
 import components.light.*;
 import core.*;
 import org.joml.*;
+import resources.*;
 import resources.materials.*;
 import resources.textures.*;
 import toolbox.annotations.*;
@@ -34,6 +35,7 @@ public class BlinnPhongShader extends Shader {
      */
     private BlinnPhongShader() {
         super("res/shaders/blinnPhong/vertexShader.glsl", "res/shaders/blinnPhong/fragmentShader.glsl", null, null, null);
+        ResourceManager.addShader("." + ResourceManager.getNextId(), this);
     }
 
     /**

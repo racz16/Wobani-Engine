@@ -353,7 +353,12 @@ public class Vao implements Resource {
     }
 
     @Override
-    public int getDataSize() {
+    public int getDataSizeInRam() {
+        return 0;
+    }
+
+    @Override
+    public int getDataSizeInVram() {
         int size = 0;
         for (Integer value : vboSize.values()) {
             size += value;

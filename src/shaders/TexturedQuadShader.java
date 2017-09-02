@@ -1,5 +1,6 @@
 package shaders;
 
+import resources.*;
 import toolbox.annotations.*;
 
 /**
@@ -17,6 +18,7 @@ public class TexturedQuadShader extends Shader {
      */
     private TexturedQuadShader() {
         super("res/shaders/texturedQuad/vertexShader.glsl", "res/shaders/texturedQuad/fragmentShader.glsl", null, null, null);
+        ResourceManager.addShader("." + ResourceManager.getNextId(), this);
     }
 
     /**

@@ -103,9 +103,10 @@ public class Example1 {
                 getGameObject().getTransform().rotate(new Vector3f(0, 0.35f * Time.getDeltaTimeFactor(), 0));
             }
         });
-
-        Material dummy = new Material(SolidColorRenderer.class);
-        dummy.setSlot(Material.DIFFUSE, new MaterialSlot(new Vector4f(1, 0, 0, 1)));
+        StaticMesh mesh = (StaticMesh) dragon.getComponent(MeshComponent.class).getMesh();
+        mesh.setDataStorePolicy(ResourceManager.ResourceState.HDD);
+        mesh.setVramTimeLimit(1000);
+        mesh.setRamTimeLimit(2000);
     }
 
     /**
@@ -114,7 +115,7 @@ public class Example1 {
     private static void boxes() {
         Material boxMaterial = new Material(BlinnPhongRenderer.class);
         boxMaterial.setSlot(Material.SPECULAR, new MaterialSlot(new Vector4f(0.3f, 0.3f, 0.3f, 0.75f)));
-//        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot("res/textures/normal9.jpg", false));
+        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot("res/textures/normal9.jpg", false));
 //        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot("res/textures/normal7.png", false));
 //        boxMaterial.getSlot(Material.NORMAL).setFloatParameter(MaterialSlot.POM_USE_FLOAT, 1f);
 //        boxMaterial.getSlot(Material.NORMAL).setFloatParameter(MaterialSlot.POM_SCALE_FLOAT, 0.3f);
@@ -227,16 +228,7 @@ public class Example1 {
                 updateLengthSum += updateLength;
 
                 if (updateLengthSum >= 1000000000) {
-                    int triangles = 0;
-                    int meshes = 0;
-                    for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(true); i++) {
-                        Renderer renderer = RenderingPipeline.getRenderer(true, i);
-                        triangles += renderer.getNumberOfRenderedFaces();
-                        meshes += renderer.getNumberOfRenderedElements();
-                    }
-                    testWindow.updateFps();
-                    testWindow.setRenderedModels(meshes);
-                    testWindow.setRenderedTriangles(triangles);
+                    testWindow.updateStats();
                     updateLengthSum = 0;
                 }
                 testWindow.update();

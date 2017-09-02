@@ -221,7 +221,12 @@ public class DynamicTexture extends AbstractTexture {
     }
 
     @Override
-    public int getDataSize() {
+    public int getDataSizeInRam() {
+        return 0;
+    }
+
+    @Override
+    public int getDataSizeInVram() {
         return dataSize;
     }
 
@@ -232,6 +237,7 @@ public class DynamicTexture extends AbstractTexture {
     @Override
     public void release() {
         glRelease();
+        dataSize = 0;
     }
 
     @Override

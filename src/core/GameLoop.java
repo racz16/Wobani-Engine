@@ -65,8 +65,8 @@ public class GameLoop {
         try {
             while (!Window.isWindowShouldClose()) {
                 Time.timing();
-                Scene.updateComponents();
                 ResourceManager.updateResources();
+                Scene.updateComponents();
                 RenderingPipeline.render();
                 Window.swapBuffers();
                 Window.pollEvents();

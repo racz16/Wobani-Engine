@@ -137,8 +137,13 @@ public class QuadMesh implements Mesh {
     }
 
     @Override
-    public int getDataSize() {
-        return 72;
+    public int getDataSizeInRam() {
+        return 0;
+    }
+
+    @Override
+    public int getDataSizeInVram() {
+        return vao == null || !vao.isUsable() ? 0 : 72;
     }
 
     @Override
@@ -159,7 +164,7 @@ public class QuadMesh implements Mesh {
 
     @Override
     public boolean isUsable() {
-        return vao != null && vao.isUsable();
+        return true;
     }
 
 }

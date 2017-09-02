@@ -62,6 +62,10 @@ public abstract class Renderer {
      */
     public void setActive(boolean active) {
         this.active = active;
+        if (!active) {
+            numberOfRenderedFaces = 0;
+            numberOfRenderedElements = 0;
+        }
     }
 
     /**

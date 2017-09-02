@@ -44,7 +44,7 @@ public class SolidColorRenderer extends Renderer {
      */
     @NotNull
     public static SolidColorRenderer getInstance() {
-        if (instance == null || !instance.isUsable()) {
+        if (instance == null) {
             instance = new SolidColorRenderer();
         }
         return instance;
@@ -147,7 +147,7 @@ public class SolidColorRenderer extends Renderer {
 
     @Override
     public boolean isUsable() {
-        return shader != null && shader.isUsable();
+        return true;
     }
 
     @Override
