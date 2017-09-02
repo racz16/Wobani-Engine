@@ -4,8 +4,9 @@ import core.*;
 import java.nio.*;
 import java.util.*;
 import org.joml.*;
-import org.lwjgl.*;
 import org.lwjgl.opengl.*;
+import org.lwjgl.system.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 import resources.textures.*;
 import toolbox.annotations.*;
 
@@ -508,14 +509,16 @@ public class Fbo implements Resource {
         if (color[index].isThereAttachment()) {
             color[index].setActiveDraw(draw);
 
-            IntBuffer result = BufferUtils.createIntBuffer(8);
-            for (AttachmentSlot slot : color) {
-                if (slot.isThereAttachment() && slot.isActiveDraw()) {
-                    result.put(GL30.GL_COLOR_ATTACHMENT0 + slot.getIndex());
+            try (MemoryStack stack = stackPush()) {
+                IntBuffer result = stack.mallocInt(8);
+                for (AttachmentSlot slot : color) {
+                    if (slot.isThereAttachment() && slot.isActiveDraw()) {
+                        result.put(GL30.GL_COLOR_ATTACHMENT0 + slot.getIndex());
+                    }
                 }
+                result.flip();
+                GL20.glDrawBuffers(result);
             }
-            result.flip();
-            GL20.glDrawBuffers(result);
         }
     }
 

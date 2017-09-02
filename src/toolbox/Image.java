@@ -3,10 +3,11 @@ package toolbox;
 import java.io.*;
 import java.nio.*;
 import org.joml.*;
-import org.lwjgl.*;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
+import org.lwjgl.system.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 import toolbox.annotations.*;
 
 /**
@@ -38,15 +39,17 @@ public class Image {
         if (!file.exists()) {
             throw new IllegalArgumentException(path + " file doesn't exist");
         }
-        IntBuffer w = BufferUtils.createIntBuffer(1);
-        IntBuffer h = BufferUtils.createIntBuffer(1);
-        IntBuffer comp = BufferUtils.createIntBuffer(1);
         stbi_set_flip_vertically_on_load(true);
-        image = stbi_load(path, w, h, comp, 4);
-        if (image == null) {
-            throw new RuntimeException("Failed to load an image file!\n" + stbi_failure_reason());
+        try (MemoryStack stack = stackPush()) {
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+            IntBuffer comp = stack.mallocInt(1);
+            image = stbi_load(path, w, h, comp, 4);
+            if (image == null) {
+                throw new RuntimeException("Failed to load an image file!\n" + stbi_failure_reason());
+            }
+            size.set(w.get(), h.get());
         }
-        size.set(w.get(), h.get());
     }
 
     /**

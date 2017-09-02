@@ -3,8 +3,6 @@ package components.light;
 import static components.light.DefaultLightComponent.ubo;
 import components.light.lightTypes.*;
 import core.*;
-import java.nio.*;
-import org.lwjgl.*;
 
 /**
  * Basic implementation of a point light source.
@@ -78,45 +76,46 @@ public class PointLightComponent extends DefaultLightComponent implements PointL
         if (getUboIndex() == -1 || getGameObject() == null || ubo == null || !ubo.isUsable()) {
             return;
         }
-        temp.position(0);
+        floatBuffer.position(0);
         //position
         for (int i = 0; i < 3; i++) {
-            temp.put(getGameObject().getTransform().getAbsolutePosition().get(i));
+            floatBuffer.put(getGameObject().getTransform().getAbsolutePosition().get(i));
         }
-        temp.put(-1);
+        floatBuffer.put(-1);
         //direction
-        temp.put(-1);
-        temp.put(-1);
-        temp.put(-1);
-        temp.put(-1);
+        floatBuffer.put(-1);
+        floatBuffer.put(-1);
+        floatBuffer.put(-1);
+        floatBuffer.put(-1);
         //attenutation
-        temp.put(getConstant());
-        temp.put(getLinear());
-        temp.put(getQuadratic());
-        temp.put(-1);
+        floatBuffer.put(getConstant());
+        floatBuffer.put(getLinear());
+        floatBuffer.put(getQuadratic());
+        floatBuffer.put(-1);
         //ambient
         for (int i = 0; i < 3; i++) {
-            temp.put(getAmbientColor().get(i));
+            floatBuffer.put(getAmbientColor().get(i));
         }
-        temp.put(-1);
+        floatBuffer.put(-1);
         //diffuse
         for (int i = 0; i < 3; i++) {
-            temp.put(getDiffuseColor().get(i));
+            floatBuffer.put(getDiffuseColor().get(i));
         }
-        temp.put(-1);
+        floatBuffer.put(-1);
         //specular
         for (int i = 0; i < 3; i++) {
-            temp.put(getSpecularColor().get(i));
+            floatBuffer.put(getSpecularColor().get(i));
         }
-        temp.position(0);
+        floatBuffer.position(0);
         //type, active
-        IntBuffer ib = BufferUtils.createIntBuffer(2);
-        ib.put(1);
-        ib.put(isActive() ? 1 : 0);
-        ib.flip();
+        intBuffer.limit(2);
+        intBuffer.position(0);
+        intBuffer.put(1);
+        intBuffer.put(isActive() ? 1 : 0);
+        intBuffer.position(0);
         ubo.bind();
-        ubo.storeData(temp, getUboIndex() * 112);
-        ubo.storeData(ib, getUboIndex() * 112 + 104);
+        ubo.storeData(floatBuffer, getUboIndex() * 112);
+        ubo.storeData(intBuffer, getUboIndex() * 112 + 104);
         ubo.unbind();
     }
 

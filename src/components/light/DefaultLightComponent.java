@@ -56,11 +56,16 @@ public abstract class DefaultLightComponent extends Component {
     /**
      * FloatBuffer for frequent UBO updates.
      */
-    protected static FloatBuffer temp;
+    protected static FloatBuffer floatBuffer;
+    /**
+     * IntBuffer for frequent UBO updates.
+     */
+    protected static IntBuffer intBuffer;
 
     static {
         createUbo();
-        temp = BufferUtils.createFloatBuffer(26);
+        floatBuffer = BufferUtils.createFloatBuffer(26);
+        intBuffer = BufferUtils.createIntBuffer(2);
     }
 
     /**
@@ -201,11 +206,12 @@ public abstract class DefaultLightComponent extends Component {
         if (getGameObject() != null || index == -1 || ubo == null || !ubo.isUsable()) {
             return;
         }
-        lights[index] = null;
-        IntBuffer ib = BufferUtils.createIntBuffer(1);
-        ib.put(0);
+        intBuffer.limit(1);
+        intBuffer.position(0);
+        intBuffer.put(0);
+        intBuffer.position(0);
         ubo.bind();
-        ubo.storeData(ib, index * 112 + 108);
+        ubo.storeData(intBuffer, index * 112 + 108);
         ubo.unbind();
         setUboIndex(-1);
         if (index == getMaxLightIndex()) {
@@ -226,11 +232,12 @@ public abstract class DefaultLightComponent extends Component {
      * Updates the max light sources number in the UBO.
      */
     private static void updateMaxLightSources() {
-        IntBuffer ib = BufferUtils.createIntBuffer(1);
-        ib.put(getMaxLightIndex() + 1);
-        ib.flip();
+        intBuffer.limit(1);
+        intBuffer.position(0);
+        intBuffer.put(getMaxLightIndex() + 1);
+        intBuffer.position(0);
         ubo.bind();
-        ubo.storeData(ib, 1904);
+        ubo.storeData(intBuffer, 1904);
         ubo.unbind();
     }
 

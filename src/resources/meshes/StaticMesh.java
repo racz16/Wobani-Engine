@@ -14,6 +14,7 @@ import static org.lwjgl.assimp.Assimp.aiProcess_CalcTangentSpace;
 import static org.lwjgl.assimp.Assimp.aiProcess_JoinIdenticalVertices;
 import static org.lwjgl.assimp.Assimp.aiProcess_Triangulate;
 import org.lwjgl.opengl.*;
+import org.lwjgl.system.*;
 import resources.ResourceManager.ResourceState;
 import resources.*;
 import toolbox.annotations.*;
@@ -222,7 +223,7 @@ public class StaticMesh implements Mesh {
     @NotNull
     private IntBuffer computeIndicesBuffer(@NotNull AIMesh mesh) {
         AIFace.Buffer facesBuffer = mesh.mFaces();
-        IntBuffer elementArrayBufferData = BufferUtils.createIntBuffer(vertexCount);
+        IntBuffer elementArrayBufferData = MemoryUtil.memAllocInt(vertexCount);
         for (int j = 0; j < faceCount; ++j) {
             AIFace face = facesBuffer.get(j);
             if (face.mNumIndices() != 3) {
@@ -344,6 +345,7 @@ public class StaticMesh implements Mesh {
         uv = null;
         normal = null;
         tangent = null;
+        MemoryUtil.memFree(indices);
         indices = null;
 
         meta.setState(ResourceState.HDD);
