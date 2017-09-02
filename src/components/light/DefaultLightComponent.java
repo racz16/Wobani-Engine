@@ -206,6 +206,7 @@ public abstract class DefaultLightComponent extends Component {
         if (getGameObject() != null || index == -1 || ubo == null || !ubo.isUsable()) {
             return;
         }
+        lights[index] = null;
         intBuffer.limit(1);
         intBuffer.position(0);
         intBuffer.put(0);
