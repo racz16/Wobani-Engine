@@ -225,6 +225,13 @@ public class ResourceManager {
         }
     }
 
+    /**
+     * Returns data about the textures. The x coordinate means the number of
+     * usable textures, the y means the data size in bytes, stored in the RAM,
+     * the z means the data size in bytes, stored in the VRAM.
+     *
+     * @return data about the textures
+     */
     @NotNull @ReadOnly
     public static Vector3i getTextureData() {
         int ram = 0;
@@ -276,6 +283,13 @@ public class ResourceManager {
         }
     }
 
+    /**
+     * Returns data about the meshes. The x coordinate means the number of
+     * usable meshes, the y means the data size in bytes, stored in the RAM, the
+     * z means the data size in bytes, stored in the VRAM.
+     *
+     * @return data about the meshes
+     */
     @NotNull @ReadOnly
     public static Vector3i getMeshData() {
         int ram = 0;
@@ -327,6 +341,13 @@ public class ResourceManager {
         }
     }
 
+    /**
+     * Returns data about the splines. The x coordinate means the number of
+     * usable splines, the y means the data size in bytes, stored in the RAM,
+     * the z means the data size in bytes, stored in the VRAM.
+     *
+     * @return data about the splines
+     */
     @NotNull @ReadOnly
     public static Vector3i getSplineData() {
         int ram = 0;
@@ -378,6 +399,13 @@ public class ResourceManager {
         }
     }
 
+    /**
+     * Returns data about the FBOs. The x coordinate means the number of usable
+     * FBOs, the y means the data size in bytes, stored in the RAM, the z means
+     * the data size in bytes, stored in the VRAM.
+     *
+     * @return data about the FBOs
+     */
     @NotNull @ReadOnly
     public static Vector3i getFboData() {
         int count = 0;
@@ -425,6 +453,13 @@ public class ResourceManager {
         }
     }
 
+    /**
+     * Returns data about the UBOs. The x coordinate means the number of usable
+     * UBOs, the y means the data size in bytes, stored in the RAM, the z means
+     * the data size in bytes, stored in the VRAM.
+     *
+     * @return data about the UBOs
+     */
     @NotNull @ReadOnly
     public static Vector3i getUboData() {
         int ram = 0;
@@ -476,6 +511,13 @@ public class ResourceManager {
         }
     }
 
+    /**
+     * Returns data about the VAOs. The x coordinate means the number of usable
+     * VAOs, the y means the data size in bytes, stored in the RAM, the z means
+     * the data size in bytes, stored in the VRAM.
+     *
+     * @return data about the VAOs
+     */
     @NotNull @ReadOnly
     public static Vector3i getVaoData() {
         int count = 0;
@@ -523,6 +565,13 @@ public class ResourceManager {
         }
     }
 
+    /**
+     * Returns data about the shaders. The x coordinate means the number of
+     * usable shaders, the y means the data size in bytes, stored in the RAM,
+     * the z means the data size in bytes, stored in the VRAM.
+     *
+     * @return data about the shaders
+     */
     @NotNull @ReadOnly
     public static Vector3i getShaderData() {
         int count = 0;
