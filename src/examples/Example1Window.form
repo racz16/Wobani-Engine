@@ -60,13 +60,13 @@
                           <Component id="jPanel3" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lblFPS" min="-2" pref="250" max="-2" attributes="0"/>
-                                  <Component id="lblMilisec" alignment="0" min="-2" pref="250" max="-2" attributes="0"/>
+                                  <Component id="lblFps" min="-2" pref="250" max="-2" attributes="0"/>
+                                  <Component id="lblMsec" alignment="0" min="-2" pref="250" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="renderedModels" alignment="1" pref="250" max="32767" attributes="0"/>
-                                  <Component id="renderedTriangles" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="lblRenderedElements" alignment="1" pref="250" max="32767" attributes="0"/>
+                                  <Component id="lblRenderedTriangles" alignment="1" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -79,16 +79,16 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="lblFPS" max="32767" attributes="0"/>
+                          <Component id="lblFps" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                              <Component id="renderedTriangles" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblRenderedTriangles" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="renderedModels" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lblMilisec" alignment="3" max="32767" attributes="0"/>
+                          <Component id="lblRenderedElements" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblMsec" alignment="3" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
@@ -98,7 +98,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="lblFPS">
+            <Component class="javax.swing.JLabel" name="lblFps">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="24" style="0"/>
@@ -107,7 +107,7 @@
                 <Property name="toolTipText" type="java.lang.String" value="Frame per sec"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="renderedModels">
+            <Component class="javax.swing.JLabel" name="lblRenderedElements">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="24" style="0"/>
@@ -117,7 +117,7 @@
                 <Property name="toolTipText" type="java.lang.String" value="Rendered models"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="renderedTriangles">
+            <Component class="javax.swing.JLabel" name="lblRenderedTriangles">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="24" style="0"/>
@@ -455,7 +455,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JLabel" name="lblMilisec">
+            <Component class="javax.swing.JLabel" name="lblMsec">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="24" style="0"/>
@@ -481,12 +481,12 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="cFrustumCulling" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="cWireframeMode" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="invert" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="grayscale" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="hdr" alignment="0" min="-2" pref="143" max="-2" attributes="0"/>
-                          <Component id="fxaa" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbFrustumCulling" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbWireframe" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbInvert" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbGrayscale" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbToneMapping" alignment="0" min="-2" pref="143" max="-2" attributes="0"/>
+                          <Component id="cbFxaa" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="jSeparator1" min="-2" pref="15" max="-2" attributes="0"/>
@@ -500,31 +500,31 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                   <Component id="jLabel6" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="msaa" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="vSync" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="cbMsaa" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="cbVSync" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jLabel9" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jLabel7" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="textureFiltering" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="cShadows" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="cbTextureFiltering" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="cbShadows" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jLabel3" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="width" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="gammaLevel" alignment="0" min="-2" pref="79" max="-2" attributes="0"/>
+                                  <Component id="spWidth" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="cbGammaCorrection" alignment="0" min="-2" pref="79" max="-2" attributes="0"/>
                               </Group>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="height" max="32767" attributes="0"/>
+                                          <Component id="spHeight" max="32767" attributes="0"/>
                                           <Component id="jLabel4" max="32767" attributes="0"/>
                                           <Component id="jLabel5" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="shadowMapSize" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="cbShadowMapSize" alignment="0" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="32767" attributes="0"/>
-                                      <Component id="cFullscreen" min="-2" pref="96" max="-2" attributes="0"/>
+                                      <Component id="cbFullscreen" min="-2" pref="96" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                                      <Component id="gammaValue" min="-2" pref="90" max="-2" attributes="0"/>
+                                      <Component id="spGammaValue" min="-2" pref="90" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -544,38 +544,38 @@
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="width" min="-2" max="-2" attributes="0"/>
+                                      <Component id="spWidth" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="1" attributes="0">
                                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="height" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="cFullscreen" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="spHeight" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="cbFullscreen" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="cShadows" min="-2" max="-2" attributes="0"/>
+                                  <Component id="cbShadows" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="shadowMapSize" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cbShadowMapSize" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                               <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="msaa" min="-2" max="-2" attributes="0"/>
+                              <Component id="cbMsaa" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="textureFiltering" min="-2" max="-2" attributes="0"/>
+                              <Component id="cbTextureFiltering" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="vSync" min="-2" max="-2" attributes="0"/>
+                              <Component id="cbVSync" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -583,22 +583,22 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="gammaLevel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="gammaValue" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="cbGammaCorrection" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="spGammaValue" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="cWireframeMode" min="-2" max="-2" attributes="0"/>
+                              <Component id="cbWireframe" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="cFrustumCulling" min="-2" max="-2" attributes="0"/>
+                              <Component id="cbFrustumCulling" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="invert" min="-2" max="-2" attributes="0"/>
+                              <Component id="cbInvert" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="grayscale" min="-2" max="-2" attributes="0"/>
+                              <Component id="cbGrayscale" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="fxaa" min="-2" max="-2" attributes="0"/>
+                              <Component id="cbFxaa" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="hdr" min="-2" max="-2" attributes="0"/>
+                              <Component id="cbToneMapping" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
@@ -607,7 +607,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JCheckBox" name="cWireframeMode">
+            <Component class="javax.swing.JCheckBox" name="cbWireframe">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Wireframe mode"/>
               </Properties>
@@ -615,7 +615,7 @@
                 <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="setWireframeMode"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="cFrustumCulling">
+            <Component class="javax.swing.JCheckBox" name="cbFrustumCulling">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Frustum culling"/>
@@ -634,24 +634,24 @@
                 <Property name="text" type="java.lang.String" value="Width"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JSpinner" name="width">
+            <Component class="javax.swing.JSpinner" name="spWidth">
               <Properties>
                 <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                   <SpinnerModel initial="640" minimum="200" numberType="java.lang.Integer" stepSize="1" type="number"/>
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="widthvalueChanged"/>
+                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="setWidth"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JSpinner" name="height">
+            <Component class="javax.swing.JSpinner" name="spHeight">
               <Properties>
                 <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                   <SpinnerModel initial="360" minimum="100" numberType="java.lang.Integer" stepSize="1" type="number"/>
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="heightvalueChanged"/>
+                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="setHeight"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel4">
@@ -664,15 +664,15 @@
                 <Property name="text" type="java.lang.String" value="Shadowmap size"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="cFullscreen">
+            <Component class="javax.swing.JCheckBox" name="cbFullscreen">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Fullscreen"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cFullscreen"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setFullscreen"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="cShadows">
+            <Component class="javax.swing.JCheckBox" name="cbShadows">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Shadows"/>
@@ -686,7 +686,7 @@
                 <Property name="text" type="java.lang.String" value="MSAA"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="msaa">
+            <Component class="javax.swing.JComboBox" name="cbMsaa">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="5">
@@ -699,7 +699,7 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="msaaChanged"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setMsaa"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -710,7 +710,7 @@
                 <Property name="text" type="java.lang.String" value="Texture filtering"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="textureFiltering">
+            <Component class="javax.swing.JComboBox" name="cbTextureFiltering">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="7">
@@ -725,13 +725,13 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textureFiltering"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setTextureFiltering"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JComboBox" name="vSync">
+            <Component class="javax.swing.JComboBox" name="cbVSync">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="3">
@@ -742,7 +742,7 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="vSync"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setVSync"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -753,7 +753,7 @@
                 <Property name="text" type="java.lang.String" value="VSync"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="shadowMapSize">
+            <Component class="javax.swing.JComboBox" name="cbShadowMapSize">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="6">
@@ -768,13 +768,13 @@
                 <Property name="selectedIndex" type="int" value="4"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="shadowMapSize"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setShadowMapSize"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JComboBox" name="gammaLevel">
+            <Component class="javax.swing.JComboBox" name="cbGammaCorrection">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="2">
@@ -785,7 +785,7 @@
                 <Property name="selectedIndex" type="int" value="1"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gammaOnOff"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setGammaCorrection"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -801,46 +801,46 @@
                 <Property name="text" type="java.lang.String" value="Value"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JSpinner" name="gammaValue">
+            <Component class="javax.swing.JSpinner" name="spGammaValue">
               <Properties>
                 <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                   <SpinnerModel initial="2.2" numberType="java.lang.Float" stepSize="1.0" type="number"/>
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="gammaValue"/>
+                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="setGammaValue"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="hdr">
+            <Component class="javax.swing.JCheckBox" name="cbToneMapping">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Tone mapping"/>
               </Properties>
               <Events>
-                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="setHDR"/>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="setToneMapping"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="invert">
+            <Component class="javax.swing.JCheckBox" name="cbInvert">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Invert"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="invertActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setInvert"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="grayscale">
+            <Component class="javax.swing.JCheckBox" name="cbGrayscale">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Grayscale"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grayscaleActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setGrayscale"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="fxaa">
+            <Component class="javax.swing.JCheckBox" name="cbFxaa">
               <Properties>
                 <Property name="text" type="java.lang.String" value="FXAA"/>
               </Properties>
               <Events>
-                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fxaa"/>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="setFxaa"/>
               </Events>
             </Component>
           </SubComponents>

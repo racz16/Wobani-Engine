@@ -9,19 +9,43 @@ import renderers.postProcessing.*;
 import resources.*;
 import resources.textures.EasyFiltering.TextureFiltering;
 import toolbox.*;
+import toolbox.annotations.*;
 import window.*;
 
+/**
+ * Example window which demonstrates the Engine's features.
+ */
 public class Example1Window extends javax.swing.JFrame {
 
+    /**
+     * Indicates that the an OpenGL related setting is changed.
+     */
     private boolean openGLRelatedSettingsChanged;
+    /**
+     * Indicates that the window's size is changed.
+     */
     private boolean dimensionChanged;
+    /**
+     * Indicates that the texture filtering setting is changed.
+     */
     private boolean textureFilteringChanged;
+    /**
+     * Indicates that the vSync setting is changed.
+     */
     private boolean vSyncChanged;
+    /**
+     * Indicates that the gamma correction setting is changed.
+     */
     private boolean gammaChanged;
+    /**
+     * Indicates that the fullscreen setting is changed.
+     */
     private boolean fullscreen;
 
+    /**
+     * Initializes a new ExampleWindow.
+     */
     public Example1Window() {
-        //GUI windows stílusú
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
@@ -29,19 +53,25 @@ public class Example1Window extends javax.swing.JFrame {
         }
 
         initComponents();
-        gammaValue.setModel(new SpinnerNumberModel(new Float(2.2f), new Float(1.99f), new Float(2.5f), new Float(0.1f)));
+        spGammaValue.setModel(new SpinnerNumberModel(new Float(2.2f), new Float(1.99f), new Float(2.5f), new Float(0.1f)));
 
-        width.setValue(Window.getClientAreaSize().x);
-        height.setValue(Window.getClientAreaSize().y);
-        cFullscreen.setSelected(Window.isFullscreen());
-        cShadows.setSelected(Settings.isShadowMapping());
-        setSelectedItem(Settings.getShadowMapResolution(), shadowMapSize);
-        setSelectedItem(Settings.getMsaaLevel(), msaa);
-        textureFiltering.setSelectedIndex(Settings.getTextureFiltering().getIndex());
-        vSync.setSelectedIndex(Window.getVSync());
+        spWidth.setValue(Window.getClientAreaSize().x);
+        spHeight.setValue(Window.getClientAreaSize().y);
+        cbFullscreen.setSelected(Window.isFullscreen());
+        cbShadows.setSelected(Settings.isShadowMapping());
+        setSelectedItem(Settings.getShadowMapResolution(), cbShadowMapSize);
+        setSelectedItem(Settings.getMsaaLevel(), cbMsaa);
+        cbTextureFiltering.setSelectedIndex(Settings.getTextureFiltering().getIndex());
+        cbVSync.setSelectedIndex(Window.getVSync());
     }
 
-    private void setSelectedItem(int value, JComboBox<String> cb) {
+    /**
+     * Selects the given value in the given ComboBox.
+     *
+     * @param value value
+     * @param cb ComboBox
+     */
+    private void setSelectedItem(int value, @NotNull JComboBox<String> cb) {
         for (int i = 0; i < cb.getItemCount(); i++) {
             if (Integer.valueOf(cb.getItemAt(i)) == value) {
                 cb.setSelectedIndex(i);
@@ -50,26 +80,34 @@ public class Example1Window extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Updates the settings.
+     */
     public void update() {
         if (openGLRelatedSettingsChanged) {
             changeOpenGLRelatedSettings();
             openGLRelatedSettingsChanged = false;
         }
-
     }
 
+    /**
+     * Updates the statistics on the UI.
+     */
     public void updateStats() {
-        getTextureData();
-        getMeshData();
-        getSplineData();
-        getFboData();
-        getVaoData();
-        getUboData();
-        getShaderData();
+        updateTextureData();
+        updateMeshData();
+        updateSplineData();
+        updateFboData();
+        updateVaoData();
+        updateUboData();
+        updateShaderData();
         updateImportant();
     }
 
-    private void getTextureData() {
+    /**
+     * Updates the texture statistics on the UI.
+     */
+    private void updateTextureData() {
         Vector3i data = ResourceManager.getTextureData();
         lblTextureNumber.setText(data.x + "");
         float size = data.z;
@@ -80,7 +118,10 @@ public class Example1Window extends javax.swing.JFrame {
         lblTextureSizeMega.setText(size + " B  (" + sizeM + " MB)");
     }
 
-    private void getMeshData() {
+    /**
+     * Updates the mesh statistics on the UI.
+     */
+    private void updateMeshData() {
         Vector3i data = ResourceManager.getMeshData();
         lblMeshNumber.setText(data.x + "");
         float size = data.z;
@@ -91,7 +132,10 @@ public class Example1Window extends javax.swing.JFrame {
         lblMeshSizeMega.setText(size + " B  (" + sizeM + " MB)");
     }
 
-    private void getSplineData() {
+    /**
+     * Updates the spline statistics on the UI.
+     */
+    private void updateSplineData() {
         Vector3i data = ResourceManager.getSplineData();
         lblSplineNumber.setText(data.x + "");
         float size = data.z;
@@ -102,15 +146,24 @@ public class Example1Window extends javax.swing.JFrame {
         lblSplineSizeMega.setText(size + " B  (" + sizeM + " MB)");
     }
 
-    private void getFboData() {
+    /**
+     * Updates the FBO statistics on the UI.
+     */
+    private void updateFboData() {
         lblFboNumber.setText(ResourceManager.getFboData().x + "");
     }
 
-    private void getVaoData() {
+    /**
+     * Updates the VAO statistics on the UI.
+     */
+    private void updateVaoData() {
         lblVaoNumber.setText(ResourceManager.getVaoData().x + "");
     }
 
-    private void getUboData() {
+    /**
+     * Updates the UBO statistics on the UI.
+     */
+    private void updateUboData() {
         Vector3i data = ResourceManager.getUboData();
         lblUboNumber.setText(data.x + "");
         float size = data.z;
@@ -121,21 +174,49 @@ public class Example1Window extends javax.swing.JFrame {
         lblUboSizeMega.setText(size + " B  (" + sizeM + " MB)");
     }
 
-    private void getShaderData() {
+    /**
+     * Updates the shader statistics on the UI.
+     */
+    private void updateShaderData() {
         lblShaderNumber.setText(ResourceManager.getShaderData().x + "");
     }
 
+    /**
+     * Updates the fps, frame rendering time, rendered triangles and rendering
+     * elements on the UI.
+     */
+    private void updateImportant() {
+        lblFps.setText(Time.getFps() + " FPS");
+        float milisecs = 1.0f / Time.getFps();
+        lblMsec.setText(milisecs + " msec");
+
+        int triangles = 0;
+        int meshes = 0;
+        for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(true); i++) {
+            Renderer renderer = RenderingPipeline.getRenderer(true, i);
+            if (renderer.isActive()) {
+                triangles += renderer.getNumberOfRenderedFaces();
+                meshes += renderer.getNumberOfRenderedElements();
+            }
+        }
+        lblRenderedElements.setText(meshes + " meshes/splines");
+        lblRenderedTriangles.setText(triangles + " triangles");
+    }
+
+    /**
+     * Sets the OpenGL related settings changes.
+     */
     private void changeOpenGLRelatedSettings() {
         if (dimensionChanged) {
-            if (Window.getClientAreaSize().x != (int) width.getValue()) {
-                Window.setClientAreaSize(new Vector2i((int) width.getValue(), Window.getClientAreaSize().y));
+            if (Window.getClientAreaSize().x != (int) spWidth.getValue()) {
+                Window.setClientAreaSize(new Vector2i((int) spWidth.getValue(), Window.getClientAreaSize().y));
             } else {
-                Window.setClientAreaSize(new Vector2i(Window.getClientAreaSize().x, (int) height.getValue()));
+                Window.setClientAreaSize(new Vector2i(Window.getClientAreaSize().x, (int) spHeight.getValue()));
             }
             dimensionChanged = false;
         }
         if (textureFilteringChanged) {
-            switch (textureFiltering.getSelectedIndex()) {
+            switch (cbTextureFiltering.getSelectedIndex()) {
                 case 0:
                     Settings.setTextureFiltering(TextureFiltering.NONE);
                     break;
@@ -163,39 +244,21 @@ public class Example1Window extends javax.swing.JFrame {
             textureFilteringChanged = false;
         }
         if (vSyncChanged) {
-            Window.setVSync(vSync.getSelectedIndex());
+            Window.setVSync(cbVSync.getSelectedIndex());
             vSyncChanged = false;
         }
         if (gammaChanged) {
-            if (gammaLevel.getSelectedIndex() == 0) {
+            if (cbGammaCorrection.getSelectedIndex() == 0) {
                 Settings.setGamma(1);
             } else {
-                Settings.setGamma((float) gammaValue.getValue());
+                Settings.setGamma((float) spGammaValue.getValue());
             }
             gammaChanged = false;
         }
         if (fullscreen) {
-            Window.setFullscreen(cFullscreen.isSelected());
+            Window.setFullscreen(cbFullscreen.isSelected());
             fullscreen = false;
         }
-    }
-
-    private void updateImportant() {
-        lblFPS.setText(Time.getFps() + " FPS");
-        float milisecs = 1.0f / Time.getFps();
-        lblMilisec.setText(milisecs + " msec");
-
-        int triangles = 0;
-        int meshes = 0;
-        for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(true); i++) {
-            Renderer renderer = RenderingPipeline.getRenderer(true, i);
-            if (renderer.isActive()) {
-                triangles += renderer.getNumberOfRenderedFaces();
-                meshes += renderer.getNumberOfRenderedElements();
-            }
-        }
-        renderedModels.setText(meshes + " meshes/splines");
-        renderedTriangles.setText(triangles + " triangles");
     }
 
     @SuppressWarnings("unchecked")
@@ -204,9 +267,9 @@ public class Example1Window extends javax.swing.JFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        lblFPS = new javax.swing.JLabel();
-        renderedModels = new javax.swing.JLabel();
-        renderedTriangles = new javax.swing.JLabel();
+        lblFps = new javax.swing.JLabel();
+        lblRenderedElements = new javax.swing.JLabel();
+        lblRenderedTriangles = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblTextureNumber = new javax.swing.JLabel();
@@ -232,33 +295,33 @@ public class Example1Window extends javax.swing.JFrame {
         jLabel15 = new javax.swing.JLabel();
         lblTextureSize1 = new javax.swing.JLabel();
         lblTextureSizeMega1 = new javax.swing.JLabel();
-        lblMilisec = new javax.swing.JLabel();
+        lblMsec = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        cWireframeMode = new javax.swing.JCheckBox();
-        cFrustumCulling = new javax.swing.JCheckBox();
+        cbWireframe = new javax.swing.JCheckBox();
+        cbFrustumCulling = new javax.swing.JCheckBox();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel3 = new javax.swing.JLabel();
-        width = new javax.swing.JSpinner();
-        height = new javax.swing.JSpinner();
+        spWidth = new javax.swing.JSpinner();
+        spHeight = new javax.swing.JSpinner();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        cFullscreen = new javax.swing.JCheckBox();
-        cShadows = new javax.swing.JCheckBox();
+        cbFullscreen = new javax.swing.JCheckBox();
+        cbShadows = new javax.swing.JCheckBox();
         jLabel6 = new javax.swing.JLabel();
-        msaa = new javax.swing.JComboBox<>();
+        cbMsaa = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
-        textureFiltering = new javax.swing.JComboBox<>();
-        vSync = new javax.swing.JComboBox<>();
+        cbTextureFiltering = new javax.swing.JComboBox<>();
+        cbVSync = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
-        shadowMapSize = new javax.swing.JComboBox<>();
-        gammaLevel = new javax.swing.JComboBox<>();
+        cbShadowMapSize = new javax.swing.JComboBox<>();
+        cbGammaCorrection = new javax.swing.JComboBox<>();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        gammaValue = new javax.swing.JSpinner();
-        hdr = new javax.swing.JCheckBox();
-        invert = new javax.swing.JCheckBox();
-        grayscale = new javax.swing.JCheckBox();
-        fxaa = new javax.swing.JCheckBox();
+        spGammaValue = new javax.swing.JSpinner();
+        cbToneMapping = new javax.swing.JCheckBox();
+        cbInvert = new javax.swing.JCheckBox();
+        cbGrayscale = new javax.swing.JCheckBox();
+        cbFxaa = new javax.swing.JCheckBox();
 
         setTitle("Example");
         setResizable(false);
@@ -273,19 +336,19 @@ public class Example1Window extends javax.swing.JFrame {
             }
         });
 
-        lblFPS.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        lblFPS.setText(" ");
-        lblFPS.setToolTipText("Frame per sec");
+        lblFps.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        lblFps.setText(" ");
+        lblFps.setToolTipText("Frame per sec");
 
-        renderedModels.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        renderedModels.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        renderedModels.setText(" ");
-        renderedModels.setToolTipText("Rendered models");
+        lblRenderedElements.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        lblRenderedElements.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblRenderedElements.setText(" ");
+        lblRenderedElements.setToolTipText("Rendered models");
 
-        renderedTriangles.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        renderedTriangles.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        renderedTriangles.setText(" ");
-        renderedTriangles.setToolTipText("Rendered triangles");
+        lblRenderedTriangles.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        lblRenderedTriangles.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblRenderedTriangles.setText(" ");
+        lblRenderedTriangles.setToolTipText("Rendered triangles");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("Textures");
@@ -462,9 +525,9 @@ public class Example1Window extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        lblMilisec.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        lblMilisec.setText(" ");
-        lblMilisec.setToolTipText("Frame per sec");
+        lblMsec.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        lblMsec.setText(" ");
+        lblMsec.setToolTipText("Frame per sec");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -476,12 +539,12 @@ public class Example1Window extends javax.swing.JFrame {
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblFPS, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblMilisec, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblFps, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblMsec, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(renderedModels, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-                            .addComponent(renderedTriangles, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(lblRenderedElements, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                            .addComponent(lblRenderedTriangles, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -489,14 +552,14 @@ public class Example1Window extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblFPS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblFps, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(renderedTriangles)))
+                        .addComponent(lblRenderedTriangles)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(renderedModels)
-                    .addComponent(lblMilisec, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblRenderedElements)
+                    .addComponent(lblMsec, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(67, 67, 67))
@@ -504,16 +567,16 @@ public class Example1Window extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Statistics", jPanel1);
 
-        cWireframeMode.setText("Wireframe mode");
-        cWireframeMode.addItemListener(new java.awt.event.ItemListener() {
+        cbWireframe.setText("Wireframe mode");
+        cbWireframe.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 setWireframeMode(evt);
             }
         });
 
-        cFrustumCulling.setSelected(true);
-        cFrustumCulling.setText("Frustum culling");
-        cFrustumCulling.addItemListener(new java.awt.event.ItemListener() {
+        cbFrustumCulling.setSelected(true);
+        cbFrustumCulling.setText("Frustum culling");
+        cbFrustumCulling.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 setFrustumCulling(evt);
             }
@@ -523,17 +586,17 @@ public class Example1Window extends javax.swing.JFrame {
 
         jLabel3.setText("Width");
 
-        width.setModel(new javax.swing.SpinnerNumberModel(640, 200, null, 1));
-        width.addChangeListener(new javax.swing.event.ChangeListener() {
+        spWidth.setModel(new javax.swing.SpinnerNumberModel(640, 200, null, 1));
+        spWidth.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                widthvalueChanged(evt);
+                setWidth(evt);
             }
         });
 
-        height.setModel(new javax.swing.SpinnerNumberModel(360, 100, null, 1));
-        height.addChangeListener(new javax.swing.event.ChangeListener() {
+        spHeight.setModel(new javax.swing.SpinnerNumberModel(360, 100, null, 1));
+        spHeight.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                heightvalueChanged(evt);
+                setHeight(evt);
             }
         });
 
@@ -541,16 +604,16 @@ public class Example1Window extends javax.swing.JFrame {
 
         jLabel5.setText("Shadowmap size");
 
-        cFullscreen.setText("Fullscreen");
-        cFullscreen.addActionListener(new java.awt.event.ActionListener() {
+        cbFullscreen.setText("Fullscreen");
+        cbFullscreen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cFullscreen(evt);
+                setFullscreen(evt);
             }
         });
 
-        cShadows.setSelected(true);
-        cShadows.setText("Shadows");
-        cShadows.addItemListener(new java.awt.event.ItemListener() {
+        cbShadows.setSelected(true);
+        cbShadows.setText("Shadows");
+        cbShadows.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 setShadows(evt);
             }
@@ -558,44 +621,44 @@ public class Example1Window extends javax.swing.JFrame {
 
         jLabel6.setText("MSAA");
 
-        msaa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "4", "8", "16" }));
-        msaa.addActionListener(new java.awt.event.ActionListener() {
+        cbMsaa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "4", "8", "16" }));
+        cbMsaa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                msaaChanged(evt);
+                setMsaa(evt);
             }
         });
 
         jLabel7.setText("Texture filtering");
 
-        textureFiltering.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "Bilinear", "Trilinear", "Anisotropic 2x", "Anisotropic 4x", "Anisotropic 8x", "Anisotropic 16x" }));
-        textureFiltering.addActionListener(new java.awt.event.ActionListener() {
+        cbTextureFiltering.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "Bilinear", "Trilinear", "Anisotropic 2x", "Anisotropic 4x", "Anisotropic 8x", "Anisotropic 16x" }));
+        cbTextureFiltering.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textureFiltering(evt);
+                setTextureFiltering(evt);
             }
         });
 
-        vSync.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Off", "60 fps", "30 fps" }));
-        vSync.addActionListener(new java.awt.event.ActionListener() {
+        cbVSync.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Off", "60 fps", "30 fps" }));
+        cbVSync.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                vSync(evt);
+                setVSync(evt);
             }
         });
 
         jLabel9.setText("VSync");
 
-        shadowMapSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "128", "256", "512", "1024", "2048", "4096" }));
-        shadowMapSize.setSelectedIndex(4);
-        shadowMapSize.addActionListener(new java.awt.event.ActionListener() {
+        cbShadowMapSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "128", "256", "512", "1024", "2048", "4096" }));
+        cbShadowMapSize.setSelectedIndex(4);
+        cbShadowMapSize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                shadowMapSize(evt);
+                setShadowMapSize(evt);
             }
         });
 
-        gammaLevel.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Off", "On" }));
-        gammaLevel.setSelectedIndex(1);
-        gammaLevel.addActionListener(new java.awt.event.ActionListener() {
+        cbGammaCorrection.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Off", "On" }));
+        cbGammaCorrection.setSelectedIndex(1);
+        cbGammaCorrection.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                gammaOnOff(evt);
+                setGammaCorrection(evt);
             }
         });
 
@@ -603,38 +666,38 @@ public class Example1Window extends javax.swing.JFrame {
 
         jLabel11.setText("Value");
 
-        gammaValue.setModel(new javax.swing.SpinnerNumberModel(2.2f, null, null, 1.0f));
-        gammaValue.addChangeListener(new javax.swing.event.ChangeListener() {
+        spGammaValue.setModel(new javax.swing.SpinnerNumberModel(2.2f, null, null, 1.0f));
+        spGammaValue.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                gammaValue(evt);
+                setGammaValue(evt);
             }
         });
 
-        hdr.setText("Tone mapping");
-        hdr.addItemListener(new java.awt.event.ItemListener() {
+        cbToneMapping.setText("Tone mapping");
+        cbToneMapping.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                setHDR(evt);
+                setToneMapping(evt);
             }
         });
 
-        invert.setText("Invert");
-        invert.addActionListener(new java.awt.event.ActionListener() {
+        cbInvert.setText("Invert");
+        cbInvert.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                invertActionPerformed(evt);
+                setInvert(evt);
             }
         });
 
-        grayscale.setText("Grayscale");
-        grayscale.addActionListener(new java.awt.event.ActionListener() {
+        cbGrayscale.setText("Grayscale");
+        cbGrayscale.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                grayscaleActionPerformed(evt);
+                setGrayscale(evt);
             }
         });
 
-        fxaa.setText("FXAA");
-        fxaa.addItemListener(new java.awt.event.ItemListener() {
+        cbFxaa.setText("FXAA");
+        cbFxaa.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                fxaa(evt);
+                setFxaa(evt);
             }
         });
 
@@ -645,12 +708,12 @@ public class Example1Window extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cFrustumCulling)
-                    .addComponent(cWireframeMode)
-                    .addComponent(invert)
-                    .addComponent(grayscale)
-                    .addComponent(hdr, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fxaa))
+                    .addComponent(cbFrustumCulling)
+                    .addComponent(cbWireframe)
+                    .addComponent(cbInvert)
+                    .addComponent(cbGrayscale)
+                    .addComponent(cbToneMapping, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbFxaa))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -662,28 +725,28 @@ public class Example1Window extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(msaa, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(vSync, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbMsaa, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbVSync, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(textureFiltering, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cShadows, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbTextureFiltering, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbShadows, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(width, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(gammaLevel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(spWidth, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cbGammaCorrection, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(height)
+                                    .addComponent(spHeight)
                                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(shadowMapSize, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(cbShadowMapSize, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(cFullscreen, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(cbFullscreen, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(9, 9, 9)
-                                .addComponent(gammaValue, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(spGammaValue, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(44, 44, 44))
         );
         jPanel2Layout.setVerticalGroup(
@@ -697,52 +760,52 @@ public class Example1Window extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(width, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(spWidth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(height, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cFullscreen))))
+                                    .addComponent(spHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cbFullscreen))))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cShadows)
+                            .addComponent(cbShadows)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(shadowMapSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(cbShadowMapSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(21, 21, 21)
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(msaa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbMsaa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textureFiltering, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbTextureFiltering, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(vSync, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbVSync, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel10)
                             .addComponent(jLabel11))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(gammaLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(gammaValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(cbGammaCorrection, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(spGammaValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(cWireframeMode)
+                        .addComponent(cbWireframe)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cFrustumCulling)
+                        .addComponent(cbFrustumCulling)
                         .addGap(18, 18, 18)
-                        .addComponent(invert)
+                        .addComponent(cbInvert)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(grayscale)
+                        .addComponent(cbGrayscale)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(fxaa)
+                        .addComponent(cbFxaa)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(hdr)))
+                        .addComponent(cbToneMapping)))
                 .addGap(43, 43, 43))
         );
 
@@ -762,132 +825,224 @@ public class Example1Window extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Handles window move changes.
+     *
+     * @param evt event
+     */
     private void moved(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_moved
         if (!Window.isFullscreen()) {
             Window.setPosition(new Vector2i(getX() + getWidth(), getY() + Window.getFrameSize().y));
         }
     }//GEN-LAST:event_moved
 
-    private void widthvalueChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_widthvalueChanged
+    /**
+     * Handles window width change.
+     *
+     * @param evt event
+     */
+    private void setWidth(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_setWidth
         dimensionChanged = true;
         openGLRelatedSettingsChanged = true;
-    }//GEN-LAST:event_widthvalueChanged
+    }//GEN-LAST:event_setWidth
 
-    private void heightvalueChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_heightvalueChanged
+    /**
+     * Handles window height change.
+     *
+     * @param evt event
+     */
+    private void setHeight(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_setHeight
         dimensionChanged = true;
         openGLRelatedSettingsChanged = true;
-    }//GEN-LAST:event_heightvalueChanged
+    }//GEN-LAST:event_setHeight
 
-    private void shadowMapSize(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shadowMapSize
-        Settings.setShadowMapResolution(Integer.valueOf(shadowMapSize.getItemAt(shadowMapSize.getSelectedIndex())));
-    }//GEN-LAST:event_shadowMapSize
+    /**
+     * Handles shadow map size change.
+     *
+     * @param evt event
+     */
+    private void setShadowMapSize(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setShadowMapSize
+        Settings.setShadowMapResolution(Integer.valueOf(cbShadowMapSize.getItemAt(cbShadowMapSize.getSelectedIndex())));
+    }//GEN-LAST:event_setShadowMapSize
 
-    private void vSync(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vSync
+    /**
+     * Handles vSync change.
+     *
+     * @param evt event
+     */
+    private void setVSync(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setVSync
         vSyncChanged = true;
         openGLRelatedSettingsChanged = true;
-    }//GEN-LAST:event_vSync
+    }//GEN-LAST:event_setVSync
 
+    /**
+     * Terminates the program.
+     *
+     * @param evt event
+     */
     private void exit(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exit
         Window.setWindowShouldClose(true);
     }//GEN-LAST:event_exit
 
+    /**
+     * Sets whether or not the wireframe mode should be enabled.
+     *
+     * @param evt event
+     */
     private void setWireframeMode(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setWireframeMode
-        Settings.setWireframeMode(cWireframeMode.isSelected());
+        Settings.setWireframeMode(cbWireframe.isSelected());
     }//GEN-LAST:event_setWireframeMode
 
+    /**
+     * Sets whether or not the frustum culling should be enabled.
+     *
+     * @param evt event
+     */
     private void setFrustumCulling(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setFrustumCulling
-        Settings.setFrustumCulling(cFrustumCulling.isSelected());
+        Settings.setFrustumCulling(cbFrustumCulling.isSelected());
     }//GEN-LAST:event_setFrustumCulling
 
+    /**
+     * Sets whether or not the shadows should be enabled.
+     *
+     * @param evt event
+     */
     private void setShadows(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setShadows
-        Settings.setShadowMapping(cShadows.isSelected());
+        Settings.setShadowMapping(cbShadows.isSelected());
     }//GEN-LAST:event_setShadows
 
-    private void textureFiltering(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textureFiltering
+    /**
+     * Handles texture filtering change.
+     *
+     * @param evt event
+     */
+    private void setTextureFiltering(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setTextureFiltering
         textureFilteringChanged = true;
         openGLRelatedSettingsChanged = true;
-    }//GEN-LAST:event_textureFiltering
+    }//GEN-LAST:event_setTextureFiltering
 
-    private void gammaValue(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_gammaValue
+    /**
+     * Handles gamma correction value change.
+     *
+     * @param evt event
+     */
+    private void setGammaValue(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_setGammaValue
         gammaChanged = true;
         openGLRelatedSettingsChanged = true;
-    }//GEN-LAST:event_gammaValue
+    }//GEN-LAST:event_setGammaValue
 
-    private void setHDR(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setHDR
+    /**
+     * Sets whether or not the tone mapping post processing should be enabled.
+     *
+     * @param evt event
+     */
+    private void setToneMapping(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setToneMapping
         Renderer renderer;
         for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(false); i++) {
             renderer = RenderingPipeline.getRenderer(false, i);
             if (renderer.getClass() == ReinhardToneMappingRenderer.class) {
-                renderer.setActive(hdr.isSelected());
+                renderer.setActive(cbToneMapping.isSelected());
                 return;
             }
         }
-    }//GEN-LAST:event_setHDR
+    }//GEN-LAST:event_setToneMapping
 
-    private void msaaChanged(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msaaChanged
-        if (msaa.getSelectedIndex() == 0) {
+    /**
+     * Handles MSAA change.
+     *
+     * @param evt event
+     */
+    private void setMsaa(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setMsaa
+        if (cbMsaa.getSelectedIndex() == 0) {
             Settings.setMsaaLevel(1);
             return;
         }
-        Settings.setMsaaLevel(2 << msaa.getSelectedIndex() - 1);
-    }//GEN-LAST:event_msaaChanged
+        Settings.setMsaaLevel(2 << cbMsaa.getSelectedIndex() - 1);
+    }//GEN-LAST:event_setMsaa
 
-    private void gammaOnOff(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gammaOnOff
+    /**
+     * Sets whether or not the gamma correction should be enabled.
+     *
+     * @param evt event
+     */
+    private void setGammaCorrection(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setGammaCorrection
         gammaChanged = true;
         openGLRelatedSettingsChanged = true;
-        gammaValue.setEnabled(gammaLevel.getSelectedIndex() == 1);
-    }//GEN-LAST:event_gammaOnOff
+        spGammaValue.setEnabled(cbGammaCorrection.getSelectedIndex() == 1);
+    }//GEN-LAST:event_setGammaCorrection
 
-    private void invertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invertActionPerformed
+    /**
+     * Sets whether or not the invert post processing should be enabled.
+     *
+     * @param evt event
+     */
+    private void setInvert(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setInvert
         Renderer renderer;
         for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(false); i++) {
             renderer = RenderingPipeline.getRenderer(false, i);
             if (renderer.getClass() == InvertRenderer.class) {
-                renderer.setActive(invert.isSelected());
+                renderer.setActive(cbInvert.isSelected());
                 return;
             }
         }
-    }//GEN-LAST:event_invertActionPerformed
+    }//GEN-LAST:event_setInvert
 
-    private void grayscaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grayscaleActionPerformed
+    /**
+     * Sets whether or not the grayscale post processing should be enabled.
+     *
+     * @param evt event
+     */
+    private void setGrayscale(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setGrayscale
         Renderer renderer;
         for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(false); i++) {
             renderer = RenderingPipeline.getRenderer(false, i);
             if (renderer.getClass() == GrayscaleRenderer.class) {
-                renderer.setActive(grayscale.isSelected());
+                renderer.setActive(cbGrayscale.isSelected());
                 return;
             }
         }
-    }//GEN-LAST:event_grayscaleActionPerformed
+    }//GEN-LAST:event_setGrayscale
 
-    private void fxaa(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fxaa
+    /**
+     * Sets whether or not the FXAA post processing should be enabled.
+     *
+     * @param evt event
+     */
+    private void setFxaa(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setFxaa
         Renderer renderer;
         for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(false); i++) {
             renderer = RenderingPipeline.getRenderer(false, i);
             if (renderer.getClass() == FxaaRenderer.class) {
-                renderer.setActive(fxaa.isSelected());
+                renderer.setActive(cbFxaa.isSelected());
                 return;
             }
         }
-    }//GEN-LAST:event_fxaa
+    }//GEN-LAST:event_setFxaa
 
-    private void cFullscreen(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cFullscreen
+    /**
+     * Sets whether or not the fullscreen should be enabled.
+     *
+     * @param evt event
+     */
+    private void setFullscreen(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setFullscreen
         fullscreen = true;
         openGLRelatedSettingsChanged = true;
-    }//GEN-LAST:event_cFullscreen
+    }//GEN-LAST:event_setFullscreen
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox cFrustumCulling;
-    private javax.swing.JCheckBox cFullscreen;
-    private javax.swing.JCheckBox cShadows;
-    private javax.swing.JCheckBox cWireframeMode;
-    private javax.swing.JCheckBox fxaa;
-    private javax.swing.JComboBox<String> gammaLevel;
-    private javax.swing.JSpinner gammaValue;
-    private javax.swing.JCheckBox grayscale;
-    private javax.swing.JCheckBox hdr;
-    private javax.swing.JSpinner height;
-    private javax.swing.JCheckBox invert;
+    private javax.swing.JCheckBox cbFrustumCulling;
+    private javax.swing.JCheckBox cbFullscreen;
+    private javax.swing.JCheckBox cbFxaa;
+    private javax.swing.JComboBox<String> cbGammaCorrection;
+    private javax.swing.JCheckBox cbGrayscale;
+    private javax.swing.JCheckBox cbInvert;
+    private javax.swing.JComboBox<String> cbMsaa;
+    private javax.swing.JComboBox<String> cbShadowMapSize;
+    private javax.swing.JCheckBox cbShadows;
+    private javax.swing.JComboBox<String> cbTextureFiltering;
+    private javax.swing.JCheckBox cbToneMapping;
+    private javax.swing.JComboBox<String> cbVSync;
+    private javax.swing.JCheckBox cbWireframe;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -908,12 +1063,14 @@ public class Example1Window extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JLabel lblFPS;
     private javax.swing.JLabel lblFboNumber;
+    private javax.swing.JLabel lblFps;
     private javax.swing.JLabel lblMeshNumber;
     private javax.swing.JLabel lblMeshSize;
     private javax.swing.JLabel lblMeshSizeMega;
-    private javax.swing.JLabel lblMilisec;
+    private javax.swing.JLabel lblMsec;
+    private javax.swing.JLabel lblRenderedElements;
+    private javax.swing.JLabel lblRenderedTriangles;
     private javax.swing.JLabel lblShaderNumber;
     private javax.swing.JLabel lblSplineNumber;
     private javax.swing.JLabel lblSplineSize;
@@ -927,13 +1084,9 @@ public class Example1Window extends javax.swing.JFrame {
     private javax.swing.JLabel lblUboSize;
     private javax.swing.JLabel lblUboSizeMega;
     private javax.swing.JLabel lblVaoNumber;
-    private javax.swing.JComboBox<String> msaa;
-    private javax.swing.JLabel renderedModels;
-    private javax.swing.JLabel renderedTriangles;
-    private javax.swing.JComboBox<String> shadowMapSize;
-    private javax.swing.JComboBox<String> textureFiltering;
-    private javax.swing.JComboBox<String> vSync;
-    private javax.swing.JSpinner width;
+    private javax.swing.JSpinner spGammaValue;
+    private javax.swing.JSpinner spHeight;
+    private javax.swing.JSpinner spWidth;
     // End of variables declaration//GEN-END:variables
 
 }
