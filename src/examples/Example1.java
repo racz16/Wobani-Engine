@@ -30,6 +30,10 @@ public class Example1 {
      * Bezier spline.
      */
     private static Spline spline;
+    /**
+     * Determines whether the window position changes affect each other.
+     */
+    private static boolean windowPositionChange;
 
     /**
      * Entry point, initializes the engine, the scene, then starts the game
@@ -44,6 +48,7 @@ public class Example1 {
         if (!Window.isFullscreen()) {
             testWindow.setVisible(true);
         }
+        windowPositionChange = true;
         initialize();
 
         GameLoop.run();
@@ -103,10 +108,6 @@ public class Example1 {
                 getGameObject().getTransform().rotate(new Vector3f(0, 0.35f * Time.getDeltaTimeFactor(), 0));
             }
         });
-        StaticMesh mesh = (StaticMesh) dragon.getComponent(MeshComponent.class).getMesh();
-        mesh.setDataStorePolicy(ResourceManager.ResourceState.HDD);
-        mesh.setVramTimeLimit(1000);
-        mesh.setRamTimeLimit(2000);
     }
 
     /**
@@ -252,7 +253,61 @@ public class Example1 {
             public void charModsCallback(int codepoint, boolean shiftPressed, boolean controlPressed, boolean altPressed, boolean superPressed) {
             }
         });
+        Window.addEventHandler(new WindowEventHandler() {
+            @Override
+            public void closeCallback() {
 
+            }
+
+            @Override
+            public void sizeCallback(Vector2i newSize) {
+                testWindow.updateSettingsWindowDimensions();
+            }
+
+            @Override
+            public void frameBufferSizeCallback(Vector2i newSize) {
+
+            }
+
+            @Override
+            public void positionCallback(Vector2i newPosition) {
+                setWindowPositions(true);
+            }
+
+            @Override
+            public void minimizationCallback(boolean minimized) {
+
+            }
+
+            @Override
+            public void focusCallback(boolean focused) {
+
+            }
+        });
+    }
+
+    /**
+     * Sticks the two windows to each other.
+     *
+     * @param isGlfwWindowChanged determines whether the GLFW windows's position
+     * changed or not
+     */
+    public static void setWindowPositions(boolean isGlfwWindowChanged) {
+        if (windowPositionChange) {
+            if (isGlfwWindowChanged) {
+                int x = Window.getPosition().x - testWindow.getWidth();
+                int y = Window.getPosition().y - Window.getFrameSize().y;
+                if (testWindow.getX() != x || testWindow.getY() != y) {
+                    testWindow.setLocation(x, y);
+                }
+            } else {
+                int x = testWindow.getX() + testWindow.getWidth();
+                int y = testWindow.getY() + Window.getFrameSize().y;
+                if (Window.getPosition().x != x || Window.getPosition().y != y) {
+                    Window.setPosition(new Vector2i(x, y));
+                }
+            }
+        }
     }
 
 }

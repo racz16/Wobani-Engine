@@ -22,10 +22,6 @@ public class Example1Window extends javax.swing.JFrame {
      */
     private boolean openGLRelatedSettingsChanged;
     /**
-     * Indicates that the window's size is changed.
-     */
-    private boolean dimensionChanged;
-    /**
      * Indicates that the texture filtering setting is changed.
      */
     private boolean textureFilteringChanged;
@@ -207,14 +203,6 @@ public class Example1Window extends javax.swing.JFrame {
      * Sets the OpenGL related settings changes.
      */
     private void changeOpenGLRelatedSettings() {
-        if (dimensionChanged) {
-            if (Window.getClientAreaSize().x != (int) spWidth.getValue()) {
-                Window.setClientAreaSize(new Vector2i((int) spWidth.getValue(), Window.getClientAreaSize().y));
-            } else {
-                Window.setClientAreaSize(new Vector2i(Window.getClientAreaSize().x, (int) spHeight.getValue()));
-            }
-            dimensionChanged = false;
-        }
         if (textureFilteringChanged) {
             switch (cbTextureFiltering.getSelectedIndex()) {
                 case 0:
@@ -259,6 +247,15 @@ public class Example1Window extends javax.swing.JFrame {
             Window.setFullscreen(cbFullscreen.isSelected());
             fullscreen = false;
         }
+    }
+
+    /**
+     * Updates the GLFW window's dimensions on the settings UI.
+     */
+    public void updateSettingsWindowDimensions() {
+        Vector2i size = Window.getSize();
+        spWidth.setValue(size.x);
+        spHeight.setValue(size.y);
     }
 
     @SuppressWarnings("unchecked")
@@ -338,17 +335,17 @@ public class Example1Window extends javax.swing.JFrame {
 
         lblFps.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         lblFps.setText(" ");
-        lblFps.setToolTipText("Frame per sec");
+        lblFps.setToolTipText("");
 
         lblRenderedElements.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         lblRenderedElements.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRenderedElements.setText(" ");
-        lblRenderedElements.setToolTipText("Rendered models");
+        lblRenderedElements.setToolTipText("");
 
         lblRenderedTriangles.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         lblRenderedTriangles.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRenderedTriangles.setText(" ");
-        lblRenderedTriangles.setToolTipText("Rendered triangles");
+        lblRenderedTriangles.setToolTipText("");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("Textures");
@@ -527,7 +524,7 @@ public class Example1Window extends javax.swing.JFrame {
 
         lblMsec.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         lblMsec.setText(" ");
-        lblMsec.setToolTipText("Frame per sec");
+        lblMsec.setToolTipText("");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -832,7 +829,7 @@ public class Example1Window extends javax.swing.JFrame {
      */
     private void moved(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_moved
         if (!Window.isFullscreen()) {
-            Window.setPosition(new Vector2i(getX() + getWidth(), getY() + Window.getFrameSize().y));
+            Example1.setWindowPositions(false);
         }
     }//GEN-LAST:event_moved
 
@@ -842,8 +839,7 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setWidth(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_setWidth
-        dimensionChanged = true;
-        openGLRelatedSettingsChanged = true;
+        Window.setClientAreaSize(new Vector2i((int) spWidth.getValue(), Window.getClientAreaSize().y));
     }//GEN-LAST:event_setWidth
 
     /**
@@ -852,8 +848,7 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setHeight(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_setHeight
-        dimensionChanged = true;
-        openGLRelatedSettingsChanged = true;
+        Window.setClientAreaSize(new Vector2i(Window.getClientAreaSize().x, (int) spHeight.getValue()));
     }//GEN-LAST:event_setHeight
 
     /**
