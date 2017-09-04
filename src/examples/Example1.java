@@ -253,6 +253,7 @@ public class Example1 {
             public void charModsCallback(int codepoint, boolean shiftPressed, boolean controlPressed, boolean altPressed, boolean superPressed) {
             }
         });
+        Window.setClientAreaSizeLimits(200, 200, 10000, 10000);
         Window.addEventHandler(new WindowEventHandler() {
             @Override
             public void closeCallback() {

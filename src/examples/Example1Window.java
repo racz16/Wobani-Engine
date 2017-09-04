@@ -253,7 +253,7 @@ public class Example1Window extends javax.swing.JFrame {
      * Updates the GLFW window's dimensions on the settings UI.
      */
     public void updateSettingsWindowDimensions() {
-        Vector2i size = Window.getSize();
+        Vector2i size = Window.getClientAreaSize();
         spWidth.setValue(size.x);
         spHeight.setValue(size.y);
     }
@@ -590,7 +590,7 @@ public class Example1Window extends javax.swing.JFrame {
             }
         });
 
-        spHeight.setModel(new javax.swing.SpinnerNumberModel(360, 100, null, 1));
+        spHeight.setModel(new javax.swing.SpinnerNumberModel(640, 200, null, 1));
         spHeight.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 setHeight(evt);

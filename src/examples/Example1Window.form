@@ -647,7 +647,7 @@
             <Component class="javax.swing.JSpinner" name="spHeight">
               <Properties>
                 <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="360" minimum="100" numberType="java.lang.Integer" stepSize="1" type="number"/>
+                  <SpinnerModel initial="640" minimum="200" numberType="java.lang.Integer" stepSize="1" type="number"/>
                 </Property>
               </Properties>
               <Events>
