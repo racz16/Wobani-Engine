@@ -75,7 +75,7 @@ public class Ubo implements Resource {
         if (offset < 0) {
             throw new IllegalArgumentException("Offset can't be lower than 0");
         }
-        if (getDataSizeInVram() < data.capacity()) {
+        if (getDataSizeInAction() < data.capacity()) {
             throw new IllegalStateException("Didn't allocated enough memory for the data");
         }
         GL15.glBufferSubData(GL31.GL_UNIFORM_BUFFER, offset, data);
@@ -111,7 +111,7 @@ public class Ubo implements Resource {
         if (offset < 0) {
             throw new IllegalArgumentException("Offset can't be lower than 0");
         }
-        if (getDataSizeInVram() < data.capacity()) {
+        if (getDataSizeInAction() < data.capacity()) {
             throw new IllegalStateException("Didn't allocated enough memory for the data");
         }
         GL15.glBufferSubData(GL31.GL_UNIFORM_BUFFER, offset, data);
@@ -155,7 +155,7 @@ public class Ubo implements Resource {
     }
 
     @Override
-    public int getDataSizeInVram() {
+    public int getDataSizeInAction() {
         return dataSize;
     }
 

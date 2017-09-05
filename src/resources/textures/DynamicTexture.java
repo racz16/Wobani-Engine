@@ -173,7 +173,7 @@ public class DynamicTexture extends AbstractTexture {
 
     @Override
     public boolean isUsable() {
-        return getTextureId() != 0;
+        return getId() != 0;
     }
 
     @Override
@@ -188,7 +188,7 @@ public class DynamicTexture extends AbstractTexture {
     }
 
     @Override
-    public int getTextureId() {
+    public int getId() {
         return glGetId();
     }
 
@@ -226,7 +226,7 @@ public class DynamicTexture extends AbstractTexture {
     }
 
     @Override
-    public int getDataSizeInVram() {
+    public int getDataSizeInAction() {
         return dataSize;
     }
 

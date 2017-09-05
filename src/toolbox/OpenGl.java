@@ -57,6 +57,18 @@ public class OpenGl {
     }
 
     /**
+     * Initializes the OpenGL settings to the Engine's default values like
+     * enabling depth testing.
+     */
+    public static void initializeToDefaults() {
+        setMultisample(true);
+        setFaceCulling(true);
+        setFaceCullingMode(OpenGl.FaceCullingMode.BACK);
+        setAlphaBlending(true);
+        setDepthTest(true);
+    }
+
+    /**
      * Sets whether or not enable the multisampling.
      *
      * @param multisample true if you would like to enable multisampling, false

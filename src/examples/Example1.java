@@ -1,5 +1,6 @@
 package examples;
 
+import components.audio.*;
 import components.camera.*;
 import components.light.*;
 import components.renderables.*;
@@ -9,6 +10,7 @@ import org.joml.*;
 import org.lwjgl.glfw.*;
 import renderers.*;
 import resources.*;
+import resources.audio.*;
 import resources.materials.*;
 import resources.meshes.*;
 import resources.splines.*;
@@ -185,6 +187,8 @@ public class Example1 {
         GameObject camera = new GameObject("camera");
         camera.getTransform().setRelativePosition(new Vector3f(0, 0, 30));
         camera.addComponent(new FreeCameraComponent());
+        camera.addComponent(new AudioListenerComponent());
+        Scene.setAudioListener(camera.getComponent(AudioListenerComponent.class));
         Scene.setCamera(camera.getComponent(Camera.class));
     }
 
@@ -285,6 +289,12 @@ public class Example1 {
 
             }
         });
+
+        GameObject sound = StaticMesh.loadModelToGameObject("res/models/box.obj");
+        sound.getComponent(MeshComponent.class).getMaterial().setSlot(Material.DIFFUSE, new MaterialSlot(new Vector4f(0, 0, 1, 1)));
+        AudioSource source = new AudioSource(AudioBuffer.loadSound("res/sounds/music.ogg"));
+        sound.addComponent(new AudioSourceComponent(source));
+        source.play();
     }
 
     /**

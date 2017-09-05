@@ -13,11 +13,12 @@ public interface Resource {
     public int getDataSizeInRam();
 
     /**
-     * Returns the resource's data size in VRAM.
+     * Returns the resource's data size in action (this means the VRAM or the
+     * sound system).
      *
-     * @return the resource's data size in VRAM (in bytes)
+     * @return the resource's data size in action (in bytes)
      */
-    public int getDataSizeInVram();
+    public int getDataSizeInAction();
 
     /**
      * Updates the resource.
