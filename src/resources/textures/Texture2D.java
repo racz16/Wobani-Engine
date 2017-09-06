@@ -55,7 +55,7 @@ public interface Texture2D extends Texture {
      *
      * @return the texture's id
      */
-    public int getTextureId();
+    public int getId();
 
     /**
      * Unbinds the texture.

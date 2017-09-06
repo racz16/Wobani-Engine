@@ -1,4 +1,5 @@
 components
+components.audio
 components.camera
 components.light
 components.light.lightTypes
@@ -8,6 +9,7 @@ examples
 renderers
 renderers.postProcessing
 resources
+resources.audio
 resources.materials
 resources.meshes
 resources.splines

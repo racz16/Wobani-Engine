@@ -1,5 +1,6 @@
 package core;
 
+import components.audio.*;
 import components.camera.*;
 import components.light.lightTypes.*;
 import components.renderables.*;
@@ -16,6 +17,7 @@ import toolbox.annotations.*;
  * directional light and other custom lists.
  */
 public class Scene {
+
     //TODO skybox
     //TODO merging splines and meshes?
     /**
@@ -38,6 +40,10 @@ public class Scene {
      * The scene's directional light.
      */
     private static DirectionalLight directionalLight;
+    /**
+     * The scene's audio listener.
+     */
+    private static AudioListenerComponent audioListener;
     /**
      * Custom lists.
      */
@@ -484,6 +490,32 @@ public class Scene {
             Scene.camera.addInvalidatable((Invalidatable) Scene.directionalLight);
         }
         Scene.directionalLight.invalidate();
+    }
+
+    /**
+     * Returns the scene's audio listener.
+     *
+     * @return the scene's audio listener
+     */
+    @Nullable
+    public static AudioListenerComponent getAudioListener() {
+        return audioListener;
+    }
+
+    /**
+     * Sets the scene's audio listener to the given value.
+     *
+     * @param audioListener scene's audio listener
+     *
+     * @throws NullPointerException the given parameter and it's GameObject
+     * can't be null
+     */
+    public static void setAudioListener(@NotNull AudioListenerComponent audioListener) {
+        if (audioListener == null || audioListener.getGameObject() == null) {
+            throw new NullPointerException();
+        }
+
+        Scene.audioListener = audioListener;
     }
 
     /**

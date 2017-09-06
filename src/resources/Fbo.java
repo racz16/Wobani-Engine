@@ -755,7 +755,7 @@ public class Fbo implements Resource {
     }
 
     @Override
-    public int getDataSizeInVram() {
+    public int getDataSizeInAction() {
         int attachmentSize = size.x * size.y * 4 * 4 * samples;
         int size = 0;
         for (int i = 0; i < color.length; i++) {
@@ -935,9 +935,9 @@ public class Fbo implements Resource {
             if (type == FboAttachmentType.TEXTURE) {
                 texture = new DynamicTexture(slot, size, floatingPoint, multisampled, Settings.getMsaaLevel(), null);
                 if (multisampled) {
-                    GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot.getAttachmet() + index, GL32.GL_TEXTURE_2D_MULTISAMPLE, texture.getTextureId(), 0);
+                    GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot.getAttachmet() + index, GL32.GL_TEXTURE_2D_MULTISAMPLE, texture.getId(), 0);
                 } else {
-                    GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot.getAttachmet() + index, GL11.GL_TEXTURE_2D, texture.getTextureId(), 0);
+                    GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot.getAttachmet() + index, GL11.GL_TEXTURE_2D, texture.getId(), 0);
                 }
             } else {
                 rbo = GL30.glGenRenderbuffers();

@@ -10,10 +10,11 @@ import toolbox.annotations.*;
 public class LoadableResourceMetaData {
 
     /**
-     * The resource's data store policy. VRAM means that the resource's data
-     * will be stored in VRAM. RAM means that the resource's data may be removed
-     * from VRAM to RAM if it's rarely used. HDD means that the resource's data
-     * may be removed from VRAM or even from RAM if it's rarely used.
+     * The resource's data store policy. ACTION means that the resource's data
+     * will be stored in VRAM the VRAM or in the sound system, ready to use. RAM
+     * means that the resource's data may be removed from ACTION to RAM if it's
+     * rarely used. HDD means that the resource's data may be removed from
+     * ACTION or even from RAM if it's rarely used.
      */
     protected ResourceState dataStorePolicy;
     /**
@@ -31,13 +32,13 @@ public class LoadableResourceMetaData {
     /**
      * If the elapsed time since this resource's last use is higher than this
      * value and the resource's data store policy is RAM or HDD, the resource's
-     * data may be removed from VRAM.
+     * data may be removed from ACTION.
      */
     private long vramTimeLimit = 30000;
     /**
      * If the elapsed time since this resource's last use is higher than this
      * value and the resource's data store policy is HDD, the resource's data
-     * may be removed from VRAM or even from RAM.
+     * may be removed from ACTION or even from RAM.
      */
     private long ramTimeLimit = 120000;
     /**
@@ -95,11 +96,11 @@ public class LoadableResourceMetaData {
     }
 
     /**
-     * Returns the resource's data store policy. VRAM means that the resource's
-     * data will be stored in VRAM. RAM means that the resource's data may be
-     * removed from VRAM to RAM if it's rarely used. HDD means that the
-     * resource's data may be removed from VRAM or even from RAM if it's rarely
-     * used.
+     * Returns the resource's data store policy. ACTION means that the
+     * resource's data will be stored in VRAM or in the sound system, ready to
+     * use. RAM means that the resource's data may be removed from ACTION to RAM
+     * if it's rarely used. HDD means that the resource's data may be removed
+     * from ACTION or even from RAM if it's rarely used.
      *
      * @return the resource's data store policy
      */
@@ -123,38 +124,38 @@ public class LoadableResourceMetaData {
     }
 
     /**
-     * Returns the VRAM time limit. If the elapsed time since this resource's
+     * Returns the ACTION time limit. If the elapsed time since this resource's
      * last use is higher than this value and the resource's data store policy
-     * is RAM or HDD, the resource's data may be removed from VRAM.
+     * is RAM or HDD, the resource's data may be removed from ACTION.
      *
      * @return VRAM time limit (in miliseconds)
      */
-    public long getVramTimeLimit() {
+    public long getActionTimeLimit() {
         return vramTimeLimit;
     }
 
     /**
-     * Sets the VRAM time limit to the given value. If the elapsed time since
+     * Sets the ACTION time limit to the given value. If the elapsed time since
      * this resource's last use is higher than this value and the resource's
      * data store policy is RAM or HDD, the resource's data may be removed from
-     * VRAM.
+     * ACTION.
      *
-     * @param vramTimeLimit VRAM time limit (in miliseconds)
+     * @param actionTimeLimit ACTION time limit (in miliseconds)
      *
-     * @throws IllegalArgumentException VRAM time limit have to be higher than 0
-     * and lower than RAM time limit
+     * @throws IllegalArgumentException ACTION time limit have to be higher than
+     * 0 and lower than RAM time limit
      */
-    public void setVramTimeLimit(long vramTimeLimit) {
-        if (vramTimeLimit <= 0 || vramTimeLimit >= ramTimeLimit) {
+    public void setActionTimeLimit(long actionTimeLimit) {
+        if (actionTimeLimit <= 0 || actionTimeLimit >= ramTimeLimit) {
             throw new IllegalArgumentException("VRAM time limit have to be higher than 0 and lower than RAM time limit");
         }
-        this.vramTimeLimit = vramTimeLimit;
+        this.vramTimeLimit = actionTimeLimit;
     }
 
     /**
      * Returns the RAM time limit. If the elapsed time since this resource's
      * last use is higher than this value and the resource's data store policy
-     * is HDD, the resource's data may be removed from VRAM or even from RAM.
+     * is HDD, the resource's data may be removed from ACTION or even from RAM.
      *
      * @return RAM time limit (in miliseconds)
      */
@@ -165,13 +166,13 @@ public class LoadableResourceMetaData {
     /**
      * Sets the RAM time limit to the given value. If the elapsed time since
      * this resource's last use is higher than this value and the resource's
-     * data store policy is HDD, the resource's data may be removed from VRAM or
-     * even from RAM.
+     * data store policy is HDD, the resource's data may be removed from ACTION
+     * or even from RAM.
      *
      * @param ramTimeLimit RAM time limit (in miliseconds)
      *
      * @throws IllegalArgumentException RAM time limit have to be higher than
-     * VRAM time limit
+     * ACTION time limit
      */
     public void setRamTimeLimit(long ramTimeLimit) {
         if (vramTimeLimit >= ramTimeLimit) {

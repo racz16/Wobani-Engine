@@ -353,7 +353,7 @@ public abstract class Shader implements Resource {
     }
 
     @Override
-    public int getDataSizeInVram() {
+    public int getDataSizeInAction() {
         return 0;
     }
 

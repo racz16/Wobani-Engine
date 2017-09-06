@@ -358,7 +358,7 @@ public class Vao implements Resource {
     }
 
     @Override
-    public int getDataSizeInVram() {
+    public int getDataSizeInAction() {
         int size = 0;
         for (Integer value : vboSize.values()) {
             size += value;

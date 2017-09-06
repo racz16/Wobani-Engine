@@ -5,6 +5,7 @@ import java.nio.*;
 import org.joml.Math;
 import org.joml.*;
 import org.lwjgl.opengl.*;
+import org.lwjgl.stb.*;
 import resources.*;
 import resources.ResourceManager.ResourceState;
 import resources.textures.EasyFiltering.TextureFiltering;
@@ -48,7 +49,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
         this.sRgb = sRgb;
         meta.setPath(path);
         meta.setLastActiveToNow();
-        meta.setDataStorePolicy(ResourceState.VRAM);
+        meta.setDataStorePolicy(ResourceState.ACTION);
         filtering = Settings.getTextureFiltering();
 
         hddToRam();
@@ -91,8 +92,8 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     }
 
     /**
-     * Loads the texture's data from the RAM to the VRAM. It may cause errors if
-     * the data isn't in the RAM.
+     * Loads the texture's data from the RAM to the ACTION. It may cause errors
+     * if the data isn't in the RAM.
      */
     private void ramToVram() {
         glGenerateTextureId();
@@ -109,12 +110,12 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
         setBorderColor(borderColor);
         changeFiltering();
 
-        meta.setState(ResourceState.VRAM);
+        meta.setState(ResourceState.ACTION);
     }
 
     /**
-     * Removes the texture's data from the VRAM. It may cause errors if the data
-     * isn't in the VRAM.
+     * Removes the texture's data from the ACTION. It may cause errors if the
+     * data isn't in the ACTION.
      */
     private void vramToRam() {
         glRelease();
@@ -127,6 +128,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      * isn't in the RAM.
      */
     private void ramToHdd() {
+        STBImage.stbi_image_free(data);
         data = null;
 
         meta.setState(ResourceState.HDD);
@@ -203,7 +205,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
             boolean fastFilteringChange = tf.getIndex() < 3 && filtering.getIndex() < 3;
             filtering = tf;
 
-            if (getState() == ResourceState.VRAM) {
+            if (getState() == ResourceState.ACTION) {
                 if (fastFilteringChange) {
                     changeFiltering();
                 } else {
@@ -216,7 +218,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
 
     /**
      * Changes the texture's filtering mode based on the filtering field. It may
-     * cause errors if the data isn't in the VRAM.
+     * cause errors if the data isn't in the ACTION.
      */
     @Bind
     private void changeFiltering() {
@@ -253,7 +255,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     //
     @Override
     public void bindToTextureUnit(int textureUnit) {
-        if (getState() != ResourceState.VRAM) {
+        if (getState() != ResourceState.ACTION) {
             if (getState() == ResourceState.HDD) {
                 hddToRam();
             }
@@ -272,7 +274,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     }
 
     @Override
-    public int getTextureId() {
+    public int getId() {
         return glGetId();
     }
 
@@ -285,37 +287,35 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     //data store----------------------------------------------------------------
     //
     /**
-     * Returns the VRAM time limit. If the elapsed time since this texture's
+     * Returns the ACTION time limit. If the elapsed time since this texture's
      * last use is higher than this value and the texture's data store policy is
-     * RAM or HDD, the texture's data may be removed from VRAM. Later if you
+     * RAM or HDD, the texture's data may be removed from ACTION. Later if you
      * want to use this texture, it'll automatically load the data from file
      * again.
      *
-     * @return VRAM time limit (in miliseconds)
+     * @return ACTION time limit (in miliseconds)
      */
     public long getVramTimeLimit() {
-        return meta.getVramTimeLimit();
+        return meta.getActionTimeLimit();
     }
 
     /**
-     * Sets the VRAM time limit to the given value. If the elapsed time since
+     * Sets the ACTION time limit to the given value. If the elapsed time since
      * this texture's last use is higher than this value and the texture's data
-     * store policy is RAM or HDD, the texture's data may be removed from VRAM.
-     * Later if you want to use this texture, it'll automatically load the data
-     * from file again.
+     * store policy is RAM or HDD, the texture's data may be removed from
+     * ACTION. Later if you want to use this texture, it'll automatically load
+     * the data from file again.
      *
-     * @param vramTimeLimit VRAM time limit (in miliseconds)
-     * @throws IllegalArgumentException VRAM time limit have to be higher than 0
-     * and lower than RAM time limit
+     * @param vramTimeLimit ACTION time limit (in miliseconds)
      */
     public void setVramTimeLimit(long vramTimeLimit) {
-        meta.setVramTimeLimit(vramTimeLimit);
+        meta.setActionTimeLimit(vramTimeLimit);
     }
 
     /**
      * Returns the RAM time limit. If the elapsed time since this texture's last
      * use is higher than this value and the texture's data store policy is HDD,
-     * the texture's data may be removed from VRAM or even from RAM. Later if
+     * the texture's data may be removed from ACTION or even from RAM. Later if
      * you want to use this texture, it'll automatically load the data from file
      * again.
      *
@@ -328,13 +328,11 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     /**
      * Sets the RAM time limit to the given value. If the elapsed time since
      * this texture's last use is higher than this value and the texture's data
-     * store policy is HDD, the texture's data may be removed from VRAM or even
-     * from RAM. Later if you want to use this texture, it'll automatically load
-     * the data from file again.
+     * store policy is HDD, the texture's data may be removed from ACTION or
+     * even from RAM. Later if you want to use this texture, it'll automatically
+     * load the data from file again.
      *
      * @param ramTimeLimit RAM time limit (in miliseconds)
-     * @throws IllegalArgumentException RAM time limit have to be higher than
-     * VRAM time limit
      */
     public void setRamTimeLimit(long ramTimeLimit) {
         meta.setRamTimeLimit(ramTimeLimit);
@@ -361,10 +359,10 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     }
 
     /**
-     * Returns the texture's data store policy. VRAM means that the texture's
-     * data will be stored in VRAM. RAM means that the texture's data may be
-     * removed from VRAM to RAM if it's rarely used. HDD means that the
-     * texture's data may be removed from VRAM or even from RAM if it's rarely
+     * Returns the texture's data store policy. ACTION means that the texture's
+     * data will be stored in ACTION. RAM means that the texture's data may be
+     * removed from ACTION to RAM if it's rarely used. HDD means that the
+     * texture's data may be removed from ACTION or even from RAM if it's rarely
      * used. Later if you want to use this texture, it'll automatically load the
      * data from file again.
      *
@@ -376,27 +374,22 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     }
 
     /**
-     * Sets the texture's data store policy to the given value. VRAM means that
-     * the texture's data will be stored in VRAM. RAM means that the texture's
-     * data may be removed from VRAM to RAM if it's rarely used. HDD means that
-     * the texture's data may be removed from VRAM or even from RAM if it's
-     * rarely used. Later if you want to use this texture, it'll automatically
-     * load the data from file again.
+     * Sets the texture's data store policy to the given value. ACTION means
+     * that the texture's data will be stored in ACTION. RAM means that the
+     * texture's data may be removed from ACTION to RAM if it's rarely used. HDD
+     * means that the texture's data may be removed from ACTION or even from RAM
+     * if it's rarely used. Later if you want to use this texture, it'll
+     * automatically load the data from file again.
      *
      * @param minState data store policy
-     *
-     * @throws NullPointerException minState can't be null
      */
     public void setDataStorePolicy(@NotNull ResourceState minState) {
-        if (minState == null) {
-            throw new NullPointerException();
-        }
         meta.setDataStorePolicy(minState);
 
         if (minState != ResourceState.HDD && getState() == ResourceState.HDD) {
             hddToRam();
         }
-        if (minState == ResourceState.VRAM && getState() != ResourceState.VRAM) {
+        if (minState == ResourceState.ACTION && getState() != ResourceState.ACTION) {
             ramToVram();
         }
     }
@@ -404,8 +397,8 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     @Override
     public void update() {
         long elapsedTime = System.currentTimeMillis() - getLastActive();
-        if (elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceState.VRAM && getState() != ResourceState.HDD) {
-            if (getState() == ResourceState.VRAM) {
+        if (elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceState.ACTION && getState() != ResourceState.HDD) {
+            if (getState() == ResourceState.ACTION) {
                 vramToRam();
             }
             if (elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceState.HDD) {
@@ -465,7 +458,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
         if (issRgb() != sRgb) {
             this.sRgb = sRgb;
             ResourceState oldState = getState();
-            if (getState() == ResourceState.VRAM) {
+            if (getState() == ResourceState.ACTION) {
                 vramToRam();
             }
             if (getState() == ResourceState.RAM) {
@@ -474,7 +467,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
             if (oldState != ResourceState.HDD) {
                 hddToRam();
             }
-            if (oldState == ResourceState.VRAM) {
+            if (oldState == ResourceState.ACTION) {
                 ramToVram();
             }
         }
@@ -491,13 +484,13 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     }
 
     @Override
-    public int getDataSizeInVram() {
-        return getState() == ResourceState.VRAM ? meta.getDataSize() : 0;
+    public int getDataSizeInAction() {
+        return getState() == ResourceState.ACTION ? meta.getDataSize() : 0;
     }
 
     @Override
     public void release() {
-        if (getState() == ResourceState.VRAM) {
+        if (getState() == ResourceState.ACTION) {
             vramToRam();
         }
         if (getState() == ResourceState.RAM) {

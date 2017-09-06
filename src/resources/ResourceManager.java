@@ -6,6 +6,7 @@ import core.*;
 import java.util.*;
 import org.joml.*;
 import renderers.*;
+import resources.audio.*;
 import resources.meshes.*;
 import resources.splines.*;
 import resources.textures.*;
@@ -24,9 +25,10 @@ public class ResourceManager {
      */
     public enum ResourceState {
         /**
-         * VRAM.
+         * ACTION (means that the resource ready to use, stored like in VRAM or
+         * in the sound system).
          */
-        VRAM,
+        ACTION,
         /**
          * RAM.
          */
@@ -62,10 +64,17 @@ public class ResourceManager {
      */
     private static final Map<String, Vao> vaos = new HashMap<>();
     /**
-     * Contains all the shader programs.
+     * Contains all the sound programs.
      */
     private static final Map<String, Shader> shaders = new HashMap<>();
-    //TODO releasing sounds too
+    /**
+     * Contains all the audioBuffers.
+     */
+    private static final Map<String, AudioBuffer> audioBuffers = new HashMap<>();
+    /**
+     * Contains all the audioBuffers.
+     */
+    private static final Map<String, AudioSource> audioSources = new HashMap<>();
     /**
      * Resource's last update time (in miliseconds).
      */
@@ -101,6 +110,8 @@ public class ResourceManager {
             updateResourceMap(ubos);
             updateResourceMap(vaos);
             updateResourceMap(shaders);
+            updateResourceMap(audioBuffers);
+            updateResourceMap(audioSources);
 
             lastUpdateTime = currentTime;
         }
@@ -158,10 +169,10 @@ public class ResourceManager {
     //textures------------------------------------------------------------------
     //
     /**
-     * Returns the specified mesh.
+     * Returns the specified texture.
      *
-     * @param key mesh's key
-     * @return mesh
+     * @param key texture's key
+     * @return texture
      *
      * @throws NullPointerException key can't be null
      */
@@ -174,10 +185,10 @@ public class ResourceManager {
     }
 
     /**
-     * Adds the given mesh to the list of textures.
+     * Adds the given texture to the list of textures.
      *
-     * @param key mesh's key
-     * @param texture mesh
+     * @param key texture's key
+     * @param texture texture
      *
      * @throws NullPointerException arguments can't be null
      */
@@ -191,7 +202,7 @@ public class ResourceManager {
     }
 
     /**
-     * Changes all mesh's (that implements EasyFiltering) filtering based on
+     * Changes all texture's (that implements EasyFiltering) filtering based on
      * what you set in Settings.
      *
      * @see EasyFiltering
@@ -209,7 +220,7 @@ public class ResourceManager {
     }
 
     /**
-     * Changes all mesh's (that implements ChangableColorSpace) color space
+     * Changes all texture's (that implements ChangableColorSpace) color space
      * based on what you set in Settings.
      *
      * @see ChangableColorSpace
@@ -228,7 +239,7 @@ public class ResourceManager {
     /**
      * Returns data about the textures. The x coordinate means the number of
      * usable textures, the y means the data size in bytes, stored in the RAM,
-     * the z means the data size in bytes, stored in the VRAM.
+     * the z means the data size in bytes, stored in the ACTION.
      *
      * @return data about the textures
      */
@@ -241,7 +252,7 @@ public class ResourceManager {
             if (texture.isUsable()) {
                 count++;
                 ram += texture.getDataSizeInRam();
-                vram += texture.getDataSizeInVram();
+                vram += texture.getDataSizeInAction();
             }
         }
         return new Vector3i(count, ram, vram);
@@ -286,7 +297,7 @@ public class ResourceManager {
     /**
      * Returns data about the meshes. The x coordinate means the number of
      * usable meshes, the y means the data size in bytes, stored in the RAM, the
-     * z means the data size in bytes, stored in the VRAM.
+     * z means the data size in bytes, stored in the ACTION.
      *
      * @return data about the meshes
      */
@@ -299,7 +310,7 @@ public class ResourceManager {
             if (mesh.isUsable()) {
                 count++;
                 ram += mesh.getDataSizeInRam();
-                vram += mesh.getDataSizeInVram();
+                vram += mesh.getDataSizeInAction();
             }
         }
         return new Vector3i(count, ram, vram);
@@ -344,7 +355,7 @@ public class ResourceManager {
     /**
      * Returns data about the splines. The x coordinate means the number of
      * usable splines, the y means the data size in bytes, stored in the RAM,
-     * the z means the data size in bytes, stored in the VRAM.
+     * the z means the data size in bytes, stored in the ACTION.
      *
      * @return data about the splines
      */
@@ -357,7 +368,7 @@ public class ResourceManager {
             if (spline.isUsable()) {
                 count++;
                 ram += spline.getDataSizeInRam();
-                vram += spline.getDataSizeInVram();
+                vram += spline.getDataSizeInAction();
             }
         }
         return new Vector3i(count, ram, vram);
@@ -402,7 +413,7 @@ public class ResourceManager {
     /**
      * Returns data about the FBOs. The x coordinate means the number of usable
      * FBOs, the y means the data size in bytes, stored in the RAM, the z means
-     * the data size in bytes, stored in the VRAM.
+     * the data size in bytes, stored in the ACTION.
      *
      * @return data about the FBOs
      */
@@ -456,7 +467,7 @@ public class ResourceManager {
     /**
      * Returns data about the UBOs. The x coordinate means the number of usable
      * UBOs, the y means the data size in bytes, stored in the RAM, the z means
-     * the data size in bytes, stored in the VRAM.
+     * the data size in bytes, stored in the ACTION.
      *
      * @return data about the UBOs
      */
@@ -469,7 +480,7 @@ public class ResourceManager {
             if (ubo.isUsable()) {
                 count++;
                 ram += ubo.getDataSizeInRam();
-                vram += ubo.getDataSizeInVram();
+                vram += ubo.getDataSizeInAction();
             }
         }
         return new Vector3i(count, ram, vram);
@@ -514,7 +525,7 @@ public class ResourceManager {
     /**
      * Returns data about the VAOs. The x coordinate means the number of usable
      * VAOs, the y means the data size in bytes, stored in the RAM, the z means
-     * the data size in bytes, stored in the VRAM.
+     * the data size in bytes, stored in the ACTION.
      *
      * @return data about the VAOs
      */
@@ -533,10 +544,10 @@ public class ResourceManager {
     //shaders----------------------------------------------------------------------
     //
     /**
-     * Returns the specified shader.
+     * Returns the specified sound.
      *
-     * @param key shader's key
-     * @return shader
+     * @param key sound's key
+     * @return sound
      *
      * @throws NullPointerException key can't be null
      */
@@ -549,10 +560,10 @@ public class ResourceManager {
     }
 
     /**
-     * Adds the given shader to the list of shaders.
+     * Adds the given sound to the list of shaders.
      *
-     * @param key shader's key
-     * @param shader shader
+     * @param key sound's key
+     * @param shader sound
      *
      * @throws NullPointerException arguments can't be null
      */
@@ -568,7 +579,7 @@ public class ResourceManager {
     /**
      * Returns data about the shaders. The x coordinate means the number of
      * usable shaders, the y means the data size in bytes, stored in the RAM,
-     * the z means the data size in bytes, stored in the VRAM.
+     * the z means the data size in bytes, stored in the ACTION.
      *
      * @return data about the shaders
      */
@@ -577,6 +588,118 @@ public class ResourceManager {
         int count = 0;
         for (Shader shader : shaders.values()) {
             if (shader.isUsable()) {
+                count++;
+            }
+        }
+        return new Vector3i(count, 0, 0);
+    }
+
+    //
+    //audio buffers-------------------------------------------------------------
+    //
+    /**
+     * Returns the specified audio buffer.
+     *
+     * @param key audio buffer's key
+     * @return audio buffer
+     *
+     * @throws NullPointerException key can't be null
+     */
+    @Nullable
+    public static AudioBuffer getAudioBuffer(@NotNull String key) {
+        if (key == null) {
+            throw new NullPointerException();
+        }
+        return audioBuffers.get(key);
+    }
+
+    /**
+     * Adds the given audio buffer to the list of audio buffers.
+     *
+     * @param key audio buffer's key
+     * @param sound audio buffer
+     *
+     * @throws NullPointerException arguments can't be null
+     */
+    public static void addAudioBuffer(@NotNull String key, @NotNull AudioBuffer sound) {
+        if (key == null || sound == null) {
+            throw new NullPointerException();
+        }
+        if (!audioBuffers.containsKey(key)) {
+            audioBuffers.put(key, sound);
+        }
+    }
+
+    /**
+     * Returns data about the audio buffers. The x coordinate means the number
+     * of usable audio buffers, the y means the data size in bytes, stored in
+     * the RAM, the z means the data size in bytes, stored in the ACTION.
+     *
+     * @return data about the audio buffers
+     */
+    @NotNull @ReadOnly
+    public static Vector3i getAudioBufferData() {
+        int ram = 0;
+        int vram = 0;
+        int count = 0;
+        for (AudioBuffer sound : audioBuffers.values()) {
+            if (sound.isUsable()) {
+                count++;
+                ram += sound.getDataSizeInRam();
+                vram += sound.getDataSizeInAction();
+            }
+        }
+        return new Vector3i(count, ram, vram);
+    }
+
+    //
+    //audio buffers-------------------------------------------------------------
+    //
+    /**
+     * Returns the specified audio source.
+     *
+     * @param key audio source's key
+     * @return audio source
+     *
+     * @throws NullPointerException key can't be null
+     */
+    @Nullable
+    public static AudioSource getAudioSource(@NotNull String key) {
+        if (key == null) {
+            throw new NullPointerException();
+        }
+        return audioSources.get(key);
+    }
+
+    /**
+     * Adds the given audio source to the list of audio sources.
+     *
+     * @param key audio source's key
+     * @param source audio source
+     *
+     * @throws NullPointerException arguments can't be null
+     */
+    public static void addAudioSource(@NotNull String key, @NotNull AudioSource source) {
+        if (key == null || source == null) {
+            throw new NullPointerException();
+        }
+        if (!audioSources.containsKey(key)) {
+            audioSources.put(key, source);
+        }
+    }
+
+    /**
+     * Returns data about the audio sources. The x coordinate means the number
+     * of usable audio sources, the y means the data size in bytes, stored in
+     * the RAM, the z means the data size in bytes, stored in the ACTION.
+     *
+     * @return data about the audio sources
+     */
+    @NotNull @ReadOnly
+    public static Vector3i getAudioSourceData() {
+        int count = 0;
+        for (AudioSource sound : audioSources.values()) {
+            if (sound.isUsable()) {
                 count++;
             }
         }
@@ -606,6 +729,8 @@ public class ResourceManager {
         releaseResourceMap(ubos);
         releaseResourceMap(vaos);
         releaseResourceMap(shaders);
+        releaseResourceMap(audioBuffers);
+        releaseResourceMap(audioSources);
         DefaultLightComponent.releaseUbo();
         CameraComponent.releaseUbo();
         RenderingPipeline.release();

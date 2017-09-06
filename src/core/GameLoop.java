@@ -34,15 +34,13 @@ public class GameLoop {
             Window.initialize(parameters);
             Input.initialize();
             RenderingPipeline.initialize();
-            OpenGl.setMultisample(true);
-            OpenGl.setFaceCulling(true);
-            OpenGl.setFaceCullingMode(OpenGl.FaceCullingMode.BACK);
-            OpenGl.setAlphaBlending(true);
-            OpenGl.setDepthTest(true);
+            OpenGl.initializeToDefaults();
             Scene.setEnvironmentColor(new Vector3f(0, 1, 0));
+            OpenAl.initialize();
         } catch (Exception e) {
             Utility.logException(e);
             ResourceManager.releaseResources();
+            OpenAl.release();
             System.exit(1);
         }
     }
@@ -76,6 +74,7 @@ public class GameLoop {
             Utility.logException(e);
         } finally {
             ResourceManager.releaseResources();
+            OpenAl.release();
         }
     }
 

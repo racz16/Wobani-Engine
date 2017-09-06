@@ -97,7 +97,7 @@ public class StaticMesh implements Mesh {
         meta.setPath(path);
         elementIndex = index;
         meta.setLastActiveToNow();
-        meta.setDataStorePolicy(ResourceState.VRAM);
+        meta.setDataStorePolicy(ResourceState.ACTION);
 
         hddToRam(mesh);
         ramToVram();
@@ -116,7 +116,7 @@ public class StaticMesh implements Mesh {
      *
      * @param path model's relative path (with extension like
      * "res/models/myModel.obj")
-     * @return lsit of model's meshes
+     * @return list of model's meshes
      */
     @NotNull
     public static List<StaticMesh> loadModel(@NotNull String path) {
@@ -188,7 +188,7 @@ public class StaticMesh implements Mesh {
         if (!file.exists()) {
             throw new IllegalArgumentException(path + " file doesn't exist");
         }
-        AIScene scene = aiImportFile(file.getAbsolutePath(), aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+        AIScene scene = aiImportFile(file.getPath(), aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
         if (scene == null) {
             throw new IllegalStateException(aiGetErrorString());
         }
@@ -297,7 +297,7 @@ public class StaticMesh implements Mesh {
     }
 
     /**
-     * Loads the mesh's data from the RAM to the VRAM. It may cause errors if
+     * Loads the mesh's data from the RAM to the ACTION. It may cause errors if
      * the data isn't in the RAM.
      */
     private void ramToVram() {
@@ -322,12 +322,12 @@ public class StaticMesh implements Mesh {
 
         vao.unbindVao();
 
-        meta.setState(ResourceState.VRAM);
+        meta.setState(ResourceState.ACTION);
     }
 
     /**
-     * Removes the mesh's data from the VRAM. It may cause errors if the data
-     * isn't in the VRAM.
+     * Removes the mesh's data from the ACTION. It may cause errors if the data
+     * isn't in the ACTION.
      */
     private void vramToRam() {
         vao.release();
@@ -356,14 +356,14 @@ public class StaticMesh implements Mesh {
     //
     @Override
     public void beforeDraw() {
-        if (getState() == ResourceState.VRAM) {
+        if (getState() == ResourceState.ACTION) {
             vao.bindVao();
         }
     }
 
     @Override
     public void draw() {
-        if (getState() != ResourceState.VRAM) {
+        if (getState() != ResourceState.ACTION) {
             if (getState() == ResourceState.HDD) {
                 hddToRam();
             }
@@ -376,7 +376,7 @@ public class StaticMesh implements Mesh {
 
     @Override
     public void afterDraw() {
-        if (getState() == ResourceState.VRAM) {
+        if (getState() == ResourceState.ACTION) {
             vao.unbindVao();
         }
     }
@@ -385,34 +385,34 @@ public class StaticMesh implements Mesh {
     //data store----------------------------------------------------------------
     //
     /**
-     * Returns the VRAM time limit. If the elapsed time since this mesh's last
+     * Returns the ACTION time limit. If the elapsed time since this mesh's last
      * use is higher than this value and the mesh's data store policy is RAM or
-     * HDD, the mesh's data may be removed from VRAM. Later if you want to
+     * HDD, the mesh's data may be removed from ACTION. Later if you want to
      * render this mesh, it'll automatically load the data from file again.
      *
-     * @return VRAM time limit (in miliseconds)
+     * @return ACTION time limit (in miliseconds)
      */
     public long getVramTimeLimit() {
-        return meta.getVramTimeLimit();
+        return meta.getActionTimeLimit();
     }
 
     /**
-     * Sets the VRAM time limit to the given value. If the elapsed time since
+     * Sets the ACTION time limit to the given value. If the elapsed time since
      * this mesh's last use is higher than this value and the mesh's data store
-     * policy is RAM or HDD, the mesh's data may be removed from VRAM. Later if
-     * you want to render this mesh, it'll automatically load the data from file
-     * again.
+     * policy is RAM or HDD, the mesh's data may be removed from ACTION. Later
+     * if you want to render this mesh, it'll automatically load the data from
+     * file again.
      *
-     * @param vramTimeLimit VRAM time limit (in miliseconds)
+     * @param vramTimeLimit ACTION time limit (in miliseconds)
      */
     public void setVramTimeLimit(long vramTimeLimit) {
-        meta.setVramTimeLimit(vramTimeLimit);
+        meta.setActionTimeLimit(vramTimeLimit);
     }
 
     /**
      * Returns the RAM time limit. If the elapsed time since this mesh's last
      * use is higher than this value and the mesh's data store policy is HDD,
-     * the mesh's data may be removed from VRAM or even from RAM. Later if you
+     * the mesh's data may be removed from ACTION or even from RAM. Later if you
      * want to render this mesh, it'll automatically load the data from file
      * again.
      *
@@ -425,9 +425,9 @@ public class StaticMesh implements Mesh {
     /**
      * Sets the RAM time limit to the given value. If the elapsed time since
      * this mesh's last use is higher than this value and the mesh's data store
-     * policy is HDD, the mesh's data may be removed from VRAM or even from RAM.
-     * Later if you want to render this mesh, it'll automatically load the data
-     * from file again.
+     * policy is HDD, the mesh's data may be removed from ACTION or even from
+     * RAM. Later if you want to render this mesh, it'll automatically load the
+     * data from file again.
      *
      * @param ramTimeLimit RAM time limit (in miliseconds)
      */
@@ -447,11 +447,11 @@ public class StaticMesh implements Mesh {
     }
 
     /**
-     * Returns the mesh's data store policy. VRAM means that the mesh's data
-     * will be stored in VRAM. RAM means that the mesh's data may be removed
-     * from VRAM to RAM if it's rarely used. HDD means that the mesh's data may
-     * be removed from VRAM or even from RAM if it's rarely used. Later if you
-     * want to render this mesh, it'll automatically load the data from file
+     * Returns the mesh's data store policy. ACTION means that the mesh's data
+     * will be stored in ACTION. RAM means that the mesh's data may be removed
+     * from ACTION to RAM if it's rarely used. HDD means that the mesh's data
+     * may be removed from ACTION or even from RAM if it's rarely used. Later if
+     * you want to render this mesh, it'll automatically load the data from file
      * again.
      *
      * @return the mesh's data store policy
@@ -462,27 +462,22 @@ public class StaticMesh implements Mesh {
     }
 
     /**
-     * Sets the mesh's data store policy to the given value. VRAM means that the
-     * mesh's data will be stored in VRAM. RAM means that the mesh's data may be
-     * removed from VRAM to RAM if it's rarely rendered. HDD means that the
-     * mesh's data may be removed from VRAM or even from RAM if it's rarely
-     * rendered. Later if you want to render this mesh, it'll automatically load
-     * the data from file again.
+     * Sets the mesh's data store policy to the given value. ACTION means that
+     * the mesh's data will be stored in ACTION. RAM means that the mesh's data
+     * may be removed from ACTION to RAM if it's rarely rendered. HDD means that
+     * the mesh's data may be removed from ACTION or even from RAM if it's
+     * rarely rendered. Later if you want to render this mesh, it'll
+     * automatically load the data from file again.
      *
      * @param minState data store policy
-     *
-     * @throws NullPointerException minState can't be null
      */
     public void setDataStorePolicy(@NotNull ResourceState minState) {
-        if (minState == null) {
-            throw new NullPointerException();
-        }
         meta.setDataStorePolicy(minState);
 
         if (minState != ResourceState.HDD && getState() == ResourceState.HDD) {
             hddToRam();
         }
-        if (minState == ResourceState.VRAM && getState() != ResourceState.VRAM) {
+        if (minState == ResourceState.ACTION && getState() != ResourceState.ACTION) {
             ramToVram();
         }
     }
@@ -499,8 +494,8 @@ public class StaticMesh implements Mesh {
     @Override
     public void update() {
         long elapsedTime = System.currentTimeMillis() - getLastActive();
-        if (elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceState.VRAM && getState() != ResourceState.HDD) {
-            if (getState() == ResourceState.VRAM) {
+        if (elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceState.ACTION && getState() != ResourceState.HDD) {
+            if (getState() == ResourceState.ACTION) {
                 vramToRam();
             }
             if (elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceState.HDD) {
@@ -511,7 +506,7 @@ public class StaticMesh implements Mesh {
 
     @Override
     public void release() {
-        if (getState() == ResourceState.VRAM) {
+        if (getState() == ResourceState.ACTION) {
             vramToRam();
         }
         if (getState() == ResourceState.RAM) {
@@ -547,8 +542,8 @@ public class StaticMesh implements Mesh {
     }
 
     @Override
-    public int getDataSizeInVram() {
-        return getState() == ResourceState.VRAM ? meta.getDataSize() : 0;
+    public int getDataSizeInAction() {
+        return getState() == ResourceState.ACTION ? meta.getDataSize() : 0;
     }
 
     @Override
