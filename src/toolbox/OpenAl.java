@@ -2,7 +2,6 @@ package toolbox;
 
 import java.nio.*;
 import org.lwjgl.openal.*;
-import static org.lwjgl.openal.EXTThreadLocalContext.alcSetThreadContext;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import toolbox.annotations.*;
 
@@ -84,8 +83,11 @@ public class OpenAl {
             throw new IllegalStateException("Failed to open the default device");
         }
         openAlContext = ALC10.alcCreateContext(defaultAudioDevice, (IntBuffer) null);
+        if (openAlContext == NULL) {
+            throw new IllegalStateException("Failed to create OpenAL context.");
+        }
         ALCCapabilities deviceCaps = ALC.createCapabilities(defaultAudioDevice);
-        alcSetThreadContext(openAlContext);
+        ALC10.alcMakeContextCurrent(openAlContext);
         AL.createCapabilities(deviceCaps);
     }
 

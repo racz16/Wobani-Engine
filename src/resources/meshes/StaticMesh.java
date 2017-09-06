@@ -116,7 +116,7 @@ public class StaticMesh implements Mesh {
      *
      * @param path model's relative path (with extension like
      * "res/models/myModel.obj")
-     * @return lsit of model's meshes
+     * @return list of model's meshes
      */
     @NotNull
     public static List<StaticMesh> loadModel(@NotNull String path) {
@@ -188,7 +188,7 @@ public class StaticMesh implements Mesh {
         if (!file.exists()) {
             throw new IllegalArgumentException(path + " file doesn't exist");
         }
-        AIScene scene = aiImportFile(file.getAbsolutePath(), aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+        AIScene scene = aiImportFile(file.getPath(), aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
         if (scene == null) {
             throw new IllegalStateException(aiGetErrorString());
         }
@@ -327,7 +327,7 @@ public class StaticMesh implements Mesh {
 
     /**
      * Removes the mesh's data from the ACTION. It may cause errors if the data
- isn't in the ACTION.
+     * isn't in the ACTION.
      */
     private void vramToRam() {
         vao.release();
@@ -386,9 +386,9 @@ public class StaticMesh implements Mesh {
     //
     /**
      * Returns the ACTION time limit. If the elapsed time since this mesh's last
- use is higher than this value and the mesh's data store policy is RAM or
- HDD, the mesh's data may be removed from ACTION. Later if you want to
- render this mesh, it'll automatically load the data from file again.
+     * use is higher than this value and the mesh's data store policy is RAM or
+     * HDD, the mesh's data may be removed from ACTION. Later if you want to
+     * render this mesh, it'll automatically load the data from file again.
      *
      * @return ACTION time limit (in miliseconds)
      */
@@ -398,10 +398,10 @@ public class StaticMesh implements Mesh {
 
     /**
      * Sets the ACTION time limit to the given value. If the elapsed time since
- this mesh's last use is higher than this value and the mesh's data store
- policy is RAM or HDD, the mesh's data may be removed from ACTION. Later if
- you want to render this mesh, it'll automatically load the data from file
- again.
+     * this mesh's last use is higher than this value and the mesh's data store
+     * policy is RAM or HDD, the mesh's data may be removed from ACTION. Later
+     * if you want to render this mesh, it'll automatically load the data from
+     * file again.
      *
      * @param vramTimeLimit ACTION time limit (in miliseconds)
      */
@@ -411,10 +411,10 @@ public class StaticMesh implements Mesh {
 
     /**
      * Returns the RAM time limit. If the elapsed time since this mesh's last
- use is higher than this value and the mesh's data store policy is HDD,
- the mesh's data may be removed from ACTION or even from RAM. Later if you
- want to render this mesh, it'll automatically load the data from file
- again.
+     * use is higher than this value and the mesh's data store policy is HDD,
+     * the mesh's data may be removed from ACTION or even from RAM. Later if you
+     * want to render this mesh, it'll automatically load the data from file
+     * again.
      *
      * @return RAM time limit (in miliseconds)
      */
@@ -424,10 +424,10 @@ public class StaticMesh implements Mesh {
 
     /**
      * Sets the RAM time limit to the given value. If the elapsed time since
- this mesh's last use is higher than this value and the mesh's data store
- policy is HDD, the mesh's data may be removed from ACTION or even from RAM.
- Later if you want to render this mesh, it'll automatically load the data
- from file again.
+     * this mesh's last use is higher than this value and the mesh's data store
+     * policy is HDD, the mesh's data may be removed from ACTION or even from
+     * RAM. Later if you want to render this mesh, it'll automatically load the
+     * data from file again.
      *
      * @param ramTimeLimit RAM time limit (in miliseconds)
      */
@@ -448,11 +448,11 @@ public class StaticMesh implements Mesh {
 
     /**
      * Returns the mesh's data store policy. ACTION means that the mesh's data
- will be stored in ACTION. RAM means that the mesh's data may be removed
- from ACTION to RAM if it's rarely used. HDD means that the mesh's data may
- be removed from ACTION or even from RAM if it's rarely used. Later if you
- want to render this mesh, it'll automatically load the data from file
- again.
+     * will be stored in ACTION. RAM means that the mesh's data may be removed
+     * from ACTION to RAM if it's rarely used. HDD means that the mesh's data
+     * may be removed from ACTION or even from RAM if it's rarely used. Later if
+     * you want to render this mesh, it'll automatically load the data from file
+     * again.
      *
      * @return the mesh's data store policy
      */
@@ -462,21 +462,16 @@ public class StaticMesh implements Mesh {
     }
 
     /**
-     * Sets the mesh's data store policy to the given value. ACTION means that the
- mesh's data will be stored in ACTION. RAM means that the mesh's data may be
- removed from ACTION to RAM if it's rarely rendered. HDD means that the
- mesh's data may be removed from ACTION or even from RAM if it's rarely
- rendered. Later if you want to render this mesh, it'll automatically load
- the data from file again.
+     * Sets the mesh's data store policy to the given value. ACTION means that
+     * the mesh's data will be stored in ACTION. RAM means that the mesh's data
+     * may be removed from ACTION to RAM if it's rarely rendered. HDD means that
+     * the mesh's data may be removed from ACTION or even from RAM if it's
+     * rarely rendered. Later if you want to render this mesh, it'll
+     * automatically load the data from file again.
      *
      * @param minState data store policy
-     *
-     * @throws NullPointerException minState can't be null
      */
     public void setDataStorePolicy(@NotNull ResourceState minState) {
-        if (minState == null) {
-            throw new NullPointerException();
-        }
         meta.setDataStorePolicy(minState);
 
         if (minState != ResourceState.HDD && getState() == ResourceState.HDD) {

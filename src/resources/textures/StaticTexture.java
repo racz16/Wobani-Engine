@@ -5,6 +5,7 @@ import java.nio.*;
 import org.joml.Math;
 import org.joml.*;
 import org.lwjgl.opengl.*;
+import org.lwjgl.stb.*;
 import resources.*;
 import resources.ResourceManager.ResourceState;
 import resources.textures.EasyFiltering.TextureFiltering;
@@ -91,8 +92,8 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     }
 
     /**
-     * Loads the texture's data from the RAM to the ACTION. It may cause errors if
-     * the data isn't in the RAM.
+     * Loads the texture's data from the RAM to the ACTION. It may cause errors
+     * if the data isn't in the RAM.
      */
     private void ramToVram() {
         glGenerateTextureId();
@@ -113,8 +114,8 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     }
 
     /**
-     * Removes the texture's data from the ACTION. It may cause errors if the data
- isn't in the ACTION.
+     * Removes the texture's data from the ACTION. It may cause errors if the
+     * data isn't in the ACTION.
      */
     private void vramToRam() {
         glRelease();
@@ -127,6 +128,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      * isn't in the RAM.
      */
     private void ramToHdd() {
+        STBImage.stbi_image_free(data);
         data = null;
 
         meta.setState(ResourceState.HDD);
@@ -216,7 +218,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
 
     /**
      * Changes the texture's filtering mode based on the filtering field. It may
- cause errors if the data isn't in the ACTION.
+     * cause errors if the data isn't in the ACTION.
      */
     @Bind
     private void changeFiltering() {
@@ -286,10 +288,10 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     //
     /**
      * Returns the ACTION time limit. If the elapsed time since this texture's
- last use is higher than this value and the texture's data store policy is
- RAM or HDD, the texture's data may be removed from ACTION. Later if you
- want to use this texture, it'll automatically load the data from file
- again.
+     * last use is higher than this value and the texture's data store policy is
+     * RAM or HDD, the texture's data may be removed from ACTION. Later if you
+     * want to use this texture, it'll automatically load the data from file
+     * again.
      *
      * @return ACTION time limit (in miliseconds)
      */
@@ -299,14 +301,12 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
 
     /**
      * Sets the ACTION time limit to the given value. If the elapsed time since
- this texture's last use is higher than this value and the texture's data
- store policy is RAM or HDD, the texture's data may be removed from ACTION.
- Later if you want to use this texture, it'll automatically load the data
- from file again.
+     * this texture's last use is higher than this value and the texture's data
+     * store policy is RAM or HDD, the texture's data may be removed from
+     * ACTION. Later if you want to use this texture, it'll automatically load
+     * the data from file again.
      *
      * @param vramTimeLimit ACTION time limit (in miliseconds)
-     * @throws IllegalArgumentException ACTION time limit have to be higher than 0
- and lower than RAM time limit
      */
     public void setVramTimeLimit(long vramTimeLimit) {
         meta.setActionTimeLimit(vramTimeLimit);
@@ -314,10 +314,10 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
 
     /**
      * Returns the RAM time limit. If the elapsed time since this texture's last
- use is higher than this value and the texture's data store policy is HDD,
- the texture's data may be removed from ACTION or even from RAM. Later if
- you want to use this texture, it'll automatically load the data from file
- again.
+     * use is higher than this value and the texture's data store policy is HDD,
+     * the texture's data may be removed from ACTION or even from RAM. Later if
+     * you want to use this texture, it'll automatically load the data from file
+     * again.
      *
      * @return RAM time limit (in miliseconds)
      */
@@ -327,14 +327,12 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
 
     /**
      * Sets the RAM time limit to the given value. If the elapsed time since
- this texture's last use is higher than this value and the texture's data
- store policy is HDD, the texture's data may be removed from ACTION or even
- from RAM. Later if you want to use this texture, it'll automatically load
- the data from file again.
+     * this texture's last use is higher than this value and the texture's data
+     * store policy is HDD, the texture's data may be removed from ACTION or
+     * even from RAM. Later if you want to use this texture, it'll automatically
+     * load the data from file again.
      *
      * @param ramTimeLimit RAM time limit (in miliseconds)
-     * @throws IllegalArgumentException RAM time limit have to be higher than
- ACTION time limit
      */
     public void setRamTimeLimit(long ramTimeLimit) {
         meta.setRamTimeLimit(ramTimeLimit);
@@ -362,11 +360,11 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
 
     /**
      * Returns the texture's data store policy. ACTION means that the texture's
- data will be stored in ACTION. RAM means that the texture's data may be
- removed from ACTION to RAM if it's rarely used. HDD means that the
- texture's data may be removed from ACTION or even from RAM if it's rarely
- used. Later if you want to use this texture, it'll automatically load the
- data from file again.
+     * data will be stored in ACTION. RAM means that the texture's data may be
+     * removed from ACTION to RAM if it's rarely used. HDD means that the
+     * texture's data may be removed from ACTION or even from RAM if it's rarely
+     * used. Later if you want to use this texture, it'll automatically load the
+     * data from file again.
      *
      * @return the texture's data store policy
      */
@@ -376,12 +374,12 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     }
 
     /**
-     * Sets the texture's data store policy to the given value. ACTION means that
- the texture's data will be stored in ACTION. RAM means that the texture's
- data may be removed from ACTION to RAM if it's rarely used. HDD means that
- the texture's data may be removed from ACTION or even from RAM if it's
- rarely used. Later if you want to use this texture, it'll automatically
- load the data from file again.
+     * Sets the texture's data store policy to the given value. ACTION means
+     * that the texture's data will be stored in ACTION. RAM means that the
+     * texture's data may be removed from ACTION to RAM if it's rarely used. HDD
+     * means that the texture's data may be removed from ACTION or even from RAM
+     * if it's rarely used. Later if you want to use this texture, it'll
+     * automatically load the data from file again.
      *
      * @param minState data store policy
      */

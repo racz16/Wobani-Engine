@@ -639,13 +639,17 @@ public class ResourceManager {
      */
     @NotNull @ReadOnly
     public static Vector3i getAudioBufferData() {
+        int ram = 0;
+        int vram = 0;
         int count = 0;
         for (AudioBuffer sound : audioBuffers.values()) {
             if (sound.isUsable()) {
                 count++;
+                ram += sound.getDataSizeInRam();
+                vram += sound.getDataSizeInAction();
             }
         }
-        return new Vector3i(count, 0, 0);
+        return new Vector3i(count, ram, vram);
     }
 
     //
