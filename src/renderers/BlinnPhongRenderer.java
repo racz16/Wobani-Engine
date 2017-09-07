@@ -13,7 +13,6 @@ import resources.textures.*;
 import shaders.*;
 import toolbox.*;
 import toolbox.annotations.*;
-import window.*;
 
 /**
  * This Renderer can draw meshes and splines by using the Blinn-Phong shading.
@@ -75,7 +74,7 @@ public class BlinnPhongRenderer extends Renderer {
             MeshComponent meshComponent;
             for (int i = 0; i < Scene.getNumberOfMeshComponents(renderer, mesh); i++) {
                 meshComponent = Scene.getMeshComponent(renderer, mesh, i);
-                if (meshComponent.isMeshActive() && camera.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax())) {
+                if (meshComponent.isActive() && meshComponent.isMeshActive() && camera.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax())) {
                     beforeDrawInstance(meshComponent);
                     mesh.draw();
                 }
@@ -88,7 +87,7 @@ public class BlinnPhongRenderer extends Renderer {
             SplineComponent splineComponent;
             for (int i = 0; i < Scene.getNumberOfSplineComponents(renderer, spline); i++) {
                 splineComponent = Scene.getSplineComponent(renderer, spline, i);
-                if (splineComponent.isSplineActive() && camera.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax())) {
+                if (splineComponent.isActive() && splineComponent.isSplineActive() && camera.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax())) {
                     beforeDrawInstance(splineComponent);
                     spline.draw();
                 }
@@ -109,7 +108,7 @@ public class BlinnPhongRenderer extends Renderer {
         shader.start();
         shader.loadGlobalUniforms();
         RenderingPipeline.bindFbo();
-        OpenGl.setViewport(Window.getClientAreaSize(), new Vector2i());
+        OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
         OpenGl.setWireframe(Settings.isWireframeMode());
         numberOfRenderedElements = 0;
         numberOfRenderedFaces = 0;

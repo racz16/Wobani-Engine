@@ -13,7 +13,6 @@ import resources.textures.*;
 import shaders.*;
 import toolbox.*;
 import toolbox.annotations.*;
-import window.*;
 
 /**
  * Performs shadow map rendering.
@@ -104,7 +103,7 @@ public class ShadowRenderer extends Renderer {
                 MeshComponent meshComponent;
                 for (int i = 0; i < Scene.getNumberOfMeshComponents(renderer, mesh); i++) {
                     meshComponent = Scene.getMeshComponent(renderer, mesh, i);
-                    if (meshComponent.isMeshActive() && meshComponent.isCastShadow() && light.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax())) {
+                    if (meshComponent.isActive() && meshComponent.isMeshActive() && meshComponent.isCastShadow() && light.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax())) {
                         beforeDrawMeshInstance(meshComponent, projectionViewMatrix, meshComponent.getGameObject().getTransform().getModelMatrix());
                         mesh.draw();
                         numberOfRenderedElements++;
@@ -119,7 +118,7 @@ public class ShadowRenderer extends Renderer {
                 SplineComponent splineComponent;
                 for (int i = 0; i < Scene.getNumberOfSplineComponents(renderer, spline); i++) {
                     splineComponent = Scene.getSplineComponent(renderer, spline, i);
-                    if (splineComponent.isSplineActive() && splineComponent.isCastShadow() && light.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax())) {
+                    if (splineComponent.isActive() && splineComponent.isSplineActive() && splineComponent.isCastShadow() && light.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax())) {
                         beforeDrawSplineInstance(projectionViewMatrix, splineComponent.getGameObject().getTransform().getModelMatrix());
                         spline.draw();
                         numberOfRenderedElements++;
@@ -154,7 +153,7 @@ public class ShadowRenderer extends Renderer {
      */
     private void afterShader() {
         fbo.unbind();
-        OpenGl.setViewport(Window.getClientAreaSize(), new Vector2i());
+        OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
         OpenGl.setFaceCullingMode(OpenGl.FaceCullingMode.BACK);
     }
 

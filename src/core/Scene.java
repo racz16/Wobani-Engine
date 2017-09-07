@@ -519,6 +519,16 @@ public class Scene {
     }
 
     /**
+     * Return the scene's environment color.
+     *
+     * @return the scene's environment color
+     */
+    @NotNull @ReadOnly
+    public static Vector3f getEnvironmentColor() {
+        return OpenGl.getClearColor();
+    }
+
+    /**
      * Sets the environment color to the given value. All of environtment
      * color's components must be min. 0.
      *

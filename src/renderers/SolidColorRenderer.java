@@ -65,7 +65,7 @@ public class SolidColorRenderer extends Renderer {
             MeshComponent meshComponent;
             for (int i = 0; i < Scene.getNumberOfMeshComponents(renderer, mesh); i++) {
                 meshComponent = Scene.getMeshComponent(renderer, mesh, i);
-                if (meshComponent.isMeshActive() && camera.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax())) {
+                if (meshComponent.isActive() && meshComponent.isMeshActive() && camera.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax())) {
                     beforeDrawRenderableInstance(meshComponent.getMaterial(), meshComponent.getGameObject().getTransform().getModelMatrix());
                     mesh.draw();
                     numberOfRenderedElements++;
@@ -80,7 +80,7 @@ public class SolidColorRenderer extends Renderer {
             SplineComponent splineComponent;
             for (int i = 0; i < Scene.getNumberOfSplineComponents(renderer, spline); i++) {
                 splineComponent = Scene.getSplineComponent(renderer, spline, i);
-                if (splineComponent.isSplineActive() && camera.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax())) {
+                if (splineComponent.isActive() && splineComponent.isSplineActive() && camera.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax())) {
                     beforeDrawRenderableInstance(splineComponent.getMaterial(), splineComponent.getGameObject().getTransform().getModelMatrix());
                     spline.draw();
                     numberOfRenderedElements++;
@@ -98,8 +98,9 @@ public class SolidColorRenderer extends Renderer {
         if (shader == null || !shader.isUsable()) {
             shader = SolidColorShader.getInstance();
         }
-        OpenGl.setWireframe(Settings.isWireframeMode());
         RenderingPipeline.bindFbo();
+        OpenGl.setWireframe(Settings.isWireframeMode());
+        OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
         numberOfRenderedElements = 0;
         numberOfRenderedFaces = 0;
     }

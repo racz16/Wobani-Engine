@@ -129,6 +129,12 @@ public class RenderingPipeline {
             screenSpaceFbo.bind();
             screenSpaceFbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
             screenSpaceFbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 1);
+            DynamicTexture texture = (DynamicTexture) screenSpaceFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 0);
+            texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
+            texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
+            texture = (DynamicTexture) screenSpaceFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 1);
+            texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
+            texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
             if (!screenSpaceFbo.isComplete()) {
                 Utility.logError(screenSpaceFbo.getStatus().name());
                 throw new RuntimeException("Incomplete FBO");

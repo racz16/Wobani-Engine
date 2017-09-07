@@ -7,7 +7,6 @@ import resources.meshes.*;
 import resources.textures.*;
 import shaders.*;
 import toolbox.*;
-import window.*;
 
 /**
  * Abstract class for post processing renderers.
@@ -45,7 +44,7 @@ public abstract class PostProcessingBase extends Renderer {
     private void beforeShader() {
         OpenGl.setWireframe(false);
         RenderingPipeline.bindFbo();
-        OpenGl.setViewport(Window.getClientAreaSize(), new Vector2i());
+        OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
         refreshShader();
     }
 

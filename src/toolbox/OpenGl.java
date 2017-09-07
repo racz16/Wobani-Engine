@@ -1,7 +1,9 @@
 package toolbox;
 
+import java.nio.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
+import org.lwjgl.system.*;
 import toolbox.annotations.*;
 
 /**
@@ -69,6 +71,15 @@ public class OpenGl {
     }
 
     /**
+     * Returns whether multisampling is enabled.
+     *
+     * @return true if multisampling is enabled, false otherwise
+     */
+    public static boolean isMultisampling() {
+        return GL11.glIsEnabled(GL13.GL_MULTISAMPLE);
+    }
+
+    /**
      * Sets whether or not enable the multisampling.
      *
      * @param multisample true if you would like to enable multisampling, false
@@ -80,6 +91,15 @@ public class OpenGl {
         } else {
             GL11.glDisable(GL13.GL_MULTISAMPLE);
         }
+    }
+
+    /**
+     * Returns whether the depth test is enabled.
+     *
+     * @return true if the depth test is enabled, false otherwise
+     */
+    public static boolean isDepthTest() {
+        return GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
     }
 
     /**
@@ -97,6 +117,15 @@ public class OpenGl {
     }
 
     /**
+     * Returns whether the alpha blending is enabled.
+     *
+     * @return true if the alpha blending is enabled, false otherwise
+     */
+    public static boolean isAlphaBlending() {
+        return GL11.glIsEnabled(GL11.GL_BLEND);
+    }
+
+    /**
      * Sets whether or not enable the alpha blending (alpha - (1-alpa)).
      *
      * @param alphaBlending true if you would like to enable alpha blending,
@@ -108,6 +137,19 @@ public class OpenGl {
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         } else {
             GL11.glDisable(GL11.GL_BLEND);
+        }
+    }
+
+    /**
+     * Returns whether the wireframe mode is enabled.
+     *
+     * @return true if the wireframe mode is enabled, false otherwise
+     */
+    public static boolean isWireframe() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer ib = stack.callocInt(1);
+            GL11.glGetIntegerv(GL11.GL_POLYGON_MODE, ib);
+            return ib.get(0) != GL11.GL_FILL;
         }
     }
 
@@ -141,6 +183,15 @@ public class OpenGl {
     }
 
     /**
+     * Returns whether the face culling is enabled.
+     *
+     * @return true if the face culling is enabled, false otherwise
+     */
+    public static boolean isFaceCulling() {
+        return GL11.glIsEnabled(GL11.GL_CULL_FACE);
+    }
+
+    /**
      * Sets whether or not enable the face culling.
      *
      * @param faceCulling true if you would like to enable face culling, false
@@ -151,6 +202,25 @@ public class OpenGl {
             GL11.glEnable(GL11.GL_CULL_FACE);
         } else {
             GL11.glDisable(GL11.GL_CULL_FACE);
+        }
+    }
+
+    /**
+     * Returns the face culling mode.
+     *
+     * @return the face culling mode
+     */
+    @NotNull
+    public static FaceCullingMode getFaceCullingMode() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer ib = stack.callocInt(1);
+            GL11.glGetIntegerv(GL11.GL_CULL_FACE_MODE, ib);
+            for (FaceCullingMode mode : FaceCullingMode.values()) {
+                if (mode.getOpenGlCode() == ib.get(0)) {
+                    return mode;
+                }
+            }
+            return null;
         }
     }
 
@@ -173,6 +243,20 @@ public class OpenGl {
      */
     public static void bindDefaultFrameBuffer() {
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+    }
+
+    /**
+     * Returns the clear color.
+     *
+     * @return the clear color
+     */
+    @NotNull @ReadOnly
+    public static Vector3f getClearColor() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer fb = stack.callocFloat(4);
+            GL11.glGetFloatv(GL11.GL_COLOR_CLEAR_VALUE, fb);
+            return new Vector3f(fb.get(0), fb.get(1), fb.get(2));
+        }
     }
 
     /**

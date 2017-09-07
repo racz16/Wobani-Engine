@@ -90,7 +90,7 @@ public class AudioSourceComponent extends Component {
 
     @Override
     public void update() {
-        if (getGameObject() != null) {
+        if (getGameObject() != null && source.isUsable()) {
             Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
             Vector3f velocity = new Vector3f();
             currentPosition.sub(lastPosition, velocity);
