@@ -58,10 +58,6 @@ public class SimpleSpline implements Spline {
      */
     private int dataSize;
     /**
-     * The spline's resource id.
-     */
-    private final int id;
-    /**
      * Approximated distances between the spline's control points.
      */
     private final List<Float> distances = new ArrayList<>();
@@ -69,12 +65,17 @@ public class SimpleSpline implements Spline {
      * The spline's approximated length.
      */
     protected float length;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new SimpleSpline.
      */
     public SimpleSpline() {
-        id = ResourceManager.getNextId();
+        resourceId = new ResourceId();
+        ResourceManager.addSpline(this);
     }
 
     /**
@@ -87,7 +88,6 @@ public class SimpleSpline implements Spline {
                     vao = new Vao();
                     vao.bindVao();
                     vao.createVbo("position");
-                    ResourceManager.addSpline("." + id, this);
                     vao.unbindVao();
                 }
             } else {
@@ -498,20 +498,15 @@ public class SimpleSpline implements Spline {
         lengthValid = false;
     }
 
+    @NotNull
     @Override
-    public boolean isUsable() {
-        return true;
+    public ResourceId getResourceId() {
+        return resourceId;
     }
 
     @Override
-    public String toString() {
-        return "SimpleSpline{" + "controlPoints=" + controlPoints + ", vao=" + vao
-                + ", valid=" + valid + ", lengthValid=" + lengthValid
-                + ", numberOfPoints=" + numberOfPoints + ", loopSpline=" + loopSpline
-                + ", dynamic=" + dynamic + ", aabbMin=" + aabbMin + ", aabbMax=" + aabbMax
-                + ", furthestVertexDistance=" + furthestVertexDistance
-                + ", dataSize=" + dataSize + ", id=" + id + ", distances=" + distances
-                + ", length=" + length + '}';
+    public boolean isUsable() {
+        return true;
     }
 
 }

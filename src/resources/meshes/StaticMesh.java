@@ -54,10 +54,6 @@ public class StaticMesh implements Mesh {
      */
     private final Vector3f aabbMax = new Vector3f();
     /**
-     * This is the loaded model's indexth mesh.
-     */
-    private final int elementIndex;
-    /**
      * Stores the mesh's position data.
      */
     private AIVector3D.Buffer position;
@@ -81,6 +77,10 @@ public class StaticMesh implements Mesh {
      * Stores meta data about this mesh.
      */
     private final LoadableResourceMetaData meta = new LoadableResourceMetaData();
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new StaticMesh to the given values.
@@ -90,12 +90,11 @@ public class StaticMesh implements Mesh {
      * "res/models/myModel.obj")
      * @param index the loadaed model's indexth mesh
      */
-    private StaticMesh(@NotNull AIMesh mesh, @NotNull String path, int index) {
+    private StaticMesh(@NotNull AIMesh mesh, @NotNull String path, @NotNull ResourceId resourceId) {
         faceCount = mesh.mNumFaces();
         vertexCount = faceCount * 3;
         computeFrustumCullingData(mesh);
         meta.setPath(path);
-        elementIndex = index;
         meta.setLastActiveToNow();
         meta.setDataStorePolicy(ResourceState.ACTION);
 
@@ -103,7 +102,8 @@ public class StaticMesh implements Mesh {
         ramToVram();
 
         computeDataSize();
-        ResourceManager.addMesh(path + "." + index, this);
+        this.resourceId = resourceId;
+        ResourceManager.addMesh(this);
     }
 
     //
@@ -125,11 +125,12 @@ public class StaticMesh implements Mesh {
         int meshCount = scene.mNumMeshes();
         PointerBuffer meshesBuffer = scene.mMeshes();
 
+        List<ResourceId> ids = ResourceId.getResourceIds(new File(path), meshCount);
         for (int i = 0; i < meshCount; ++i) {
             String key = path + "." + i;
             StaticMesh me = (StaticMesh) ResourceManager.getMesh(key);
             if (me == null) {
-                me = new StaticMesh(AIMesh.create(meshesBuffer.get(i)), path, i);
+                me = new StaticMesh(AIMesh.create(meshesBuffer.get(i)), path, ids.get(i));
             }
             meshes.add(me);
         }
@@ -276,7 +277,7 @@ public class StaticMesh implements Mesh {
      * furthest vertex distance again.
      */
     private void hddToRam() {
-        AIMesh mesh = AIMesh.create(getSceneAssimp(getPath()).mMeshes().get(elementIndex));
+        AIMesh mesh = AIMesh.create(getSceneAssimp(getPath()).mMeshes().get(resourceId.getIndex()));
         hddToRam(mesh);
     }
 
@@ -514,6 +515,12 @@ public class StaticMesh implements Mesh {
         }
     }
 
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
+    }
+
     //
     //misc----------------------------------------------------------------------
     //
@@ -533,7 +540,7 @@ public class StaticMesh implements Mesh {
      * @return the mesh's index in the loaded model
      */
     public int getIndex() {
-        return elementIndex;
+        return resourceId.getIndex();
     }
 
     @Override
@@ -576,46 +583,6 @@ public class StaticMesh implements Mesh {
     @Override
     public Vector3f getAabbMin() {
         return new Vector3f(aabbMin);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 41 * hash + this.elementIndex;
-        hash = 41 * hash + getPath().hashCode();
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final StaticMesh other = (StaticMesh) obj;
-        if (this.elementIndex != other.elementIndex) {
-            return false;
-        }
-        if (!this.getPath().equals(other.getPath())) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "StaticMesh{" + "vao=" + vao + ", vertexCount=" + vertexCount
-                + ", faceCount=" + faceCount
-                + ", furthestVertexDistance=" + furthestVertexDistance
-                + ", aabbMin=" + aabbMin + ", aabbMax=" + aabbMax
-                + ", elementIndex=" + elementIndex + ", position=" + position
-                + ", uv=" + uv + ", normal=" + normal + ", tangent=" + tangent
-                + ", indices=" + indices + ", meta=" + meta + '}';
     }
 
 }

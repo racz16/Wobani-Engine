@@ -41,6 +41,10 @@ public class AudioBuffer implements Resource {
      * Audio buffer's frequency.
      */
     private int frequency;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new AudioBuffer to the given value.
@@ -57,7 +61,8 @@ public class AudioBuffer implements Resource {
         ramToAction();
 
         meta.setDataSize(data.capacity());
-        ResourceManager.addAudioBuffer(path, this);
+        resourceId = new ResourceId(new File(path));
+        ResourceManager.addAudioBuffer(this);
     }
 
     /**
@@ -366,6 +371,11 @@ public class AudioBuffer implements Resource {
         if (getState() == ResourceState.RAM) {
             ramToHdd();
         }
+    }
+
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
     }
 
     @Override

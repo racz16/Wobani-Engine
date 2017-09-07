@@ -42,39 +42,39 @@ public class ResourceManager {
     /**
      * Contains all the textures.
      */
-    private static final Map<String, Texture2D> textures = new HashMap<>();
+    private static final Map<ResourceId, Texture> textures = new HashMap<>();
     /**
      * Contains all the meshes.
      */
-    private static final Map<String, Mesh> meshes = new HashMap<>();
+    private static final Map<ResourceId, Mesh> meshes = new HashMap<>();
     /**
      * Contains all the splines.
      */
-    private static final Map<String, Spline> splines = new HashMap<>();
+    private static final Map<ResourceId, Spline> splines = new HashMap<>();
     /**
      * Contains all the FBOs.
      */
-    private static final Map<String, Fbo> fbos = new HashMap<>();
+    private static final Map<ResourceId, Fbo> fbos = new HashMap<>();
     /**
      * Contains all the UBOs.
      */
-    private static final Map<String, Ubo> ubos = new HashMap<>();
+    private static final Map<ResourceId, Ubo> ubos = new HashMap<>();
     /**
      * Contains all the VAOs.
      */
-    private static final Map<String, Vao> vaos = new HashMap<>();
+    private static final Map<ResourceId, Vao> vaos = new HashMap<>();
     /**
      * Contains all the sound programs.
      */
-    private static final Map<String, Shader> shaders = new HashMap<>();
+    private static final Map<ResourceId, Shader> shaders = new HashMap<>();
     /**
      * Contains all the audioBuffers.
      */
-    private static final Map<String, AudioBuffer> audioBuffers = new HashMap<>();
+    private static final Map<ResourceId, AudioBuffer> audioBuffers = new HashMap<>();
     /**
      * Contains all the audioBuffers.
      */
-    private static final Map<String, AudioSource> audioSources = new HashMap<>();
+    private static final Map<ResourceId, AudioSource> audioSources = new HashMap<>();
     /**
      * Resource's last update time (in miliseconds).
      */
@@ -125,7 +125,7 @@ public class ResourceManager {
      *
      * @throws NullPointerException map can't be null
      */
-    private static <T extends Resource> void updateResourceMap(@NotNull Map<String, T> resources) {
+    private static <T extends Resource> void updateResourceMap(@NotNull Map<ResourceId, T> resources) {
         if (resources == null) {
             throw new NullPointerException();
         }
@@ -177,7 +177,7 @@ public class ResourceManager {
      * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Texture2D getTexture(@NotNull String key) {
+    public static Texture getTexture(@NotNull ResourceId key) {
         if (key == null) {
             throw new NullPointerException();
         }
@@ -192,12 +192,12 @@ public class ResourceManager {
      *
      * @throws NullPointerException arguments can't be null
      */
-    public static void addTexture(@NotNull String key, @NotNull Texture2D texture) {
-        if (key == null || texture == null) {
+    public static void addTexture(@NotNull Texture texture) {
+        if (texture == null) {
             throw new NullPointerException();
         }
-        if (!textures.containsKey(key)) {
-            textures.put(key, texture);
+        if (!textures.containsKey(texture.getResourceId())) {
+            textures.put(texture.getResourceId(), texture);
         }
     }
 
@@ -209,7 +209,7 @@ public class ResourceManager {
      * @see Settings#getTextureFiltering()
      */
     public static void changeTextureFiltering() {
-        for (String key : textures.keySet()) {
+        for (ResourceId key : textures.keySet()) {
             if (EasyFiltering.class.isInstance(textures.get(key))) {
                 EasyFiltering texture = (EasyFiltering) textures.get(key);
                 texture.bind();
@@ -228,7 +228,7 @@ public class ResourceManager {
      */
     public static void changeTextureColorSpace() {
         boolean sRgb = Settings.getGamma() != 1;
-        for (String key : textures.keySet()) {
+        for (ResourceId key : textures.keySet()) {
             if (ChangableColorSpace.class.isInstance(textures.get(key))) {
                 ChangableColorSpace texture = (ChangableColorSpace) textures.get(key);
                 texture.setsRgb(sRgb);
@@ -248,7 +248,7 @@ public class ResourceManager {
         int ram = 0;
         int vram = 0;
         int count = 0;
-        for (Texture2D texture : textures.values()) {
+        for (Texture texture : textures.values()) {
             if (texture.isUsable()) {
                 count++;
                 ram += texture.getDataSizeInRam();
@@ -270,7 +270,7 @@ public class ResourceManager {
      * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Mesh getMesh(@NotNull String key) {
+    public static Mesh getMesh(@NotNull ResourceId key) {
         if (key == null) {
             throw new NullPointerException();
         }
@@ -285,12 +285,12 @@ public class ResourceManager {
      *
      * @throws NullPointerException arguments can't be null
      */
-    public static void addMesh(@NotNull String key, @NotNull Mesh mesh) {
-        if (key == null || mesh == null) {
+    public static void addMesh(@NotNull Mesh mesh) {
+        if (mesh == null) {
             throw new NullPointerException();
         }
-        if (!meshes.containsKey(key)) {
-            meshes.put(key, mesh);
+        if (!meshes.containsKey(mesh.getResourceId())) {
+            meshes.put(mesh.getResourceId(), mesh);
         }
     }
 
@@ -328,7 +328,7 @@ public class ResourceManager {
      * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Spline getSpline(@NotNull String key) {
+    public static Spline getSpline(@NotNull ResourceId key) {
         if (key == null) {
             throw new NullPointerException();
         }
@@ -343,12 +343,12 @@ public class ResourceManager {
      *
      * @throws NullPointerException arguments can't be null
      */
-    public static void addSpline(@NotNull String key, @NotNull Spline spline) {
-        if (key == null || spline == null) {
+    public static void addSpline(@NotNull Spline spline) {
+        if (spline == null) {
             throw new NullPointerException();
         }
-        if (!splines.containsKey(key)) {
-            splines.put(key, spline);
+        if (!splines.containsKey(spline.getResourceId())) {
+            splines.put(spline.getResourceId(), spline);
         }
     }
 
@@ -386,7 +386,7 @@ public class ResourceManager {
      * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Fbo getFbo(@NotNull String key) {
+    public static Fbo getFbo(@NotNull ResourceId key) {
         if (key == null) {
             throw new NullPointerException();
         }
@@ -401,12 +401,12 @@ public class ResourceManager {
      *
      * @throws NullPointerException arguments can't be null
      */
-    public static void addFbo(@NotNull String key, @NotNull Fbo fbo) {
-        if (key == null || fbo == null) {
+    public static void addFbo(@NotNull Fbo fbo) {
+        if (fbo == null) {
             throw new NullPointerException();
         }
-        if (!fbos.containsKey(key)) {
-            fbos.put(key, fbo);
+        if (!fbos.containsKey(fbo.getResourceId())) {
+            fbos.put(fbo.getResourceId(), fbo);
         }
     }
 
@@ -440,7 +440,7 @@ public class ResourceManager {
      * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Ubo getUbo(@NotNull String key) {
+    public static Ubo getUbo(@NotNull ResourceId key) {
         if (key == null) {
             throw new NullPointerException();
         }
@@ -455,12 +455,12 @@ public class ResourceManager {
      *
      * @throws NullPointerException arguments can't be null
      */
-    public static void addUbo(@NotNull String key, @NotNull Ubo ubo) {
-        if (key == null || ubo == null) {
+    public static void addUbo(@NotNull Ubo ubo) {
+        if (ubo == null) {
             throw new NullPointerException();
         }
-        if (!ubos.containsKey(key)) {
-            ubos.put(key, ubo);
+        if (!ubos.containsKey(ubo.getResourceId())) {
+            ubos.put(ubo.getResourceId(), ubo);
         }
     }
 
@@ -498,7 +498,7 @@ public class ResourceManager {
      * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Vao getVao(@NotNull String key) {
+    public static Vao getVao(@NotNull ResourceId key) {
         if (key == null) {
             throw new NullPointerException();
         }
@@ -513,12 +513,12 @@ public class ResourceManager {
      *
      * @throws NullPointerException arguments can't be null
      */
-    public static void addVao(@NotNull String key, @NotNull Vao vao) {
-        if (key == null || vao == null) {
+    public static void addVao(@NotNull Vao vao) {
+        if (vao == null) {
             throw new NullPointerException();
         }
-        if (!vaos.containsKey(key)) {
-            vaos.put(key, vao);
+        if (!vaos.containsKey(vao.getResourceId())) {
+            vaos.put(vao.getResourceId(), vao);
         }
     }
 
@@ -552,7 +552,7 @@ public class ResourceManager {
      * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Shader getShader(@NotNull String key) {
+    public static Shader getShader(@NotNull ResourceId key) {
         if (key == null) {
             throw new NullPointerException();
         }
@@ -567,12 +567,12 @@ public class ResourceManager {
      *
      * @throws NullPointerException arguments can't be null
      */
-    public static void addShader(@NotNull String key, @NotNull Shader shader) {
-        if (key == null || shader == null) {
+    public static void addShader(@NotNull Shader shader) {
+        if (shader == null) {
             throw new NullPointerException();
         }
-        if (!shaders.containsKey(key)) {
-            shaders.put(key, shader);
+        if (!shaders.containsKey(shader.getResourceId())) {
+            shaders.put(shader.getResourceId(), shader);
         }
     }
 
@@ -606,7 +606,7 @@ public class ResourceManager {
      * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static AudioBuffer getAudioBuffer(@NotNull String key) {
+    public static AudioBuffer getAudioBuffer(@NotNull ResourceId key) {
         if (key == null) {
             throw new NullPointerException();
         }
@@ -621,12 +621,12 @@ public class ResourceManager {
      *
      * @throws NullPointerException arguments can't be null
      */
-    public static void addAudioBuffer(@NotNull String key, @NotNull AudioBuffer sound) {
-        if (key == null || sound == null) {
+    public static void addAudioBuffer(@NotNull AudioBuffer sound) {
+        if (sound == null) {
             throw new NullPointerException();
         }
-        if (!audioBuffers.containsKey(key)) {
-            audioBuffers.put(key, sound);
+        if (!audioBuffers.containsKey(sound.getResourceId())) {
+            audioBuffers.put(sound.getResourceId(), sound);
         }
     }
 
@@ -664,7 +664,7 @@ public class ResourceManager {
      * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static AudioSource getAudioSource(@NotNull String key) {
+    public static AudioSource getAudioSource(@NotNull ResourceId key) {
         if (key == null) {
             throw new NullPointerException();
         }
@@ -679,12 +679,12 @@ public class ResourceManager {
      *
      * @throws NullPointerException arguments can't be null
      */
-    public static void addAudioSource(@NotNull String key, @NotNull AudioSource source) {
-        if (key == null || source == null) {
+    public static void addAudioSource(@NotNull AudioSource source) {
+        if (source == null) {
             throw new NullPointerException();
         }
-        if (!audioSources.containsKey(key)) {
-            audioSources.put(key, source);
+        if (!audioSources.containsKey(source.getResourceId())) {
+            audioSources.put(source.getResourceId(), source);
         }
     }
 
@@ -746,15 +746,15 @@ public class ResourceManager {
      *
      * @throws NullPointerException the map can't be null
      */
-    private static <T extends Resource> void releaseResourceMap(@NotNull Map<String, T> resources) {
+    private static <T extends Resource> void releaseResourceMap(@NotNull Map<ResourceId, T> resources) {
         if (resources == null) {
             throw new NullPointerException();
         }
 
-        String[] keys = new String[resources.keySet().size()];
+        ResourceId[] keys = new ResourceId[resources.keySet().size()];
         resources.keySet().toArray(keys);
 
-        for (String key : keys) {
+        for (ResourceId key : keys) {
             Resource resource = resources.get(key);
             if (resource.isUsable()) {
                 resource.release();

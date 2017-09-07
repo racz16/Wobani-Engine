@@ -1,6 +1,7 @@
 package resources.textures;
 
 import core.*;
+import java.io.*;
 import java.nio.*;
 import org.joml.Math;
 import org.joml.*;
@@ -18,7 +19,7 @@ import toolbox.annotations.*;
  *
  * @see #loadTexture(String path, boolean sRGB)
  */
-public class StaticTexture extends AbstractTexture implements EasyFiltering, ChangableColorSpace {
+public class StaticTexture extends AbstractTexture implements Texture2D, EasyFiltering, ChangableColorSpace {
 
     /**
      * Texture's filtering mode.
@@ -36,6 +37,10 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      * The texture's default color space.
      */
     private final boolean basesRgb;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new StaticTexture to the given parameters.
@@ -56,7 +61,8 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
         ramToVram();
 
         meta.setDataSize(data.capacity());
-        ResourceManager.addTexture(path, this);
+        resourceId = new ResourceId(new File(path));
+        ResourceManager.addTexture(this);
     }
 
     //
@@ -105,8 +111,8 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
             glTexImage(GL11.GL_RGBA8, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data);
         }
 
-        setTextureWrap(TextureWrapType2D.WRAP_U, wrapingU);
-        setTextureWrap(TextureWrapType2D.WRAP_U, wrapingV);
+        setTextureWrap(TextureWrapDirection.WRAP_U, wrapingU);
+        setTextureWrap(TextureWrapDirection.WRAP_U, wrapingV);
         setBorderColor(borderColor);
         changeFiltering();
 
@@ -142,9 +148,14 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      *
      * @param type texture wrap direction
      * @return the texture's specified wrap mode
+     *
+     * @throws IllegalArgumentException w direction can't apply to a 2D texture
      */
     @NotNull
-    public TextureWrap getTextureWrap(@NotNull TextureWrapType2D type) {
+    public TextureWrap getTextureWrap(@NotNull TextureWrapDirection type) {
+        if (type == TextureWrapDirection.WRAP_W) {
+            throw new IllegalArgumentException("W direction can't apply to a 2D texture");
+        }
         return glGetWrap(type);
     }
 
@@ -153,10 +164,15 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      *
      * @param type texture wrap direction
      * @param tw texture wrap
+     *
+     * @throws IllegalArgumentException w direction can't apply to a 2D texture
      */
     @Bind
-    public void setTextureWrap(@NotNull TextureWrapType2D type, @NotNull TextureWrap tw) {
-        glSetWrap(type, tw, false);
+    public void setTextureWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap tw) {
+        if (type == TextureWrapDirection.WRAP_W) {
+            throw new IllegalArgumentException("W direction can't apply to a 2D texture");
+        }
+        glSetWrap(type, tw);
     }
 
     /**
@@ -176,7 +192,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      */
     @Bind
     public void setBorderColor(@NotNull Vector4f borderColor) {
-        glSetBorderColor(borderColor, false);
+        glSetBorderColor(borderColor);
     }
 
     //
@@ -222,23 +238,23 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      */
     @Bind
     private void changeFiltering() {
-        glGenerateMipmaps(false);
+        glGenerateMipmaps();
         switch (filtering) {
             case NONE:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.NEAREST, false);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.NEAREST_MIPMAP_NEAREST, false);
+                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.NEAREST);
+                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.NEAREST_MIPMAP_NEAREST);
                 break;
             case BILINEAR:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR, false);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_NEAREST, false);
+                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
+                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_NEAREST);
                 break;
             case TRILINEAR:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR, false);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR, false);
+                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
+                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR);
                 break;
             default:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR, false);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR, false);
+                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
+                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR);
                 if (GL.getCapabilities().GL_EXT_texture_filter_anisotropic) {
                     float maxLevel = Math.min(2 << filtering.getIndex() - 3, GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
                     filtering = TextureFiltering.valueOf("ANISOTROPIC_" + (int) maxLevel + "X");
@@ -264,13 +280,13 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
         }
 
         glActivate(textureUnit);
-        bind();
+        glBind();
         meta.setLastActiveToNow();
     }
 
     @Override
     public void bind() {
-        glBind(false);
+        glBind();
     }
 
     @Override
@@ -280,7 +296,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
 
     @Override
     public void unbind() {
-        glUnbind(false);
+        glUnbind();
     }
 
     //
@@ -410,6 +426,11 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     //
     //misc----------------------------------------------------------------------
     //
+    @Override
+    protected int getTextureType() {
+        return GL11.GL_TEXTURE_2D;
+    }
+
     /**
      * Returns the texture's path.
      *
@@ -496,6 +517,12 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
         if (getState() == ResourceState.RAM) {
             ramToHdd();
         }
+    }
+
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
     }
 
     @Override

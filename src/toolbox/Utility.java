@@ -323,6 +323,13 @@ public class Utility {
         return color.get(color.minComponent()) >= 0 && color.get(color.maxComponent()) <= 1;
     }
 
+    @NotNull
+    public static <T> List<T> wrapObjectByList(T object) {
+        List<T> list = new ArrayList<>(1);
+        list.add(object);
+        return list;
+    }
+
     /**
      * Creates an int buffer and stores the given data in it.
      *

@@ -35,13 +35,18 @@ public class Vao implements Resource {
      * VBOs' size.
      */
     private final HashMap<String, Integer> vboSize = new HashMap<>();
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new VAO.
      */
     public Vao() {
         vao = GL30.glGenVertexArrays();
-        ResourceManager.addVao("." + ResourceManager.getNextId(), this);
+        resourceId = new ResourceId();
+        ResourceManager.addVao(this);
     }
 
     /**
@@ -350,6 +355,11 @@ public class Vao implements Resource {
         }
         removeEbo();
         removeVao();
+    }
+
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
     }
 
     @Override

@@ -192,7 +192,7 @@ public class Fbo implements Resource {
     /**
      * FBO's id.
      */
-    private int fbo = -1;
+    private int id = -1;
     /**
      * The index of the attachment, which is active to read.
      */
@@ -229,6 +229,10 @@ public class Fbo implements Resource {
      * Determines whether the color attachments stored as floating point values.
      */
     private boolean floatingPoint;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new FBO to the given value.
@@ -262,8 +266,9 @@ public class Fbo implements Resource {
             this.samples = 1;
         }
         activeRead = 0;
-        fbo = GL30.glGenFramebuffers();
-        ResourceManager.addFbo("." + ResourceManager.getNextId(), this);
+        id = GL30.glGenFramebuffers();
+        resourceId = new ResourceId();
+        ResourceManager.addFbo(this);
     }
 
     /**
@@ -613,28 +618,28 @@ public class Fbo implements Resource {
      * @return FBO's id
      */
     public int getId() {
-        return fbo;
+        return id;
     }
 
     /**
      * Binds this FBO for both reading and drawing.
      */
     public void bind() {
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
     }
 
     /**
      * Binds this FBO for reading.
      */
     public void bindRead() {
-        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, fbo);
+        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, id);
     }
 
     /**
      * Binds this FBO for drawing.
      */
     public void bindDraw() {
-        GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, fbo);
+        GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, id);
     }
 
     /**
@@ -785,8 +790,8 @@ public class Fbo implements Resource {
         depth.removeAttachment();
         stencil.removeAttachment();
         depthStencil.removeAttachment();
-        GL30.glDeleteFramebuffers(fbo);
-        fbo = -1;
+        GL30.glDeleteFramebuffers(id);
+        id = -1;
     }
 
     /**
@@ -806,13 +811,18 @@ public class Fbo implements Resource {
         stencil.removeRbo();
         depthStencil.detachTexture();
         depthStencil.removeRbo();
-        GL30.glDeleteFramebuffers(fbo);
-        fbo = -1;
+        GL30.glDeleteFramebuffers(id);
+        id = -1;
+    }
+
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
     }
 
     @Override
     public boolean isUsable() {
-        return fbo != -1;
+        return id != -1;
     }
 
     /**
@@ -835,7 +845,7 @@ public class Fbo implements Resource {
 
     @Override
     public String toString() {
-        return "Fbo{" + "fbo=" + fbo + ", activeRead=" + activeRead
+        return "Fbo{" + "fbo=" + id + ", activeRead=" + activeRead
                 + ", color=" + Arrays.toString(color) + ", depth=" + depth
                 + ", stencil=" + stencil + ", depthStencil=" + depthStencil
                 + ", size=" + size + ", multisampled=" + multisampled

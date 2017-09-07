@@ -20,13 +20,18 @@ public class QuadMesh implements Mesh {
      * The only QuadMesh instance.
      */
     private static QuadMesh instace;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new QuadMesh.
      */
     private QuadMesh() {
         loadData();
-        ResourceManager.addMesh("." + ResourceManager.getNextId(), this);
+        resourceId = new ResourceId();
+        ResourceManager.addMesh(this);
     }
 
     /**
@@ -160,6 +165,12 @@ public class QuadMesh implements Mesh {
     public void release() {
         vao.release();
         vao = null;
+    }
+
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
     }
 
     @Override

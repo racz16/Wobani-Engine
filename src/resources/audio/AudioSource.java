@@ -18,6 +18,10 @@ public class AudioSource implements Resource {
      * The connected audio buffer.
      */
     private AudioBuffer buffer;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * The audio source's possible states.
@@ -72,7 +76,8 @@ public class AudioSource implements Resource {
     public AudioSource(@NotNull AudioBuffer buffer) {
         id = AL10.alGenSources();
         setAudioBuffer(buffer);
-        ResourceManager.addAudioSource("." + ResourceManager.getNextId(), this);
+        resourceId = new ResourceId();
+        ResourceManager.addAudioSource(this);
     }
 
     /**
@@ -346,6 +351,11 @@ public class AudioSource implements Resource {
         stop();
         AL10.alDeleteSources(id);
         id = -1;
+    }
+
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
     }
 
     @Override

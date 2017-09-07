@@ -10,7 +10,7 @@ import toolbox.annotations.*;
 /**
  * Dynamic texture for FBO attachments.
  */
-public class DynamicTexture extends AbstractTexture {
+public class DynamicTexture extends AbstractTexture implements Texture2D {
 
     /**
      * The texture data size (in bytes).
@@ -28,6 +28,10 @@ public class DynamicTexture extends AbstractTexture {
      * Number of the texture's samples.
      */
     private int samples;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new DynamicTexture to the given parameter.
@@ -76,11 +80,12 @@ public class DynamicTexture extends AbstractTexture {
 
         setFilter(TextureFilterType.MINIFICATION, minification);
         setFilter(TextureFilterType.MAGNIFICATION, magnification);
-        setTextureWrap(TextureWrapType2D.WRAP_U, wrapingU);
-        setTextureWrap(TextureWrapType2D.WRAP_V, wrapingV);
+        setTextureWrap(TextureWrapDirection.WRAP_U, wrapingU);
+        setTextureWrap(TextureWrapDirection.WRAP_V, wrapingV);
         setBorderColor(borderColor);
 
-        ResourceManager.addTexture("." + ResourceManager.getNextId(), this);
+        resourceId = new ResourceId();
+        ResourceManager.addTexture(this);
     }
 
     /**
@@ -126,7 +131,7 @@ public class DynamicTexture extends AbstractTexture {
      */
     @Bind
     public void setFilter(@NotNull TextureFilterType type, @NotNull TextureFilter value) {
-        glSetFilter(type, value, multisampled);
+        glSetFilter(type, value);
     }
 
     /**
@@ -134,9 +139,14 @@ public class DynamicTexture extends AbstractTexture {
      *
      * @param type texture wrap direction
      * @return the texture's specified wrap mode
+     *
+     * @throws IllegalArgumentException w direction can't apply to a 2D texture
      */
     @NotNull
-    public TextureWrap getTextureWrap(@NotNull TextureWrapType2D type) {
+    public TextureWrap getTextureWrap(@NotNull TextureWrapDirection type) {
+        if (type == TextureWrapDirection.WRAP_W) {
+            throw new IllegalArgumentException("W direction can't apply to a 2D texture");
+        }
         return glGetWrap(type);
     }
 
@@ -145,10 +155,15 @@ public class DynamicTexture extends AbstractTexture {
      *
      * @param type texture wrap direction
      * @param tw texture wrap
+     *
+     * @throws IllegalArgumentException w direction can't apply to a 2D texture
      */
     @Bind
-    public void setTextureWrap(@NotNull TextureWrapType2D type, @NotNull TextureWrap tw) {
-        glSetWrap(type, tw, multisampled);
+    public void setTextureWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap tw) {
+        if (type == TextureWrapDirection.WRAP_W) {
+            throw new IllegalArgumentException("W direction can't apply to a 2D texture");
+        }
+        glSetWrap(type, tw);
     }
 
     /**
@@ -168,7 +183,12 @@ public class DynamicTexture extends AbstractTexture {
      */
     @Bind
     public void setBorderColor(@NotNull Vector4f borderColor) {
-        glSetBorderColor(borderColor, multisampled);
+        glSetBorderColor(borderColor);
+    }
+
+    @Override
+    protected int getTextureType() {
+        return multisampled ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D;
     }
 
     @Override
@@ -179,12 +199,12 @@ public class DynamicTexture extends AbstractTexture {
     @Override
     public void bindToTextureUnit(int textureUnit) {
         glActivate(textureUnit);
-        bind();
+        glBind();
     }
 
     @Override
     public void bind() {
-        glBind(multisampled);
+        glBind();
     }
 
     @Override
@@ -194,7 +214,7 @@ public class DynamicTexture extends AbstractTexture {
 
     @Override
     public void unbind() {
-        glUnbind(multisampled);
+        glUnbind();
     }
 
     @Override
@@ -238,6 +258,12 @@ public class DynamicTexture extends AbstractTexture {
     public void release() {
         glRelease();
         dataSize = 0;
+    }
+
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
     }
 
     @Override
