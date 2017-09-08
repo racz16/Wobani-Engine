@@ -79,7 +79,7 @@ public class StaticTexture extends AbstractTexture implements Texture2D, EasyFil
      */
     @NotNull
     public static StaticTexture loadTexture(@NotNull String path, boolean sRgb) {
-        StaticTexture tex = (StaticTexture) ResourceManager.getTexture(path);
+        StaticTexture tex = (StaticTexture) ResourceManager.getTexture(new ResourceId(new File(path)));
         if (tex != null) {
             return tex;
         }
@@ -528,7 +528,8 @@ public class StaticTexture extends AbstractTexture implements Texture2D, EasyFil
     @Override
     public String toString() {
         return super.toString() + "\nStaticTexture{" + "filtering=" + filtering
-                + ", data=" + data + ", meta=" + meta + '}';
+                + ", data=" + data + ", meta=" + meta + ", basesRgb=" + basesRgb
+                + ", resourceId=" + resourceId + '}';
     }
 
 }

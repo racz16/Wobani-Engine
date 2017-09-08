@@ -1,8 +1,10 @@
-package shaders.postProcessing;
+package resources.shaders.postProcessing;
 
 import core.*;
+import java.io.*;
+import java.util.*;
 import resources.*;
-import shaders.*;
+import resources.shaders.*;
 import toolbox.annotations.*;
 
 /**
@@ -16,13 +18,29 @@ public class GammaCorrectionShader extends Shader {
      * The only GammaCorrectionShader instance.
      */
     private static GammaCorrectionShader instance;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
+    /**
+     * The vertex shader's path.
+     */
+    private static final String vertexPath = "res/shaders/postProcessing/gammaCorrection/vertexShader.glsl";
+    /**
+     * The fragment shader's path
+     */
+    private static final String fragmentPath = "res/shaders/postProcessing/gammaCorrection/fragmentShader.glsl";
 
     /**
      * Initializes a new GammaCorrectionShader.
      */
     private GammaCorrectionShader() {
-        super("res/shaders/postProcessing/gammaCorrection/vertexShader.glsl", "res/shaders/postProcessing/gammaCorrection/fragmentShader.glsl", null, null, null);
-        ResourceManager.addShader("." + ResourceManager.getNextId(), this);
+        super(vertexPath, fragmentPath, null, null, null);
+        List<File> paths = new ArrayList<>(2);
+        paths.add(new File(vertexPath));
+        paths.add(new File(fragmentPath));
+        resourceId = new ResourceId(paths);
+        ResourceManager.addShader(this);
     }
 
     /**
@@ -56,6 +74,18 @@ public class GammaCorrectionShader extends Shader {
      */
     public void loadGammaUniform() {
         loadFloat("gamma", Settings.getGamma());
+    }
+
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\nGammaCorrectionShader{" + "resourceId="
+                + resourceId + '}';
     }
 
 }

@@ -32,6 +32,10 @@ public class CubeMapTexture extends AbstractTexture {
      */
     private final ResourceId resourceId;
 
+    public CubeMapTexture() {
+        resourceId = new ResourceId();
+    }
+
     @Override
     protected int getTextureType() {
         return GL13.GL_TEXTURE_CUBE_MAP;

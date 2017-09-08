@@ -1,10 +1,12 @@
-package shaders;
+package resources.shaders;
 
 import components.light.*;
 import core.*;
+import java.io.*;
+import java.util.*;
+import materials.*;
 import org.joml.*;
 import resources.*;
-import resources.materials.*;
 import resources.textures.*;
 import toolbox.annotations.*;
 
@@ -29,13 +31,29 @@ public class BlinnPhongShader extends Shader {
      * The only BlinnPhongShader instance.
      */
     private static BlinnPhongShader instance;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
+    /**
+     * The vertex shader's path.
+     */
+    private static final String vertexPath = "res/shaders/blinnPhong/vertexShader.glsl";
+    /**
+     * The fragment shader's path
+     */
+    private static final String fragmentPath = "res/shaders/blinnPhong/fragmentShader.glsl";
 
     /**
      * Inizializes a new Blinn-Phong shader.
      */
     private BlinnPhongShader() {
-        super("res/shaders/blinnPhong/vertexShader.glsl", "res/shaders/blinnPhong/fragmentShader.glsl", null, null, null);
-        ResourceManager.addShader("." + ResourceManager.getNextId(), this);
+        super(vertexPath, fragmentPath, null, null, null);
+        List<File> paths = new ArrayList<>(2);
+        paths.add(new File(vertexPath));
+        paths.add(new File(fragmentPath));
+        resourceId = new ResourceId(paths);
+        ResourceManager.addShader(this);
     }
 
     /**
@@ -274,6 +292,17 @@ public class BlinnPhongShader extends Shader {
         connectTextureUnit("material.diffuse", 1);
         connectTextureUnit("material.specular", 2);
         connectTextureUnit("material.normal", 3);
+    }
+
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\nBlinnPhongShader{" + "resourceId=" + resourceId + '}';
     }
 
 }

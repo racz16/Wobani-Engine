@@ -1,6 +1,6 @@
 package renderers.postProcessing;
 
-import shaders.postProcessing.*;
+import resources.shaders.postProcessing.InvertShader;
 import toolbox.annotations.*;
 
 /**

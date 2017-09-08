@@ -1,5 +1,7 @@
 package examples;
 
+import materials.Material;
+import materials.MaterialSlot;
 import components.audio.*;
 import components.camera.*;
 import components.light.*;
@@ -11,7 +13,6 @@ import org.lwjgl.glfw.*;
 import renderers.*;
 import resources.*;
 import resources.audio.*;
-import resources.materials.*;
 import resources.meshes.*;
 import resources.splines.*;
 import toolbox.*;

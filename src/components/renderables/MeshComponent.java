@@ -1,10 +1,10 @@
 package components.renderables;
 
+import materials.Material;
 import core.*;
 import java.util.*;
 import org.joml.*;
 import renderers.*;
-import resources.materials.*;
 import resources.meshes.*;
 import toolbox.annotations.*;
 

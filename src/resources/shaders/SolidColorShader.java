@@ -1,5 +1,7 @@
-package shaders;
+package resources.shaders;
 
+import java.io.*;
+import java.util.*;
 import org.joml.*;
 import resources.*;
 import toolbox.annotations.*;
@@ -13,13 +15,29 @@ public class SolidColorShader extends Shader {
      * The only SolidColorShader instance.
      */
     private static SolidColorShader instance;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
+    /**
+     * The vertex shader's path.
+     */
+    private static final String vertexPath = "res/shaders/solidColor/vertexShader.glsl";
+    /**
+     * The fragment shader's path
+     */
+    private static final String fragmentPath = "res/shaders/solidColor/fragmentShader.glsl";
 
     /**
      * Inizializes a new SolidColorShader.
      */
     private SolidColorShader() {
-        super("res/shaders/solidColor/vertexShader.glsl", "res/shaders/solidColor/fragmentShader.glsl", null, null, null);
-        ResourceManager.addShader("." + ResourceManager.getNextId(), this);
+        super(vertexPath, fragmentPath, null, null, null);
+        List<File> paths = new ArrayList<>(2);
+        paths.add(new File(vertexPath));
+        paths.add(new File(fragmentPath));
+        resourceId = new ResourceId(paths);
+        ResourceManager.addShader(this);
     }
 
     /**
@@ -50,6 +68,17 @@ public class SolidColorShader extends Shader {
     public void loadUniforms(@NotNull Matrix4f modelMatrix, @NotNull Vector3f color) {
         loadMatrix4("modelMatrix", modelMatrix);
         loadVector3("color", color);
+    }
+
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\nSolidColorShader{" + "resourceId=" + resourceId + '}';
     }
 
 }

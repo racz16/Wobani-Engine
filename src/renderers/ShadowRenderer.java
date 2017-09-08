@@ -1,5 +1,6 @@
 package renderers;
 
+import resources.shaders.ShadowShader;
 import components.light.*;
 import components.renderables.*;
 import core.*;
@@ -10,7 +11,6 @@ import resources.*;
 import resources.meshes.*;
 import resources.splines.*;
 import resources.textures.*;
-import shaders.*;
 import toolbox.*;
 import toolbox.annotations.*;
 

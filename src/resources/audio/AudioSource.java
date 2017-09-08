@@ -353,6 +353,7 @@ public class AudioSource implements Resource {
         id = -1;
     }
 
+    @NotNull
     @Override
     public ResourceId getResourceId() {
         return resourceId;
@@ -365,7 +366,8 @@ public class AudioSource implements Resource {
 
     @Override
     public String toString() {
-        return "AudioSource{" + "id=" + id + ", buffer=" + buffer + '}';
+        return "AudioSource{" + "id=" + id + ", buffer=" + buffer
+                + ", resourceId=" + resourceId + '}';
     }
 
 }

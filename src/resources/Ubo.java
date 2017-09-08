@@ -191,6 +191,7 @@ public class Ubo implements Resource {
         dataSize = 0;
     }
 
+    @NotNull
     @Override
     public ResourceId getResourceId() {
         return resourceId;
@@ -198,7 +199,8 @@ public class Ubo implements Resource {
 
     @Override
     public String toString() {
-        return "Ubo{" + "id=" + id + ", dataSize=" + dataSize + '}';
+        return "Ubo{" + "id=" + id + ", dataSize=" + dataSize + ", resourceId="
+                + resourceId + '}';
     }
 
 }

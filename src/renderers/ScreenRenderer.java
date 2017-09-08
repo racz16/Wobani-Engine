@@ -1,10 +1,10 @@
 package renderers;
 
+import resources.shaders.TexturedQuadShader;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import resources.meshes.*;
 import resources.textures.*;
-import shaders.*;
 import toolbox.*;
 import toolbox.annotations.*;
 import window.*;

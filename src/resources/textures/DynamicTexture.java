@@ -269,8 +269,9 @@ public class DynamicTexture extends AbstractTexture implements Texture2D {
     @Override
     public String toString() {
         return super.toString() + "\nDynamicTexture{" + "dataSize=" + dataSize
-                + ", attachmentType=" + attachmentType
-                + ", multisampled=" + multisampled + ", samples=" + samples + '}';
+                + ", attachmentType=" + attachmentType + ", multisampled="
+                + multisampled + ", samples=" + samples + ", resourceId="
+                + resourceId + '}';
     }
 
 }

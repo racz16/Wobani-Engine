@@ -1,4 +1,4 @@
-package resources.materials;
+package materials;
 
 import java.util.*;
 import renderers.*;

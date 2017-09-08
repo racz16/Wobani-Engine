@@ -357,6 +357,7 @@ public class Vao implements Resource {
         removeVao();
     }
 
+    @NotNull
     @Override
     public ResourceId getResourceId() {
         return resourceId;
@@ -385,7 +386,8 @@ public class Vao implements Resource {
     @Override
     public String toString() {
         return "Vao{" + "vao=" + vao + ", ebo=" + ebo + ", eboSize=" + eboSize
-                + ", vbos=" + vbos + ", vboSize=" + vboSize + '}';
+                + ", vbos=" + vbos + ", vboSize=" + vboSize + ", resourceId="
+                + resourceId + '}';
     }
 
 }

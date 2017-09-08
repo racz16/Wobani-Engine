@@ -178,4 +178,9 @@ public class QuadMesh implements Mesh {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "QuadMesh{" + "vao=" + vao + ", resourceId=" + resourceId + '}';
+    }
+
 }

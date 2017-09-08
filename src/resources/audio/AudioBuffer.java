@@ -175,7 +175,7 @@ public class AudioBuffer implements Resource {
      * @return audio buffer
      */
     public static AudioBuffer loadSound(@NotNull String path) {
-        AudioBuffer sound = ResourceManager.getAudioBuffer(path);
+        AudioBuffer sound = ResourceManager.getAudioBuffer(new ResourceId(new File(path)));
         if (sound != null) {
             return sound;
         }
@@ -373,6 +373,7 @@ public class AudioBuffer implements Resource {
         }
     }
 
+    @NotNull
     @Override
     public ResourceId getResourceId() {
         return resourceId;
@@ -386,7 +387,8 @@ public class AudioBuffer implements Resource {
     @Override
     public String toString() {
         return "AudioBuffer{" + "id=" + id + ", meta=" + meta + ", data=" + data
-                + ", channels=" + channels + ", frequency=" + frequency + '}';
+                + ", channels=" + channels + ", frequency=" + frequency
+                + ", resourceId=" + resourceId + '}';
     }
 
 }

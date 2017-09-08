@@ -1,11 +1,11 @@
 package renderers.postProcessing;
 
+import resources.shaders.Shader;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import renderers.*;
 import resources.meshes.*;
 import resources.textures.*;
-import shaders.*;
 import toolbox.*;
 
 /**

@@ -1,15 +1,16 @@
 package renderers;
 
+import materials.Material;
+import materials.MaterialSlot;
+import resources.shaders.SolidColorShader;
 import components.camera.*;
 import components.renderables.*;
 import core.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import resources.*;
-import resources.materials.*;
 import resources.meshes.*;
 import resources.splines.*;
-import shaders.*;
 import toolbox.*;
 import toolbox.annotations.*;
 

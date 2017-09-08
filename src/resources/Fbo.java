@@ -815,6 +815,7 @@ public class Fbo implements Resource {
         id = -1;
     }
 
+    @NotNull
     @Override
     public ResourceId getResourceId() {
         return resourceId;

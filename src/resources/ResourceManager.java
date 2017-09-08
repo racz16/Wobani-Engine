@@ -8,9 +8,9 @@ import org.joml.*;
 import renderers.*;
 import resources.audio.*;
 import resources.meshes.*;
+import resources.shaders.*;
 import resources.splines.*;
 import resources.textures.*;
-import shaders.*;
 import toolbox.annotations.*;
 import window.*;
 
@@ -83,10 +83,6 @@ public class ResourceManager {
      * Resources' update time period (in miliseconds).
      */
     private static long resourceUpdatePeriod = 5000;
-    /**
-     * The next resource id.
-     */
-    private static int nextId = 1;
 
     /**
      * To can't initialize a new ResourceManager.
@@ -129,10 +125,10 @@ public class ResourceManager {
         if (resources == null) {
             throw new NullPointerException();
         }
-        String[] keys = new String[resources.keySet().size()];
+        ResourceId[] keys = new ResourceId[resources.keySet().size()];
         resources.keySet().toArray(keys);
 
-        for (String key : keys) {
+        for (ResourceId key : keys) {
             Resource resource = resources.get(key);
             if (resource.isUsable()) {
                 resource.update();
@@ -173,29 +169,18 @@ public class ResourceManager {
      *
      * @param key texture's key
      * @return texture
-     *
-     * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Texture getTexture(@NotNull ResourceId key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
+    public static Texture getTexture(@Nullable ResourceId key) {
         return textures.get(key);
     }
 
     /**
      * Adds the given texture to the list of textures.
      *
-     * @param key texture's key
      * @param texture texture
-     *
-     * @throws NullPointerException arguments can't be null
      */
     public static void addTexture(@NotNull Texture texture) {
-        if (texture == null) {
-            throw new NullPointerException();
-        }
         if (!textures.containsKey(texture.getResourceId())) {
             textures.put(texture.getResourceId(), texture);
         }
@@ -266,29 +251,18 @@ public class ResourceManager {
      *
      * @param key mesh's key
      * @return mesh
-     *
-     * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Mesh getMesh(@NotNull ResourceId key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
+    public static Mesh getMesh(@Nullable ResourceId key) {
         return meshes.get(key);
     }
 
     /**
      * Adds the given mesh to the list of meshes.
      *
-     * @param key mesh's key
      * @param mesh mesh
-     *
-     * @throws NullPointerException arguments can't be null
      */
     public static void addMesh(@NotNull Mesh mesh) {
-        if (mesh == null) {
-            throw new NullPointerException();
-        }
         if (!meshes.containsKey(mesh.getResourceId())) {
             meshes.put(mesh.getResourceId(), mesh);
         }
@@ -324,29 +298,19 @@ public class ResourceManager {
      *
      * @param key spline's key
      * @return spline
-     *
-     * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Spline getSpline(@NotNull ResourceId key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
+    public static Spline getSpline(@Nullable ResourceId key) {
         return splines.get(key);
     }
 
     /**
      * Adds the given spline to the list of spline.
      *
-     * @param key spline's key
      * @param spline spline
      *
-     * @throws NullPointerException arguments can't be null
      */
     public static void addSpline(@NotNull Spline spline) {
-        if (spline == null) {
-            throw new NullPointerException();
-        }
         if (!splines.containsKey(spline.getResourceId())) {
             splines.put(spline.getResourceId(), spline);
         }
@@ -382,29 +346,18 @@ public class ResourceManager {
      *
      * @param key FBO's key
      * @return FBO
-     *
-     * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Fbo getFbo(@NotNull ResourceId key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
+    public static Fbo getFbo(@Nullable ResourceId key) {
         return fbos.get(key);
     }
 
     /**
      * Adds the given FBO to the list of FBOs.
      *
-     * @param key FBO's key
      * @param fbo FBO
-     *
-     * @throws NullPointerException arguments can't be null
      */
     public static void addFbo(@NotNull Fbo fbo) {
-        if (fbo == null) {
-            throw new NullPointerException();
-        }
         if (!fbos.containsKey(fbo.getResourceId())) {
             fbos.put(fbo.getResourceId(), fbo);
         }
@@ -436,29 +389,18 @@ public class ResourceManager {
      *
      * @param key UBO's key
      * @return UBO
-     *
-     * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Ubo getUbo(@NotNull ResourceId key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
+    public static Ubo getUbo(@Nullable ResourceId key) {
         return ubos.get(key);
     }
 
     /**
      * Adds the given UBO to the list of UBOs.
      *
-     * @param key UBO's key
      * @param ubo UBO
-     *
-     * @throws NullPointerException arguments can't be null
      */
     public static void addUbo(@NotNull Ubo ubo) {
-        if (ubo == null) {
-            throw new NullPointerException();
-        }
         if (!ubos.containsKey(ubo.getResourceId())) {
             ubos.put(ubo.getResourceId(), ubo);
         }
@@ -494,29 +436,18 @@ public class ResourceManager {
      *
      * @param key VAO's key
      * @return VAO
-     *
-     * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Vao getVao(@NotNull ResourceId key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
+    public static Vao getVao(@Nullable ResourceId key) {
         return vaos.get(key);
     }
 
     /**
      * Adds the given VAO to the list of VAOs.
      *
-     * @param key VAO's key
      * @param vao VAO
-     *
-     * @throws NullPointerException arguments can't be null
      */
     public static void addVao(@NotNull Vao vao) {
-        if (vao == null) {
-            throw new NullPointerException();
-        }
         if (!vaos.containsKey(vao.getResourceId())) {
             vaos.put(vao.getResourceId(), vao);
         }
@@ -548,29 +479,18 @@ public class ResourceManager {
      *
      * @param key sound's key
      * @return sound
-     *
-     * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static Shader getShader(@NotNull ResourceId key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
+    public static Shader getShader(@Nullable ResourceId key) {
         return shaders.get(key);
     }
 
     /**
      * Adds the given sound to the list of shaders.
      *
-     * @param key sound's key
      * @param shader sound
-     *
-     * @throws NullPointerException arguments can't be null
      */
     public static void addShader(@NotNull Shader shader) {
-        if (shader == null) {
-            throw new NullPointerException();
-        }
         if (!shaders.containsKey(shader.getResourceId())) {
             shaders.put(shader.getResourceId(), shader);
         }
@@ -602,29 +522,18 @@ public class ResourceManager {
      *
      * @param key audio buffer's key
      * @return audio buffer
-     *
-     * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static AudioBuffer getAudioBuffer(@NotNull ResourceId key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
+    public static AudioBuffer getAudioBuffer(@Nullable ResourceId key) {
         return audioBuffers.get(key);
     }
 
     /**
      * Adds the given audio buffer to the list of audio buffers.
      *
-     * @param key audio buffer's key
      * @param sound audio buffer
-     *
-     * @throws NullPointerException arguments can't be null
      */
     public static void addAudioBuffer(@NotNull AudioBuffer sound) {
-        if (sound == null) {
-            throw new NullPointerException();
-        }
         if (!audioBuffers.containsKey(sound.getResourceId())) {
             audioBuffers.put(sound.getResourceId(), sound);
         }
@@ -660,29 +569,18 @@ public class ResourceManager {
      *
      * @param key audio source's key
      * @return audio source
-     *
-     * @throws NullPointerException key can't be null
      */
     @Nullable
-    public static AudioSource getAudioSource(@NotNull ResourceId key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
+    public static AudioSource getAudioSource(@Nullable ResourceId key) {
         return audioSources.get(key);
     }
 
     /**
      * Adds the given audio source to the list of audio sources.
      *
-     * @param key audio source's key
      * @param source audio source
-     *
-     * @throws NullPointerException arguments can't be null
      */
     public static void addAudioSource(@NotNull AudioSource source) {
-        if (source == null) {
-            throw new NullPointerException();
-        }
         if (!audioSources.containsKey(source.getResourceId())) {
             audioSources.put(source.getResourceId(), source);
         }
@@ -709,15 +607,6 @@ public class ResourceManager {
     //
     //misc----------------------------------------------------------------------
     //
-    /**
-     * Returns the next resource id.
-     *
-     * @return the next resource id
-     */
-    public static int getNextId() {
-        return nextId++;
-    }
-
     /**
      * Releases the textures, meshes, splines, FBOs and the window.
      */

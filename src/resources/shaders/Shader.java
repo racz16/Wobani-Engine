@@ -1,4 +1,4 @@
-package shaders;
+package resources.shaders;
 
 import java.io.*;
 import java.nio.*;

@@ -13,13 +13,15 @@ public class ResourceId {
     private int index;
 
     private ResourceId(@Nullable List<File> paths, int index) {
-        id = getNextId();
-        this.index = index;
-        if (paths != null) {
+        if (paths == null || paths.isEmpty()) {
+            id = getNextId();
+        } else {
+            id = 0;
             for (File path : paths) {
                 this.paths.add(path.getAbsoluteFile());
             }
         }
+        this.index = index;
     }
 
     public ResourceId() {
@@ -55,6 +57,7 @@ public class ResourceId {
         return nextId++;
     }
 
+    @NotNull
     public static List<ResourceId> getResourceIds(@NotNull File path, int segments) {
         List<ResourceId> ids = new ArrayList<>(segments);
         List<File> paths = new ArrayList<>(1);
@@ -68,10 +71,10 @@ public class ResourceId {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 89 * hash + this.id;
-        hash = 89 * hash + Objects.hashCode(this.paths);
-        hash = 89 * hash + this.index;
+        int hash = 3;
+        hash = 67 * hash + this.id;
+        hash = 67 * hash + Objects.hashCode(this.paths);
+        hash = 67 * hash + this.index;
         return hash;
     }
 

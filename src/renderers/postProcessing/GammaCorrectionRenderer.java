@@ -1,7 +1,7 @@
 package renderers.postProcessing;
 
+import resources.shaders.postProcessing.GammaCorrectionShader;
 import core.*;
-import shaders.postProcessing.*;
 import toolbox.annotations.*;
 
 /**

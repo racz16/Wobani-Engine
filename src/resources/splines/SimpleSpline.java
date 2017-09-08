@@ -509,4 +509,14 @@ public class SimpleSpline implements Spline {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "SimpleSpline{" + "controlPoints=" + controlPoints + ", vao=" + vao
+                + ", valid=" + valid + ", lengthValid=" + lengthValid
+                + ", numberOfPoints=" + numberOfPoints + ", loopSpline=" + loopSpline
+                + ", dynamic=" + dynamic + ", aabbMin=" + aabbMin + ", aabbMax=" + aabbMax
+                + ", furthestVertexDistance=" + furthestVertexDistance + ", dataSize=" + dataSize
+                + ", distances=" + distances + ", length=" + length + ", resourceId=" + resourceId + '}';
+    }
+
 }

@@ -127,8 +127,7 @@ public class StaticMesh implements Mesh {
 
         List<ResourceId> ids = ResourceId.getResourceIds(new File(path), meshCount);
         for (int i = 0; i < meshCount; ++i) {
-            String key = path + "." + i;
-            StaticMesh me = (StaticMesh) ResourceManager.getMesh(key);
+            StaticMesh me = (StaticMesh) ResourceManager.getMesh(new ResourceId(new File(path)));
             if (me == null) {
                 me = new StaticMesh(AIMesh.create(meshesBuffer.get(i)), path, ids.get(i));
             }
@@ -583,6 +582,16 @@ public class StaticMesh implements Mesh {
     @Override
     public Vector3f getAabbMin() {
         return new Vector3f(aabbMin);
+    }
+
+    @Override
+    public String toString() {
+        return "StaticMesh{" + "vao=" + vao + ", vertexCount=" + vertexCount
+                + ", faceCount=" + faceCount + ", furthestVertexDistance="
+                + furthestVertexDistance + ", aabbMin=" + aabbMin + ", aabbMax="
+                + aabbMax + ", position=" + position + ", uv=" + uv + ", normal="
+                + normal + ", tangent=" + tangent + ", indices=" + indices
+                + ", meta=" + meta + ", resourceId=" + resourceId + '}';
     }
 
 }

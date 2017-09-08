@@ -1,6 +1,6 @@
 package renderers.postProcessing;
 
-import shaders.postProcessing.*;
+import resources.shaders.postProcessing.GrayscaleShader;
 import toolbox.annotations.*;
 
 /**
