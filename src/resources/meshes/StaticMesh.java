@@ -17,6 +17,7 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import resources.ResourceManager.ResourceState;
 import resources.*;
+import toolbox.*;
 import toolbox.annotations.*;
 
 /**
@@ -25,7 +26,7 @@ import toolbox.annotations.*;
  * StaticMesh's data store policy including when and where the data should be
  * stored.
  *
- * @see #loadModel(String path)
+ * @see #loadModel(File path)
  */
 public class StaticMesh implements Mesh {
 
@@ -88,13 +89,13 @@ public class StaticMesh implements Mesh {
      * @param mesh mesh
      * @param path model's relative path (with extension like
      * "res/models/myModel.obj")
-     * @param index the loadaed model's indexth mesh
+     * @param resourceId the mesh's id
      */
-    private StaticMesh(@NotNull AIMesh mesh, @NotNull String path, @NotNull ResourceId resourceId) {
+    private StaticMesh(@NotNull AIMesh mesh, @NotNull File path, @NotNull ResourceId resourceId) {
         faceCount = mesh.mNumFaces();
         vertexCount = faceCount * 3;
         computeFrustumCullingData(mesh);
-        meta.setPath(path);
+        meta.setPaths(Utility.wrapObjectByList(path));
         meta.setLastActiveToNow();
         meta.setDataStorePolicy(ResourceState.ACTION);
 
@@ -119,15 +120,15 @@ public class StaticMesh implements Mesh {
      * @return list of model's meshes
      */
     @NotNull
-    public static List<StaticMesh> loadModel(@NotNull String path) {
+    public static List<StaticMesh> loadModel(@NotNull File path) {
         AIScene scene = getSceneAssimp(path);
         List<StaticMesh> meshes = new ArrayList<>();
         int meshCount = scene.mNumMeshes();
         PointerBuffer meshesBuffer = scene.mMeshes();
 
-        List<ResourceId> ids = ResourceId.getResourceIds(new File(path), meshCount);
+        List<ResourceId> ids = ResourceId.getResourceIds(path, meshCount);
         for (int i = 0; i < meshCount; ++i) {
-            StaticMesh me = (StaticMesh) ResourceManager.getMesh(new ResourceId(new File(path)));
+            StaticMesh me = (StaticMesh) ResourceManager.getMesh(new ResourceId(path));
             if (me == null) {
                 me = new StaticMesh(AIMesh.create(meshesBuffer.get(i)), path, ids.get(i));
             }
@@ -145,7 +146,7 @@ public class StaticMesh implements Mesh {
      * @return list of GameObjects
      */
     @NotNull
-    public static List<GameObject> loadModelToGameObjects(@NotNull String path) {
+    public static List<GameObject> loadModelToGameObjects(@NotNull File path) {
         List<GameObject> list = new ArrayList<>();
         for (StaticMesh me : loadModel(path)) {
             GameObject g = new GameObject();
@@ -164,7 +165,7 @@ public class StaticMesh implements Mesh {
      * @return GameObject
      */
     @NotNull
-    public static GameObject loadModelToGameObject(@NotNull String path) {
+    public static GameObject loadModelToGameObject(@NotNull File path) {
         GameObject g = new GameObject();
         for (StaticMesh me : loadModel(path)) {
             g.addComponent(new MeshComponent(me));
@@ -179,16 +180,11 @@ public class StaticMesh implements Mesh {
      * "res/models/myModel.obj")
      * @return model's scene
      *
-     * @throws IllegalArgumentException if there is no file on the given path
      * @throws IllegalStateException if assimp can't load the data from the file
      */
     @NotNull
-    private static AIScene getSceneAssimp(@NotNull String path) {
-        File file = new File(path);
-        if (!file.exists()) {
-            throw new IllegalArgumentException(path + " file doesn't exist");
-        }
-        AIScene scene = aiImportFile(file.getPath(), aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+    private static AIScene getSceneAssimp(@NotNull File path) {
+        AIScene scene = aiImportFile(path.getPath(), aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
         if (scene == null) {
             throw new IllegalStateException(aiGetErrorString());
         }
@@ -529,8 +525,8 @@ public class StaticMesh implements Mesh {
      * @return the loaded model's path
      */
     @NotNull
-    public String getPath() {
-        return meta.getPath();
+    public File getPath() {
+        return meta.getPaths().get(0);
     }
 
     /**

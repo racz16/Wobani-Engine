@@ -211,7 +211,7 @@ public class Example1Window extends javax.swing.JFrame {
     private void updateImportant() {
         lblFps.setText(Time.getFps() + " FPS");
         float milisecs = 1.0f / Time.getFps();
-        lblMsec.setText(milisecs + " msec");
+        lblMsec.setText(milisecs + " sec");
 
         int triangles = 0;
         int meshes = 0;

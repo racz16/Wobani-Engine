@@ -10,7 +10,7 @@ import toolbox.annotations.*;
 /**
  * Dynamic texture for FBO attachments.
  */
-public class DynamicTexture extends AbstractTexture implements Texture2D {
+public class DynamicTexture2D extends AbstractTexture implements Texture2D {
 
     /**
      * The texture data size (in bytes).
@@ -50,7 +50,7 @@ public class DynamicTexture extends AbstractTexture implements Texture2D {
      * @throws IllegalArgumentException width and height must be positive
      * @throws IllegalArgumentException samples can't be lower than 1
      */
-    public DynamicTexture(@NotNull FboAttachmentSlot attachmentType, @NotNull Vector2i size, boolean floatingPoint, boolean multisampled, int samples, @Nullable ByteBuffer image) {
+    public DynamicTexture2D(@NotNull FboAttachmentSlot attachmentType, @NotNull Vector2i size, boolean floatingPoint, boolean multisampled, int samples, @Nullable ByteBuffer image) {
         if (attachmentType == null || size == null) {
             throw new NullPointerException();
         }

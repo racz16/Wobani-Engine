@@ -1,5 +1,7 @@
 package toolbox;
 
+import org.lwjgl.glfw.*;
+
 /**
  * By calling the timing method every frame, it computes the delta time factor
  * and the frame per sec value.
@@ -86,6 +88,15 @@ public class Time {
      */
     public static int getFps() {
         return lastFps;
+    }
+
+    /**
+     * Retruns the elapsed time since the start.
+     *
+     * @return the elapsed time since the start (in seconds)
+     */
+    public static double getTime() {
+        return GLFW.glfwGetTime();
     }
 
 }

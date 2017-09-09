@@ -18,7 +18,6 @@ import toolbox.annotations.*;
  */
 public class Scene {
 
-    //TODO skybox
     //TODO merging splines and meshes?
     /**
      * Contains all the GameObjects.

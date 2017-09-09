@@ -14,6 +14,7 @@ import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import resources.*;
 import resources.ResourceManager.ResourceState;
+import toolbox.*;
 import toolbox.annotations.*;
 
 /**
@@ -52,8 +53,8 @@ public class AudioBuffer implements Resource {
      * @param path sound file's relative path (with extension like
      * "res/sounds/mySound.ogg")
      */
-    private AudioBuffer(@NotNull String path) {
-        meta.setPath(path);
+    private AudioBuffer(@NotNull File path) {
+        meta.setPaths(Utility.wrapObjectByList(path));
         meta.setLastActiveToNow();
         meta.setDataStorePolicy(ResourceManager.ResourceState.ACTION);
 
@@ -61,7 +62,7 @@ public class AudioBuffer implements Resource {
         ramToAction();
 
         meta.setDataSize(data.capacity());
-        resourceId = new ResourceId(new File(path));
+        resourceId = new ResourceId(path);
         ResourceManager.addAudioBuffer(this);
     }
 
@@ -103,8 +104,7 @@ public class AudioBuffer implements Resource {
         try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
             ByteBuffer vorbis = null;
             try {
-                File file = new File(getPath());
-                FileInputStream fis = new FileInputStream(file);
+                FileInputStream fis = new FileInputStream(getPath());
                 FileChannel fc = fis.getChannel();
                 vorbis = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
                 fc.close();
@@ -174,8 +174,8 @@ public class AudioBuffer implements Resource {
      * "res/sounds/mySound.ogg")
      * @return audio buffer
      */
-    public static AudioBuffer loadSound(@NotNull String path) {
-        AudioBuffer sound = ResourceManager.getAudioBuffer(new ResourceId(new File(path)));
+    public static AudioBuffer loadSound(@NotNull File path) {
+        AudioBuffer sound = ResourceManager.getAudioBuffer(new ResourceId(path));
         if (sound != null) {
             return sound;
         }
@@ -349,8 +349,8 @@ public class AudioBuffer implements Resource {
      * @return the sound's path
      */
     @NotNull
-    public String getPath() {
-        return meta.getPath();
+    public File getPath() {
+        return meta.getPaths().get(0);
     }
 
     @Override

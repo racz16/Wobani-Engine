@@ -148,7 +148,7 @@ public class QuadMesh implements Mesh {
 
     @Override
     public int getDataSizeInAction() {
-        return vao == null || !vao.isUsable() ? 0 : 72;
+        return vao == null || !vao.isUsable() ? 0 : 104;
     }
 
     @Override
@@ -156,11 +156,6 @@ public class QuadMesh implements Mesh {
 
     }
 
-    /**
-     * Releases the mesh's data. After calling this method, you can't use this
-     * mesh for anything. However calling the getInstance method, you'll get a
-     * new, usable instance.
-     */
     @Override
     public void release() {
         vao.release();

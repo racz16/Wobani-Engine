@@ -944,7 +944,7 @@ public class Fbo implements Resource {
             }
 
             if (type == FboAttachmentType.TEXTURE) {
-                texture = new DynamicTexture(slot, size, floatingPoint, multisampled, Settings.getMsaaLevel(), null);
+                texture = new DynamicTexture2D(slot, size, floatingPoint, multisampled, Settings.getMsaaLevel(), null);
                 if (multisampled) {
                     GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot.getAttachmet() + index, GL32.GL_TEXTURE_2D_MULTISAMPLE, texture.getId(), 0);
                 } else {

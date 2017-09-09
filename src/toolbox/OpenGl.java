@@ -47,8 +47,69 @@ public class OpenGl {
          *
          * @return the face culling mode's OpenGL code
          */
-        public int getOpenGlCode() {
+        public int getCode() {
             return openGlCode;
+        }
+    }
+
+    /**
+     * Depth test mode.
+     */
+    public enum DepthTestMode {
+        /**
+         * Never pass the depth test.
+         */
+        NEVER(GL11.GL_NEVER),
+        /**
+         * Pass the depth test if the new value is less.
+         */
+        LESS(GL11.GL_LESS),
+        /**
+         * Pass the depth test if the new value is equal.
+         */
+        EQUAL(GL11.GL_EQUAL),
+        /**
+         * Pass the depth test if the new value is less or equal.
+         */
+        LESS_OR_EQUAL(GL11.GL_LEQUAL),
+        /**
+         * Pass the depth test if the new value is greater.
+         */
+        GREATER(GL11.GL_GREATER),
+        /**
+         * Pass the depth test if the new value isn't equal.
+         */
+        NOT_EQUAL(GL11.GL_NOTEQUAL),
+        /**
+         * Pass the depth test if the new value is greater or equal.
+         */
+        GREATER_OR_EQUAL(GL11.GL_GEQUAL),
+        /**
+         * Always pass the depth test.
+         */
+        ALWAYS(GL11.GL_ALWAYS);
+
+        /**
+         * Depth test mode's OpenGL code.
+         */
+        private final int code;
+
+        /**
+         * Initializes a new DepthTestMode to the given value.
+         *
+         * @param code depth test mode's OpenGL code
+         */
+        private DepthTestMode(int code) {
+            this.code = code;
+        }
+
+        /**
+         * Returns the depth test mode's OpenGL code.
+         *
+         * @return the depth test mode's OpenGL code
+         */
+        public int getCode() {
+            return code;
         }
     }
 
@@ -114,6 +175,56 @@ public class OpenGl {
         } else {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
         }
+    }
+
+    /**
+     * Returns whether the depth mask is enabled.
+     *
+     * @return true if the depth mask is enabled, false otherwise
+     */
+    public static boolean isDepthMask() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer ib = stack.callocInt(1);
+            GL11.glGetIntegerv(GL11.GL_DEPTH_WRITEMASK, ib);
+            return ib.get(0) == GL11.GL_TRUE;
+        }
+    }
+
+    /**
+     * Sets whether or not enable the depth mask.
+     *
+     * @param depthMask true if you would like to enable the depth maks, false
+     * otheriwse
+     */
+    public static void setDepthMask(boolean depthMask) {
+        GL11.glDepthMask(depthMask);
+    }
+
+    /**
+     * Returns the depth test mode.
+     *
+     * @return the depth test mode
+     */
+    public static DepthTestMode getDepthTestMode() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer ib = stack.callocInt(1);
+            GL11.glGetIntegerv(GL11.GL_DEPTH_FUNC, ib);
+            for (DepthTestMode mode : DepthTestMode.values()) {
+                if (mode.getCode() == ib.get(0)) {
+                    return mode;
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Sets the depth test mode to the given value.
+     *
+     * @param depthMode depth test mode
+     */
+    public static void setDepthTestMode(@NotNull DepthTestMode depthMode) {
+        GL11.glDepthFunc(depthMode.getCode());
     }
 
     /**
@@ -216,7 +327,7 @@ public class OpenGl {
             IntBuffer ib = stack.callocInt(1);
             GL11.glGetIntegerv(GL11.GL_CULL_FACE_MODE, ib);
             for (FaceCullingMode mode : FaceCullingMode.values()) {
-                if (mode.getOpenGlCode() == ib.get(0)) {
+                if (mode.getCode() == ib.get(0)) {
                     return mode;
                 }
             }
@@ -228,14 +339,9 @@ public class OpenGl {
      * Sets the face culling mode to the given value.
      *
      * @param faceCulling face culling mode
-     *
-     * @throws NullPointerException parameter can't be null
      */
     public static void setFaceCullingMode(@NotNull FaceCullingMode faceCulling) {
-        if (faceCulling == null) {
-            throw new NullPointerException();
-        }
-        GL11.glCullFace(faceCulling.getOpenGlCode());
+        GL11.glCullFace(faceCulling.getCode());
     }
 
     /**

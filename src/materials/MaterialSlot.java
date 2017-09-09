@@ -1,5 +1,6 @@
 package materials;
 
+import java.io.*;
 import java.util.*;
 import org.joml.*;
 import resources.textures.*;
@@ -13,7 +14,6 @@ import toolbox.annotations.*;
  * map, you should set a texture, shaders can't do anything with a single color
  * as a normal map.
  */
-//TODO add cubemaptexture
 public class MaterialSlot {
 
     /**
@@ -25,9 +25,13 @@ public class MaterialSlot {
      */
     private Vector4f color;
     /**
-     * The slot's texture.
+     * The slot's 2D texture.
      */
     private Texture2D texture;
+    /**
+     * The slot's cubemap texture.
+     */
+    private CubeMapTexture cubeMapTexture;
     /**
      * Texture's tile factor along U and V directions.
      */
@@ -81,10 +85,19 @@ public class MaterialSlot {
     /**
      * Initializes a new MaterialSlot to the given value.
      *
-     * @param texture texture
+     * @param texture 2D texture
      */
     public MaterialSlot(@Nullable Texture2D texture) {
         setTexture(texture);
+    }
+
+    /**
+     * Initializes a new MaterialSlot to the given value.
+     *
+     * @param texture cubemap texture
+     */
+    public MaterialSlot(@Nullable CubeMapTexture texture) {
+        setCubeMapTexture(texture);
     }
 
     /**
@@ -95,8 +108,8 @@ public class MaterialSlot {
      * @param sRgb determines whether the texture is in sRGB color space
      *
      */
-    public MaterialSlot(@NotNull String path, boolean sRgb) {
-        setTexture(StaticTexture.loadTexture(path, sRgb));
+    public MaterialSlot(@NotNull File path, boolean sRgb) {
+        setTexture(StaticTexture2D.loadTexture(path, sRgb));
     }
 
     /**
@@ -167,6 +180,25 @@ public class MaterialSlot {
      */
     public void setTexture(@Nullable Texture2D texture) {
         this.texture = texture;
+    }
+
+    /**
+     * Returns the MaterialSlot's cubemap texture.
+     *
+     * @return the MaterialSlot's cubemap texture
+     */
+    @Nullable
+    public CubeMapTexture getCubeMapTexture() {
+        return cubeMapTexture;
+    }
+
+    /**
+     * Sets the cubemap texture to the given value.
+     *
+     * @param cubeMapTexture cubemap texture
+     */
+    public void setCubeMapTexture(@Nullable CubeMapTexture cubeMapTexture) {
+        this.cubeMapTexture = cubeMapTexture;
     }
 
     /**

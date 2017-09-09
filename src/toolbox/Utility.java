@@ -323,8 +323,15 @@ public class Utility {
         return color.get(color.minComponent()) >= 0 && color.get(color.maxComponent()) <= 1;
     }
 
+    /**
+     * Wraps the given object by a list.
+     *
+     * @param <T> type
+     * @param object object to wrap
+     * @return list
+     */
     @NotNull
-    public static <T> List<T> wrapObjectByList(T object) {
+    public static <T> List<T> wrapObjectByList(@Nullable T object) {
         List<T> list = new ArrayList<>(1);
         list.add(object);
         return list;

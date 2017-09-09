@@ -204,7 +204,7 @@ public abstract class AbstractTexture implements Texture {
                 wrapingW = value;
                 break;
         }
-        GL11.glTexParameteri(getTextureType(), type.getOpenGlCode(), value.getOpenGlCode());
+        GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
     }
 
     /**
@@ -245,7 +245,7 @@ public abstract class AbstractTexture implements Texture {
         } else {
             minification = value;
         }
-        GL11.glTexParameteri(getTextureType(), type.getOpenGlCode(), value.getOpenGlCode());
+        GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
     }
 
     /**

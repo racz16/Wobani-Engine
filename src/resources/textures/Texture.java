@@ -57,7 +57,7 @@ public interface Texture extends Resource {
          *
          * @return the filter's OpenGL code
          */
-        public int getOpenGlCode() {
+        public int getCode() {
             return openGlCode;
         }
     }
@@ -94,7 +94,7 @@ public interface Texture extends Resource {
          *
          * @return the texture filter type's OpenGL code
          */
-        public int getOpenGlCode() {
+        public int getCode() {
             return openGlCode;
         }
     }
@@ -139,7 +139,7 @@ public interface Texture extends Resource {
          *
          * @return the texture wrap mode's OpenGL code
          */
-        public int getOpenGlCode() {
+        public int getCode() {
             return openGlCode;
         }
     }
@@ -180,7 +180,7 @@ public interface Texture extends Resource {
          *
          * @return the texture wrap type's OpenGL code
          */
-        public int getOpenGlCode() {
+        public int getCode() {
             return openGlCode;
         }
     }

@@ -129,10 +129,10 @@ public class RenderingPipeline {
             screenSpaceFbo.bind();
             screenSpaceFbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
             screenSpaceFbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 1);
-            DynamicTexture texture = (DynamicTexture) screenSpaceFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 0);
+            DynamicTexture2D texture = (DynamicTexture2D) screenSpaceFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 0);
             texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
             texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
-            texture = (DynamicTexture) screenSpaceFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 1);
+            texture = (DynamicTexture2D) screenSpaceFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 1);
             texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
             texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
             if (!screenSpaceFbo.isComplete()) {
@@ -528,6 +528,7 @@ public class RenderingPipeline {
         addRendererToTheEnd(ShadowRenderer.getInstance());
         addRendererToTheEnd(BlinnPhongRenderer.getInstance());
         addRendererToTheEnd(SolidColorRenderer.getInstance());
+        addRendererToTheEnd(SkyBoxRenderer.getInstance());
         //invert
         Renderer renderer = InvertRenderer.getInstance();
         renderer.setActive(false);

@@ -1,14 +1,14 @@
 package renderers;
 
-import materials.Material;
-import resources.shaders.BlinnPhongShader;
 import components.camera.*;
 import components.renderables.*;
 import core.*;
+import materials.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import resources.*;
 import resources.meshes.*;
+import resources.shaders.*;
 import resources.splines.*;
 import resources.textures.*;
 import toolbox.*;
@@ -95,7 +95,7 @@ public class BlinnPhongRenderer extends Renderer {
             afterDrawRenderable(spline);
         }
         shader.stop();
-        GL11.glEnable(GL11.GL_CULL_FACE);
+        OpenGl.setFaceCulling(true);
     }
 
     /**

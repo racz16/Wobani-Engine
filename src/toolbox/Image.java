@@ -30,21 +30,18 @@ public class Image {
      *
      * @param path image's relative path (with extension like
      * "res/textures/myTexture.png")
+     * @param flip true if you want to flip the image upside down, false
+     * otherwise
      *
-     * @throws IllegalArgumentException if the file doesn't exists
      * @throws RuntimeException stbi can't load the image
      */
-    public Image(@NotNull String path) {
-        File file = new File(path);
-        if (!file.exists()) {
-            throw new IllegalArgumentException(path + " file doesn't exist");
-        }
-        stbi_set_flip_vertically_on_load(true);
+    public Image(@NotNull File path, boolean flip) {
+        stbi_set_flip_vertically_on_load(flip);
         try (MemoryStack stack = stackPush()) {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer comp = stack.mallocInt(1);
-            image = stbi_load(path, w, h, comp, 4);
+            image = stbi_load(path.getPath(), w, h, comp, 4);
             if (image == null) {
                 throw new RuntimeException("Failed to load an image file!\n" + stbi_failure_reason());
             }
