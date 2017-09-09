@@ -2,26 +2,21 @@ package renderers;
 
 import components.renderables.*;
 import core.*;
-import materials.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import resources.*;
 import resources.meshes.*;
 import resources.shaders.*;
 import resources.splines.*;
-import resources.textures.*;
 import toolbox.*;
 import toolbox.annotations.*;
 
 /**
- * This Renderer can draw meshes and splines by using the Blinn-Phong shading.
- * You can fill the materials with diffuse color or diffuse map, specular color
- * or specular map and normal map. If you set the appropirate parameters, the
- * specular map's alpha channel used as the glossiness value and the normal
- * map's alpha channel as a parallax map. If you don't fill the diffuse or
- * specular slots, the shader uses default values (basically you can even use
- * this Renderer with an empty material).
- *
+ * This renderer can draw a skybox. In theory it can render any number of meshes
+ * and splines, but in practice it's adivsed to only use one cube. To render the
+ * cube, it's material must contain a CubeMapTexture in the diffuse slot. If
+ * there is no CubeMapTexture in the diffuse slot, the entire cube will be
+ * filled with mid-grey color.
  */
 public class SkyBoxRenderer extends Renderer {
 
@@ -136,9 +131,7 @@ public class SkyBoxRenderer extends Renderer {
     private void beforeDrawInstance(@NotNull MeshComponent rc) {
         numberOfRenderedElements++;
         numberOfRenderedFaces += rc.getMesh().getFaceCount();
-        Material material = rc.getMaterial();
-        CubeMapTexture texture = material.getSlot(Material.DIFFUSE).getCubeMapTexture();
-        texture.bindToTextureUnit(0);
+        shader.loadUniforms(rc.getMaterial());
         if (!rc.isTwoSided()) {
             OpenGl.setFaceCulling(true);
         } else {
@@ -153,9 +146,7 @@ public class SkyBoxRenderer extends Renderer {
      */
     private void beforeDrawInstance(@NotNull SplineComponent rc) {
         numberOfRenderedElements++;
-        Material material = rc.getMaterial();
-        CubeMapTexture texture = material.getSlot(Material.DIFFUSE).getCubeMapTexture();
-        texture.bindToTextureUnit(0);
+        shader.loadUniforms(rc.getMaterial());
     }
 
     /**

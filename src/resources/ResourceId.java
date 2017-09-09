@@ -51,7 +51,7 @@ public class ResourceId {
         } else {
             id = 0;
             for (File path : paths) {
-                this.paths.add(path.getAbsoluteFile());
+                this.paths.add(new File(path.getPath()));
             }
         }
         this.index = index;
@@ -122,7 +122,7 @@ public class ResourceId {
      */
     @NotNull @ReadOnly
     public File getPath(int index) {
-        return new File(paths.get(index).getAbsolutePath());
+        return new File(paths.get(index).getPath());
     }
 
     /**

@@ -2,17 +2,16 @@ package resources.shaders;
 
 import java.io.*;
 import java.util.*;
+import materials.*;
 import resources.*;
 import toolbox.annotations.*;
 
 /**
- * This shader can draw meshes and splines by using the Blinn-Phong shading. You
- * can fill the materials with diffuse color or diffuse map, specular color or
- * specular map and normal map. If you set the appropirate parameters, the
- * specular map's alpha channel used as the glossiness value and the normal
- * map's alpha channel as a parallax map. If you don't fill the diffuse or
- * specular slots, the shader uses default values (basically you can even use
- * this Renderer with an empty material).
+ * This shader can draw a skybox. In theory it can render any number of meshes
+ * and splines, but in practice it's adivsed to only use one cube. To render the
+ * cube, it's material must contain a CubeMapTexture in the diffuse slot. If
+ * there is no CubeMapTexture in the diffuse slot, the entire cube will be
+ * filled with mid-grey color.
  */
 public class SkyBoxShader extends Shader {
 
@@ -61,6 +60,16 @@ public class SkyBoxShader extends Shader {
     @Override
     protected void connectUniforms() {
         connectUniform("cubeMap");
+        connectUniform("isThereCubeMap");
+    }
+
+    public void loadUniforms(@NotNull Material material) {
+        if (material.getSlot(Material.DIFFUSE) != null && material.getSlot(Material.DIFFUSE).getCubeMapTexture() != null) {
+            material.getSlot(Material.DIFFUSE).getCubeMapTexture().bindToTextureUnit(0);
+            loadBoolean("isThereCubeMap", true);
+        } else {
+            loadBoolean("isThereCubeMap", false);
+        }
     }
 
     @Override
