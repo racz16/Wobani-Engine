@@ -23,11 +23,12 @@ import toolbox.annotations.*;
  * specular slots, the shader uses default values (basically you can even use
  * this Renderer with an empty material).
  *
- * @see MaterialSlot#GLOSSINESS_USE_FLOAT
- * @see MaterialSlot#POM_USE_FLOAT
- * @see MaterialSlot#POM_SCALE_FLOAT
- * @see MaterialSlot#POM_MIN_LAYERS_FLOAT
- * @see MaterialSlot#POM_MAX_LAYERS_FLOAT
+ * @see Material#PARAM_POM_MAX_LAYERS_F
+ * @see Material#PARAM_POM_MIN_LAYERS_F
+ * @see Material#PARAM_POM_SCALE_F
+ * @see Material#PARAM_USE_POM_F
+ * @see Material#PARAM_REFRACTION_INDEX_F
+ * @see Material#PARAM_USE_GLOSSINESS_F
  */
 public class BlinnPhongRenderer extends Renderer {
 

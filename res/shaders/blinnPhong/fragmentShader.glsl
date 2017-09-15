@@ -24,6 +24,17 @@ struct Material {
     float POMScale;
     float POMMinLayers;
     float POMMaxLayers;
+
+    bool isThereReflectionMap;
+    samplerCube reflection;
+    bool isThereRefractionMap;
+    samplerCube refraction;
+    float refractionIndex;
+    bool isThereEnvironmentIntensityMap;
+    sampler2D environmentIntensity;
+    vec2 environmentIntensityTile;
+    vec2 environmentIntensityOffset;
+    vec3 environmentIntensityColor;
 }; 
 
 struct Light {              //base alignment        alignment offset
@@ -73,10 +84,11 @@ vec3 calculateAmbientColor(vec3 materialDiffuseColor, vec3 lightAmbientColor);
 float calculateAttenuation(vec3 fragmentPosition, vec3 lightPosition, vec3 lightAttenuation);
 float calculateCutOff(vec3 lightToFragmentDirection, vec3 lightDirection, vec2 lightCutOff);
 //data collection
-vec3 getDiffuseColor(vec2 textureCoordinates);
+vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVector);
 vec4 getSpecularColor(vec2 textureCoordinates);
 vec3 getNormalVector(vec2 textureCoordinates);
 vec2 getTextureCoordinates();
+vec3 getIntensity(vec2 textureCoordinates);
 //misc
 vec2 parallaxMapping(in vec3 textureCoordinates, in vec2 tangentViewDirection);
 float calculateShadow(bool receiveShadow, vec4 fragmentPositionLightSpace, vec3 normalVector);
@@ -87,12 +99,12 @@ void main(){
         return;
     }
     //collecting data
-    vec2 textureCoordinates = getTextureCoordinates();
-    vec3 diffuseColor = getDiffuseColor(textureCoordinates);
-    vec4 specularColor = getSpecularColor(textureCoordinates);
-    vec3 normalVector = getNormalVector(textureCoordinates);
     vec3 viewDirection = normalize(viewPositionF - fragmentPositionF);
     vec3 fragmentPosition = fragmentPositionF;
+    vec2 textureCoordinates = getTextureCoordinates();
+    vec3 normalVector = getNormalVector(textureCoordinates);
+    vec3 diffuseColor = getDiffuseColor(textureCoordinates, viewDirection, normalVector);
+    vec4 specularColor = getSpecularColor(textureCoordinates);
     //directional light
     vec3 result = calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, directionalLight);
     //shadows
@@ -103,6 +115,7 @@ void main(){
             result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights[i]);
         }
     }
+
     color = vec4(result, 1);
 }
 
@@ -123,7 +136,8 @@ vec3 calculateLight(vec3 materialDiffuseColor, vec4 materialSpecularColor, vec3 
 
 vec3 calculateDiffuseColor(vec3 materialDiffuseColor, vec3 lightDiffuseColor, vec3 normalVector, vec3 lightDirection){
     float diffuseStrength = max(dot(normalVector, -lightDirection), 0.0);
-    return lightDiffuseColor * diffuseStrength * materialDiffuseColor;
+    vec3 diffuse = lightDiffuseColor * diffuseStrength * materialDiffuseColor;
+    return diffuse;
 }
 
 vec3 calculateSpecularColor(vec4 materialSpecularColor, vec3 lightSpecularColor, vec3 normalVector, vec3 lightToFragmentDirection, vec3 viewDirection){
@@ -199,19 +213,56 @@ vec2 parallaxMapping(in vec3 tangentViewDirection, in vec2 textureCoordinates){
 //
 //data collection---------------------------------------------------------------
 //
-vec3 getDiffuseColor(vec2 textureCoordinates){
+vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVector){
+    vec3 diffuse;
     if(material.isThereDiffuseMap){
         vec4 tex = texture(material.diffuse, textureCoordinates * material.diffuseTile + material.diffuseOffset);
         if(tex.a == 0){
             discard;
         }
-        return tex.rgb;
+        diffuse = tex.rgb;
     }else{
         if(gamma != 1){
-            return pow(material.diffuseColor, vec3(2.2f));
+            diffuse = pow(material.diffuseColor, vec3(2.2f));
         }else{
-            return material.diffuseColor;
+            diffuse = material.diffuseColor;
         }
+    }
+
+    vec3 reflectionColor;
+    if(material.isThereReflectionMap){
+        vec3 reflectionVector = reflect(-viewDirection, normalVector);
+        reflectionColor = texture(material.reflection, reflectionVector).rgb;
+    }
+    vec3 refractionColor;
+    if(material.isThereRefractionMap){
+        vec3 refractionVector = refract(-viewDirection, normalVector, material.refractionIndex);
+        refractionColor = texture(material.refraction, refractionVector).rgb;
+    }
+    vec3 intensity = getIntensity(textureCoordinates);
+    return diffuse * intensity.r + reflectionColor * intensity.g + refractionColor * intensity.b;
+}
+
+vec3 getIntensity(vec2 textureCoordinates){
+    vec3 intensity;
+    float sum;
+    if(material.isThereEnvironmentIntensityMap){
+        intensity = texture(material.environmentIntensity, textureCoordinates * material.environmentIntensityTile + material.environmentIntensityOffset).rgb;
+    }else{
+        intensity = material.environmentIntensityColor;
+    }
+    if(!material.isThereReflectionMap){
+        intensity.g = 0;
+    }
+    if(!material.isThereRefractionMap){
+        intensity.b = 0;
+    }
+    sum = intensity.r + intensity.g + intensity.b;
+    if(sum == 0){
+        return vec3(1, 0, 0);
+    }else{
+        intensity /= sum;
+        return intensity;
     }
 }
 

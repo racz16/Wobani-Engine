@@ -63,6 +63,12 @@ public class SkyBoxShader extends Shader {
         connectUniform("isThereCubeMap");
     }
 
+    /**
+     * Loads the skybox's material properties to the shader as uniform
+     * variables.
+     *
+     * @param material material
+     */
     public void loadUniforms(@NotNull Material material) {
         if (material.getSlot(Material.DIFFUSE) != null && material.getSlot(Material.DIFFUSE).getCubeMapTexture() != null) {
             material.getSlot(Material.DIFFUSE).getCubeMapTexture().bindToTextureUnit(0);

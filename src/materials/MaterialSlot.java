@@ -40,41 +40,6 @@ public class MaterialSlot {
      * Texture coordinates' offset along U and V directions.
      */
     private final Vector2f textureOffset = new Vector2f(0);
-    /**
-     * Slot's float parameters.
-     */
-    private final Map<String, Float> floatParameters = new HashMap<>();
-    /**
-     * Slot's vector parameters.
-     */
-    private final Map<String, Vector4f> vectorParameters = new HashMap<>();
-    /**
-     * Slot's String parameters.
-     */
-    private final Map<String, String> stringParameters = new HashMap<>();
-
-    /**
-     * Determines whether the shader use the specular map's or the specular
-     * color's alpha chanel as a glossiness value.
-     */
-    public static final String GLOSSINESS_USE_FLOAT = "GLOSSINESS_USE_FLOAT";
-    /**
-     * Determines whether the shader use the normal map's alpha chanel as a
-     * parallax map.
-     */
-    public static final String POM_USE_FLOAT = "POM_USE_FLOAT";
-    /**
-     * Parallax occlussion map's scale factor.
-     */
-    public static final String POM_SCALE_FLOAT = "POM_SCALE_FLOAT";
-    /**
-     * Parallax occlussion map's minimum layers.
-     */
-    public static final String POM_MIN_LAYERS_FLOAT = "POM_MIN_LAYERS_FLOAT";
-    /**
-     * Parallax occlussion map's maximum layers.
-     */
-    public static final String POM_MAX_LAYERS_FLOAT = "POM_MAX_LAYERS_FLOAT";
 
     /**
      * Initializes a new MaterialSlot.
@@ -144,7 +109,6 @@ public class MaterialSlot {
      *
      * @return MaterialSlot's color
      */
-    @Nullable @ReadOnly
     public Vector4f getColor() {
         return color == null ? null : new Vector4f(color);
     }
@@ -243,134 +207,17 @@ public class MaterialSlot {
     }
 
     //
-    //parameters----------------------------------------------------------------
-    //
-    /**
-     * Returns the specified key's Float value. Float, String and vector
-     * parameters use distinct keys and values.
-     *
-     * @param key key
-     * @return the specified key's Float value
-     *
-     * @throws NullPointerException key can't be null
-     * @see #POM_SCALE_FLOAT
-     * @see #POM_MIN_LAYERS_FLOAT
-     * @see #POM_MAX_LAYERS_FLOAT
-     */
-    @Nullable
-    public Float getFloatParameter(@NotNull String key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        return floatParameters.get(key);
-    }
-
-    /**
-     * Sets the specified key's value to the given Float parameter. Note that
-     * the MaterialSlot doesn't check whether or not given value is valid so try
-     * to give sensable values. Float, String and vector parameters use distinct
-     * keys and values.
-     *
-     * @param key key
-     * @param value value
-     *
-     * @throws NullPointerException key can't be null
-     *
-     * @see #POM_SCALE_FLOAT
-     * @see #POM_MIN_LAYERS_FLOAT
-     * @see #POM_MAX_LAYERS_FLOAT
-     */
-    public void setFloatParameter(@NotNull String key, @Nullable Float value) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        floatParameters.put(key, value);
-    }
-
-    /**
-     * Returns the specified key's String value. Float, String and vector
-     * parameters use distinct keys and values.
-     *
-     * @param key key
-     * @return the specified key's String value
-     *
-     * @throws NullPointerException key can't be null
-     */
-    @Nullable
-    public String getStringParameter(@NotNull String key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        return stringParameters.get(key);
-    }
-
-    /**
-     * Sets the specified key's value to the given String parameter. Note that
-     * the MaterialSlot doesn't check whether or not given value is valid so try
-     * to give sensable values. Float, String and vector parameters use distinct
-     * keys and values.
-     *
-     * @param key key
-     * @param value value
-     *
-     * @throws NullPointerException key can't be null
-     */
-    public void setStringParameter(@NotNull String key, @Nullable String value) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        stringParameters.put(key, value);
-    }
-
-    /**
-     * Returns the specified key's vector value. Float, String and vector
-     * parameters use distinct keys and values.
-     *
-     * @param key key
-     * @return the specified key's vector value
-     *
-     * @throws NullPointerException key can't be null
-     */
-    @Nullable
-    public Vector4f getVectorParameter(@NotNull String key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        return vectorParameters.get(key);
-    }
-
-    /**
-     * Sets the specified key's value to the given vector parameter. Note that
-     * the MaterialSlot doesn't check whether or not given value is valid so try
-     * to give sensable values. Float, String and vector parameters use distinct
-     * keys and values.
-     *
-     * @param key key
-     * @param value value
-     *
-     * @throws NullPointerException key can't be null
-     */
-    public void setVectorParameter(@NotNull String key, @Nullable Vector4f value) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        vectorParameters.put(key, value);
-    }
-
-    //
     //misc----------------------------------------------------------------------
     //
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 37 * hash + (this.active ? 1 : 0);
-        hash = 37 * hash + Objects.hashCode(this.color);
-        hash = 37 * hash + Objects.hashCode(this.texture);
-        hash = 37 * hash + Objects.hashCode(this.textureTile);
-        hash = 37 * hash + Objects.hashCode(this.textureOffset);
-        hash = 37 * hash + Objects.hashCode(this.floatParameters);
-        hash = 37 * hash + Objects.hashCode(this.vectorParameters);
-        hash = 37 * hash + Objects.hashCode(this.stringParameters);
+        int hash = 5;
+        hash = 71 * hash + (this.active ? 1 : 0);
+        hash = 71 * hash + Objects.hashCode(this.color);
+        hash = 71 * hash + Objects.hashCode(this.texture);
+        hash = 71 * hash + Objects.hashCode(this.cubeMapTexture);
+        hash = 71 * hash + Objects.hashCode(this.textureTile);
+        hash = 71 * hash + Objects.hashCode(this.textureOffset);
         return hash;
     }
 
@@ -395,19 +242,13 @@ public class MaterialSlot {
         if (!Objects.equals(this.texture, other.texture)) {
             return false;
         }
+        if (!Objects.equals(this.cubeMapTexture, other.cubeMapTexture)) {
+            return false;
+        }
         if (!Objects.equals(this.textureTile, other.textureTile)) {
             return false;
         }
         if (!Objects.equals(this.textureOffset, other.textureOffset)) {
-            return false;
-        }
-        if (!Objects.equals(this.floatParameters, other.floatParameters)) {
-            return false;
-        }
-        if (!Objects.equals(this.vectorParameters, other.vectorParameters)) {
-            return false;
-        }
-        if (!Objects.equals(this.stringParameters, other.stringParameters)) {
             return false;
         }
         return true;
@@ -416,9 +257,8 @@ public class MaterialSlot {
     @Override
     public String toString() {
         return "MaterialSlot{" + "active=" + active + ", color=" + color
-                + ", texture=" + texture + ", textureTile=" + textureTile
-                + ", textureOffset=" + textureOffset + ", floatParameters=" + floatParameters
-                + ", vectorParameters=" + vectorParameters + ", stringParameters=" + stringParameters + '}';
+                + ", texture=" + texture + ", cubeMapTexture=" + cubeMapTexture
+                + ", textureTile=" + textureTile + ", textureOffset=" + textureOffset + '}';
     }
 
 }

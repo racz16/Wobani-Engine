@@ -19,11 +19,12 @@ import toolbox.annotations.*;
  * specular slots, the shader uses default values (basically you can even use
  * this Renderer with an empty material).
  *
- * @see MaterialSlot#GLOSSINESS_USE_FLOAT
- * @see MaterialSlot#POM_USE_FLOAT
- * @see MaterialSlot#POM_SCALE_FLOAT
- * @see MaterialSlot#POM_MIN_LAYERS_FLOAT
- * @see MaterialSlot#POM_MAX_LAYERS_FLOAT
+ * @see Material#PARAM_POM_MAX_LAYERS_F
+ * @see Material#PARAM_POM_MIN_LAYERS_F
+ * @see Material#PARAM_POM_SCALE_F
+ * @see Material#PARAM_USE_POM_F
+ * @see Material#PARAM_REFRACTION_INDEX_F
+ * @see Material#PARAM_USE_GLOSSINESS_F
  */
 public class BlinnPhongShader extends Shader {
 
@@ -100,6 +101,17 @@ public class BlinnPhongShader extends Shader {
         connectUniform("material.POMScale");
         connectUniform("material.POMMinLayers");
         connectUniform("material.POMMaxLayers");
+        //reflection
+        connectUniform("material.isThereReflectionMap");
+        connectUniform("material.reflection");
+        connectUniform("material.isThereRefractionMap");
+        connectUniform("material.refraction");
+        connectUniform("material.refractionIndex");
+        connectUniform("material.isThereEnvironmentIntensityMap");
+        connectUniform("material.environmentIntensity");
+        connectUniform("material.environmentIntensityColor");
+        connectUniform("material.environmentIntensityTile");
+        connectUniform("material.environmentIntensityOffset");
         //misc
         connectUniform("wireframe");
         connectUniform("viewPosition");
@@ -138,13 +150,13 @@ public class BlinnPhongShader extends Shader {
     }
 
     /**
-     * Loads the diffuse values from the given MaterialSlot to the shader as
-     * uniform variables.
+     * Loads the diffuse values from the given Material to the shader as uniform
+     * variables.
      *
-     * @param slot the MaterialSlot, which may contains the texture, the color
-     * and the parameters
+     * @param material renderable's material
      */
-    private void loadDiffuseSlot(@Nullable MaterialSlot slot) {
+    private void loadDiffuseSlot(@Nullable Material material) {
+        MaterialSlot slot = material.getSlot(Material.DIFFUSE);
         String isThereMapUniformName = "material.isThereDiffuseMap";
         String tileName = "material.diffuseTile";
         String offsetName = "material.diffuseOffset";
@@ -174,13 +186,13 @@ public class BlinnPhongShader extends Shader {
     }
 
     /**
-     * Loads the specular values from the given MaterialSlot to the shader as
+     * Loads the specular values from the given Material to the shader as
      * uniform variables.
      *
-     * @param slot the MaterialSlot, which may contains the texture, the color
-     * and the parameters
+     * @param material renderable's material
      */
-    private void loadSpecularSlot(@Nullable MaterialSlot slot) {
+    private void loadSpecularSlot(@Nullable Material material) {
+        MaterialSlot slot = material.getSlot(Material.SPECULAR);
         String isThereMapUniformName = "material.isThereSpecularMap";
         String tileName = "material.specularTile";
         String offsetName = "material.specularOffset";
@@ -197,7 +209,7 @@ public class BlinnPhongShader extends Shader {
                 loadBoolean(isThereMapUniformName, true);
                 loadVector2(tileName, slot.getTextureTile());
                 loadVector2(offsetName, slot.getTextureOffset());
-                Float isThereGlossiness = slot.getFloatParameter(MaterialSlot.GLOSSINESS_USE_FLOAT);
+                Float isThereGlossiness = material.getFloatParameter(Material.PARAM_USE_GLOSSINESS_F);
                 if (isThereGlossiness == null || isThereGlossiness != 1f) {
                     loadBoolean(useGlossiness, false);
                     if (color != null) {
@@ -222,13 +234,13 @@ public class BlinnPhongShader extends Shader {
     }
 
     /**
-     * Loads the normal values from the given MaterialSlot to the shader as
-     * uniform variables.
+     * Loads the normal values from the given Material to the shader as uniform
+     * variables.
      *
-     * @param slot the MaterialSlot, which may contains the texture, the color
-     * and the parameters
+     * @param material renderable's material
      */
-    private void loadNormalSlot(@Nullable MaterialSlot slot) {
+    private void loadNormalSlot(@Nullable Material material) {
+        MaterialSlot slot = material.getSlot(Material.NORMAL);
         String isThereMapUniformName = "material.isThereNormalMap";
         String useNormalUniformName = "useNormalMap";
         String tileName = "material.normalTile";
@@ -250,14 +262,14 @@ public class BlinnPhongShader extends Shader {
                 loadBoolean(useNormalUniformName, true);
                 loadVector2(tileName, slot.getTextureTile());
                 loadVector2(offsetName, slot.getTextureOffset());
-                Float usePom = slot.getFloatParameter(MaterialSlot.POM_USE_FLOAT);
+                Float usePom = material.getFloatParameter(Material.PARAM_USE_POM_F);
                 if (usePom != null && usePom == 1f) {
                     loadBoolean(isTherePomUniformName, true);
-                    Float value = slot.getFloatParameter(MaterialSlot.POM_SCALE_FLOAT);
+                    Float value = material.getFloatParameter(Material.PARAM_POM_SCALE_F);
                     loadFloat(POMScale, value == null ? defPOMScale : value);
-                    value = slot.getFloatParameter(MaterialSlot.POM_MIN_LAYERS_FLOAT);
+                    value = material.getFloatParameter(Material.PARAM_POM_MIN_LAYERS_F);
                     loadFloat(POMMinLayers, value == null ? defPOMMinLayers : value);
-                    value = slot.getFloatParameter(MaterialSlot.POM_MAX_LAYERS_FLOAT);
+                    value = material.getFloatParameter(Material.PARAM_POM_MAX_LAYERS_F);
                     loadFloat(POMMaxLayers, value == null ? defPOMMaxLayers : value);
                 } else {
                     loadBoolean(isTherePomUniformName, false);
@@ -273,17 +285,91 @@ public class BlinnPhongShader extends Shader {
     }
 
     /**
+     * Loads the reflection and refraction values from the given Material to the
+     * shader as uniform variables.
+     *
+     * @param material renderable's material
+     */
+    private void loadEnvironmentSlots(@Nullable Material material) {
+        //reflection
+        MaterialSlot reflectionSlot = material.getSlot(Material.REFLECTION);
+        String isThereReflectionMap = "material.isThereReflectionMap";
+        int reflectionTextureUnit = 4;
+        boolean reflectionUsable = reflectionSlot != null && reflectionSlot.isActive() && reflectionSlot.getCubeMapTexture() != null;
+        //refraction
+        MaterialSlot refractionSlot = material.getSlot(Material.REFRACTION);
+        String isThereRefractionMap = "material.isThereRefractionMap";
+        int refractionTextureUnit = 5;
+        String refractionIndex = "material.refractionIndex";
+        float index = material.getFloatParameter(Material.PARAM_REFRACTION_INDEX_F) == null ? 1f / 1.33f : material.getFloatParameter(Material.PARAM_REFRACTION_INDEX_F);
+        boolean refractionUsable = refractionSlot != null && refractionSlot.isActive() && refractionSlot.getCubeMapTexture() != null;
+        //intensity
+        MaterialSlot intensitySlot = material.getSlot(Material.ENVIRONTMENT_INTENSITY);
+        String isThereIntensityMap = "material.isThereEnvironmentIntensityMap";
+        String intensityColor = "material.environmentIntensityColor";
+        String tileName = "material.environmentIntensityTile";
+        String offsetName = "material.environmentIntensityOffset";
+        int intensityTextureUnit = 6;
+
+        if (reflectionUsable || refractionUsable) {
+            if (!reflectionUsable && refractionUsable) {
+                loadBoolean(isThereReflectionMap, false);
+
+                loadBoolean(isThereRefractionMap, true);
+                refractionSlot.getCubeMapTexture().bindToTextureUnit(refractionTextureUnit);
+                loadFloat(refractionIndex, index);
+            } else if (reflectionUsable && !refractionUsable) {
+                loadBoolean(isThereReflectionMap, true);
+                reflectionSlot.getCubeMapTexture().bindToTextureUnit(reflectionTextureUnit);
+
+                loadBoolean(isThereRefractionMap, false);
+            } else {
+                loadBoolean(isThereReflectionMap, true);
+                reflectionSlot.getCubeMapTexture().bindToTextureUnit(reflectionTextureUnit);
+
+                loadBoolean(isThereRefractionMap, true);
+                refractionSlot.getCubeMapTexture().bindToTextureUnit(refractionTextureUnit);
+                loadFloat(refractionIndex, index);
+            }
+            if (intensitySlot != null && intensitySlot.isActive()) {
+                Texture2D texture = intensitySlot.getTexture();
+                Vector4f color = intensitySlot.getColor();
+                if (texture != null) {
+                    texture.bindToTextureUnit(intensityTextureUnit);
+                    loadBoolean(isThereIntensityMap, true);
+                    loadVector2(tileName, intensitySlot.getTextureTile());
+                    loadVector2(offsetName, intensitySlot.getTextureOffset());
+                } else if (color != null) {
+                    loadVector3(intensityColor, new Vector3f(color.x, color.y, color.z));
+                    loadBoolean(isThereIntensityMap, false);
+                } else {
+                    loadBoolean(isThereIntensityMap, false);
+                    loadVector3(intensityColor, new Vector3f(1));
+                }
+            } else {
+                loadBoolean(isThereIntensityMap, false);
+                loadVector3(intensityColor, new Vector3f(1));
+            }
+        } else {
+            loadBoolean(isThereReflectionMap, false);
+            loadBoolean(isThereRefractionMap, false);
+        }
+    }
+
+    /**
      * Loads the given Material's data to the shader as uniform variables.
      *
      * @param material material
      */
     public void loadMaterial(@NotNull Material material) {
         //diffuse
-        loadDiffuseSlot(material.getSlot(Material.DIFFUSE));
+        loadDiffuseSlot(material);
         //specular
-        loadSpecularSlot(material.getSlot(Material.SPECULAR));
+        loadSpecularSlot(material);
         //normal
-        loadNormalSlot(material.getSlot(Material.NORMAL));
+        loadNormalSlot(material);
+        //reflection and refraction
+        loadEnvironmentSlots(material);
     }
 
     @Override
@@ -292,6 +378,9 @@ public class BlinnPhongShader extends Shader {
         connectTextureUnit("material.diffuse", 1);
         connectTextureUnit("material.specular", 2);
         connectTextureUnit("material.normal", 3);
+        connectTextureUnit("material.reflection", 4);
+        connectTextureUnit("material.refraction", 5);
+        connectTextureUnit("material.environmentIntensity", 6);
     }
 
     @NotNull

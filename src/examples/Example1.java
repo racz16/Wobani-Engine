@@ -38,6 +38,11 @@ public class Example1 {
      * Determines whether the window position changes affect each other.
      */
     private static boolean windowPositionChange;
+    /**
+     * The example's environment map used for the skybox, reflections and
+     * refractions.
+     */
+    private static CubeMapTexture environment;
 
     /**
      * Entry point, initializes the engine, the scene, then starts the game
@@ -67,12 +72,12 @@ public class Example1 {
      */
     private static void initialize() {
         try {
+            skybox();
             dragons();
             boxes();
             camera();
             spline();
             lightSources();
-            skybox();
             other();
         } catch (Exception ex) {
             Utility.logException(ex);
@@ -88,6 +93,10 @@ public class Example1 {
         Material dragonMat = new Material(BlinnPhongRenderer.class);
         dragonMat.setSlot(Material.DIFFUSE, new MaterialSlot(new Vector4f(0.5f, 0.5f, 0.5f, 1f)));
         dragonMat.setSlot(Material.SPECULAR, new MaterialSlot(new Vector4f(0.7f, 0.7f, 0.7f, 1f)));
+        dragonMat.setSlot(Material.REFLECTION, new MaterialSlot(environment));
+        dragonMat.setSlot(Material.REFRACTION, new MaterialSlot(environment));
+        dragonMat.setSlot(Material.ENVIRONTMENT_INTENSITY, new MaterialSlot(new Vector4f(1)));
+        dragonMat.setFloatParameter(Material.PARAM_REFRACTION_INDEX_F, 1f / 1.33f);
 
         GameObject dragon = StaticMesh.loadModelToGameObject(new File("res/models/dragon.obj"));
         dragon.getComponent(MeshComponent.class).setMaterial(dragonMat);
@@ -122,11 +131,11 @@ public class Example1 {
         Material boxMaterial = new Material(BlinnPhongRenderer.class);
         boxMaterial.setSlot(Material.SPECULAR, new MaterialSlot(new Vector4f(0.3f, 0.3f, 0.3f, 0.75f)));
         boxMaterial.setSlot(Material.NORMAL, new MaterialSlot(new File("res/textures/normal9.jpg"), false));
-//        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot("res/textures/normal7.png", false));
-//        boxMaterial.getSlot(Material.NORMAL).setFloatParameter(MaterialSlot.POM_USE_FLOAT, 1f);
-//        boxMaterial.getSlot(Material.NORMAL).setFloatParameter(MaterialSlot.POM_SCALE_FLOAT, 0.3f);
-//        boxMaterial.getSlot(Material.NORMAL).setFloatParameter(MaterialSlot.POM_MIN_LAYERS_FLOAT, 50f);
-//        boxMaterial.getSlot(Material.NORMAL).setFloatParameter(MaterialSlot.POM_MAX_LAYERS_FLOAT, 100f);
+//        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot(new File("res/textures/normal7.png"), false));
+//        boxMaterial.setFloatParameter(Material.PARAM_USE_POM_F, 1f);
+//        boxMaterial.setFloatParameter(Material.PARAM_POM_SCALE_F, 0.3f);
+//        boxMaterial.setFloatParameter(Material.PARAM_POM_MIN_LAYERS_F, 50f);
+//        boxMaterial.setFloatParameter(Material.PARAM_POM_MAX_LAYERS_F, 100f);
 
         GameObject box = new GameObject("bigBox");
         box.getTransform().setRelativePosition(new Vector3f(0, -40, -20));
@@ -230,10 +239,10 @@ public class Example1 {
         paths.add(new File("res/textures/ely_hills/hills_dn.tga"));
         paths.add(new File("res/textures/ely_hills/hills_bk.tga"));
         paths.add(new File("res/textures/ely_hills/hills_ft.tga"));
-        CubeMapTexture tex = StaticCubeMapTexture.loadTexture(paths, true);
+        environment = StaticCubeMapTexture.loadTexture(paths, true);
         GameObject skybox = new GameObject("skybox");
         Material sky = new Material(SkyBoxRenderer.class);
-        sky.setSlot(Material.DIFFUSE, new MaterialSlot(tex));
+        sky.setSlot(Material.DIFFUSE, new MaterialSlot(environment));
         MeshComponent mc = new MeshComponent(CubeMesh.getInstance(), sky);
         mc.setCastShadow(false);
         mc.setReceiveShadows(false);
