@@ -1,4 +1,4 @@
-package resources.textures;
+package resources.textures.cubeMapTexture;
 
 import core.*;
 import java.io.*;
@@ -7,6 +7,7 @@ import java.util.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.stb.*;
 import resources.*;
+import resources.textures.*;
 import toolbox.*;
 import toolbox.annotations.*;
 

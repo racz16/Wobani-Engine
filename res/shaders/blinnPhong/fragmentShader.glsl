@@ -73,7 +73,7 @@ out vec4 color;
 uniform Material material;
 uniform sampler2D shadowMap;
 uniform bool receiveShadow;
-uniform float gamma;
+uniform bool gamma;
 uniform bool wireframe;
 
 //lighting
@@ -222,7 +222,7 @@ vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVec
         }
         diffuse = tex.rgb;
     }else{
-        if(gamma != 1){
+        if(gamma){
             diffuse = pow(material.diffuseColor, vec3(2.2f));
         }else{
             diffuse = material.diffuseColor;

@@ -1,5 +1,6 @@
 package renderers.postProcessing;
 
+import resources.textures.texture2D.Texture2D;
 import resources.shaders.Shader;
 import org.joml.*;
 import org.lwjgl.opengl.*;

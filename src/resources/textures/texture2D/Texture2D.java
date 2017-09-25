@@ -1,4 +1,6 @@
-package resources.textures;
+package resources.textures.texture2D;
+
+import resources.textures.*;
 
 /**
  * Interface for the standard 2D textures.

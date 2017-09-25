@@ -7,7 +7,7 @@ import org.joml.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
-import resources.textures.*;
+import resources.textures.texture2D.*;
 import toolbox.annotations.*;
 
 /**
@@ -609,6 +609,7 @@ public class Fbo implements Resource {
                 return fbc;
             }
         }
+
         return null;
     }
 

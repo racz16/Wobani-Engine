@@ -70,4 +70,11 @@
     nbproject/build-impl.xml file. 
 
     -->
+	<target name="-post-jar">
+		<copy file="windowSettings.ini" todir="${dist.dir}"/>
+		<copy todir="${dist.dir}/res">
+			<fileset dir="res"/>
+		</copy>
+		<delete file="${dist.dir}/README.TXT"/>
+	</target>
 </project>

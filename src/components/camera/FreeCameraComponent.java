@@ -1,9 +1,9 @@
 package components.camera;
 
-import window.Input;
 import core.*;
 import org.joml.*;
 import toolbox.*;
+import window.*;
 
 /**
  * This class extends the DefaultCameraComponent and allows the user to control

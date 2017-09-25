@@ -3,7 +3,7 @@ package resources.textures;
 /**
  * Easy filtering settings to textures.
  */
-public interface EasyFiltering extends Texture2D {
+public interface EasyFiltering extends Texture {
 
     /**
      * Texture filtering modes.

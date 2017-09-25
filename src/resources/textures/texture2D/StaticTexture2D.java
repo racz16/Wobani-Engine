@@ -1,4 +1,4 @@
-package resources.textures;
+package resources.textures.texture2D;
 
 import core.*;
 import java.io.*;
@@ -7,6 +7,7 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.stb.*;
 import resources.*;
 import resources.ResourceManager.ResourceState;
+import resources.textures.StaticTexture;
 import toolbox.*;
 import toolbox.annotations.*;
 

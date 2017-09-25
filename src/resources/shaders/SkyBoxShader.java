@@ -70,8 +70,8 @@ public class SkyBoxShader extends Shader {
      * @param material material
      */
     public void loadUniforms(@NotNull Material material) {
-        if (material.getSlot(Material.DIFFUSE) != null && material.getSlot(Material.DIFFUSE).getCubeMapTexture() != null) {
-            material.getSlot(Material.DIFFUSE).getCubeMapTexture().bindToTextureUnit(0);
+        if (material.getSlot(Material.DIFFUSE) != null && material.getSlot(Material.DIFFUSE).getEnvironmentProbe() != null) {
+            material.getSlot(Material.DIFFUSE).getEnvironmentProbe().bindToTextureUnit(0);
             loadBoolean("isThereCubeMap", true);
         } else {
             loadBoolean("isThereCubeMap", false);

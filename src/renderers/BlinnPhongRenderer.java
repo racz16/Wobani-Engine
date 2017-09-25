@@ -10,7 +10,7 @@ import resources.*;
 import resources.meshes.*;
 import resources.shaders.*;
 import resources.splines.*;
-import resources.textures.*;
+import resources.textures.texture2D.*;
 import toolbox.*;
 import toolbox.annotations.*;
 

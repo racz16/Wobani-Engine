@@ -3,7 +3,9 @@ package materials;
 import java.io.*;
 import java.util.*;
 import org.joml.*;
-import resources.textures.*;
+import resources.environmentProbes.*;
+import resources.textures.cubeMapTexture.*;
+import resources.textures.texture2D.*;
 import toolbox.*;
 import toolbox.annotations.*;
 
@@ -29,9 +31,9 @@ public class MaterialSlot {
      */
     private Texture2D texture;
     /**
-     * The slot's cubemap texture.
+     * The slot's environment probe.
      */
-    private CubeMapTexture cubeMapTexture;
+    private EnvironmentProbe environmentProbe;
     /**
      * Texture's tile factor along U and V directions.
      */
@@ -59,10 +61,19 @@ public class MaterialSlot {
     /**
      * Initializes a new MaterialSlot to the given value.
      *
-     * @param texture cubemap texture
+     * @param environmentProbe environment probe
      */
-    public MaterialSlot(@Nullable CubeMapTexture texture) {
-        setCubeMapTexture(texture);
+    public MaterialSlot(@Nullable EnvironmentProbe environmentProbe) {
+        setEnvironmentProbe(environmentProbe);
+    }
+
+    /**
+     * Initializes a new MaterialSlot to the given value.
+     *
+     * @param cubeMapTexture cube map texture
+     */
+    public MaterialSlot(@NotNull StaticCubeMapTexture cubeMapTexture) {
+        setEnvironmentProbe(cubeMapTexture);
     }
 
     /**
@@ -147,22 +158,31 @@ public class MaterialSlot {
     }
 
     /**
-     * Returns the MaterialSlot's cubemap texture.
+     * Returns the MaterialSlot's environment probe.
      *
-     * @return the MaterialSlot's cubemap texture
+     * @return the MaterialSlot's environment probe
      */
     @Nullable
-    public CubeMapTexture getCubeMapTexture() {
-        return cubeMapTexture;
+    public EnvironmentProbe getEnvironmentProbe() {
+        return environmentProbe;
     }
 
     /**
-     * Sets the cubemap texture to the given value.
+     * Sets the environment probe to the given value.
      *
-     * @param cubeMapTexture cubemap texture
+     * @param environmentProbe environment probe
      */
-    public void setCubeMapTexture(@Nullable CubeMapTexture cubeMapTexture) {
-        this.cubeMapTexture = cubeMapTexture;
+    public void setEnvironmentProbe(@Nullable EnvironmentProbe environmentProbe) {
+        this.environmentProbe = environmentProbe;
+    }
+
+    /**
+     * Sets the environment probe to the given value.
+     *
+     * @param cubeMapTexture cube map texture
+     */
+    public void setEnvironmentProbe(@NotNull StaticCubeMapTexture cubeMapTexture) {
+        this.environmentProbe = new StaticEnvironmentProbe(cubeMapTexture);
     }
 
     /**
@@ -215,7 +235,7 @@ public class MaterialSlot {
         hash = 71 * hash + (this.active ? 1 : 0);
         hash = 71 * hash + Objects.hashCode(this.color);
         hash = 71 * hash + Objects.hashCode(this.texture);
-        hash = 71 * hash + Objects.hashCode(this.cubeMapTexture);
+        hash = 71 * hash + Objects.hashCode(this.environmentProbe);
         hash = 71 * hash + Objects.hashCode(this.textureTile);
         hash = 71 * hash + Objects.hashCode(this.textureOffset);
         return hash;
@@ -242,7 +262,7 @@ public class MaterialSlot {
         if (!Objects.equals(this.texture, other.texture)) {
             return false;
         }
-        if (!Objects.equals(this.cubeMapTexture, other.cubeMapTexture)) {
+        if (!Objects.equals(this.environmentProbe, other.environmentProbe)) {
             return false;
         }
         if (!Objects.equals(this.textureTile, other.textureTile)) {
@@ -257,7 +277,7 @@ public class MaterialSlot {
     @Override
     public String toString() {
         return "MaterialSlot{" + "active=" + active + ", color=" + color
-                + ", texture=" + texture + ", cubeMapTexture=" + cubeMapTexture
+                + ", texture=" + texture + ", cubeMapTexture=" + environmentProbe
                 + ", textureTile=" + textureTile + ", textureOffset=" + textureOffset + '}';
     }
 

@@ -1,5 +1,6 @@
 package renderers;
 
+import resources.textures.texture2D.Texture2D;
 import resources.shaders.ShadowShader;
 import components.light.*;
 import components.renderables.*;

@@ -7,7 +7,7 @@ import java.util.*;
 import materials.*;
 import org.joml.*;
 import resources.*;
-import resources.textures.*;
+import resources.textures.texture2D.*;
 import toolbox.annotations.*;
 
 /**
@@ -131,7 +131,7 @@ public class BlinnPhongShader extends Shader {
         loadMatrix4("shadowProjectionViewMatrix", light.getProjectionViewMatrix());
         //others
         loadVector3("viewPosition", Scene.getCamera().getGameObject().getTransform().getAbsolutePosition());
-        loadFloat("gamma", Settings.getGamma());
+        loadBoolean("gamma", Settings.getGamma() != 1);
         loadBoolean("wireframe", Settings.isWireframeMode());
     }
 
@@ -295,14 +295,14 @@ public class BlinnPhongShader extends Shader {
         MaterialSlot reflectionSlot = material.getSlot(Material.REFLECTION);
         String isThereReflectionMap = "material.isThereReflectionMap";
         int reflectionTextureUnit = 4;
-        boolean reflectionUsable = reflectionSlot != null && reflectionSlot.isActive() && reflectionSlot.getCubeMapTexture() != null;
+        boolean reflectionUsable = reflectionSlot != null && reflectionSlot.isActive() && reflectionSlot.getEnvironmentProbe() != null;
         //refraction
         MaterialSlot refractionSlot = material.getSlot(Material.REFRACTION);
         String isThereRefractionMap = "material.isThereRefractionMap";
         int refractionTextureUnit = 5;
         String refractionIndex = "material.refractionIndex";
         float index = material.getFloatParameter(Material.PARAM_REFRACTION_INDEX_F) == null ? 1f / 1.33f : material.getFloatParameter(Material.PARAM_REFRACTION_INDEX_F);
-        boolean refractionUsable = refractionSlot != null && refractionSlot.isActive() && refractionSlot.getCubeMapTexture() != null;
+        boolean refractionUsable = refractionSlot != null && refractionSlot.isActive() && refractionSlot.getEnvironmentProbe() != null;
         //intensity
         MaterialSlot intensitySlot = material.getSlot(Material.ENVIRONTMENT_INTENSITY);
         String isThereIntensityMap = "material.isThereEnvironmentIntensityMap";
@@ -316,19 +316,19 @@ public class BlinnPhongShader extends Shader {
                 loadBoolean(isThereReflectionMap, false);
 
                 loadBoolean(isThereRefractionMap, true);
-                refractionSlot.getCubeMapTexture().bindToTextureUnit(refractionTextureUnit);
+                refractionSlot.getEnvironmentProbe().bindToTextureUnit(refractionTextureUnit);
                 loadFloat(refractionIndex, index);
             } else if (reflectionUsable && !refractionUsable) {
                 loadBoolean(isThereReflectionMap, true);
-                reflectionSlot.getCubeMapTexture().bindToTextureUnit(reflectionTextureUnit);
+                reflectionSlot.getEnvironmentProbe().bindToTextureUnit(reflectionTextureUnit);
 
                 loadBoolean(isThereRefractionMap, false);
             } else {
                 loadBoolean(isThereReflectionMap, true);
-                reflectionSlot.getCubeMapTexture().bindToTextureUnit(reflectionTextureUnit);
+                reflectionSlot.getEnvironmentProbe().bindToTextureUnit(reflectionTextureUnit);
 
                 loadBoolean(isThereRefractionMap, true);
-                refractionSlot.getCubeMapTexture().bindToTextureUnit(refractionTextureUnit);
+                refractionSlot.getEnvironmentProbe().bindToTextureUnit(refractionTextureUnit);
                 loadFloat(refractionIndex, index);
             }
             if (intensitySlot != null && intensitySlot.isActive()) {

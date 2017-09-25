@@ -1,5 +1,7 @@
 package renderers;
 
+import resources.textures.texture2D.DynamicTexture2D;
+import resources.textures.texture2D.Texture2D;
 import components.camera.*;
 import components.light.lightTypes.*;
 import core.*;

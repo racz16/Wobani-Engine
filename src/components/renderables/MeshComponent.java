@@ -1,8 +1,8 @@
 package components.renderables;
 
-import materials.Material;
 import core.*;
 import java.util.*;
+import materials.*;
 import org.joml.*;
 import renderers.*;
 import resources.meshes.*;

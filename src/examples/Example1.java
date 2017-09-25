@@ -1,5 +1,6 @@
 package examples;
 
+import components.*;
 import components.audio.*;
 import components.camera.*;
 import components.light.*;
@@ -13,9 +14,10 @@ import org.lwjgl.glfw.*;
 import renderers.*;
 import resources.*;
 import resources.audio.*;
+import resources.environmentProbes.*;
 import resources.meshes.*;
 import resources.splines.*;
-import resources.textures.*;
+import resources.textures.cubeMapTexture.*;
 import toolbox.*;
 import window.Input.Key;
 import window.*;
@@ -42,7 +44,7 @@ public class Example1 {
      * The example's environment map used for the skybox, reflections and
      * refractions.
      */
-    private static CubeMapTexture environment;
+    private static StaticCubeMapTexture environment;
 
     /**
      * Entry point, initializes the engine, the scene, then starts the game
@@ -72,9 +74,10 @@ public class Example1 {
      */
     private static void initialize() {
         try {
+            boxes();
             skybox();
             dragons();
-            boxes();
+
             camera();
             spline();
             lightSources();
@@ -107,7 +110,7 @@ public class Example1 {
         GameObject dragon2 = StaticMesh.loadModelToGameObject(new File("res/models/dragon.obj"));
         dragon2.getComponent(MeshComponent.class).setMaterial(dragonMat);
         dragon2.setName("dragon2");
-        dragon2.getTransform().setRelativePosition(new Vector3f(50, 0, 0));
+        dragon2.getTransform().setRelativePosition(new Vector3f(50, -40, 0));
         dragon.addChild(dragon2);
 
         dragon.addComponent(new Component() {
@@ -124,23 +127,33 @@ public class Example1 {
         });
     }
 
+    private static DynamicEnvironmentProbe probe;
+
     /**
      * Adds boxes to the scene.
      */
     private static void boxes() {
         Material boxMaterial = new Material(BlinnPhongRenderer.class);
         boxMaterial.setSlot(Material.SPECULAR, new MaterialSlot(new Vector4f(0.3f, 0.3f, 0.3f, 0.75f)));
-        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot(new File("res/textures/normal9.jpg"), false));
+//        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot(new File("res/textures/normal9.jpg"), false));
 //        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot(new File("res/textures/normal7.png"), false));
 //        boxMaterial.setFloatParameter(Material.PARAM_USE_POM_F, 1f);
 //        boxMaterial.setFloatParameter(Material.PARAM_POM_SCALE_F, 0.3f);
 //        boxMaterial.setFloatParameter(Material.PARAM_POM_MIN_LAYERS_F, 50f);
 //        boxMaterial.setFloatParameter(Material.PARAM_POM_MAX_LAYERS_F, 100f);
+//        boxMaterial.setSlot(Material.ENVIRONTMENT_INTENSITY, new MaterialSlot(new Vector4f(0, 1, 0, 0)));
+
+        probe = new DynamicEnvironmentProbe();
+        EnvironmentProbeComponent probeComponent = new EnvironmentProbeComponent(probe);
+        boxMaterial.setSlot(Material.REFLECTION, new MaterialSlot(probe));
+        GameObject g = new GameObject();
+        g.getTransform().setRelativePosition(new Vector3f(0, -40, 0));
+        g.addComponent(probeComponent);
 
         GameObject box = new GameObject("bigBox");
         box.getTransform().setRelativePosition(new Vector3f(0, -40, -20));
-        box.getTransform().setRelativeScale(new Vector3f(50f));
-        for (Mesh m : StaticMesh.loadModel(new File("res/models/box.obj"))) {
+        box.getTransform().setRelativeScale(new Vector3f(30f));
+        for (Mesh m : StaticMesh.loadModel(new File("res/models/sphere.obj"))) {
             box.addComponent(new MeshComponent(m, boxMaterial));
         }
     }
@@ -243,6 +256,7 @@ public class Example1 {
         GameObject skybox = new GameObject("skybox");
         Material sky = new Material(SkyBoxRenderer.class);
         sky.setSlot(Material.DIFFUSE, new MaterialSlot(environment));
+//        sky.setSlot(Material.DIFFUSE, new MaterialSlot(probe));
         MeshComponent mc = new MeshComponent(CubeMesh.getInstance(), sky);
         mc.setCastShadow(false);
         mc.setReceiveShadows(false);
