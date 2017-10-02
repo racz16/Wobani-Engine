@@ -239,6 +239,8 @@ public class Example1 {
         Material splineMat = new Material(SolidColorRenderer.class);
         splineMat.setSlot(Material.DIFFUSE, new MaterialSlot(new Vector4f(0, 0, 1, 1)));
         splineGameObject.addComponent(new SplineComponent(spline, splineMat));
+
+        splineGameObject.getTransform().setBillboardingMode(Transform.BillboardingMode.SPHERICAL_BILLBOARDING);
     }
 
     /**

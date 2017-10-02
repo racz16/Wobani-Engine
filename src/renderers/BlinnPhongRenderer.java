@@ -75,7 +75,7 @@ public class BlinnPhongRenderer extends Renderer {
             MeshComponent meshComponent;
             for (int i = 0; i < Scene.getNumberOfMeshComponents(renderer, mesh); i++) {
                 meshComponent = Scene.getMeshComponent(renderer, mesh, i);
-                if (meshComponent.isActive() && meshComponent.isMeshActive() && camera.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax())) {
+                if (meshComponent.isActive() && meshComponent.isMeshActive() && Utility.isInsideFrustum(meshComponent)) {
                     beforeDrawInstance(meshComponent);
                     mesh.draw();
                 }
@@ -88,7 +88,7 @@ public class BlinnPhongRenderer extends Renderer {
             SplineComponent splineComponent;
             for (int i = 0; i < Scene.getNumberOfSplineComponents(renderer, spline); i++) {
                 splineComponent = Scene.getSplineComponent(renderer, spline, i);
-                if (splineComponent.isActive() && splineComponent.isSplineActive() && camera.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax())) {
+                if (splineComponent.isActive() && splineComponent.isSplineActive() && Utility.isInsideFrustum(splineComponent)) {
                     beforeDrawInstance(splineComponent);
                     spline.draw();
                 }

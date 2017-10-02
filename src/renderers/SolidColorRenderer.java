@@ -1,15 +1,14 @@
 package renderers;
 
-import materials.Material;
-import materials.MaterialSlot;
-import resources.shaders.SolidColorShader;
 import components.camera.*;
 import components.renderables.*;
 import core.*;
+import materials.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import resources.*;
 import resources.meshes.*;
+import resources.shaders.*;
 import resources.splines.*;
 import toolbox.*;
 import toolbox.annotations.*;
@@ -66,7 +65,7 @@ public class SolidColorRenderer extends Renderer {
             MeshComponent meshComponent;
             for (int i = 0; i < Scene.getNumberOfMeshComponents(renderer, mesh); i++) {
                 meshComponent = Scene.getMeshComponent(renderer, mesh, i);
-                if (meshComponent.isActive() && meshComponent.isMeshActive() && camera.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax())) {
+                if (meshComponent.isActive() && meshComponent.isMeshActive() && Utility.isInsideFrustum(meshComponent)) {
                     beforeDrawRenderableInstance(meshComponent.getMaterial(), meshComponent.getGameObject().getTransform().getModelMatrix());
                     mesh.draw();
                     numberOfRenderedElements++;
@@ -81,7 +80,7 @@ public class SolidColorRenderer extends Renderer {
             SplineComponent splineComponent;
             for (int i = 0; i < Scene.getNumberOfSplineComponents(renderer, spline); i++) {
                 splineComponent = Scene.getSplineComponent(renderer, spline, i);
-                if (splineComponent.isActive() && splineComponent.isSplineActive() && camera.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax())) {
+                if (splineComponent.isActive() && splineComponent.isSplineActive() && Utility.isInsideFrustum(splineComponent)) {
                     beforeDrawRenderableInstance(splineComponent.getMaterial(), splineComponent.getGameObject().getTransform().getModelMatrix());
                     spline.draw();
                     numberOfRenderedElements++;

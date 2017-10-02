@@ -2,6 +2,7 @@ package toolbox;
 
 import components.camera.*;
 import components.camera.Camera.CornerPoint;
+import components.renderables.*;
 import core.*;
 import java.io.*;
 import java.nio.*;
@@ -363,6 +364,42 @@ public class Utility {
         buffer.put(data);
         buffer.flip();
         return buffer;
+    }
+
+    /**
+     * Determines whether the given mesh component is inside the main camera's
+     * view frustum.
+     *
+     * @param meshComponent mesh component
+     * @return true if the mesh component is inside the main camera's view
+     * frustum, false otherwise
+     */
+    public static boolean isInsideFrustum(@NotNull MeshComponent meshComponent) {
+        Camera camera = Scene.getCamera();
+        Transform transform = meshComponent.getGameObject().getTransform();
+        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
+            return camera.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax());
+        } else {
+            return camera.isInsideFrustum(transform.getAbsolutePosition(), meshComponent.getRealFurthestVertexDistance());
+        }
+    }
+
+    /**
+     * Determines whether the given spline component is inside the main camera's
+     * view frustum.
+     *
+     * @param splineComponent spline component
+     * @return true if the spline component is inside the main camera's view
+     * frustum, false otherwise
+     */
+    public static boolean isInsideFrustum(@NotNull SplineComponent splineComponent) {
+        Camera camera = Scene.getCamera();
+        Transform transform = splineComponent.getGameObject().getTransform();
+        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
+            return camera.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax());
+        } else {
+            return camera.isInsideFrustum(transform.getAbsolutePosition(), splineComponent.getRealFurthestVertexDistance());
+        }
     }
 
 }

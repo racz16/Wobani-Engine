@@ -63,6 +63,7 @@ public class DirectionalLightComponent extends DefaultLightComponent implements 
      * @throws IllegalArgumentException radius can't be negative
      * @see Settings#isFrustumCulling()
      */
+    @Override
     public boolean isInsideFrustum(@NotNull Vector3f position, float radius) {
         if (position == null) {
             throw new NullPointerException();
@@ -93,6 +94,7 @@ public class DirectionalLightComponent extends DefaultLightComponent implements 
      * @throws NullPointerException the parameters can't be null
      * @see Settings#isFrustumCulling()
      */
+    @Override
     public boolean isInsideFrustum(@NotNull Vector3f aabbMin, @NotNull Vector3f aabbMax) {
         if (aabbMin == null || aabbMax == null) {
             throw new NullPointerException();

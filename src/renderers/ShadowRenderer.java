@@ -1,8 +1,7 @@
 package renderers;
 
-import resources.textures.texture2D.Texture2D;
-import resources.shaders.ShadowShader;
 import components.light.*;
+import components.light.lightTypes.*;
 import components.renderables.*;
 import core.*;
 import java.util.*;
@@ -10,8 +9,9 @@ import org.joml.*;
 import org.lwjgl.opengl.*;
 import resources.*;
 import resources.meshes.*;
+import resources.shaders.*;
 import resources.splines.*;
-import resources.textures.*;
+import resources.textures.texture2D.*;
 import toolbox.*;
 import toolbox.annotations.*;
 
@@ -104,7 +104,7 @@ public class ShadowRenderer extends Renderer {
                 MeshComponent meshComponent;
                 for (int i = 0; i < Scene.getNumberOfMeshComponents(renderer, mesh); i++) {
                     meshComponent = Scene.getMeshComponent(renderer, mesh, i);
-                    if (meshComponent.isActive() && meshComponent.isMeshActive() && meshComponent.isCastShadow() && light.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax())) {
+                    if (meshComponent.isActive() && meshComponent.isMeshActive() && meshComponent.isCastShadow() && isInsideFrustum(meshComponent)) {
                         beforeDrawMeshInstance(meshComponent, projectionViewMatrix, meshComponent.getGameObject().getTransform().getModelMatrix());
                         mesh.draw();
                         numberOfRenderedElements++;
@@ -119,7 +119,7 @@ public class ShadowRenderer extends Renderer {
                 SplineComponent splineComponent;
                 for (int i = 0; i < Scene.getNumberOfSplineComponents(renderer, spline); i++) {
                     splineComponent = Scene.getSplineComponent(renderer, spline, i);
-                    if (splineComponent.isActive() && splineComponent.isSplineActive() && splineComponent.isCastShadow() && light.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax())) {
+                    if (splineComponent.isActive() && splineComponent.isSplineActive() && splineComponent.isCastShadow() && isInsideFrustum(splineComponent)) {
                         beforeDrawSplineInstance(projectionViewMatrix, splineComponent.getGameObject().getTransform().getModelMatrix());
                         spline.draw();
                         numberOfRenderedElements++;
@@ -233,6 +233,42 @@ public class ShadowRenderer extends Renderer {
                 throw new RuntimeException("Incomplete FBO");
             }
             fbo.unbind();
+        }
+    }
+
+    /**
+     * Determines whether the given mesh component is inside the directional
+     * light's view frustum.
+     *
+     * @param meshComponent mesh component
+     * @return true if the mesh component is inside the directional light's view
+     * frustum, false otherwise
+     */
+    private boolean isInsideFrustum(@NotNull MeshComponent meshComponent) {
+        DirectionalLight light = Scene.getDirectionalLight();
+        Transform transform = meshComponent.getGameObject().getTransform();
+        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
+            return light.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax());
+        } else {
+            return light.isInsideFrustum(transform.getAbsolutePosition(), meshComponent.getRealFurthestVertexDistance());
+        }
+    }
+
+    /**
+     * Determines whether the given spline component is inside the directional
+     * light's view frustum.
+     *
+     * @param splineComponent spline component
+     * @return true if the spline component is inside the directional light's
+     * view frustum, false otherwise
+     */
+    private boolean isInsideFrustum(@NotNull SplineComponent splineComponent) {
+        DirectionalLight light = Scene.getDirectionalLight();
+        Transform transform = splineComponent.getGameObject().getTransform();
+        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
+            return light.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax());
+        } else {
+            return light.isInsideFrustum(transform.getAbsolutePosition(), splineComponent.getRealFurthestVertexDistance());
         }
     }
 
