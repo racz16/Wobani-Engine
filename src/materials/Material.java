@@ -120,7 +120,7 @@ public class Material {
      * @return the Material's Renderer class
      */
     @NotNull
-    public Class getRenderer() {
+    public Class<? extends Renderer> getRenderer() {
         return renderer;
     }
 
@@ -135,6 +135,7 @@ public class Material {
      * will use some kind of a default value.
      *
      * @param key slot's key
+     *
      * @return the Material's specified slot
      *
      * @throws NullPointerException the key can't be null
@@ -157,7 +158,7 @@ public class Material {
      * will ignore it. If you don't add a slot which is requred by a built-in
      * Renderer, it will use some kind of a default value.
      *
-     * @param key slot's key
+     * @param key  slot's key
      * @param slot Material's slot
      *
      * @throws NullPointerException the key can't be null
@@ -177,6 +178,7 @@ public class Material {
      * parameters use distinct keys and values.
      *
      * @param key key
+     *
      * @return the specified key's Float value
      *
      * @throws NullPointerException key can't be null
@@ -198,7 +200,7 @@ public class Material {
      * sensable values. Float, String and vector parameters use distinct keys
      * and values.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      *
      * @throws NullPointerException key can't be null
@@ -215,6 +217,7 @@ public class Material {
      * parameters use distinct keys and values.
      *
      * @param key key
+     *
      * @return the specified key's String value
      *
      * @throws NullPointerException key can't be null
@@ -233,7 +236,7 @@ public class Material {
      * sensable values. Float, String and vector parameters use distinct keys
      * and values.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      *
      * @throws NullPointerException key can't be null
@@ -250,6 +253,7 @@ public class Material {
      * parameters use distinct keys and values.
      *
      * @param key key
+     *
      * @return the specified key's vector value
      *
      * @throws NullPointerException key can't be null
@@ -268,7 +272,7 @@ public class Material {
      * sensable values. Float, String and vector parameters use distinct keys
      * and values.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      *
      * @throws NullPointerException key can't be null

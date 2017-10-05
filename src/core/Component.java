@@ -11,13 +11,12 @@ import toolbox.annotations.*;
  * @see GameObject
  *
  */
-//TODO fixedupdate
 public abstract class Component implements Invalidatable {
 
     /**
      * The assigned GameObject.
      */
-    protected GameObject gameObject;
+    private GameObject gameObject;
     /**
      * Determines whether the Component is active. If it's not, your changes may
      * not affect the end result, and the data you get from this Component may
@@ -27,7 +26,7 @@ public abstract class Component implements Invalidatable {
     /**
      * List of invalidatables.
      */
-    protected final List<Invalidatable> invalidatables = new ArrayList<>();
+    private final List<Invalidatable> invalidatables = new ArrayList<>();
     /**
      * Prevents invalidation mechanism from causing deadlock.
      */
@@ -37,9 +36,10 @@ public abstract class Component implements Invalidatable {
      * Adds the given Invalidatable to the list of invalidatables.
      *
      * @param invalidatable invalidatable
+     *
      * @return true if the given parameter added successfully (the parameter
-     * isn't already in the list and if it isn't this Component), false
-     * otherwise
+     *         isn't already in the list and if it isn't this Component), false
+     *         otherwise
      *
      * @throws NullPointerException can't add null to the list of invalidatables
      */
@@ -60,8 +60,9 @@ public abstract class Component implements Invalidatable {
      * element.
      *
      * @param invalidatable invalidatable
+     *
      * @return true if the list of invalidatables contains the specified
-     * element, false otherwise
+     *         element, false otherwise
      */
     public boolean containsInvalidatable(@Nullable Invalidatable invalidatable) {
         return Utility.containsReference(invalidatables, invalidatable);

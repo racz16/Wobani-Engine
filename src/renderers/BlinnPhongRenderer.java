@@ -1,6 +1,5 @@
 package renderers;
 
-import components.camera.*;
 import components.renderables.*;
 import core.*;
 import materials.*;
@@ -67,8 +66,7 @@ public class BlinnPhongRenderer extends Renderer {
     @Override
     public void render() {
         beforeDrawShader();
-        Camera camera = Scene.getCamera();
-        Class renderer = BlinnPhongRenderer.class;
+        Class<BlinnPhongRenderer> renderer = BlinnPhongRenderer.class;
         //meshes
         for (Mesh mesh : Scene.getMeshes(renderer)) {
             beforeDrawRenderable(mesh);

@@ -55,7 +55,7 @@ public class SkyBoxRenderer extends Renderer {
     @Override
     public void render() {
         beforeDrawShader();
-        Class renderer = SkyBoxRenderer.class;
+        Class<SkyBoxRenderer> renderer = SkyBoxRenderer.class;
         //meshes
         for (Mesh mesh : Scene.getMeshes(renderer)) {
             beforeDrawRenderable(mesh);

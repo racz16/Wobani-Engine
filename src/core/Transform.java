@@ -71,7 +71,7 @@ public class Transform implements Invalidatable {
     /**
      * Determines whether this Transform's data is valid.
      */
-    protected boolean valid;
+    private boolean valid;
     /**
      * List of invalidatables.
      */
@@ -125,7 +125,7 @@ public class Transform implements Invalidatable {
      *
      * @param position position
      * @param rotation rotation (in degrees)
-     * @param scale scale
+     * @param scale    scale
      */
     public Transform(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Vector3f scale) {
         setRelativePosition(position);
@@ -315,6 +315,7 @@ public class Transform implements Invalidatable {
      * Returns the model matrix.
      *
      * @return model matrix
+     *
      * @see #getInverseModelMatrix()
      */
     @NotNull @ReadOnly
@@ -335,6 +336,7 @@ public class Transform implements Invalidatable {
      * Returns the model matrix's inverse.
      *
      * @return the model matrix's inverse
+     *
      * @see #getModelMatrix()
      */
     @NotNull @ReadOnly
@@ -468,6 +470,7 @@ public class Transform implements Invalidatable {
      * Adds the Transform to the given GameObject.
      *
      * @param object gameObject
+     *
      * @throws NullPointerException object can't be null
      */
     protected void addToGameObject(@NotNull GameObject object) {
@@ -501,9 +504,10 @@ public class Transform implements Invalidatable {
      * Adds the given Invalidatable to the list of invalidatables.
      *
      * @param invalidatable invalidatable
+     *
      * @return true if the given parameter added successfully (the parameter
-     * isn't already in the list and if it isn't this Transform), false
-     * otherwise
+     *         isn't already in the list and if it isn't this Transform), false
+     *         otherwise
      *
      * @throws NullPointerException can't add null to the list of invalidatables
      */
@@ -524,8 +528,9 @@ public class Transform implements Invalidatable {
      * element.
      *
      * @param invalidatable invalidatable
+     *
      * @return true if the list of invalidatables contains the specified
-     * element, false otherwise
+     *         element, false otherwise
      */
     public boolean containsInvalidatable(@Nullable Invalidatable invalidatable) {
         return Utility.containsReference(invalidatables, invalidatable);

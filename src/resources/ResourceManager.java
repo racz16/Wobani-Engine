@@ -381,6 +381,43 @@ public class ResourceManager {
         return new Vector3i(count, 0, 0);
     }
 
+    /**
+     * Returns data about the RBOs. The x coordinate means the number of usable
+     * RBOs, the y means the data size in bytes, stored in the RAM, the z means
+     * the data size in bytes, stored in the ACTION.
+     *
+     * @return data about the RBOs
+     */
+    @NotNull @ReadOnly
+    public static Vector3i getRboData() {
+        int count = 0;
+        int vram = 0;
+        for (Fbo fbo : fbos.values()) {
+            if (fbo.isUsable()) {
+                int attachmentSize = fbo.getSize().x() * fbo.getSize().y() * 4 * 4 * fbo.getNumberOfSamples();
+                for (int i = 0; i < 8; i++) {
+                    if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.RBO, i)) {
+                        count++;
+                        vram += attachmentSize;
+                    }
+                }
+                if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.DEPTH, Fbo.FboAttachmentType.RBO, 0)) {
+                    count++;
+                    vram += attachmentSize;
+                }
+                if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.STENCIL, Fbo.FboAttachmentType.RBO, 0)) {
+                    count++;
+                    vram += attachmentSize;
+                }
+                if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.DEPTH_STENCIL, Fbo.FboAttachmentType.RBO, 0)) {
+                    count++;
+                    vram += attachmentSize;
+                }
+            }
+        }
+        return new Vector3i(count, 0, vram);
+    }
+
     //
     //UBOs----------------------------------------------------------------------
     //

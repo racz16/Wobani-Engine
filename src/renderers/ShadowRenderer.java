@@ -35,7 +35,7 @@ public class ShadowRenderer extends Renderer {
 
     /**
      * Creates a new ShadowRenderer.
-     *
+     * <p>
      */
     private ShadowRenderer() {
         shader = ShadowShader.getInstance();
@@ -90,14 +90,14 @@ public class ShadowRenderer extends Renderer {
         DirectionalLightComponent light = (DirectionalLightComponent) Scene.getDirectionalLight();
         Matrix4f projectionViewMatrix = light.getProjectionViewMatrix();
 
-        List<Class> renderers = new ArrayList<>();
+        List<Class<? extends Renderer>> renderers = new ArrayList<>();
         for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(true); i++) {
             Class renderer = RenderingPipeline.getRenderer(true, i).getClass();
             if (renderer != getClass()) {
                 renderers.add(renderer);
             }
         }
-        for (Class renderer : renderers) {
+        for (Class<? extends Renderer> renderer : renderers) {
             //meshes
             for (Mesh mesh : Scene.getMeshes(renderer)) {
                 beforeDrawRenderable(mesh);
@@ -181,9 +181,9 @@ public class ShadowRenderer extends Renderer {
     /**
      * Prepares for rendering the Mesh.
      *
-     * @param meshComponent MeshComponent
+     * @param meshComponent        MeshComponent
      * @param projectionViewMatrix projection view matrix
-     * @param modelMatrix model matrix
+     * @param modelMatrix          model matrix
      */
     private void beforeDrawMeshInstance(MeshComponent meshComponent, @NotNull Matrix4f projectionViewMatrix, @NotNull Matrix4f modelMatrix) {
         loadProjectionViewModelMatrix(projectionViewMatrix, modelMatrix);
@@ -200,7 +200,7 @@ public class ShadowRenderer extends Renderer {
      * Prepares for rendering the Spline.
      *
      * @param projectionViewMatrix projection view matrix
-     * @param modelMatrix model matrix
+     * @param modelMatrix          model matrix
      */
     private void beforeDrawSplineInstance(@NotNull Matrix4f projectionViewMatrix, @NotNull Matrix4f modelMatrix) {
         loadProjectionViewModelMatrix(projectionViewMatrix, modelMatrix);
@@ -210,7 +210,7 @@ public class ShadowRenderer extends Renderer {
      * Loads the projection view model matrix to the shader as uniform variable.
      *
      * @param projectionViewMatrix projection view matrix
-     * @param modelMatrix model matrix
+     * @param modelMatrix          model matrix
      */
     private void loadProjectionViewModelMatrix(@NotNull Matrix4f projectionViewMatrix, @NotNull Matrix4f modelMatrix) {
         Matrix4f projectionViewModelMatrix = new Matrix4f();
@@ -241,8 +241,9 @@ public class ShadowRenderer extends Renderer {
      * light's view frustum.
      *
      * @param meshComponent mesh component
+     *
      * @return true if the mesh component is inside the directional light's view
-     * frustum, false otherwise
+     *         frustum, false otherwise
      */
     private boolean isInsideFrustum(@NotNull MeshComponent meshComponent) {
         DirectionalLight light = Scene.getDirectionalLight();
@@ -259,8 +260,9 @@ public class ShadowRenderer extends Renderer {
      * light's view frustum.
      *
      * @param splineComponent spline component
+     *
      * @return true if the spline component is inside the directional light's
-     * view frustum, false otherwise
+     *         view frustum, false otherwise
      */
     private boolean isInsideFrustum(@NotNull SplineComponent splineComponent) {
         DirectionalLight light = Scene.getDirectionalLight();

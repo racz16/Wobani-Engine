@@ -58,7 +58,7 @@ public class SolidColorRenderer extends Renderer {
         beforeShader();
         shader.start();
         Camera camera = Scene.getCamera();
-        Class renderer = SolidColorRenderer.class;
+        Class<SolidColorRenderer> renderer = SolidColorRenderer.class;
         //meshes
         for (Mesh mesh : Scene.getMeshes(renderer)) {
             beforeDrawRenderable(mesh);
@@ -108,7 +108,7 @@ public class SolidColorRenderer extends Renderer {
     /**
      * Prepares the given Renderable to the rendering.
      *
-     * @param material material
+     * @param material    material
      * @param modelMatrix model matrix
      */
     private void beforeDrawRenderableInstance(@NotNull Material material, @NotNull Matrix4f modelMatrix) {

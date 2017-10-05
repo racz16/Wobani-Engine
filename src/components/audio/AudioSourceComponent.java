@@ -46,6 +46,7 @@ public class AudioSourceComponent extends Component {
      *
      * @return OpenAL audio source
      */
+    @NotNull
     public AudioSource getSource() {
         return source;
     }
