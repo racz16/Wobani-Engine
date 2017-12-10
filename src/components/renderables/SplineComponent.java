@@ -1,10 +1,10 @@
 package components.renderables;
 
+import rendering.geometry.SolidColorRenderer;
 import core.*;
 import java.util.*;
 import materials.*;
 import org.joml.*;
-import renderers.*;
 import resources.splines.*;
 import toolbox.annotations.*;
 

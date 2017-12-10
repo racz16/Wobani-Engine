@@ -166,6 +166,10 @@ public abstract class Component implements Invalidatable {
         }
     }
 
+    public void afterLoading() {
+        //TODO XStream load
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;

@@ -28,7 +28,6 @@ public class EnvironmentProbeComponent extends Component {
     @Override
     public void update() {
         probe.setPosition(getGameObject() == null ? new Vector3f() : getGameObject().getTransform().getAbsolutePosition());
-        probe.update();
     }
 
 }

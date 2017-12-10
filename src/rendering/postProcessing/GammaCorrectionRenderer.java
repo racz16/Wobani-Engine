@@ -1,4 +1,4 @@
-package renderers.postProcessing;
+package rendering.postProcessing;
 
 import resources.shaders.postProcessing.GammaCorrectionShader;
 import core.*;
@@ -9,7 +9,7 @@ import toolbox.annotations.*;
  *
  * @see Settings#getGamma()
  */
-public class GammaCorrectionRenderer extends PostProcessingBase {
+public class GammaCorrectionRenderer extends PostProcessingRenderer {
 
     /**
      * The only GammaCorrectionRenderer instance.

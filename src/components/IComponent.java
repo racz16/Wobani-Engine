@@ -70,10 +70,6 @@ public interface IComponent extends Invalidatable {
      */
     public void setGameObject(@Nullable GameObject object);
 
-    /**
-     * Invalidates this Component's data and the Component's invalidatables'
-     * data.
-     */
-    public void invalidate();
+    public void afterLoading();
 
 }

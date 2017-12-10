@@ -3,9 +3,11 @@ package examples;
 import core.*;
 import javax.swing.*;
 import org.joml.*;
-import renderers.Renderer;
-import renderers.*;
-import renderers.postProcessing.*;
+import rendering.Renderer;
+import rendering.*;
+import rendering.geometry.*;
+import rendering.postProcessing.*;
+import rendering.stages.*;
 import resources.*;
 import resources.textures.EasyFiltering.TextureFiltering;
 import toolbox.*;
@@ -69,7 +71,7 @@ public class Example1Window extends javax.swing.JFrame {
      * Selects the given value in the given ComboBox.
      *
      * @param value value
-     * @param cb ComboBox
+     * @param cb    ComboBox
      */
     private void setSelectedItem(int value, @NotNull JComboBox<String> cb) {
         for (int i = 0; i < cb.getItemCount(); i++) {
@@ -230,11 +232,14 @@ public class Example1Window extends javax.swing.JFrame {
 
         int triangles = 0;
         int meshes = 0;
-        for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(true); i++) {
-            Renderer renderer = RenderingPipeline.getRenderer(true, i);
-            if (renderer.isActive()) {
-                triangles += renderer.getNumberOfRenderedFaces();
-                meshes += renderer.getNumberOfRenderedElements();
+        for (int j = 0; j < RenderingPipeline.getRenderingStageCount(); j++) {
+            GeometryRenderingStage stage = RenderingPipeline.getRenderingStage(j);
+            for (int i = 0; i < stage.getRendererCount(); i++) {
+                GeometryRenderer renderer = stage.getRenderer(i);
+                if (renderer.isActive()) {
+                    triangles += renderer.getNumberOfRenderedFaces();
+                    meshes += renderer.getNumberOfRenderedElements();
+                }
             }
         }
         lblRenderedElements.setText(meshes + " meshes/splines");
@@ -1078,8 +1083,8 @@ public class Example1Window extends javax.swing.JFrame {
      */
     private void setToneMapping(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setToneMapping
         Renderer renderer;
-        for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(false); i++) {
-            renderer = RenderingPipeline.getRenderer(false, i);
+        for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
+            renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
             if (renderer.getClass() == ReinhardToneMappingRenderer.class) {
                 renderer.setActive(cbToneMapping.isSelected());
                 return;
@@ -1107,8 +1112,8 @@ public class Example1Window extends javax.swing.JFrame {
      */
     private void setInvert(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setInvert
         Renderer renderer;
-        for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(false); i++) {
-            renderer = RenderingPipeline.getRenderer(false, i);
+        for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
+            renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
             if (renderer.getClass() == InvertRenderer.class) {
                 renderer.setActive(cbInvert.isSelected());
                 return;
@@ -1123,8 +1128,8 @@ public class Example1Window extends javax.swing.JFrame {
      */
     private void setGrayscale(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setGrayscale
         Renderer renderer;
-        for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(false); i++) {
-            renderer = RenderingPipeline.getRenderer(false, i);
+        for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
+            renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
             if (renderer.getClass() == GrayscaleRenderer.class) {
                 renderer.setActive(cbGrayscale.isSelected());
                 return;
@@ -1139,8 +1144,8 @@ public class Example1Window extends javax.swing.JFrame {
      */
     private void setFxaa(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setFxaa
         Renderer renderer;
-        for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(false); i++) {
-            renderer = RenderingPipeline.getRenderer(false, i);
+        for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
+            renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
             if (renderer.getClass() == FxaaRenderer.class) {
                 renderer.setActive(cbFxaa.isSelected());
                 return;

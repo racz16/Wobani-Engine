@@ -1,13 +1,12 @@
-package renderers;
+package rendering.prepare;
 
-import components.renderables.*;
 import core.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
+import rendering.*;
 import resources.*;
 import resources.meshes.*;
 import resources.shaders.*;
-import resources.splines.*;
 import toolbox.*;
 import toolbox.annotations.*;
 
@@ -29,11 +28,14 @@ public class SkyBoxRenderer extends Renderer {
      */
     private static SkyBoxRenderer instance;
 
+    private Mesh box;
+
     /**
      * Initializes a new SkyBoxRenderer.
      */
     private SkyBoxRenderer() {
         shader = SkyBoxShader.getInstance();
+        box = CubeMesh.getInstance();
     }
 
     /**
@@ -55,33 +57,12 @@ public class SkyBoxRenderer extends Renderer {
     @Override
     public void render() {
         beforeDrawShader();
-        Class<SkyBoxRenderer> renderer = SkyBoxRenderer.class;
-        //meshes
-        for (Mesh mesh : Scene.getMeshes(renderer)) {
-            beforeDrawRenderable(mesh);
-            MeshComponent meshComponent;
-            for (int i = 0; i < Scene.getNumberOfMeshComponents(renderer, mesh); i++) {
-                meshComponent = Scene.getMeshComponent(renderer, mesh, i);
-                if (meshComponent.isActive() && meshComponent.isMeshActive()) {
-                    beforeDrawInstance(meshComponent);
-                    mesh.draw();
-                }
-            }
-            afterDrawRenderable(mesh);
-        }
-        //splines
-        for (Spline spline : Scene.getSplines(renderer)) {
-            beforeDrawRenderable(spline);
-            SplineComponent splineComponent;
-            for (int i = 0; i < Scene.getNumberOfSplineComponents(renderer, spline); i++) {
-                splineComponent = Scene.getSplineComponent(renderer, spline, i);
-                if (splineComponent.isActive() && splineComponent.isSplineActive()) {
-                    beforeDrawInstance(splineComponent);
-                    spline.draw();
-                }
-            }
-            afterDrawRenderable(spline);
-        }
+
+        beforeDrawRenderable(box);
+        beforeDrawInstance();
+        box.draw();
+        afterDrawRenderable(box);
+
         shader.stop();
         OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS);
     }
@@ -90,6 +71,9 @@ public class SkyBoxRenderer extends Renderer {
      * Prepares the shader to the rendering.
      */
     private void beforeDrawShader() {
+        if (Scene.getSkybox() == null) {
+            return;
+        }
         if (shader == null || !shader.isUsable()) {
             shader = SkyBoxShader.getInstance();
         }
@@ -98,8 +82,6 @@ public class SkyBoxRenderer extends Renderer {
         OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS_OR_EQUAL);
         OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
         OpenGl.setWireframe(Settings.isWireframeMode());
-        numberOfRenderedElements = 0;
-        numberOfRenderedFaces = 0;
     }
 
     /**
@@ -128,25 +110,8 @@ public class SkyBoxRenderer extends Renderer {
      *
      * @param rc MeshComponent
      */
-    private void beforeDrawInstance(@NotNull MeshComponent rc) {
-        numberOfRenderedElements++;
-        numberOfRenderedFaces += rc.getMesh().getFaceCount();
-        shader.loadUniforms(rc.getMaterial());
-        if (!rc.isTwoSided()) {
-            OpenGl.setFaceCulling(true);
-        } else {
-            OpenGl.setFaceCulling(false);
-        }
-    }
-
-    /**
-     * Prepares the SplineComponent to the rendering.
-     *
-     * @param rc SplineComponent
-     */
-    private void beforeDrawInstance(@NotNull SplineComponent rc) {
-        numberOfRenderedElements++;
-        shader.loadUniforms(rc.getMaterial());
+    private void beforeDrawInstance() {
+        shader.loadUniforms();
     }
 
     /**
@@ -161,11 +126,6 @@ public class SkyBoxRenderer extends Renderer {
     @Override
     public void removeFromRenderingPipeline() {
 
-    }
-
-    @Override
-    public boolean isGeometryRenderer() {
-        return true;
     }
 
     @Override

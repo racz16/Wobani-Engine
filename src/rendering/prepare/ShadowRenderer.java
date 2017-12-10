@@ -1,4 +1,4 @@
-package renderers;
+package rendering.prepare;
 
 import components.light.*;
 import components.light.lightTypes.*;
@@ -7,6 +7,10 @@ import core.*;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
+import rendering.*;
+import rendering.geometry.GeometryRenderer;
+import rendering.prepare.*;
+import rendering.stages.*;
 import resources.*;
 import resources.meshes.*;
 import resources.shaders.*;
@@ -18,7 +22,7 @@ import toolbox.annotations.*;
 /**
  * Performs shadow map rendering.
  */
-public class ShadowRenderer extends Renderer {
+public class ShadowRenderer extends PrepareRenderer {
 
     /**
      * Shadow shader.
@@ -90,14 +94,17 @@ public class ShadowRenderer extends Renderer {
         DirectionalLightComponent light = (DirectionalLightComponent) Scene.getDirectionalLight();
         Matrix4f projectionViewMatrix = light.getProjectionViewMatrix();
 
-        List<Class<? extends Renderer>> renderers = new ArrayList<>();
-        for (int i = 0; i < RenderingPipeline.getNumberOfRenderers(true); i++) {
-            Class renderer = RenderingPipeline.getRenderer(true, i).getClass();
-            if (renderer != getClass()) {
-                renderers.add(renderer);
+        List<Class<? extends GeometryRenderer>> renderers = new ArrayList<>();
+        for (int j = 0; j < RenderingPipeline.getRenderingStageCount(); j++) {
+            GeometryRenderingStage stage = RenderingPipeline.getRenderingStage(j);
+            for (int i = 0; i < stage.getRendererCount(); i++) {
+                Class renderer = stage.getRenderer(i).getClass();
+                if (renderer != getClass()) {
+                    renderers.add(renderer);
+                }
             }
         }
-        for (Class<? extends Renderer> renderer : renderers) {
+        for (Class<? extends GeometryRenderer> renderer : renderers) {
             //meshes
             for (Mesh mesh : Scene.getMeshes(renderer)) {
                 beforeDrawRenderable(mesh);
@@ -286,7 +293,7 @@ public class ShadowRenderer extends Renderer {
 
     /**
      * Removes the shader program and the FBO from the GPU's memory. After this
-     * method call you can't use this Renderer.
+ method call you can't use this GeometryRenderer.
      */
     @Override
     public void release() {
@@ -316,11 +323,6 @@ public class ShadowRenderer extends Renderer {
             }
             RenderingPipeline.setTextureParameter(RenderingPipeline.TEXTURE_SHADOWMAP, null);
         }
-    }
-
-    @Override
-    public boolean isGeometryRenderer() {
-        return true;
     }
 
     @Override

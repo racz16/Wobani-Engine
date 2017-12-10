@@ -25,11 +25,6 @@ public class StaticEnvironmentProbe implements EnvironmentProbe {
     }
 
     @Override
-    public void update() {
-
-    }
-
-    @Override
     public void bindToTextureUnit(int textureUnit) {
         cubeMap.bindToTextureUnit(textureUnit);
     }

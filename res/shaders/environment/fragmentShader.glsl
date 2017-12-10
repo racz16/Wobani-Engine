@@ -17,7 +17,7 @@ struct Light {              //base alignment        alignment offset
     vec3 specular;          //16                    80
     vec2 cutOff;            //8                     96
     int type;               //4                     104
-    bool active;            //4                     108
+    bool active2;            //4                     108
 };                          //                      112
 
 #define DIRECTIONAL_LIGHT 0

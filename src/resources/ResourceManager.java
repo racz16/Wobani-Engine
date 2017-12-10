@@ -5,7 +5,7 @@ import components.light.*;
 import core.*;
 import java.util.*;
 import org.joml.*;
-import renderers.*;
+import rendering.*;
 import resources.audio.*;
 import resources.meshes.*;
 import resources.shaders.*;
@@ -16,7 +16,7 @@ import window.*;
 
 /**
  * Manages the loaded models, textures and splines.
- *
+ * <p>
  */
 public class ResourceManager {
 
@@ -117,7 +117,7 @@ public class ResourceManager {
      * Updates the specified map of resources.
      *
      * @param resources map of resources
-     * @param <T> resource type
+     * @param <T>       resource type
      *
      * @throws NullPointerException map can't be null
      */
@@ -168,6 +168,7 @@ public class ResourceManager {
      * Returns the specified texture.
      *
      * @param key texture's key
+     *
      * @return texture
      */
     @Nullable
@@ -250,6 +251,7 @@ public class ResourceManager {
      * Returns the specified mesh.
      *
      * @param key mesh's key
+     *
      * @return mesh
      */
     @Nullable
@@ -297,6 +299,7 @@ public class ResourceManager {
      * Returns the specified spline.
      *
      * @param key spline's key
+     *
      * @return spline
      */
     @Nullable
@@ -345,6 +348,7 @@ public class ResourceManager {
      * Returns the specified FBO.
      *
      * @param key FBO's key
+     *
      * @return FBO
      */
     @Nullable
@@ -425,6 +429,7 @@ public class ResourceManager {
      * Returns the specified UBO.
      *
      * @param key UBO's key
+     *
      * @return UBO
      */
     @Nullable
@@ -472,6 +477,7 @@ public class ResourceManager {
      * Returns the specified VAO.
      *
      * @param key VAO's key
+     *
      * @return VAO
      */
     @Nullable
@@ -515,6 +521,7 @@ public class ResourceManager {
      * Returns the specified sound.
      *
      * @param key sound's key
+     *
      * @return sound
      */
     @Nullable
@@ -558,6 +565,7 @@ public class ResourceManager {
      * Returns the specified audio buffer.
      *
      * @param key audio buffer's key
+     *
      * @return audio buffer
      */
     @Nullable
@@ -605,6 +613,7 @@ public class ResourceManager {
      * Returns the specified audio source.
      *
      * @param key audio source's key
+     *
      * @return audio source
      */
     @Nullable
@@ -668,7 +677,7 @@ public class ResourceManager {
      * Releases the specified map of resources.
      *
      * @param resources map of resources
-     * @param <T> resource type
+     * @param <T>       resource type
      *
      * @throws NullPointerException the map can't be null
      */

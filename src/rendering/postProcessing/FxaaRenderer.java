@@ -1,4 +1,4 @@
-package renderers.postProcessing;
+package rendering.postProcessing;
 
 import resources.shaders.postProcessing.FxaaShader;
 import toolbox.annotations.*;
@@ -6,7 +6,7 @@ import toolbox.annotations.*;
 /**
  * Performs FXAA.
  */
-public class FxaaRenderer extends PostProcessingBase {
+public class FxaaRenderer extends PostProcessingRenderer {
 
     /**
      * The only FxaaRenderer instance.

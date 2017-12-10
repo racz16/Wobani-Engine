@@ -11,7 +11,7 @@ import java.util.*;
 import materials.*;
 import org.joml.*;
 import org.lwjgl.glfw.*;
-import renderers.*;
+import rendering.geometry.*;
 import resources.*;
 import resources.audio.*;
 import resources.environmentProbes.*;
@@ -44,7 +44,7 @@ public class Example1 {
      * The example's environment map used for the skybox, reflections and
      * refractions.
      */
-    private static StaticCubeMapTexture environment;
+    private static StaticCubeMapTexture skybox;
 
     /**
      * Entry point, initializes the engine, the scene, then starts the game
@@ -96,19 +96,21 @@ public class Example1 {
         Material dragonMat = new Material(BlinnPhongRenderer.class);
         dragonMat.setSlot(Material.DIFFUSE, new MaterialSlot(new Vector4f(0.5f, 0.5f, 0.5f, 1f)));
         dragonMat.setSlot(Material.SPECULAR, new MaterialSlot(new Vector4f(0.7f, 0.7f, 0.7f, 1f)));
-        dragonMat.setSlot(Material.REFLECTION, new MaterialSlot(environment));
-        dragonMat.setSlot(Material.REFRACTION, new MaterialSlot(environment));
+        dragonMat.setSlot(Material.REFLECTION, new MaterialSlot(skybox));
+        dragonMat.setSlot(Material.REFRACTION, new MaterialSlot(skybox));
         dragonMat.setSlot(Material.ENVIRONTMENT_INTENSITY, new MaterialSlot(new Vector4f(1)));
         dragonMat.setFloatParameter(Material.PARAM_REFRACTION_INDEX_F, 1f / 1.33f);
 
         GameObject dragon = StaticMesh.loadModelToGameObject(new File("res/models/dragon.obj"));
         dragon.getComponent(MeshComponent.class).setMaterial(dragonMat);
+        dragon.getComponent(MeshComponent.class).setReflectable(true);
         dragon.setName("dragon");
         dragon.getTransform().setRelativePosition(new Vector3f(0, -5, -15));
         dragon.getTransform().setRelativeScale(new Vector3f(2.5f));
 
         GameObject dragon2 = StaticMesh.loadModelToGameObject(new File("res/models/dragon.obj"));
         dragon2.getComponent(MeshComponent.class).setMaterial(dragonMat);
+        dragon2.getComponent(MeshComponent.class).setReflectable(true);
         dragon2.setName("dragon2");
         dragon2.getTransform().setRelativePosition(new Vector3f(50, -40, 0));
         dragon.addChild(dragon2);
@@ -254,15 +256,19 @@ public class Example1 {
         paths.add(new File("res/textures/ely_hills/hills_dn.tga"));
         paths.add(new File("res/textures/ely_hills/hills_bk.tga"));
         paths.add(new File("res/textures/ely_hills/hills_ft.tga"));
-        environment = StaticCubeMapTexture.loadTexture(paths, true);
-        GameObject skybox = new GameObject("skybox");
-        Material sky = new Material(SkyBoxRenderer.class);
-        sky.setSlot(Material.DIFFUSE, new MaterialSlot(environment));
-//        sky.setSlot(Material.DIFFUSE, new MaterialSlot(probe));
-        MeshComponent mc = new MeshComponent(CubeMesh.getInstance(), sky);
-        mc.setCastShadow(false);
-        mc.setReceiveShadows(false);
-        skybox.addComponent(mc);
+        skybox = new StaticCubeMapTexture(paths, true);
+        StaticEnvironmentProbe skyboxProbe = new StaticEnvironmentProbe(skybox);
+        Scene.setSkybox(skyboxProbe);
+
+//        environment = StaticCubeMapTexture.loadTexture(paths, true);
+//        GameObject skybox = new GameObject("skybox");
+//        Material sky = new Material(SkyBoxRenderer.class);
+//        sky.setSlot(Material.DIFFUSE, new MaterialSlot(environment));
+////        sky.setSlot(Material.DIFFUSE, new MaterialSlot(probe));
+//        MeshComponent mc = new MeshComponent(CubeMesh.getInstance(), sky);
+//        mc.setCastShadow(false);
+//        mc.setReceiveShadows(false);
+//        skybox.addComponent(mc);
     }
 
     /**
@@ -350,7 +356,7 @@ public class Example1 {
      * Sticks the two windows to each other.
      *
      * @param isGlfwWindowChanged determines whether the GLFW windows's position
-     * changed or not
+     *                            changed or not
      */
     public static void setWindowPositions(boolean isGlfwWindowChanged) {
         if (windowPositionChange) {

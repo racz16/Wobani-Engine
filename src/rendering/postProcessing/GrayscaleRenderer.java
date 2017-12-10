@@ -1,4 +1,4 @@
-package renderers.postProcessing;
+package rendering.postProcessing;
 
 import resources.shaders.postProcessing.GrayscaleShader;
 import toolbox.annotations.*;
@@ -6,7 +6,7 @@ import toolbox.annotations.*;
 /**
  * Makes the frame grayscaled.
  */
-public class GrayscaleRenderer extends PostProcessingBase {
+public class GrayscaleRenderer extends PostProcessingRenderer {
 
     /**
      * The only GrayscaleRenderer instance.

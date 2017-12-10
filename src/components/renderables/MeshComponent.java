@@ -4,7 +4,7 @@ import core.*;
 import java.util.*;
 import materials.*;
 import org.joml.*;
-import renderers.*;
+import rendering.geometry.*;
 import resources.meshes.*;
 import toolbox.annotations.*;
 
@@ -78,6 +78,16 @@ public class MeshComponent extends Component {
      * Determines whether the Component is valid.
      */
     private boolean valid;
+
+    private boolean reflectable;
+
+    public boolean isReflectable() {
+        return reflectable;
+    }
+
+    public void setReflectable(boolean ref) {
+        reflectable = ref;
+    }
 
     /**
      * Initializes a new MeshComponent to the given value.

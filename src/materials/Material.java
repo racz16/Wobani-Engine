@@ -1,24 +1,24 @@
 package materials;
 
+import rendering.geometry.GeometryRenderer;
 import java.util.*;
 import org.joml.*;
-import renderers.*;
 import toolbox.annotations.*;
 
 /**
  * Material for Splines and Meshes. It can work together with any kind of
- * Renderers, you should only store the required slots in it. Note that not all
- * Rendeers support all types of slots, but that isn't a problem if you add
- * unsupported type of slot to a Material, the Renderer will ignore it. If you
- * don't add a slot which is requred by a built-in Renderer, it will use some
- * kind of a default value.
+ Renderers, you should only store the required slots in it. Note that not all
+ Rendeers support all types of slots, but that isn't a problem if you add
+ unsupported type of slot to a Material, the GeometryRenderer will ignore it. If you
+ don't add a slot which is requred by a built-in GeometryRenderer, it will use some
+ kind of a default value.
  */
 public class Material {
 
     /**
-     * The Material's Renderer class.
+     * The Material's GeometryRenderer class.
      */
-    private Class<? extends Renderer> renderer;
+    private Class<? extends GeometryRenderer> renderer;
     /**
      * The Material's slots.
      */
@@ -107,7 +107,7 @@ public class Material {
      *
      * @throws NullPointerException renderer can't be null
      */
-    public Material(@NotNull Class<? extends Renderer> renderer) {
+    public Material(@NotNull Class<? extends GeometryRenderer> renderer) {
         if (renderer == null) {
             throw new NullPointerException();
         }
@@ -115,24 +115,24 @@ public class Material {
     }
 
     /**
-     * Returns the Material's Renderer class.
+     * Returns the Material's GeometryRenderer class.
      *
-     * @return the Material's Renderer class
+     * @return the Material's GeometryRenderer class
      */
     @NotNull
-    public Class<? extends Renderer> getRenderer() {
+    public Class<? extends GeometryRenderer> getRenderer() {
         return renderer;
     }
 
     /**
-     * Returns the Material's specified slot. If you use your own Renderer, you
-     * can use any String key you want. However if you use the built-in
-     * Renderers, you should use these Renderers' specified keys. You can reach
-     * these keys as this Material class's static final String values. Note that
-     * not all Rendeers support all types of slots, but that isn't a problem if
-     * you add unsupported type of slot to a Material, the Renderer will ignore
-     * it. If you don't add a slot which is requred by a built-in Renderer, it
-     * will use some kind of a default value.
+     * Returns the Material's specified slot. If you use your own GeometryRenderer, you
+ can use any String key you want. However if you use the built-in
+ Renderers, you should use these Renderers' specified keys. You can reach
+ these keys as this Material class's static final String values. Note that
+ not all Rendeers support all types of slots, but that isn't a problem if
+ you add unsupported type of slot to a Material, the GeometryRenderer will ignore
+ it. If you don't add a slot which is requred by a built-in GeometryRenderer, it
+ will use some kind of a default value.
      *
      * @param key slot's key
      *
@@ -150,13 +150,13 @@ public class Material {
 
     /**
      * Sets the Material's specified slot to the given value. If you use your
-     * own Renderer, you can use any String key you want. However if you use the
-     * built-in Renderers, you should use these Renderers' specified keys. You
-     * can reach these keys as this Material class's static final String values.
-     * Note that not all Rendeers support all types of slots, but that isn't a
-     * problem if you add unsupported type of slot to a Material, the Renderer
-     * will ignore it. If you don't add a slot which is requred by a built-in
-     * Renderer, it will use some kind of a default value.
+ own GeometryRenderer, you can use any String key you want. However if you use the
+ built-in Renderers, you should use these Renderers' specified keys. You
+ can reach these keys as this Material class's static final String values.
+ Note that not all Rendeers support all types of slots, but that isn't a
+ problem if you add unsupported type of slot to a Material, the GeometryRenderer
+ will ignore it. If you don't add a slot which is requred by a built-in
+ GeometryRenderer, it will use some kind of a default value.
      *
      * @param key  slot's key
      * @param slot Material's slot

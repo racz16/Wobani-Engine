@@ -1,4 +1,4 @@
-package renderers.postProcessing;
+package rendering.postProcessing;
 
 import resources.shaders.postProcessing.InvertShader;
 import toolbox.annotations.*;
@@ -6,7 +6,7 @@ import toolbox.annotations.*;
 /**
  * Inverts the frame's colors.
  */
-public class InvertRenderer extends PostProcessingBase {
+public class InvertRenderer extends PostProcessingRenderer {
 
     /**
      * The only InvertRenderer instance.

@@ -1,7 +1,7 @@
 package core;
 
 import org.joml.*;
-import renderers.*;
+import rendering.*;
 import resources.*;
 import toolbox.*;
 import window.*;

@@ -1,11 +1,10 @@
-package renderers;
+package rendering;
 
-import resources.textures.texture2D.Texture2D;
-import resources.shaders.TexturedQuadShader;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import resources.meshes.*;
-import resources.textures.*;
+import resources.shaders.*;
+import resources.textures.texture2D.*;
 import toolbox.*;
 import toolbox.annotations.*;
 import window.*;
@@ -107,11 +106,6 @@ public class ScreenRenderer extends Renderer {
     @Override
     public boolean isUsable() {
         return true;
-    }
-
-    @Override
-    public boolean isGeometryRenderer() {
-        return false;
     }
 
     @Override

@@ -46,7 +46,7 @@ struct Light {              //base alignment        alignment offset
     vec3 specular;          //16                    80
     vec2 cutOff;            //8                     96
     int type;               //4                     104
-    bool active;            //4                     108
+    bool active2;            //4                     108
 };                          //                      112
 
 #define DIRECTIONAL_LIGHT 0
@@ -111,7 +111,7 @@ void main(){
     result *= calculateShadow(receiveShadow, fragmentPositionLightSpace, normalVector);
     //point and spotlights
     for(int i=0; i<maxLightSources; i++){
-        if(lights[i].active){
+        if(lights[i].active2){
             result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights[i]);
         }
     }

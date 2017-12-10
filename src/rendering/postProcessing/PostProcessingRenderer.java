@@ -1,21 +1,20 @@
-package renderers.postProcessing;
+package rendering.postProcessing;
 
-import resources.textures.texture2D.Texture2D;
-import resources.shaders.Shader;
 import org.joml.*;
 import org.lwjgl.opengl.*;
-import renderers.*;
+import rendering.*;
 import resources.meshes.*;
-import resources.textures.*;
+import resources.shaders.*;
+import resources.textures.texture2D.*;
 import toolbox.*;
 
 /**
  * Abstract class for post processing renderers.
  */
-public abstract class PostProcessingBase extends Renderer {
+public abstract class PostProcessingRenderer extends Renderer {
 
     /**
-     * Renderer's shader.
+     * GeometryRenderer's shader.
      */
     protected Shader shader;
     /**
@@ -31,7 +30,6 @@ public abstract class PostProcessingBase extends Renderer {
         quad.draw();
         afterDrawQuad();
         shader.stop();
-        RenderingPipeline.swapFboAttachments();
     }
 
     /**
@@ -44,7 +42,7 @@ public abstract class PostProcessingBase extends Renderer {
      */
     private void beforeShader() {
         OpenGl.setWireframe(false);
-        RenderingPipeline.bindFbo();
+        RenderingPipeline.getPostProcessingRenderingStage().bindFbo();
         OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
         refreshShader();
     }
@@ -77,11 +75,6 @@ public abstract class PostProcessingBase extends Renderer {
     @Override
     public void removeFromRenderingPipeline() {
 
-    }
-
-    @Override
-    public boolean isGeometryRenderer() {
-        return false;
     }
 
     @Override

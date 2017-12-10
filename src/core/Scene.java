@@ -4,10 +4,12 @@ import components.audio.*;
 import components.camera.*;
 import components.light.lightTypes.*;
 import components.renderables.*;
+import java.io.*;
 import java.util.*;
 import materials.*;
 import org.joml.*;
-import renderers.*;
+import rendering.geometry.*;
+import resources.environmentProbes.*;
 import resources.meshes.*;
 import resources.splines.*;
 import toolbox.*;
@@ -27,11 +29,11 @@ public class Scene {
     /**
      * Contains all the available MeshComponents.
      */
-    private static final Map<Class<? extends Renderer>, Map<Mesh, List<MeshComponent>>> MESHES = new HashMap<>();
+    private static final Map<Class<? extends GeometryRenderer>, Map<Mesh, List<MeshComponent>>> MESHES = new HashMap<>();
     /**
      * Contains all the available SplineComponents.
      */
-    private static final Map<Class<? extends Renderer>, Map<Spline, List<SplineComponent>>> SPLINES = new HashMap<>();
+    private static final Map<Class<? extends GeometryRenderer>, Map<Spline, List<SplineComponent>>> SPLINES = new HashMap<>();
     /**
      * Custom LISTS.
      */
@@ -49,6 +51,22 @@ public class Scene {
      */
     private static AudioListenerComponent audioListener;
 
+    private static EnvironmentProbe skybox;
+
+    private static final List<DynamicEnvironmentProbe> PROBES = new ArrayList<>();
+
+    public static void addProbe(DynamicEnvironmentProbe probe) {
+        PROBES.add(probe);
+    }
+
+    public static DynamicEnvironmentProbe getProbe(int index) {
+        return PROBES.get(index);
+    }
+
+    public static int getProbeCount() {
+        return PROBES.size();
+    }
+
     static {
         addComponentListClass(Camera.class);
         addComponentListClass(DirectionalLight.class);
@@ -60,6 +78,14 @@ public class Scene {
      * To can't create Scene instance.
      */
     private Scene() {
+    }
+
+    public static void load(@NotNull File file) {
+        //TODO XStream load
+    }
+
+    public static void save(@NotNull File file) {
+        //TODO XStream load
     }
 
     //
@@ -312,14 +338,14 @@ public class Scene {
     }
 
     /**
-     * Returns the array of Meshes using the specified Renderer.
+     * Returns the array of Meshes using the specified GeometryRenderer.
      *
-     * @param renderer Renderer
+     * @param renderer GeometryRenderer
      *
-     * @return the array of Meshes using the specified Renderer
+     * @return the array of Meshes using the specified GeometryRenderer
      */
     @NotNull @ReadOnly
-    public static Mesh[] getMeshes(@NotNull Class<? extends Renderer> renderer) {
+    public static Mesh[] getMeshes(@NotNull Class<? extends GeometryRenderer> renderer) {
         Map<Mesh, List<MeshComponent>> map = MESHES.get(renderer);
         if (map == null) {
             return new Mesh[0];
@@ -331,15 +357,16 @@ public class Scene {
     }
 
     /**
-     * Returns the number of MeshComponents using the specified Renderer and
-     * Mesh.
+     * Returns the number of MeshComponents using the specified GeometryRenderer
+     * and Mesh.
      *
-     * @param renderer Renderer
+     * @param renderer GeometryRenderer
      * @param mesh     Mesh
      *
-     * @return number of MeshComponents using the specified Renderer and Mesh
+     * @return number of MeshComponents using the specified GeometryRenderer and
+     *         Mesh
      */
-    public static int getNumberOfMeshComponents(@NotNull Class<? extends Renderer> renderer, @NotNull Mesh mesh) {
+    public static int getNumberOfMeshComponents(@NotNull Class<? extends GeometryRenderer> renderer, @NotNull Mesh mesh) {
         if (MESHES.get(renderer) == null || MESHES.get(renderer).get(mesh) == null) {
             return 0;
         } else {
@@ -348,16 +375,17 @@ public class Scene {
     }
 
     /**
-     * Returns the indexth MeshComponent using the specified Renderer and Mesh.
+     * Returns the indexth MeshComponent using the specified GeometryRenderer
+     * and Mesh.
      *
-     * @param renderer Renderer
+     * @param renderer GeometryRenderer
      * @param mesh     Mesh
      * @param index    index
      *
      * @return MeshComponent
      */
     @Nullable
-    public static MeshComponent getMeshComponent(@NotNull Class<? extends Renderer> renderer, @NotNull Mesh mesh, int index) {
+    public static MeshComponent getMeshComponent(@NotNull Class<? extends GeometryRenderer> renderer, @NotNull Mesh mesh, int index) {
         if (MESHES.get(renderer) == null || MESHES.get(renderer).get(mesh) == null) {
             return null;
         } else {
@@ -463,14 +491,14 @@ public class Scene {
     }
 
     /**
-     * Returns the array of Splines using the specified Renderer.
+     * Returns the array of Splines using the specified GeometryRenderer.
      *
-     * @param renderer Renderer
+     * @param renderer GeometryRenderer
      *
-     * @return the array of Splines using the specified Renderer
+     * @return the array of Splines using the specified GeometryRenderer
      */
     @NotNull @ReadOnly
-    public static Spline[] getSplines(@NotNull Class<? extends Renderer> renderer) {
+    public static Spline[] getSplines(@NotNull Class<? extends GeometryRenderer> renderer) {
         Map<Spline, List<SplineComponent>> map = SPLINES.get(renderer);
         if (map == null) {
             return new Spline[0];
@@ -482,16 +510,16 @@ public class Scene {
     }
 
     /**
-     * Returns the number of SplineComponents using the specified Renderer and
-     * Spline.
+     * Returns the number of SplineComponents using the specified
+     * GeometryRenderer and Spline.
      *
-     * @param renderer Renderer
+     * @param renderer GeometryRenderer
      * @param spline   Spline
      *
-     * @return number of SplineComponents using the specified Renderer and
-     *         Spline
+     * @return number of SplineComponents using the specified GeometryRenderer
+     *         and Spline
      */
-    public static int getNumberOfSplineComponents(@NotNull Class<? extends Renderer> renderer, @NotNull Spline spline) {
+    public static int getNumberOfSplineComponents(@NotNull Class<? extends GeometryRenderer> renderer, @NotNull Spline spline) {
         if (SPLINES.get(renderer) == null || SPLINES.get(renderer).get(spline) == null) {
             return 0;
         } else {
@@ -500,17 +528,17 @@ public class Scene {
     }
 
     /**
-     * Returns the indexth SplineComponent using the specified Renderer and
-     * Spline.
+     * Returns the indexth SplineComponent using the specified GeometryRenderer
+     * and Spline.
      *
-     * @param renderer Renderer
+     * @param renderer GeometryRenderer
      * @param spline   Spline
      * @param index    index
      *
      * @return SplineComponent
      */
     @Nullable
-    public static SplineComponent getSplineComponent(@NotNull Class<? extends Renderer> renderer, @NotNull Spline spline, int index) {
+    public static SplineComponent getSplineComponent(@NotNull Class<? extends GeometryRenderer> renderer, @NotNull Spline spline, int index) {
         if (SPLINES.get(renderer) == null || SPLINES.get(renderer).get(spline) == null) {
             return null;
         } else {
@@ -610,6 +638,18 @@ public class Scene {
             throw new NullPointerException();
         }
         Scene.audioListener = audioListener;
+    }
+
+    @Nullable
+    public static EnvironmentProbe getSkybox() {
+        return skybox;
+    }
+
+    public static void setSkybox(@Nullable EnvironmentProbe skybox) {
+        if (skybox == null) {
+            return;
+        }
+        Scene.skybox = skybox;
     }
 
     /**

@@ -1,10 +1,11 @@
-package renderers;
+package rendering.geometry;
 
 import components.renderables.*;
 import core.*;
 import materials.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
+import rendering.*;
 import resources.*;
 import resources.meshes.*;
 import resources.shaders.*;
@@ -14,13 +15,13 @@ import toolbox.*;
 import toolbox.annotations.*;
 
 /**
- * This Renderer can draw meshes and splines by using the Blinn-Phong shading.
- * You can fill the materials with diffuse color or diffuse map, specular color
- * or specular map and normal map. If you set the appropirate parameters, the
- * specular map's alpha channel used as the glossiness value and the normal
- * map's alpha channel as a parallax map. If you don't fill the diffuse or
- * specular slots, the shader uses default values (basically you can even use
- * this Renderer with an empty material).
+ * This GeometryRenderer can draw meshes and splines by using the Blinn-Phong
+ shading. You can fill the materials with diffuse color or diffuse map,
+ specular color or specular map and normal map. If you set the appropirate
+ parameters, the specular map's alpha channel used as the glossiness value and
+ the normal map's alpha channel as a parallax map. If you don't fill the
+ diffuse or specular slots, the shader uses default values (basically you can
+ even use this GeometryRenderer with an empty material).
  *
  * @see Material#PARAM_POM_MAX_LAYERS_F
  * @see Material#PARAM_POM_MIN_LAYERS_F
@@ -29,7 +30,7 @@ import toolbox.annotations.*;
  * @see Material#PARAM_REFRACTION_INDEX_F
  * @see Material#PARAM_USE_GLOSSINESS_F
  */
-public class BlinnPhongRenderer extends Renderer {
+public class BlinnPhongRenderer extends GeometryRenderer {
 
     /**
      * Blinn-Phong shader.
@@ -188,11 +189,6 @@ public class BlinnPhongRenderer extends Renderer {
     @Override
     public void removeFromRenderingPipeline() {
 
-    }
-
-    @Override
-    public boolean isGeometryRenderer() {
-        return true;
     }
 
     @Override

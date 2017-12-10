@@ -1,4 +1,4 @@
-package renderers;
+package rendering.geometry;
 
 import components.camera.*;
 import components.renderables.*;
@@ -6,6 +6,7 @@ import core.*;
 import materials.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
+import rendering.*;
 import resources.*;
 import resources.meshes.*;
 import resources.shaders.*;
@@ -19,7 +20,7 @@ import toolbox.annotations.*;
  * color, if there is no diffuse color in the material, it uses as default the
  * mid-gray color.
  */
-public class SolidColorRenderer extends Renderer {
+public class SolidColorRenderer extends GeometryRenderer {
 
     /**
      * Solid color shader.
@@ -148,11 +149,6 @@ public class SolidColorRenderer extends Renderer {
 
     @Override
     public boolean isUsable() {
-        return true;
-    }
-
-    @Override
-    public boolean isGeometryRenderer() {
         return true;
     }
 

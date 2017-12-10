@@ -1,4 +1,4 @@
-package renderers.postProcessing;
+package rendering.postProcessing;
 
 import resources.shaders.postProcessing.ReinhardToneMappingShader;
 import toolbox.annotations.*;
@@ -6,7 +6,7 @@ import toolbox.annotations.*;
 /**
  * Performs Reinhard tone mapping on the frame.
  */
-public class ReinhardToneMappingRenderer extends PostProcessingBase {
+public class ReinhardToneMappingRenderer extends PostProcessingRenderer {
 
     /**
      * The only ReinhardToneMappingRenderer instance.
