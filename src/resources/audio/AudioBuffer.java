@@ -14,6 +14,7 @@ import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import resources.*;
 import resources.ResourceManager.ResourceState;
+import toolbox.*;
 import toolbox.annotations.*;
 
 /**
@@ -41,6 +42,10 @@ public class AudioBuffer implements Resource {
      * Audio buffer's frequency.
      */
     private int frequency;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new AudioBuffer to the given value.
@@ -48,8 +53,8 @@ public class AudioBuffer implements Resource {
      * @param path sound file's relative path (with extension like
      * "res/sounds/mySound.ogg")
      */
-    private AudioBuffer(@NotNull String path) {
-        meta.setPath(path);
+    private AudioBuffer(@NotNull File path) {
+        meta.setPaths(Utility.wrapObjectByList(path));
         meta.setLastActiveToNow();
         meta.setDataStorePolicy(ResourceManager.ResourceState.ACTION);
 
@@ -57,7 +62,8 @@ public class AudioBuffer implements Resource {
         ramToAction();
 
         meta.setDataSize(data.capacity());
-        ResourceManager.addAudioBuffer(path, this);
+        resourceId = new ResourceId(path);
+        ResourceManager.addAudioBuffer(this);
     }
 
     /**
@@ -98,8 +104,7 @@ public class AudioBuffer implements Resource {
         try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
             ByteBuffer vorbis = null;
             try {
-                File file = new File(getPath());
-                FileInputStream fis = new FileInputStream(file);
+                FileInputStream fis = new FileInputStream(getPath());
                 FileChannel fc = fis.getChannel();
                 vorbis = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
                 fc.close();
@@ -169,8 +174,8 @@ public class AudioBuffer implements Resource {
      * "res/sounds/mySound.ogg")
      * @return audio buffer
      */
-    public static AudioBuffer loadSound(@NotNull String path) {
-        AudioBuffer sound = ResourceManager.getAudioBuffer(path);
+    public static AudioBuffer loadSound(@NotNull File path) {
+        AudioBuffer sound = ResourceManager.getAudioBuffer(new ResourceId(path));
         if (sound != null) {
             return sound;
         }
@@ -344,8 +349,8 @@ public class AudioBuffer implements Resource {
      * @return the sound's path
      */
     @NotNull
-    public String getPath() {
-        return meta.getPath();
+    public File getPath() {
+        return meta.getPaths().get(0);
     }
 
     @Override
@@ -368,6 +373,12 @@ public class AudioBuffer implements Resource {
         }
     }
 
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
+    }
+
     @Override
     public boolean isUsable() {
         return true;
@@ -376,7 +387,8 @@ public class AudioBuffer implements Resource {
     @Override
     public String toString() {
         return "AudioBuffer{" + "id=" + id + ", meta=" + meta + ", data=" + data
-                + ", channels=" + channels + ", frequency=" + frequency + '}';
+                + ", channels=" + channels + ", frequency=" + frequency
+                + ", resourceId=" + resourceId + '}';
     }
 
 }

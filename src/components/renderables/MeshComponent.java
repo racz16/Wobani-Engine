@@ -2,9 +2,9 @@ package components.renderables;
 
 import core.*;
 import java.util.*;
+import materials.*;
 import org.joml.*;
-import renderers.*;
-import resources.materials.*;
+import rendering.geometry.*;
 import resources.meshes.*;
 import toolbox.annotations.*;
 
@@ -79,6 +79,16 @@ public class MeshComponent extends Component {
      */
     private boolean valid;
 
+    private boolean reflectable;
+
+    public boolean isReflectable() {
+        return reflectable;
+    }
+
+    public void setReflectable(boolean ref) {
+        reflectable = ref;
+    }
+
     /**
      * Initializes a new MeshComponent to the given value.
      *
@@ -92,7 +102,7 @@ public class MeshComponent extends Component {
     /**
      * Initializes a new MeshComponent to the given values.
      *
-     * @param mesh mesh
+     * @param mesh     mesh
      * @param material mesh's material
      */
     public MeshComponent(@NotNull Mesh mesh, @NotNull Material material) {
@@ -121,12 +131,9 @@ public class MeshComponent extends Component {
         if (mesh == null) {
             throw new NullPointerException();
         }
-        GameObject old = gameObject;
-        gameObject = null;
-        removeFromLists();
-        gameObject = old;
+        Mesh old = this.mesh;
         this.mesh = mesh;
-        addToLists();
+        Scene.refreshMeshComponent(this, old);
         invalidate();
     }
 
@@ -151,12 +158,9 @@ public class MeshComponent extends Component {
         if (material == null) {
             throw new NullPointerException();
         }
-        GameObject old = gameObject;
-        gameObject = null;
-        removeFromLists();
-        gameObject = old;
+        Material old = this.material;
         this.material = material;
-        addToLists();
+        Scene.refreshMeshComponent(this, old);
     }
 
     @Override
@@ -238,6 +242,7 @@ public class MeshComponent extends Component {
      * vertex distance.
      *
      * @return furthest vertex distance
+     *
      * @see #getOriginalFurthestVertexDistance()
      * @see Transform#getAbsoluteScale()
      * @see #getGameObject()
@@ -380,7 +385,7 @@ public class MeshComponent extends Component {
      * Sets whether or not the Mesh receives shadows.
      *
      * @param receiveShadows true if the Mesh should receive shadows, false
-     * otherwise
+     *                       otherwise
      *
      * @see Settings#isShadowMapping()
      */
@@ -401,7 +406,7 @@ public class MeshComponent extends Component {
      * Sets whether or not the Mesh rendered two sided.
      *
      * @param twoSided true if the Mesh should be rendered two sided, false
-     * otherwise
+     *                 otherwise
      */
     public void setTwoSided(boolean twoSided) {
         this.twoSided = twoSided;
@@ -443,42 +448,18 @@ public class MeshComponent extends Component {
         this.materialActive = materialActive;
     }
 
-    /**
-     * Adds the Mesh to the Scene's appropirate list based on the Material.
-     *
-     * @see Scene
-     */
-    private void addToLists() {
-        if (mesh == null || material == null) {
-            return;
-        }
-        Scene.addMeshComponent(this);
-    }
-
-    /**
-     * Removes the Mesh from the Scene's appropirate list based on the Material.
-     *
-     * @see Scene
-     */
-    private void removeFromLists() {
-        if (mesh == null || material == null) {
-            return;
-        }
-        Scene.removeMeshComponent(this);
-    }
-
     @Override
     protected void removeFromGameObject() {
         getGameObject().getTransform().removeInvalidatable(this);
         super.removeFromGameObject();
-        removeFromLists();
+        Scene.removeMeshComponent(this);
         invalidate();
     }
 
     @Override
     protected void addToGameObject(@NotNull GameObject object) {
         super.addToGameObject(object);
-        addToLists();
+        Scene.addMeshComponent(this);
         getGameObject().getTransform().addInvalidatable(this);
         invalidate();
     }

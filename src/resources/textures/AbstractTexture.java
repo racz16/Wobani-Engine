@@ -9,12 +9,12 @@ import toolbox.annotations.*;
 /**
  * Basic data and methods for implementing a texture.
  */
-public abstract class AbstractTexture implements Texture2D {
+public abstract class AbstractTexture implements Texture {
 
     /**
      * Texture's id.
      */
-    protected int textureId = 0;
+    protected int id = 0;
     /**
      * Texture's width and height.
      */
@@ -31,6 +31,10 @@ public abstract class AbstractTexture implements Texture2D {
      * Texture wrap along the V direcion.
      */
     protected TextureWrap wrapingV = TextureWrap.REPEAT;
+    /**
+     * Texture wrap along the W direcion.
+     */
+    protected TextureWrap wrapingW = TextureWrap.REPEAT;
     /**
      * Texture's magnification filter.
      */
@@ -58,7 +62,7 @@ public abstract class AbstractTexture implements Texture2D {
      * Generates an id for the texture.
      */
     protected void glGenerateTextureId() {
-        textureId = GL11.glGenTextures();
+        id = GL11.glGenTextures();
     }
 
     /**
@@ -67,16 +71,14 @@ public abstract class AbstractTexture implements Texture2D {
      * @return texture's id
      */
     protected int glGetId() {
-        return textureId;
+        return id;
     }
 
     /**
      * Binds the texture.
-     *
-     * @param multisampled multisampled texture
      */
-    protected void glBind(boolean multisampled) {
-        GL11.glBindTexture(multisampled ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D, textureId);
+    protected void glBind() {
+        GL11.glBindTexture(getTextureType(), id);
     }
 
     /**
@@ -96,21 +98,17 @@ public abstract class AbstractTexture implements Texture2D {
 
     /**
      * Unbinds the texture.
-     *
-     * @param multisampled multisampled texture
      */
-    protected void glUnbind(boolean multisampled) {
-        GL11.glBindTexture(multisampled ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D, 0);
+    protected void glUnbind() {
+        GL11.glBindTexture(getTextureType(), 0);
     }
 
     /**
      * Generates the texture's mipmaps.
-     *
-     * @param multisampled multisampled texture
      */
     @Bind
-    protected void glGenerateMipmaps(boolean multisampled) {
-        GL30.glGenerateMipmap(multisampled ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D);
+    protected void glGenerateMipmaps() {
+        GL30.glGenerateMipmap(getTextureType());
     }
 
     /**
@@ -123,7 +121,7 @@ public abstract class AbstractTexture implements Texture2D {
      */
     @Bind
     protected void glTexImage(int internalFormat, int format, int type, @Nullable ByteBuffer data) {
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat, size.x, size.y, 0, format, type, data);
+        GL11.glTexImage2D(getTextureType(), 0, internalFormat, size.x, size.y, 0, format, type, data);
     }
 
     /**
@@ -140,13 +138,12 @@ public abstract class AbstractTexture implements Texture2D {
      * Sets the texture's border color to the given value.
      *
      * @param borderColor border color
-     * @param multisampled multisampled texture
      *
      * @throws NullPointerException borderColor can't be null
      * @throws IllegalArgumentException border color can't be lower than 0
      */
     @Bind
-    protected void glSetBorderColor(@NotNull Vector4f borderColor, boolean multisampled) {
+    protected void glSetBorderColor(@NotNull Vector4f borderColor) {
         if (borderColor == null) {
             throw new NullPointerException();
         }
@@ -155,7 +152,7 @@ public abstract class AbstractTexture implements Texture2D {
         }
         this.borderColor.set(borderColor);
         float bc[] = {borderColor.x, borderColor.y, borderColor.z, borderColor.w};
-        GL11.glTexParameterfv(multisampled ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_BORDER_COLOR, bc);
+        GL11.glTexParameterfv(getTextureType(), GL11.GL_TEXTURE_BORDER_COLOR, bc);
 
     }
 
@@ -168,15 +165,19 @@ public abstract class AbstractTexture implements Texture2D {
      * @throws NullPointerException parameter can't be null
      */
     @NotNull
-    protected TextureWrap glGetWrap(@NotNull TextureWrapType2D type) {
+    protected TextureWrap glGetWrap(@NotNull TextureWrapDirection type) {
         if (type == null) {
             throw new NullPointerException();
         }
-        if (type == TextureWrapType2D.WRAP_U) {
-            return wrapingU;
-        } else {
-            return wrapingV;
+        switch (type) {
+            case WRAP_U:
+                return wrapingU;
+            case WRAP_V:
+                return wrapingV;
+            case WRAP_W:
+                return wrapingW;
         }
+        return null;
     }
 
     /**
@@ -184,21 +185,26 @@ public abstract class AbstractTexture implements Texture2D {
      *
      * @param type texture wrap direction
      * @param value texture wrap
-     * @param multisampled multisampled texture
      *
      * @throws NullPointerException type and value can't be null
      */
     @Bind
-    protected void glSetWrap(@NotNull TextureWrapType2D type, @NotNull TextureWrap value, boolean multisampled) {
+    protected void glSetWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap value) {
         if (type == null || value == null) {
             throw new NullPointerException();
         }
-        if (type == TextureWrapType2D.WRAP_U) {
-            wrapingU = value;
-        } else {
-            wrapingV = value;
+        switch (type) {
+            case WRAP_U:
+                wrapingU = value;
+                break;
+            case WRAP_V:
+                wrapingV = value;
+                break;
+            case WRAP_W:
+                wrapingW = value;
+                break;
         }
-        GL11.glTexParameteri(multisampled ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D, type.getOpenGlCode(), value.getOpenGlCode());
+        GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
     }
 
     /**
@@ -226,12 +232,11 @@ public abstract class AbstractTexture implements Texture2D {
      *
      * @param type texture filter type
      * @param value texture filter
-     * @param multisampled multisampled texture
      *
      * @throws NullPointerException type and value can't be null
      */
     @Bind
-    protected void glSetFilter(@NotNull TextureFilterType type, @NotNull TextureFilter value, boolean multisampled) {
+    protected void glSetFilter(@NotNull TextureFilterType type, @NotNull TextureFilter value) {
         if (type == null || value == null) {
             throw new NullPointerException();
         }
@@ -240,20 +245,27 @@ public abstract class AbstractTexture implements Texture2D {
         } else {
             minification = value;
         }
-        GL11.glTexParameteri(multisampled ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D, type.getOpenGlCode(), value.getOpenGlCode());
+        GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
     }
 
     /**
      * Releases the texture's data.
      */
     protected void glRelease() {
-        GL11.glDeleteTextures(textureId);
-        textureId = 0;
+        GL11.glDeleteTextures(id);
+        id = 0;
     }
+
+    /**
+     * Returns the texture's native OpenGL type.
+     *
+     * @return the texture's native OpenGL types
+     */
+    protected abstract int getTextureType();
 
     @Override
     public String toString() {
-        return "AbstractTexture{" + "textureId=" + textureId + ", size=" + size
+        return "AbstractTexture{" + "textureId=" + id + ", size=" + size
                 + ", sRgb=" + sRgb + ", wrapingU=" + wrapingU + ", wrapingV=" + wrapingV
                 + ", magnification=" + magnification + ", minification=" + minification
                 + ", borderColor=" + borderColor + '}';

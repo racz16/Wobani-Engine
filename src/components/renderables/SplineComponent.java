@@ -1,10 +1,10 @@
 package components.renderables;
 
+import rendering.geometry.SolidColorRenderer;
 import core.*;
 import java.util.*;
+import materials.*;
 import org.joml.*;
-import renderers.*;
-import resources.materials.*;
 import resources.splines.*;
 import toolbox.annotations.*;
 
@@ -24,12 +24,12 @@ public class SplineComponent extends Component {
     private Spline spline;
     /**
      * The Spline's Material.
-     *
+     * <p>
      */
     private Material material;
     /**
      * Determines whether the Spline is active.
-     *
+     * <p>
      */
     private boolean splineActive = true;
     /**
@@ -90,7 +90,7 @@ public class SplineComponent extends Component {
     /**
      * Initializes a new SplineComponent to the given values.
      *
-     * @param spline spline
+     * @param spline   spline
      * @param material spline's material
      */
     public SplineComponent(@NotNull Spline spline, @NotNull Material material) {
@@ -112,18 +112,16 @@ public class SplineComponent extends Component {
      * Sets the Spline to the given value.
      *
      * @param spline spline
+     *
      * @throws NullPointerException spline can't be null
      */
     public void setSpline(@NotNull Spline spline) {
         if (spline == null) {
             throw new NullPointerException();
         }
-        GameObject old = gameObject;
-        gameObject = null;
-        removeFromLists();
-        gameObject = old;
+        Spline old = this.spline;
         this.spline = spline;
-        addToLists();
+        Scene.refreshSplineComponent(this, old);
         invalidate();
     }
 
@@ -148,12 +146,9 @@ public class SplineComponent extends Component {
         if (material == null) {
             throw new NullPointerException();
         }
-        GameObject old = gameObject;
-        gameObject = null;
-        removeFromLists();
-        gameObject = old;
+        Material old = this.material;
         this.material = material;
-        addToLists();
+        Scene.refreshSplineComponent(this, old);
     }
 
     @Override
@@ -235,6 +230,7 @@ public class SplineComponent extends Component {
      * vertex distance.
      *
      * @return furthest vertex distance
+     *
      * @see #getOriginalFurthestVertexDistance()
      * @see Transform#getAbsoluteScale()
      * @see #getGameObject()
@@ -344,6 +340,7 @@ public class SplineComponent extends Component {
      * Determines whether the Spline casts shadow.
      *
      * @return true if the Spline casts shadow, false otherwise
+     *
      * @see Settings#isShadowMapping()
      */
     public boolean isCastShadow() {
@@ -354,6 +351,7 @@ public class SplineComponent extends Component {
      * Sets whether or not the Spline casts shadow.
      *
      * @param castShadow true if the Spline should cast shadows, false otherwise
+     *
      * @see Settings#isShadowMapping()
      */
     public void setCastShadow(boolean castShadow) {
@@ -364,6 +362,7 @@ public class SplineComponent extends Component {
      * Determines whether the Spline receives shadows.
      *
      * @return true if the Spline receives shadows, false otherwise
+     *
      * @see Settings#isShadowMapping()
      */
     public boolean isReceiveShadows() {
@@ -374,7 +373,8 @@ public class SplineComponent extends Component {
      * Sets whether or not the Spline receives shadows.
      *
      * @param receiveShadows true if the Spline should receive shadows, false
-     * otherwise
+     *                       otherwise
+     *
      * @see Settings#isShadowMapping()
      */
     public void setReceiveShadows(boolean receiveShadows) {
@@ -417,43 +417,18 @@ public class SplineComponent extends Component {
         this.materialActive = materialActive;
     }
 
-    /**
-     * Adds the Spline to the Scene's appropirate list based on the Material.
-     *
-     * @see Scene
-     */
-    private void addToLists() {
-        if (spline == null || material == null) {
-            return;
-        }
-        Scene.addSplineComponent(this);
-    }
-
-    /**
-     * Removes the Spline from the Scene's appropirate list based on the
-     * Material.
-     *
-     * @see Scene
-     */
-    private void removeFromLists() {
-        if (spline == null || material == null) {
-            return;
-        }
-        Scene.removeSplineComponent(this);
-    }
-
     @Override
     protected void removeFromGameObject() {
         getGameObject().getTransform().removeInvalidatable(this);
         super.removeFromGameObject();
-        removeFromLists();
+        Scene.removeSplineComponent(this);
         invalidate();
     }
 
     @Override
     protected void addToGameObject(@NotNull GameObject object) {
         super.addToGameObject(object);
-        addToLists();
+        Scene.addSplineComponent(this);
         getGameObject().getTransform().addInvalidatable(this);
         invalidate();
     }

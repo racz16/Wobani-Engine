@@ -20,13 +20,18 @@ public class QuadMesh implements Mesh {
      * The only QuadMesh instance.
      */
     private static QuadMesh instace;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new QuadMesh.
      */
     private QuadMesh() {
         loadData();
-        ResourceManager.addMesh("." + ResourceManager.getNextId(), this);
+        resourceId = new ResourceId();
+        ResourceManager.addMesh(this);
     }
 
     /**
@@ -143,7 +148,7 @@ public class QuadMesh implements Mesh {
 
     @Override
     public int getDataSizeInAction() {
-        return vao == null || !vao.isUsable() ? 0 : 72;
+        return vao == null || !vao.isUsable() ? 0 : 104;
     }
 
     @Override
@@ -151,20 +156,26 @@ public class QuadMesh implements Mesh {
 
     }
 
-    /**
-     * Releases the mesh's data. After calling this method, you can't use this
-     * mesh for anything. However calling the getInstance method, you'll get a
-     * new, usable instance.
-     */
     @Override
     public void release() {
         vao.release();
         vao = null;
     }
 
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
+    }
+
     @Override
     public boolean isUsable() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "QuadMesh{" + "vao=" + vao + ", resourceId=" + resourceId + '}';
     }
 
 }

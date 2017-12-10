@@ -10,7 +10,7 @@ import org.lwjgl.openal.*;
  * affects how we hear audio sources' sounds.
  *
  * @see Scene#getAudioListener()
- * @see Scene#setAudioListener(AudioListenerComponent audioListener)
+ * @see Scene#setAudioListener(AudioListenerComponent)
  */
 public class AudioListenerComponent extends Component {
 

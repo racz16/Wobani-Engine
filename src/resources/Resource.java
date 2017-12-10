@@ -37,4 +37,11 @@ public interface Resource {
      * @return true if usable, false otherwise
      */
     public boolean isUsable();
+
+    /**
+     * Returns the resource's unique resource id.
+     *
+     * @return the resource's unique resource id.
+     */
+    public ResourceId getResourceId();
 }

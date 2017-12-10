@@ -1,19 +1,23 @@
 package examples;
 
+import components.*;
 import components.audio.*;
 import components.camera.*;
 import components.light.*;
 import components.renderables.*;
 import core.*;
+import java.io.*;
 import java.util.*;
+import materials.*;
 import org.joml.*;
 import org.lwjgl.glfw.*;
-import renderers.*;
+import rendering.geometry.*;
 import resources.*;
 import resources.audio.*;
-import resources.materials.*;
+import resources.environmentProbes.*;
 import resources.meshes.*;
 import resources.splines.*;
+import resources.textures.cubeMapTexture.*;
 import toolbox.*;
 import window.Input.Key;
 import window.*;
@@ -36,6 +40,11 @@ public class Example1 {
      * Determines whether the window position changes affect each other.
      */
     private static boolean windowPositionChange;
+    /**
+     * The example's environment map used for the skybox, reflections and
+     * refractions.
+     */
+    private static StaticCubeMapTexture skybox;
 
     /**
      * Entry point, initializes the engine, the scene, then starts the game
@@ -65,8 +74,10 @@ public class Example1 {
      */
     private static void initialize() {
         try {
-            dragons();
             boxes();
+            skybox();
+            dragons();
+
             camera();
             spline();
             lightSources();
@@ -85,17 +96,23 @@ public class Example1 {
         Material dragonMat = new Material(BlinnPhongRenderer.class);
         dragonMat.setSlot(Material.DIFFUSE, new MaterialSlot(new Vector4f(0.5f, 0.5f, 0.5f, 1f)));
         dragonMat.setSlot(Material.SPECULAR, new MaterialSlot(new Vector4f(0.7f, 0.7f, 0.7f, 1f)));
+        dragonMat.setSlot(Material.REFLECTION, new MaterialSlot(skybox));
+        dragonMat.setSlot(Material.REFRACTION, new MaterialSlot(skybox));
+        dragonMat.setSlot(Material.ENVIRONTMENT_INTENSITY, new MaterialSlot(new Vector4f(1)));
+        dragonMat.setFloatParameter(Material.PARAM_REFRACTION_INDEX_F, 1f / 1.33f);
 
-        GameObject dragon = StaticMesh.loadModelToGameObject("res/models/dragon.obj");
+        GameObject dragon = StaticMesh.loadModelToGameObject(new File("res/models/dragon.obj"));
         dragon.getComponent(MeshComponent.class).setMaterial(dragonMat);
+        dragon.getComponent(MeshComponent.class).setReflectable(true);
         dragon.setName("dragon");
         dragon.getTransform().setRelativePosition(new Vector3f(0, -5, -15));
         dragon.getTransform().setRelativeScale(new Vector3f(2.5f));
 
-        GameObject dragon2 = StaticMesh.loadModelToGameObject("res/models/dragon.obj");
+        GameObject dragon2 = StaticMesh.loadModelToGameObject(new File("res/models/dragon.obj"));
         dragon2.getComponent(MeshComponent.class).setMaterial(dragonMat);
+        dragon2.getComponent(MeshComponent.class).setReflectable(true);
         dragon2.setName("dragon2");
-        dragon2.getTransform().setRelativePosition(new Vector3f(50, 0, 0));
+        dragon2.getTransform().setRelativePosition(new Vector3f(50, -40, 0));
         dragon.addChild(dragon2);
 
         dragon.addComponent(new Component() {
@@ -112,23 +129,33 @@ public class Example1 {
         });
     }
 
+    private static DynamicEnvironmentProbe probe;
+
     /**
      * Adds boxes to the scene.
      */
     private static void boxes() {
         Material boxMaterial = new Material(BlinnPhongRenderer.class);
         boxMaterial.setSlot(Material.SPECULAR, new MaterialSlot(new Vector4f(0.3f, 0.3f, 0.3f, 0.75f)));
-        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot("res/textures/normal9.jpg", false));
-//        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot("res/textures/normal7.png", false));
-//        boxMaterial.getSlot(Material.NORMAL).setFloatParameter(MaterialSlot.POM_USE_FLOAT, 1f);
-//        boxMaterial.getSlot(Material.NORMAL).setFloatParameter(MaterialSlot.POM_SCALE_FLOAT, 0.3f);
-//        boxMaterial.getSlot(Material.NORMAL).setFloatParameter(MaterialSlot.POM_MIN_LAYERS_FLOAT, 50f);
-//        boxMaterial.getSlot(Material.NORMAL).setFloatParameter(MaterialSlot.POM_MAX_LAYERS_FLOAT, 100f);
+//        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot(new File("res/textures/normal9.jpg"), false));
+//        boxMaterial.setSlot(Material.NORMAL, new MaterialSlot(new File("res/textures/normal7.png"), false));
+//        boxMaterial.setFloatParameter(Material.PARAM_USE_POM_F, 1f);
+//        boxMaterial.setFloatParameter(Material.PARAM_POM_SCALE_F, 0.3f);
+//        boxMaterial.setFloatParameter(Material.PARAM_POM_MIN_LAYERS_F, 50f);
+//        boxMaterial.setFloatParameter(Material.PARAM_POM_MAX_LAYERS_F, 100f);
+//        boxMaterial.setSlot(Material.ENVIRONTMENT_INTENSITY, new MaterialSlot(new Vector4f(0, 1, 0, 0)));
+
+        probe = new DynamicEnvironmentProbe();
+        EnvironmentProbeComponent probeComponent = new EnvironmentProbeComponent(probe);
+        boxMaterial.setSlot(Material.REFLECTION, new MaterialSlot(probe));
+        GameObject g = new GameObject();
+        g.getTransform().setRelativePosition(new Vector3f(0, -40, 0));
+        g.addComponent(probeComponent);
 
         GameObject box = new GameObject("bigBox");
         box.getTransform().setRelativePosition(new Vector3f(0, -40, -20));
-        box.getTransform().setRelativeScale(new Vector3f(50f));
-        for (Mesh m : StaticMesh.loadModel("res/models/box.obj")) {
+        box.getTransform().setRelativeScale(new Vector3f(30f));
+        for (Mesh m : StaticMesh.loadModel(new File("res/models/sphere.obj"))) {
             box.addComponent(new MeshComponent(m, boxMaterial));
         }
     }
@@ -137,7 +164,7 @@ public class Example1 {
      * Adds light sources to the scene.
      */
     private static void lightSources() {
-        List<StaticMesh> boxModel = StaticMesh.loadModel("res/models/box.obj");
+        List<StaticMesh> boxModel = StaticMesh.loadModel(new File("res/models/box.obj"));
         //directional light
         GameObject light = new GameObject("directionalLight");
         light.getTransform().setRelativeRotation(new Vector3f(-45, 10, 0));
@@ -214,6 +241,34 @@ public class Example1 {
         Material splineMat = new Material(SolidColorRenderer.class);
         splineMat.setSlot(Material.DIFFUSE, new MaterialSlot(new Vector4f(0, 0, 1, 1)));
         splineGameObject.addComponent(new SplineComponent(spline, splineMat));
+
+        splineGameObject.getTransform().setBillboardingMode(Transform.BillboardingMode.SPHERICAL_BILLBOARDING);
+    }
+
+    /**
+     * Creates a skybox.
+     */
+    private static void skybox() {
+        List<File> paths = new ArrayList<>(6);
+        paths.add(new File("res/textures/ely_hills/hills_rt.tga"));
+        paths.add(new File("res/textures/ely_hills/hills_lf.tga"));
+        paths.add(new File("res/textures/ely_hills/hills_up.tga"));
+        paths.add(new File("res/textures/ely_hills/hills_dn.tga"));
+        paths.add(new File("res/textures/ely_hills/hills_bk.tga"));
+        paths.add(new File("res/textures/ely_hills/hills_ft.tga"));
+        skybox = new StaticCubeMapTexture(paths, true);
+        StaticEnvironmentProbe skyboxProbe = new StaticEnvironmentProbe(skybox);
+        Scene.setSkybox(skyboxProbe);
+
+//        environment = StaticCubeMapTexture.loadTexture(paths, true);
+//        GameObject skybox = new GameObject("skybox");
+//        Material sky = new Material(SkyBoxRenderer.class);
+//        sky.setSlot(Material.DIFFUSE, new MaterialSlot(environment));
+////        sky.setSlot(Material.DIFFUSE, new MaterialSlot(probe));
+//        MeshComponent mc = new MeshComponent(CubeMesh.getInstance(), sky);
+//        mc.setCastShadow(false);
+//        mc.setReceiveShadows(false);
+//        skybox.addComponent(mc);
     }
 
     /**
@@ -239,8 +294,8 @@ public class Example1 {
                 testWindow.update();
             }
         });
-        Window.setMouseShape("res/textures/cursors/cross.png", new Vector2i(210));
-        Window.setIcon("res/textures/normal12.png");
+        Window.setMouseShape(new File("res/textures/cursors/cross.png"), new Vector2i(210));
+        Window.setIcon(new File("res/textures/normal12.png"));
         Input.addKeyboardEventHandler(new KeyboardEventHandler() {
             @Override
             public void keyCallback(Input.Key key, int scancode, Input.KeyStatus action, boolean shiftPressed, boolean controlPressed, boolean altPressed, boolean superPressed) {
@@ -290,9 +345,9 @@ public class Example1 {
             }
         });
 
-        GameObject sound = StaticMesh.loadModelToGameObject("res/models/box.obj");
+        GameObject sound = StaticMesh.loadModelToGameObject(new File("res/models/box.obj"));
         sound.getComponent(MeshComponent.class).getMaterial().setSlot(Material.DIFFUSE, new MaterialSlot(new Vector4f(0, 0, 1, 1)));
-        AudioSource source = new AudioSource(AudioBuffer.loadSound("res/sounds/music.ogg"));
+        AudioSource source = new AudioSource(AudioBuffer.loadSound(new File("res/sounds/music.ogg")));
         sound.addComponent(new AudioSourceComponent(source));
         source.play();
     }
@@ -301,7 +356,7 @@ public class Example1 {
      * Sticks the two windows to each other.
      *
      * @param isGlfwWindowChanged determines whether the GLFW windows's position
-     * changed or not
+     *                            changed or not
      */
     public static void setWindowPositions(boolean isGlfwWindowChanged) {
         if (windowPositionChange) {

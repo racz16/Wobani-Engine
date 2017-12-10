@@ -1,5 +1,6 @@
 package core;
 
+import com.sun.nio.sctp.*;
 import java.util.*;
 import org.joml.*;
 import toolbox.*;
@@ -15,7 +16,7 @@ import toolbox.annotations.*;
  * @see GameObject
  * @see GameObject#setTransform(Transform transform)
  */
-//TODO lookat, bilboarding, quaternions
+//TODO lookat quaternions
 //store only model matrix and get all data from it?
 public class Transform implements Invalidatable {
 
@@ -70,7 +71,7 @@ public class Transform implements Invalidatable {
     /**
      * Determines whether this Transform's data is valid.
      */
-    protected boolean valid;
+    private boolean valid;
     /**
      * List of invalidatables.
      */
@@ -79,6 +80,39 @@ public class Transform implements Invalidatable {
      * Prevents invalidation mechanism from causing deadlock.
      */
     private boolean invalidatable = true;
+
+    private BillboardingMode billboardingMode = BillboardingMode.NO_BILLBOARDING;
+    private final Vector3f billboardingAxis = new Vector3f(0, 1, 0);
+
+    public enum BillboardingMode {
+        NO_BILLBOARDING,
+        CYLINDRICAL_BILLBOARDING,
+        SPHERICAL_BILLBOARDING;
+    }
+
+    @NotNull
+    public BillboardingMode getBillboardingMode() {
+        return billboardingMode;
+    }
+
+    public void setBillboardingMode(@NotNull BillboardingMode billboardingMode) {
+        if (billboardingMode == null) {
+            throw new NullPointerException();
+        }
+        this.billboardingMode = billboardingMode;
+    }
+
+    @NotNull @ReadOnly
+    public Vector3f getBillboardingAxis() {
+        return new Vector3f(billboardingAxis);
+    }
+
+    public void setBillboardingAxis(@NotNull Vector3f billboardingAxis) {
+        if (billboardingAxis.x() == 0 && billboardingAxis.y() == 0 && billboardingAxis.z() == 0) {
+            throw new IllegalReceiveException("Axis can't be nullvector");
+        }
+        billboardingAxis.set(billboardingAxis).normalize();
+    }
 
     /**
      * Initializes a new Transform.
@@ -91,7 +125,7 @@ public class Transform implements Invalidatable {
      *
      * @param position position
      * @param rotation rotation (in degrees)
-     * @param scale scale
+     * @param scale    scale
      */
     public Transform(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Vector3f scale) {
         setRelativePosition(position);
@@ -281,24 +315,42 @@ public class Transform implements Invalidatable {
      * Returns the model matrix.
      *
      * @return model matrix
+     *
      * @see #getInverseModelMatrix()
      */
     @NotNull @ReadOnly
     public Matrix4f getModelMatrix() {
         refresh();
-        return new Matrix4f(modelMatrix);
+        if (getBillboardingMode() == BillboardingMode.NO_BILLBOARDING) {
+            return new Matrix4f(modelMatrix);
+        } else if (billboardingMode == BillboardingMode.CYLINDRICAL_BILLBOARDING) {
+            Vector3f cameraPosition = Scene.getCamera().getGameObject().getTransform().getAbsolutePosition();
+            return new Matrix4f().billboardCylindrical(absolutePosition, cameraPosition, billboardingAxis).scale(absoluteScale);
+        } else {
+            Vector3f cameraPosition = Scene.getCamera().getGameObject().getTransform().getAbsolutePosition();
+            return new Matrix4f().billboardSpherical(absolutePosition, cameraPosition).scale(absoluteScale);
+        }
     }
 
     /**
      * Returns the model matrix's inverse.
      *
      * @return the model matrix's inverse
+     *
      * @see #getModelMatrix()
      */
     @NotNull @ReadOnly
     public Matrix4f getInverseModelMatrix() {
         refresh();
-        return new Matrix4f(inverseModelMatrix);
+        if (getBillboardingMode() == BillboardingMode.NO_BILLBOARDING) {
+            return new Matrix4f(inverseModelMatrix);
+        } else if (billboardingMode == BillboardingMode.CYLINDRICAL_BILLBOARDING) {
+            Vector3f cameraPosition = Scene.getCamera().getGameObject().getTransform().getAbsolutePosition();
+            return new Matrix4f().billboardCylindrical(absolutePosition, cameraPosition, billboardingAxis).invert();
+        } else {
+            Vector3f cameraPosition = Scene.getCamera().getGameObject().getTransform().getAbsolutePosition();
+            return new Matrix4f().billboardSpherical(absolutePosition, cameraPosition).invert();
+        }
     }
 
     /**
@@ -418,6 +470,7 @@ public class Transform implements Invalidatable {
      * Adds the Transform to the given GameObject.
      *
      * @param object gameObject
+     *
      * @throws NullPointerException object can't be null
      */
     protected void addToGameObject(@NotNull GameObject object) {
@@ -451,9 +504,10 @@ public class Transform implements Invalidatable {
      * Adds the given Invalidatable to the list of invalidatables.
      *
      * @param invalidatable invalidatable
+     *
      * @return true if the given parameter added successfully (the parameter
-     * isn't already in the list and if it isn't this Transform), false
-     * otherwise
+     *         isn't already in the list and if it isn't this Transform), false
+     *         otherwise
      *
      * @throws NullPointerException can't add null to the list of invalidatables
      */
@@ -474,8 +528,9 @@ public class Transform implements Invalidatable {
      * element.
      *
      * @param invalidatable invalidatable
+     *
      * @return true if the list of invalidatables contains the specified
-     * element, false otherwise
+     *         element, false otherwise
      */
     public boolean containsInvalidatable(@Nullable Invalidatable invalidatable) {
         return Utility.containsReference(invalidatables, invalidatable);
@@ -493,9 +548,11 @@ public class Transform implements Invalidatable {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 71 * hash + Objects.hashCode(this.relativePosition);
-        hash = 71 * hash + Objects.hashCode(this.relativeRotation);
-        hash = 71 * hash + Objects.hashCode(this.relativeScale);
+        hash = 53 * hash + Objects.hashCode(this.relativePosition);
+        hash = 53 * hash + Objects.hashCode(this.relativeRotation);
+        hash = 53 * hash + Objects.hashCode(this.relativeScale);
+        hash = 53 * hash + Objects.hashCode(this.billboardingMode);
+        hash = 53 * hash + Objects.hashCode(this.billboardingAxis);
         return hash;
     }
 
@@ -520,30 +577,27 @@ public class Transform implements Invalidatable {
         if (!Objects.equals(this.relativeScale, other.relativeScale)) {
             return false;
         }
+        if (this.billboardingMode != other.billboardingMode) {
+            return false;
+        }
+        if (!Objects.equals(this.billboardingAxis, other.billboardingAxis)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        String gameObjectName = gameObject == null ? "null" : gameObject.getName();
-        StringBuilder isb = new StringBuilder().append('[');
-        for (Invalidatable inv : invalidatables) {
-            isb.append(inv.getClass().getSimpleName()).append(", ");
-        }
-        isb.append(']');
-
-        return "Transform{" + "gameObject=" + gameObjectName
-                + ", relativePosition=" + relativePosition
-                + ", relativeRotation=" + relativeRotation
-                + ", relativeScale=" + relativeScale
-                + ", absolutePosition=" + absolutePosition
-                + ", absoluteRotation=" + absoluteRotation
-                + ", absoluteScale=" + absoluteScale
-                + ", modelMatrix=\n" + modelMatrix
-                + ", inverseModelMatrix=\n" + inverseModelMatrix
-                + ", forward=" + forward + ", right=" + right + ", up=" + up
-                + ", valid=" + valid + ", invalidatables="
-                + isb + ", invalidatable=" + invalidatable + '}';
+        return "Transform{" + "gameObject=" + gameObject + ", relativePosition="
+                + relativePosition + ", relativeRotation=" + relativeRotation
+                + ", relativeScale=" + relativeScale + ", absolutePosition="
+                + absolutePosition + ", absoluteRotation=" + absoluteRotation
+                + ", absoluteScale=" + absoluteScale + ", modelMatrix=" + modelMatrix
+                + ", inverseModelMatrix=" + inverseModelMatrix + ", forward="
+                + forward + ", right=" + right + ", up=" + up + ", valid=" + valid
+                + ", invalidatables=" + invalidatables + ", invalidatable="
+                + invalidatable + ", bilboardingMode=" + billboardingMode
+                + ", bilboardingAxis=" + billboardingAxis + '}';
     }
 
 }

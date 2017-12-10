@@ -2,6 +2,7 @@ package toolbox;
 
 import components.camera.*;
 import components.camera.Camera.CornerPoint;
+import components.renderables.*;
 import core.*;
 import java.io.*;
 import java.nio.*;
@@ -89,7 +90,7 @@ public class Utility {
     /**
      * This method logs to the console that you entered to the given menthod.
      *
-     * @param sourceClass name of the class
+     * @param sourceClass  name of the class
      * @param sourceMethod name of the method
      */
     public static void logEntering(@NotNull String sourceClass, @NotNull String sourceMethod) {
@@ -99,7 +100,7 @@ public class Utility {
     /**
      * This method logs to the console that you exited from the given menthod.
      *
-     * @param sourceClass name of the class
+     * @param sourceClass  name of the class
      * @param sourceMethod name of the method
      */
     public static void logExiting(@NotNull String sourceClass, @NotNull String sourceMethod) {
@@ -114,7 +115,8 @@ public class Utility {
      *
      * @param position position
      * @param rotation rotation (in degrees)
-     * @param scale scale
+     * @param scale    scale
+     *
      * @return model matrix
      */
     @NotNull
@@ -131,7 +133,8 @@ public class Utility {
      *
      * @param position position
      * @param rotation rotation (in degrees)
-     * @param scale scale
+     * @param scale    scale
+     *
      * @return inverse of the model matrix
      */
     @NotNull
@@ -148,6 +151,7 @@ public class Utility {
      *
      * @param position position
      * @param rotation rotation (in degrees)
+     *
      * @return view matrix
      */
     @NotNull
@@ -158,9 +162,10 @@ public class Utility {
     /**
      * Returns the perspective projection matrix based on the given values.
      *
-     * @param fov vertical field of view (in degrees)
+     * @param fov       vertical field of view (in degrees)
      * @param nearPlane near plane
-     * @param farPlane far plane
+     * @param farPlane  far plane
+     *
      * @return perspective projection matrix
      */
     @NotNull
@@ -174,9 +179,10 @@ public class Utility {
     /**
      * Returns the orthographic projection matrix based on the given values.
      *
-     * @param scale scale
+     * @param scale     scale
      * @param nearPlane near plane
-     * @param farPlane far plane
+     * @param farPlane  far plane
+     *
      * @return orthographic projection matrix
      */
     @NotNull
@@ -246,9 +252,10 @@ public class Utility {
      * object.
      *
      * @param collection collection
-     * @param object object
+     * @param object     object
+     *
      * @return true if the given collection contains reference to the given
-     * object, false otherwise
+     *         object, false otherwise
      */
     public static boolean containsReference(@NotNull Collection collection, @Nullable Object object) {
         for (Object collectionObject : collection) {
@@ -264,9 +271,10 @@ public class Utility {
      * stored reference to the object.
      *
      * @param collection collection
-     * @param object object
+     * @param object     object
+     *
      * @return true if the given object successfully removed from the
-     * Collection, false otherwise
+     *         Collection, false otherwise
      */
     public static boolean removeReference(@NotNull Collection collection, @Nullable Object object) {
         return collection.removeIf((Object t) -> t == object);
@@ -279,6 +287,7 @@ public class Utility {
      * generally inexact.
      *
      * @param angle an angle, in degrees
+     *
      * @return the measurement of the angle angdeg in radians.
      */
     public static float toRadians(float angle) {
@@ -293,6 +302,7 @@ public class Utility {
      * {@code 0.0}.
      *
      * @param angle an angle, in radians
+     *
      * @return the measurement of the angle {@code angrad} in degrees.
      */
     public static float toDegrees(float angle) {
@@ -304,8 +314,9 @@ public class Utility {
      * higher than zero.
      *
      * @param color color
+     *
      * @return true if all of the given vector's cordinates are equals or higher
-     * than zero, false otherwise
+     *         than zero, false otherwise
      */
     public static boolean isHdrColor(@NotNull Vector3f color) {
         return color.get(color.minComponent()) >= 0;
@@ -316,17 +327,34 @@ public class Utility {
      * and one.
      *
      * @param color color
+     *
      * @return true if all of the given vector's cordinates are between zero and
-     * one, false otherwise
+     *         one, false otherwise
      */
     public static boolean isColor(@NotNull Vector3f color) {
         return color.get(color.minComponent()) >= 0 && color.get(color.maxComponent()) <= 1;
     }
 
     /**
+     * Wraps the given object by a list.
+     *
+     * @param <T>    type
+     * @param object object to wrap
+     *
+     * @return list
+     */
+    @NotNull
+    public static <T> List<T> wrapObjectByList(@Nullable T object) {
+        List<T> list = new ArrayList<>(1);
+        list.add(object);
+        return list;
+    }
+
+    /**
      * Creates an int buffer and stores the given data in it.
      *
      * @param data data to store
+     *
      * @return int buffer containing the given data
      */
     @NotNull
@@ -341,6 +369,7 @@ public class Utility {
      * Creates a float buffer and stores the given data in it.
      *
      * @param data data to store
+     *
      * @return float buffer containing the given data
      */
     @NotNull
@@ -349,6 +378,44 @@ public class Utility {
         buffer.put(data);
         buffer.flip();
         return buffer;
+    }
+
+    /**
+     * Determines whether the given mesh component is inside the main camera's
+     * view frustum.
+     *
+     * @param meshComponent mesh component
+     *
+     * @return true if the mesh component is inside the main camera's view
+     *         frustum, false otherwise
+     */
+    public static boolean isInsideFrustum(@NotNull MeshComponent meshComponent) {
+        Camera camera = Scene.getCamera();
+        Transform transform = meshComponent.getGameObject().getTransform();
+        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
+            return camera.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax());
+        } else {
+            return camera.isInsideFrustum(transform.getAbsolutePosition(), meshComponent.getRealFurthestVertexDistance());
+        }
+    }
+
+    /**
+     * Determines whether the given spline component is inside the main camera's
+     * view frustum.
+     *
+     * @param splineComponent spline component
+     *
+     * @return true if the spline component is inside the main camera's view
+     *         frustum, false otherwise
+     */
+    public static boolean isInsideFrustum(@NotNull SplineComponent splineComponent) {
+        Camera camera = Scene.getCamera();
+        Transform transform = splineComponent.getGameObject().getTransform();
+        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
+            return camera.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax());
+        } else {
+            return camera.isInsideFrustum(transform.getAbsolutePosition(), splineComponent.getRealFurthestVertexDistance());
+        }
     }
 
 }

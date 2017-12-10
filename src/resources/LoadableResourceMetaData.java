@@ -1,11 +1,12 @@
 package resources;
 
+import java.io.*;
 import java.util.*;
 import resources.ResourceManager.ResourceState;
 import toolbox.annotations.*;
 
 /**
- * Stores meta data for loadable resources like it's path or it's size.
+ * Stores meta data for loadable resources like it's paths or it's size.
  */
 public class LoadableResourceMetaData {
 
@@ -22,9 +23,9 @@ public class LoadableResourceMetaData {
      */
     private ResourceState state;
     /**
-     * Resource's path.
+     * Resource's paths.
      */
-    private String path;
+    private final List<File> paths = new ArrayList<>();
     /**
      * Time in miliseconds when the resource last time used.
      */
@@ -182,27 +183,24 @@ public class LoadableResourceMetaData {
     }
 
     /**
-     * Returns the resource's path.
+     * Returns the resource's paths.
      *
-     * @return resource's path
+     * @return resource's paths
      */
     @Nullable
-    public String getPath() {
-        return path;
+    public List<File> getPaths() {
+        return paths;
     }
 
     /**
-     * Sets the resource's path to the given value.
+     * Sets the resource's paths to the given value.
      *
-     * @param path resource's path
-     *
-     * @throws NullPointerException path can't be null
+     * @param paths resource's paths
      */
-    public void setPath(@NotNull String path) {
-        if (path == null) {
-            throw new NullPointerException();
+    public void setPaths(@NotNull List<File> paths) {
+        for (File path : paths) {
+            this.paths.add(new File(path.getPath()));
         }
-        this.path = path;
     }
 
     /**
@@ -226,7 +224,7 @@ public class LoadableResourceMetaData {
         int hash = 7;
         hash = 53 * hash + Objects.hashCode(this.dataStorePolicy);
         hash = 53 * hash + Objects.hashCode(this.state);
-        hash = 53 * hash + Objects.hashCode(this.path);
+        hash = 53 * hash + Objects.hashCode(this.paths);
         hash = 53 * hash + (int) (this.lastActive ^ (this.lastActive >>> 32));
         hash = 53 * hash + (int) (this.vramTimeLimit ^ (this.vramTimeLimit >>> 32));
         hash = 53 * hash + (int) (this.ramTimeLimit ^ (this.ramTimeLimit >>> 32));
@@ -258,7 +256,7 @@ public class LoadableResourceMetaData {
         if (this.dataSize != other.dataSize) {
             return false;
         }
-        if (!Objects.equals(this.path, other.path)) {
+        if (!Objects.equals(this.paths, other.paths)) {
             return false;
         }
         if (this.dataStorePolicy != other.dataStorePolicy) {
@@ -273,7 +271,7 @@ public class LoadableResourceMetaData {
     @Override
     public String toString() {
         return "LoadableResourceMetaData{" + "dataStorePolicy=" + dataStorePolicy
-                + ", state=" + state + ", path=" + path + ", lastActive=" + lastActive
+                + ", state=" + state + ", path=" + paths + ", lastActive=" + lastActive
                 + ", vramTimeLimit=" + vramTimeLimit + ", ramTimeLimit=" + ramTimeLimit
                 + ", dataSize=" + dataSize + '}';
     }

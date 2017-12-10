@@ -6,15 +6,16 @@ import toolbox.annotations.*;
 /**
  * Makes possible that Component's interface can act as Components.
  */
-public interface IComponent {
+public interface IComponent extends Invalidatable {
 
     /**
      * Adds the given Invalidatable to the list of invalidatables.
      *
      * @param invalidatable invalidatable
+     *
      * @return true if the given parameter added successfully (the parametern
-     * isn't already in the list and if it isn't this Component), false
-     * otherwise
+     *         isn't already in the list and if it isn't this Component), false
+     *         otherwise
      *
      * @throws NullPointerException can't add null to the list of invalidatables
      */
@@ -25,8 +26,9 @@ public interface IComponent {
      * element.
      *
      * @param invalidatable invalidatable
+     *
      * @return true if the list of invalidatables contains the specified
-     * element, false otherwise
+     *         element, false otherwise
      */
     public boolean containsInvalidatable(@Nullable Invalidatable invalidatable);
 
@@ -68,10 +70,6 @@ public interface IComponent {
      */
     public void setGameObject(@Nullable GameObject object);
 
-    /**
-     * Invalidates this Component's data and the Component's invalidatables'
-     * data.
-     */
-    public void invalidate();
+    public void afterLoading();
 
 }

@@ -7,7 +7,7 @@ import org.joml.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
-import resources.textures.*;
+import resources.textures.texture2D.*;
 import toolbox.annotations.*;
 
 /**
@@ -63,10 +63,10 @@ public class Fbo implements Resource {
         /**
          * Initializes a new FboAttachmentSlot to the given values.
          *
-         * @param attachment attachment's OpenGL code
+         * @param attachment     attachment's OpenGL code
          * @param internalFormat texture's OpenGL internal format
-         * @param format texture's OpenGL format
-         * @param type texture's OpenGL type
+         * @param format         texture's OpenGL format
+         * @param type           texture's OpenGL type
          */
         private FboAttachmentSlot(int attachment, int internalFormat, int format, int type) {
             this.attachment = attachment;
@@ -88,7 +88,8 @@ public class Fbo implements Resource {
          * Returns the texture's OpenGL internal format.
          *
          * @param floatingPoint is this attachment stored as floating point
-         * values or not
+         *                      values or not
+         *
          * @return the texture's OpenGL internal format
          */
         public int getInternalFormat(boolean floatingPoint) {
@@ -192,7 +193,7 @@ public class Fbo implements Resource {
     /**
      * FBO's id.
      */
-    private int fbo = -1;
+    private int id = -1;
     /**
      * The index of the attachment, which is active to read.
      */
@@ -229,16 +230,20 @@ public class Fbo implements Resource {
      * Determines whether the color attachments stored as floating point values.
      */
     private boolean floatingPoint;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new FBO to the given value.
      *
-     * @param size FBO's width and height
-     * @param multisampled multisampled
-     * @param samples number of samples, if the FBO isn't multisampled, it can
-     * be anything
+     * @param size          FBO's width and height
+     * @param multisampled  multisampled
+     * @param samples       number of samples, if the FBO isn't multisampled, it
+     *                      can be anything
      * @param floatingPoint FBO store color attachments as floating point values
-     * or not
+     *                      or not
      *
      * @throws IllegalArgumentException width and height must be positive
      * @throws IllegalArgumentException samples can't be lower than 1
@@ -262,8 +267,9 @@ public class Fbo implements Resource {
             this.samples = 1;
         }
         activeRead = 0;
-        fbo = GL30.glGenFramebuffers();
-        ResourceManager.addFbo("." + ResourceManager.getNextId(), this);
+        id = GL30.glGenFramebuffers();
+        resourceId = new ResourceId();
+        ResourceManager.addFbo(this);
     }
 
     /**
@@ -272,15 +278,16 @@ public class Fbo implements Resource {
      * to add both depth and stencil attachments, you should add a depth-stencil
      * attachment.
      *
-     * @param slot attachment's slot
-     * @param type attachment's type
+     * @param slot  attachment's slot
+     * @param type  attachment's type
      * @param index attachment's index (0;7), if slot isn't color attachment, it
-     * can be anything
+     *              can be anything
+     *
      * @return true if the attachment added successfully, false otherwise
      *
-     * @throws NullPointerException slot and type can't be null
+     * @throws NullPointerException     slot and type can't be null
      * @throws IllegalArgumentException if the slot is color attachment, the
-     * index must be in the (0;7) interval
+     *                                  index must be in the (0;7) interval
      */
     @Bind
     public boolean addAttachment(@NotNull FboAttachmentSlot slot, @NotNull FboAttachmentType type, int index) {
@@ -319,11 +326,12 @@ public class Fbo implements Resource {
      * Return true if there is a texture or a RBO attachment in the given slot,
      * false otherwise.
      *
-     * @param slot attachment's slot
+     * @param slot  attachment's slot
      * @param index attachment's index (0;7), if slot isn't color attachment, it
-     * can be anything
+     *              can be anything
+     *
      * @return true if there is a texture or a RBO attachment in the given slot,
-     * false otherwise
+     *         false otherwise
      */
     public boolean isThereAttachment(@NotNull FboAttachmentSlot slot, int index) {
         return isThereAttachment(slot, FboAttachmentType.RBO, index) || isThereAttachment(slot, FboAttachmentType.TEXTURE, index);
@@ -333,16 +341,17 @@ public class Fbo implements Resource {
      * Returns true if there is attachment in the given slot and it's type is
      * the same as the given parameter.
      *
-     * @param slot attachment's slot
-     * @param type attachment's type
+     * @param slot  attachment's slot
+     * @param type  attachment's type
      * @param index attachment's index (0;7), if slot isn't color attachment, it
-     * can be anything
-     * @return true if there is attachment in the given slot and it's type is
-     * the same as the given parameter, false otherwise
+     *              can be anything
      *
-     * @throws NullPointerException slot and type can't be null
+     * @return true if there is attachment in the given slot and it's type is
+     *         the same as the given parameter, false otherwise
+     *
+     * @throws NullPointerException     slot and type can't be null
      * @throws IllegalArgumentException if the slot is color attachment, the
-     * index must be in the (0;7) interval
+     *                                  index must be in the (0;7) interval
      */
     public boolean isThereAttachment(@NotNull FboAttachmentSlot slot, @NotNull FboAttachmentType type, int index) {
         if (slot == null || type == null) {
@@ -368,14 +377,15 @@ public class Fbo implements Resource {
      * Returns the specified slot's texture attachment. Returns null if there is
      * no texture attachment.
      *
-     * @param slot attachment's slot
+     * @param slot  attachment's slot
      * @param index attachment's index (0;7), if slot isn't color attachment, it
-     * can be anything
+     *              can be anything
+     *
      * @return the slot's texture attachment
      *
-     * @throws NullPointerException slot can't be null
+     * @throws NullPointerException     slot can't be null
      * @throws IllegalArgumentException if the slot is color attachment, the
-     * index must be in the (0;7) interval
+     *                                  index must be in the (0;7) interval
      */
     @Nullable
     public Texture2D getTextureAttachment(@NotNull FboAttachmentSlot slot, int index) {
@@ -402,13 +412,13 @@ public class Fbo implements Resource {
      * Detaches the specified slot's attachment and releases the corresponding
      * RBO or texture.
      *
-     * @param slot attachment's slot
+     * @param slot  attachment's slot
      * @param index attachment's index (0;7), if slot isn't color attachment, it
-     * can be anything
+     *              can be anything
      *
-     * @throws NullPointerException slot can't be null
+     * @throws NullPointerException     slot can't be null
      * @throws IllegalArgumentException if the slot is attachment, the index
-     * must be in the (0;7) interval
+     *                                  must be in the (0;7) interval
      */
     public void removeAttachment(@NotNull FboAttachmentSlot slot, int index) {
         if (slot == null) {
@@ -437,13 +447,13 @@ public class Fbo implements Resource {
      * Detaches the specified slot's texture attachment but it doesn't release
      * the texture.
      *
-     * @param slot attachment's slot
+     * @param slot  attachment's slot
      * @param index attachment's index (0;7), if slot isn't color attachment, it
-     * can be anything
+     *              can be anything
      *
-     * @throws NullPointerException slot can't be null
+     * @throws NullPointerException     slot can't be null
      * @throws IllegalArgumentException if the slot is color attachment, the
-     * index must be in the (0;7) interval
+     *                                  index must be in the (0;7) interval
      */
     public void detachTexture(@NotNull FboAttachmentSlot slot, int index) {
         if (slot == null) {
@@ -475,8 +485,9 @@ public class Fbo implements Resource {
      * Determines whether the specified attachment is active to draw.
      *
      * @param index attachment's index (0;7)
+     *
      * @return true if the specified attachment is active to draw, false
-     * otherwise
+     *         otherwise
      *
      * @throws IllegalArgumentException the index must be in the (0;7) interval
      */
@@ -494,8 +505,8 @@ public class Fbo implements Resource {
     /**
      * Sets whether or not the specified attachment is active to draw.
      *
-     * @param draw true if the specified attachment should be active to draw,
-     * false otherwise
+     * @param draw  true if the specified attachment should be active to draw,
+     *              false otherwise
      * @param index attachment's index (0;7)
      *
      * @throws IllegalArgumentException the index must be in the (0;7) interval
@@ -527,8 +538,9 @@ public class Fbo implements Resource {
      * time only one attachment can be active to read.
      *
      * @param index attachment's index (0;7)
+     *
      * @return true if the specified attachment is active to read, false
-     * otherwise
+     *         otherwise
      *
      * @throws IllegalArgumentException the index must be in the (0;7) interval
      */
@@ -543,8 +555,8 @@ public class Fbo implements Resource {
      * Sets whether or not the specified attachment is active to read. At the
      * time only one attachment can be active to read.
      *
-     * @param read true if the specified attachment should be active to read,
-     * false otherwise
+     * @param read  true if the specified attachment should be active to read,
+     *              false otherwise
      * @param index attachment's index (0;7)
      *
      * @throws IllegalArgumentException the index must be in the (0;7) interval
@@ -570,7 +582,7 @@ public class Fbo implements Resource {
      * Determines whether the color attachments stored as floating point values.
      *
      * @return true if the color attachments stored as floating point values,
-     * false otherwise
+     *         false otherwise
      */
     public boolean isFloatingPoint() {
         return floatingPoint;
@@ -604,6 +616,7 @@ public class Fbo implements Resource {
                 return fbc;
             }
         }
+
         return null;
     }
 
@@ -613,28 +626,28 @@ public class Fbo implements Resource {
      * @return FBO's id
      */
     public int getId() {
-        return fbo;
+        return id;
     }
 
     /**
      * Binds this FBO for both reading and drawing.
      */
     public void bind() {
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
     }
 
     /**
      * Binds this FBO for reading.
      */
     public void bindRead() {
-        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, fbo);
+        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, id);
     }
 
     /**
      * Binds this FBO for drawing.
      */
     public void bindDraw() {
-        GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, fbo);
+        GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, id);
     }
 
     /**
@@ -670,11 +683,11 @@ public class Fbo implements Resource {
      * to the given FBO's same slot.
      *
      * @param toResolve destonation FBO
-     * @param slot attachment's slot
+     * @param slot      attachment's slot
      * @param fromIndex this FBO's attachment's index (0;7), if slot isn't color
-     * attachment, it can be anything
-     * @param toIndex given FBO's attachment's index (0;7), if slot isn't color
-     * attachment, it can be anything
+     *                  attachment, it can be anything
+     * @param toIndex   given FBO's attachment's index (0;7), if slot isn't
+     *                  color attachment, it can be anything
      */
     public void resolveFbo(@NotNull Fbo toResolve, @NotNull FboAttachmentSlot slot, int fromIndex, int toIndex) {
         resolveFbo(toResolve, slot, FboAttachmentType.TEXTURE, fromIndex, toIndex);
@@ -689,16 +702,17 @@ public class Fbo implements Resource {
      * to the given FBO's same slot.
      *
      * @param toResolve destonation FBO
-     * @param slot attachment's slot
-     * @param fromType specifies the type of this FBO to resolve
+     * @param slot      attachment's slot
+     * @param fromType  specifies the type of this FBO to resolve
      * @param fromIndex this FBO's attachment's index (0;7), if slot isn't color
-     * attachment, it can be anything
-     * @param toIndex given FBO's attachment's index (0;7), if slot isn't color
-     * attachment, it can be anything
+     *                  attachment, it can be anything
+     * @param toIndex   given FBO's attachment's index (0;7), if slot isn't
+     *                  color attachment, it can be anything
      *
-     * @throws NullPointerException slot can't be null
+     * @throws NullPointerException     slot can't be null
      * @throws IllegalArgumentException both FBOs have to be usable, the same
-     * size and the specified attachment have to be exists
+     *                                  size and the specified attachment have
+     *                                  to be exists
      */
     public void resolveFbo(@NotNull Fbo toResolve, @NotNull FboAttachmentSlot slot, @NotNull FboAttachmentType fromType, int fromIndex, int toIndex) {
         if (slot == null) {
@@ -785,8 +799,8 @@ public class Fbo implements Resource {
         depth.removeAttachment();
         stencil.removeAttachment();
         depthStencil.removeAttachment();
-        GL30.glDeleteFramebuffers(fbo);
-        fbo = -1;
+        GL30.glDeleteFramebuffers(id);
+        id = -1;
     }
 
     /**
@@ -806,13 +820,19 @@ public class Fbo implements Resource {
         stencil.removeRbo();
         depthStencil.detachTexture();
         depthStencil.removeRbo();
-        GL30.glDeleteFramebuffers(fbo);
-        fbo = -1;
+        GL30.glDeleteFramebuffers(id);
+        id = -1;
+    }
+
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
     }
 
     @Override
     public boolean isUsable() {
-        return fbo != -1;
+        return id != -1;
     }
 
     /**
@@ -835,7 +855,7 @@ public class Fbo implements Resource {
 
     @Override
     public String toString() {
-        return "Fbo{" + "fbo=" + fbo + ", activeRead=" + activeRead
+        return "Fbo{" + "fbo=" + id + ", activeRead=" + activeRead
                 + ", color=" + Arrays.toString(color) + ", depth=" + depth
                 + ", stencil=" + stencil + ", depthStencil=" + depthStencil
                 + ", size=" + size + ", multisampled=" + multisampled
@@ -872,13 +892,14 @@ public class Fbo implements Resource {
         /**
          * Initializes a new AttachmentSlot to the given values.
          *
-         * @param slot attachment's slot
+         * @param slot  attachment's slot
          * @param index color attachment's index, if it isn't a color
-         * attachment, it can be anything
+         *              attachment, it can be anything
          *
-         * @throws NullPointerException slot can't be null
+         * @throws NullPointerException     slot can't be null
          * @throws IllegalArgumentException if the slot is color attachment,
-         * index have to be in the (0;7) interval
+         *                                  index have to be in the (0;7)
+         *                                  interval
          */
         public AttachmentSlot(@NotNull FboAttachmentSlot slot, int index) {
             if (slot == null) {
@@ -933,7 +954,7 @@ public class Fbo implements Resource {
             }
 
             if (type == FboAttachmentType.TEXTURE) {
-                texture = new DynamicTexture(slot, size, floatingPoint, multisampled, Settings.getMsaaLevel(), null);
+                texture = new DynamicTexture2D(slot, size, floatingPoint, multisampled, Settings.getMsaaLevel(), null);
                 if (multisampled) {
                     GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot.getAttachmet() + index, GL32.GL_TEXTURE_2D_MULTISAMPLE, texture.getId(), 0);
                 } else {
@@ -968,7 +989,7 @@ public class Fbo implements Resource {
          * otherwise.
          *
          * @return true if there is a texture or a RBO attachment, false
-         * otherwise
+         *         otherwise
          */
         public boolean isThereAttachment() {
             return isThereAttachment(FboAttachmentType.TEXTURE) || isThereAttachment(FboAttachmentType.RBO);
@@ -979,8 +1000,9 @@ public class Fbo implements Resource {
          * same as the given parameter.
          *
          * @param type attachment's type
+         *
          * @return true if there is attachment in this slot and it's type is the
-         * same as the given parameter, false otherwise
+         *         same as the given parameter, false otherwise
          */
         public boolean isThereAttachment(@NotNull FboAttachmentType type) {
             if (type == FboAttachmentType.TEXTURE) {
@@ -1041,7 +1063,7 @@ public class Fbo implements Resource {
          * Sets whether or not this attachment is active to draw.
          *
          * @param draw true if this attachment should be active to draw, false
-         * otherwise
+         *             otherwise
          */
         public void setActiveDraw(boolean draw) {
             this.draw = draw;

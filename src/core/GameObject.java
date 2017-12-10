@@ -40,7 +40,7 @@ public class GameObject {
     /**
      * List of the GameObject's Components.
      */
-    protected final ArrayList<Component> components = new ArrayList<>();
+    private final ArrayList<Component> components = new ArrayList<>();
 
     /**
      * Initializes a new GameObject.
@@ -66,6 +66,7 @@ public class GameObject {
      * returns the hash code.
      *
      * @return name
+     *
      * @see #hashCode()
      */
     @NotNull
@@ -103,7 +104,9 @@ public class GameObject {
      * Returns the GameObject's indexth child.
      *
      * @param index index
+     *
      * @return GameObject's indexth child
+     *
      * @see #getNumberOfChildren()
      */
     @NotNull
@@ -115,8 +118,10 @@ public class GameObject {
      * Determines whether the given GameObject is the child of this GameObject.
      *
      * @param child child
+     *
      * @return true if the given GameObject is the child of this GameObject,
-     * false otherwise
+     *         false otherwise
+     *
      * @see #containsChildDeep(GameObject child)
      */
     public boolean containsChild(@Nullable GameObject child) {
@@ -128,8 +133,10 @@ public class GameObject {
      * or descendant of it.
      *
      * @param child child
+     *
      * @return true if the given GameObject is the child of this GameObject or
-     * descendant of it, false otherwise
+     *         descendant of it, false otherwise
+     *
      * @see #containsChild(GameObject child)
      */
     public boolean containsChildDeep(@Nullable GameObject child) {
@@ -148,8 +155,9 @@ public class GameObject {
      * Removes the specified GameObject from the GameObject's children.
      *
      * @param child child to remove
+     *
      * @return true if the children contained the specified element, false
-     * otherwise
+     *         otherwise
      */
     public boolean removeChild(@Nullable GameObject child) {
         if (containsChild(child)) {
@@ -164,6 +172,7 @@ public class GameObject {
      * Removes the GameObject's indexth child from children.
      *
      * @param index index
+     *
      * @return the removed child
      *
      * @see #getNumberOfChildren()
@@ -179,8 +188,9 @@ public class GameObject {
      * Removes the given GameObject from children.
      *
      * @param child child
+     *
      * @return true if this list contained the specified element, false
-     * otherwise
+     *         otherwise
      */
     private boolean remove(@Nullable GameObject child) {
         boolean ret = Utility.removeReference(children, child);
@@ -241,8 +251,9 @@ public class GameObject {
      * can't be this, null, the ancestor of this or child of this.
      *
      * @param child add to children
+     *
      * @return true if the parameter added successfully to the children, false
-     * otherwise
+     *         otherwise
      */
     public boolean addChild(@NotNull GameObject child) {
         if (child == null || child == this || child.containsChildDeep(this) || containsChild(child)) {
@@ -275,8 +286,9 @@ public class GameObject {
      * can't be this, the descendant of this or the parent of this.
      *
      * @param parent parent
+     *
      * @return true if the parameter set successfully to the parent of this,
-     * false otherwise
+     *         false otherwise
      */
     public boolean setParent(@Nullable GameObject parent) {
         if (parent == this || containsChildDeep(parent) || parent == getParent()) {
@@ -325,7 +337,7 @@ public class GameObject {
      * @param transform transform
      *
      * @throws IllegalArgumentException you can't assign a Transform to multiple
-     * GameObjects
+     *                                  GameObjects
      */
     public void setTransform(@NotNull Transform transform) {
         if (transform.getGameObject() != null) {
@@ -343,12 +355,13 @@ public class GameObject {
      * Adds the given Component to this GameObject.
      *
      * @param component component
-     * @return false if the GameObject already contained the given Component,
-     * true otherwise
      *
-     * @throws NullPointerException Component can't be null
+     * @return false if the GameObject already contained the given Component,
+     *         true otherwise
+     *
+     * @throws NullPointerException     Component can't be null
      * @throws IllegalArgumentException you can't assign a Component to multiple
-     * GameObjects
+     *                                  GameObjects
      */
     public boolean addComponent(@NotNull Component component) {
         if (component == null) {
@@ -358,7 +371,7 @@ public class GameObject {
             return false;
         }
         if (component.getGameObject() != null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("You can't assign a Component to multiple GameObjects");
         }
         component.addToGameObject(this);
         components.add(component);
@@ -369,8 +382,9 @@ public class GameObject {
      * Removes the given Component from the GameObject's components.
      *
      * @param component component
+     *
      * @return true if the GameObject's components contained the given
-     * Component, false otherwise
+     *         Component, false otherwise
      */
     public boolean removeComponent(@Nullable Component component) {
         if (component == Scene.getDirectionalLight() || component == Scene.getCamera()) {
@@ -389,6 +403,7 @@ public class GameObject {
      * @param index index
      *
      * @return true if the component removed successfully, false otherwise
+     *
      * @see #getNumberOfComponents()
      */
     public boolean removeComponent(int index) {
@@ -407,7 +422,7 @@ public class GameObject {
      *
      * @param type type
      */
-    public void removeComponents(@NotNull Class type) {
+    public void removeComponents(@NotNull Class<?> type) {
         for (Component comp : components) {
             if (type.isInstance(comp) && comp != Scene.getDirectionalLight() && comp != Scene.getCamera()) {
                 comp.removeFromGameObject();
@@ -418,7 +433,7 @@ public class GameObject {
 
     /**
      * Removes all the Components from the GameObject.
-     *
+     * <p>
      */
     public void clearComponents() {
         removeComponents(Component.class);
@@ -428,7 +443,9 @@ public class GameObject {
      * Returns the GameObject's indexth Component.
      *
      * @param index index
+     *
      * @return indexth Component
+     *
      * @see #getNumberOfComponents()
      */
     @NotNull
@@ -440,10 +457,12 @@ public class GameObject {
      * Returns one of the GameObject's Components that's class is the given type
      * or extends it.
      *
-     * @param <T> type
+     * @param <T>  type
      * @param type type
+     *
      * @return one of the GameObject's Components that's class is the given type
-     * or extends it
+     *         or extends it
+     *
      * @see #getComponents(Class type)
      */
     @Nullable
@@ -461,10 +480,12 @@ public class GameObject {
      * the given type or extends it. If there's no such a Component, it returns
      * an empty list.
      *
-     * @param <T> type
+     * @param <T>  type
      * @param type type
+     *
      * @return a list containing all the GameObject's Components that's class is
-     * the given type or extends it
+     *         the given type or extends it
+     *
      * @see #getComponent(Class type)
      */
     @NotNull

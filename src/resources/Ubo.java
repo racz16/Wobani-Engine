@@ -19,13 +19,18 @@ public class Ubo implements Resource {
      * The allocated memory size (in bytes).
      */
     private int dataSize;
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new UBO.
      */
     public Ubo() {
         id = GL15.glGenBuffers();
-        ResourceManager.addUbo("." + ResourceManager.getNextId(), this);
+        resourceId = new ResourceId();
+        ResourceManager.addUbo(this);
     }
 
     /**
@@ -186,9 +191,16 @@ public class Ubo implements Resource {
         dataSize = 0;
     }
 
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
+    }
+
     @Override
     public String toString() {
-        return "Ubo{" + "id=" + id + ", dataSize=" + dataSize + '}';
+        return "Ubo{" + "id=" + id + ", dataSize=" + dataSize + ", resourceId="
+                + resourceId + '}';
     }
 
 }

@@ -1,138 +1,56 @@
 package resources.textures;
 
-import core.*;
-import java.nio.*;
-import org.joml.Math;
 import org.joml.*;
 import org.lwjgl.opengl.*;
-import org.lwjgl.stb.*;
 import resources.*;
-import resources.ResourceManager.ResourceState;
-import resources.textures.EasyFiltering.TextureFiltering;
-import toolbox.*;
+import static resources.textures.EasyFiltering.TextureFiltering.BILINEAR;
+import static resources.textures.EasyFiltering.TextureFiltering.NONE;
+import static resources.textures.EasyFiltering.TextureFiltering.TRILINEAR;
 import toolbox.annotations.*;
 
 /**
- * Stores data about a loaded texture. You can load a texture only once, if you
- * try to load it twice, you get reference to the already loaded one.
- *
- * @see #loadTexture(String path, boolean sRGB)
+ * Base class for static (loaded from file) textures.
  */
-public class StaticTexture extends AbstractTexture implements EasyFiltering, ChangableColorSpace {
+public abstract class StaticTexture extends AbstractTexture implements EasyFiltering, ChangableColorSpace {
 
     /**
      * Texture's filtering mode.
      */
-    private TextureFiltering filtering;
-    /**
-     * Texture's pixel data.
-     */
-    private ByteBuffer data;
+    protected EasyFiltering.TextureFiltering filtering;
     /**
      * Stores meta data about this texture.
      */
-    private final LoadableResourceMetaData meta = new LoadableResourceMetaData();
+    protected final LoadableResourceMetaData meta = new LoadableResourceMetaData();
     /**
      * The texture's default color space.
      */
-    private final boolean basesRgb;
-
-    /**
-     * Initializes a new StaticTexture to the given parameters.
-     *
-     * @param path texture's relative path (with extension like
-     * "res/textures/myTexture.png")
-     * @param sRgb determines whether the texture is in sRgb color space
-     */
-    private StaticTexture(@NotNull String path, boolean sRgb) {
-        basesRgb = sRgb;
-        this.sRgb = sRgb;
-        meta.setPath(path);
-        meta.setLastActiveToNow();
-        meta.setDataStorePolicy(ResourceState.ACTION);
-        filtering = Settings.getTextureFiltering();
-
-        hddToRam();
-        ramToVram();
-
-        meta.setDataSize(data.capacity());
-        ResourceManager.addTexture(path, this);
-    }
+    protected boolean basesRgb;
 
     //
     //loading/saving------------------------------------------------------------
     //
     /**
-     * Loads a texture from the given path. You can load a texture only once, if
-     * you try to load it twice, you get reference to the already loaded one.
-     *
-     * @param path texture's relative path (with extension like
-     * "res/textures/myTexture.png")
-     * @param sRgb determines whether the texture is in sRGB color space
-     * @return texture
-     */
-    @NotNull
-    public static StaticTexture loadTexture(@NotNull String path, boolean sRgb) {
-        StaticTexture tex = (StaticTexture) ResourceManager.getTexture(path);
-        if (tex != null) {
-            return tex;
-        }
-        return new StaticTexture(path, sRgb);
-    }
-
-    /**
      * Loads the texture's data from file to the RAM.
      */
-    private void hddToRam() {
-        Image image = new Image(meta.getPath());
-        size.set(image.getSize());
-        data = image.getImage();
-
-        meta.setState(ResourceState.RAM);
-    }
+    protected abstract void hddToRam();
 
     /**
      * Loads the texture's data from the RAM to the ACTION. It may cause errors
      * if the data isn't in the RAM.
      */
-    private void ramToVram() {
-        glGenerateTextureId();
-        bind();
-
-        if (sRgb) {
-            glTexImage(GL21.GL_SRGB8_ALPHA8, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data);
-        } else {
-            glTexImage(GL11.GL_RGBA8, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data);
-        }
-
-        setTextureWrap(TextureWrapType2D.WRAP_U, wrapingU);
-        setTextureWrap(TextureWrapType2D.WRAP_U, wrapingV);
-        setBorderColor(borderColor);
-        changeFiltering();
-
-        meta.setState(ResourceState.ACTION);
-    }
+    protected abstract void ramToVram();
 
     /**
      * Removes the texture's data from the ACTION. It may cause errors if the
      * data isn't in the ACTION.
      */
-    private void vramToRam() {
-        glRelease();
-
-        meta.setState(ResourceState.RAM);
-    }
+    protected abstract void vramToRam();
 
     /**
      * Removes the texture's data from the RAM. It may cause errors if the data
      * isn't in the RAM.
      */
-    private void ramToHdd() {
-        STBImage.stbi_image_free(data);
-        data = null;
-
-        meta.setState(ResourceState.HDD);
-    }
+    protected abstract void ramToHdd();
 
     //
     //texture wrapping----------------------------------------------------------
@@ -144,7 +62,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      * @return the texture's specified wrap mode
      */
     @NotNull
-    public TextureWrap getTextureWrap(@NotNull TextureWrapType2D type) {
+    public TextureWrap getTextureWrap(@NotNull TextureWrapDirection type) {
         return glGetWrap(type);
     }
 
@@ -155,8 +73,8 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      * @param tw texture wrap
      */
     @Bind
-    public void setTextureWrap(@NotNull TextureWrapType2D type, @NotNull TextureWrap tw) {
-        glSetWrap(type, tw, false);
+    public void setTextureWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap tw) {
+        glSetWrap(type, tw);
     }
 
     /**
@@ -176,7 +94,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      */
     @Bind
     public void setBorderColor(@NotNull Vector4f borderColor) {
-        glSetBorderColor(borderColor, false);
+        glSetBorderColor(borderColor);
     }
 
     //
@@ -189,7 +107,8 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     }
 
     /**
-     * Sets the texture's filtering to the given value.
+     * Sets the texture's filtering to the given value. Note that this method
+     * reloads the texture if the old or the new filtering mode is anisotropic.
      *
      * @param tf texture's filtering mode
      *
@@ -205,7 +124,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
             boolean fastFilteringChange = tf.getIndex() < 3 && filtering.getIndex() < 3;
             filtering = tf;
 
-            if (getState() == ResourceState.ACTION) {
+            if (getState() == ResourceManager.ResourceState.ACTION) {
                 if (fastFilteringChange) {
                     changeFiltering();
                 } else {
@@ -221,26 +140,26 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      * cause errors if the data isn't in the ACTION.
      */
     @Bind
-    private void changeFiltering() {
-        glGenerateMipmaps(false);
+    protected void changeFiltering() {
+        glGenerateMipmaps();
         switch (filtering) {
             case NONE:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.NEAREST, false);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.NEAREST_MIPMAP_NEAREST, false);
+                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.NEAREST);
+                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.NEAREST_MIPMAP_NEAREST);
                 break;
             case BILINEAR:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR, false);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_NEAREST, false);
+                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
+                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_NEAREST);
                 break;
             case TRILINEAR:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR, false);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR, false);
+                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
+                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR);
                 break;
             default:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR, false);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR, false);
+                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
+                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR);
                 if (GL.getCapabilities().GL_EXT_texture_filter_anisotropic) {
-                    float maxLevel = Math.min(2 << filtering.getIndex() - 3, GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
+                    float maxLevel = org.joml.Math.min(2 << filtering.getIndex() - 3, GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
                     filtering = TextureFiltering.valueOf("ANISOTROPIC_" + (int) maxLevel + "X");
                     GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, maxLevel);
                 } else {
@@ -254,9 +173,24 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     //opengl related------------------------------------------------------------
     //
     @Override
+    public void bind() {
+        glBind();
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void unbind() {
+        glUnbind();
+    }
+
+    @Override
     public void bindToTextureUnit(int textureUnit) {
-        if (getState() != ResourceState.ACTION) {
-            if (getState() == ResourceState.HDD) {
+        if (getState() != ResourceManager.ResourceState.ACTION) {
+            if (getState() == ResourceManager.ResourceState.HDD) {
                 hddToRam();
             }
             ramToVram();
@@ -264,23 +198,8 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
         }
 
         glActivate(textureUnit);
-        bind();
+        glBind();
         meta.setLastActiveToNow();
-    }
-
-    @Override
-    public void bind() {
-        glBind(false);
-    }
-
-    @Override
-    public int getId() {
-        return glGetId();
-    }
-
-    @Override
-    public void unbind() {
-        glUnbind(false);
     }
 
     //
@@ -354,7 +273,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      * @return the texture's state
      */
     @NotNull
-    public ResourceState getState() {
+    public ResourceManager.ResourceState getState() {
         return meta.getState();
     }
 
@@ -369,7 +288,7 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      * @return the texture's data store policy
      */
     @NotNull
-    public ResourceState getDataStorePolicy() {
+    public ResourceManager.ResourceState getDataStorePolicy() {
         return meta.getDataStorePolicy();
     }
 
@@ -383,13 +302,13 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      *
      * @param minState data store policy
      */
-    public void setDataStorePolicy(@NotNull ResourceState minState) {
+    public void setDataStorePolicy(@NotNull ResourceManager.ResourceState minState) {
         meta.setDataStorePolicy(minState);
 
-        if (minState != ResourceState.HDD && getState() == ResourceState.HDD) {
+        if (minState != ResourceManager.ResourceState.HDD && getState() == ResourceManager.ResourceState.HDD) {
             hddToRam();
         }
-        if (minState == ResourceState.ACTION && getState() != ResourceState.ACTION) {
+        if (minState == ResourceManager.ResourceState.ACTION && getState() != ResourceManager.ResourceState.ACTION) {
             ramToVram();
         }
     }
@@ -397,11 +316,11 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     @Override
     public void update() {
         long elapsedTime = System.currentTimeMillis() - getLastActive();
-        if (elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceState.ACTION && getState() != ResourceState.HDD) {
-            if (getState() == ResourceState.ACTION) {
+        if (elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceManager.ResourceState.ACTION && getState() != ResourceManager.ResourceState.HDD) {
+            if (getState() == ResourceManager.ResourceState.ACTION) {
                 vramToRam();
             }
-            if (elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceState.HDD) {
+            if (elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceManager.ResourceState.HDD) {
                 ramToHdd();
             }
         }
@@ -410,14 +329,9 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     //
     //misc----------------------------------------------------------------------
     //
-    /**
-     * Returns the texture's path.
-     *
-     * @return the texture's path
-     */
-    @NotNull
-    public String getPath() {
-        return meta.getPath();
+    @Override
+    public boolean issRgb() {
+        return sRgb;
     }
 
     /**
@@ -433,11 +347,6 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
      */
     public boolean isDefaultsRgb() {
         return basesRgb;
-    }
-
-    @Override
-    public boolean issRgb() {
-        return sRgb;
     }
 
     /**
@@ -457,19 +366,39 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
         }
         if (issRgb() != sRgb) {
             this.sRgb = sRgb;
-            ResourceState oldState = getState();
-            if (getState() == ResourceState.ACTION) {
+            ResourceManager.ResourceState oldState = getState();
+            if (getState() == ResourceManager.ResourceState.ACTION) {
                 vramToRam();
             }
-            if (getState() == ResourceState.RAM) {
+            if (getState() == ResourceManager.ResourceState.RAM) {
                 ramToHdd();
             }
-            if (oldState != ResourceState.HDD) {
+            if (oldState != ResourceManager.ResourceState.HDD) {
                 hddToRam();
             }
-            if (oldState == ResourceState.ACTION) {
+            if (oldState == ResourceManager.ResourceState.ACTION) {
                 ramToVram();
             }
+        }
+    }
+
+    @Override
+    public int getDataSizeInRam() {
+        return getState() == ResourceManager.ResourceState.HDD ? 0 : meta.getDataSize();
+    }
+
+    @Override
+    public int getDataSizeInAction() {
+        return getState() == ResourceManager.ResourceState.ACTION ? meta.getDataSize() : 0;
+    }
+
+    @Override
+    public void release() {
+        if (getState() == ResourceManager.ResourceState.ACTION) {
+            vramToRam();
+        }
+        if (getState() == ResourceManager.ResourceState.RAM) {
+            ramToHdd();
         }
     }
 
@@ -479,29 +408,9 @@ public class StaticTexture extends AbstractTexture implements EasyFiltering, Cha
     }
 
     @Override
-    public int getDataSizeInRam() {
-        return getState() == ResourceState.HDD ? 0 : meta.getDataSize();
-    }
-
-    @Override
-    public int getDataSizeInAction() {
-        return getState() == ResourceState.ACTION ? meta.getDataSize() : 0;
-    }
-
-    @Override
-    public void release() {
-        if (getState() == ResourceState.ACTION) {
-            vramToRam();
-        }
-        if (getState() == ResourceState.RAM) {
-            ramToHdd();
-        }
-    }
-
-    @Override
     public String toString() {
         return super.toString() + "\nStaticTexture{" + "filtering=" + filtering
-                + ", data=" + data + ", meta=" + meta + '}';
+                + ", meta=" + meta + ", basesRgb=" + basesRgb + '}';
     }
 
 }

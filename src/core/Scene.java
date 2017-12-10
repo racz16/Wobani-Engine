@@ -4,34 +4,40 @@ import components.audio.*;
 import components.camera.*;
 import components.light.lightTypes.*;
 import components.renderables.*;
+import java.io.*;
 import java.util.*;
+import materials.*;
 import org.joml.*;
-import renderers.*;
+import rendering.geometry.*;
+import resources.environmentProbes.*;
 import resources.meshes.*;
 import resources.splines.*;
 import toolbox.*;
 import toolbox.annotations.*;
 
 /**
- * Scene contains all the GameObjects, meshes, splines, the camera, the
- * directional light and other custom lists.
+ * Scene contains all the GameObjects, MESHES, SPLINES, the camera, the
+ * directional light and other custom LISTS.
  */
 public class Scene {
 
-    //TODO skybox
-    //TODO merging splines and meshes?
+    //TODO merging SPLINES and MESHES?
     /**
      * Contains all the GameObjects.
      */
-    private static final List<GameObject> objects = new ArrayList<>();
+    private static final List<GameObject> OBJECTS = new ArrayList<>();
     /**
      * Contains all the available MeshComponents.
      */
-    private static final Map<Class, Map<Mesh, List<MeshComponent>>> meshes = new HashMap<>();
+    private static final Map<Class<? extends GeometryRenderer>, Map<Mesh, List<MeshComponent>>> MESHES = new HashMap<>();
     /**
      * Contains all the available SplineComponents.
      */
-    private static final Map<Class, Map<Spline, List<SplineComponent>>> splines = new HashMap<>();
+    private static final Map<Class<? extends GeometryRenderer>, Map<Spline, List<SplineComponent>>> SPLINES = new HashMap<>();
+    /**
+     * Custom LISTS.
+     */
+    private static final Map<Class<?>, List<Component>> LISTS = new HashMap<>();
     /**
      * The scene's main camera.
      */
@@ -44,64 +50,90 @@ public class Scene {
      * The scene's audio listener.
      */
     private static AudioListenerComponent audioListener;
-    /**
-     * Custom lists.
-     */
-    private static final Map<Class, List<Component>> lists = new HashMap<>();
+
+    private static EnvironmentProbe skybox;
+
+    private static final List<DynamicEnvironmentProbe> PROBES = new ArrayList<>();
+
+    public static void addProbe(DynamicEnvironmentProbe probe) {
+        PROBES.add(probe);
+    }
+
+    public static DynamicEnvironmentProbe getProbe(int index) {
+        return PROBES.get(index);
+    }
+
+    public static int getProbeCount() {
+        return PROBES.size();
+    }
 
     static {
-        lists.put(Camera.class, new ArrayList<>());
-        lists.put(DirectionalLight.class, new ArrayList<>());
-        lists.put(PointLight.class, new ArrayList<>());
-        lists.put(SpotLight.class, new ArrayList<>());
+        addComponentListClass(Camera.class);
+        addComponentListClass(DirectionalLight.class);
+        addComponentListClass(PointLight.class);
+        addComponentListClass(SpotLight.class);
+    }
+
+    /**
+     * To can't create Scene instance.
+     */
+    private Scene() {
+    }
+
+    public static void load(@NotNull File file) {
+        //TODO XStream load
+    }
+
+    public static void save(@NotNull File file) {
+        //TODO XStream load
     }
 
     //
     //lists---------------------------------------------------------------------
     //
     /**
-     * Adds the given key to the Scene's custom lists. After calling this
+     * Adds the given key to the Scene's custom LISTS. After calling this
      * method, all Components that instances the given class, you add to a
      * GameObject will be presented in the Scene's corresponding list.
      *
      * @param key class
      */
-    public static void addComponentListClass(@NotNull Class key) {
-        if (!lists.keySet().contains(key)) {
-            lists.put(key, new ArrayList<>());
+    public static void addComponentListClass(@NotNull Class<?> key) {
+        if (!LISTS.keySet().contains(key)) {
+            LISTS.put(key, new ArrayList<>());
         }
     }
 
     /**
      * Removes the given key and the correspondig list from the Scene's custom
-     * lists. After calling this method, Components that instances the given
+     * LISTS. After calling this method, Components that instances the given
      * class, you add to a GameObject no more will be presented in the Scene's
      * corresponding list.
      *
      * @param key class
      */
-    public static void removeComponentListClass(@NotNull Class key) {
-        lists.remove(key);
+    public static void removeComponentListClass(@NotNull Class<?> key) {
+        LISTS.remove(key);
     }
 
     /**
-     * Returns the keys of the Scene's custom lists.
+     * Returns the keys of the Scene's custom LISTS.
      *
-     * @return the keys of the Scene's custom lists
+     * @return the keys of the Scene's custom LISTS
      */
-    @NotNull
-    public static Class[] getComponentListClasses() {
-        Class[] classes = new Class[lists.keySet().size()];
-        lists.keySet().toArray(classes);
+    @NotNull @ReadOnly
+    public static Class<?>[] getComponentListClasses() {
+        Class<?>[] classes = new Class<?>[LISTS.keySet().size()];
+        LISTS.keySet().toArray(classes);
         return classes;
     }
 
     /**
-     * Adds the given Component to the Scene's corresponding lists if it's the
+     * Adds the given Component to the Scene's corresponding LISTS if it's the
      * instance of the list's class. Note that if the given Component is instace
-     * of n list's class, it'll be presented in and only in these lists. You can
+     * of n list's class, it'll be presented in and only in these LISTS. You can
      * add more keys by calling the addComponentListClass method but Components
-     * added to GameObjects in the past won't be presented in the new lists.
+     * added to GameObjects in the past won't be presented in the new LISTS.
      *
      * @param component Component
      */
@@ -109,8 +141,8 @@ public class Scene {
         if (component == null) {
             throw new NullPointerException();
         }
-        for (Class key : lists.keySet()) {
-            List<Component> list = lists.get(key);
+        for (Class<?> key : LISTS.keySet()) {
+            List<Component> list = LISTS.get(key);
             if (key.isInstance(component) && !Utility.containsReference(list, component)) {
                 list.add(component);
             }
@@ -118,7 +150,7 @@ public class Scene {
     }
 
     /**
-     * Removes the given Component from the Scene's custom lists.
+     * Removes the given Component from the Scene's custom LISTS.
      *
      * @param component Component
      */
@@ -126,8 +158,8 @@ public class Scene {
         if (component == null) {
             throw new NullPointerException();
         }
-        for (Class key : lists.keySet()) {
-            List<Component> list = lists.get(key);
+        for (Class<?> key : LISTS.keySet()) {
+            List<Component> list = LISTS.get(key);
             if (key.isInstance(component) && Utility.containsReference(list, component)) {
                 Utility.removeReference(list, component);
             }
@@ -140,8 +172,9 @@ public class Scene {
      *
      * @param <T> type
      * @param key class
+     *
      * @return the list of all the Components which are the given class's
-     * instances
+     *         instances
      */
     @NotNull @ReadOnly
     public static <T> List<T> getListOfComponents(@NotNull Class<T> key) {
@@ -149,7 +182,7 @@ public class Scene {
             throw new NullPointerException();
         }
         List<T> list = new ArrayList<>();
-        list.addAll((Collection<? extends T>) lists.get(key));
+        list.addAll((List<? extends T>) LISTS.get(key));
         return list;
     }
 
@@ -160,7 +193,7 @@ public class Scene {
      * Updates all GameObject's all Components.
      */
     static void updateComponents() {
-        for (GameObject gameObject : objects) {
+        for (GameObject gameObject : OBJECTS) {
             gameObject.update();
         }
     }
@@ -171,7 +204,7 @@ public class Scene {
      * @return the number of the GameObjects
      */
     public static int getNumberOfGameObjects() {
-        return objects.size();
+        return OBJECTS.size();
     }
 
     /**
@@ -179,6 +212,7 @@ public class Scene {
      * already stored GameObject to the list.
      *
      * @param gameObject GameObject
+     *
      * @return true if the GameObject added successfully, false otherwise
      *
      * @throws NullPointerException gameObject can't be null
@@ -187,10 +221,10 @@ public class Scene {
         if (gameObject == null) {
             throw new NullPointerException();
         }
-        if (Utility.containsReference(objects, gameObject)) {
+        if (Utility.containsReference(OBJECTS, gameObject)) {
             return false;
         } else {
-            return objects.add(gameObject);
+            return OBJECTS.add(gameObject);
         }
     }
 
@@ -198,11 +232,12 @@ public class Scene {
      * Returns the specified GameObject.
      *
      * @param i index
+     *
      * @return GameObject
      */
     @NotNull
     public static GameObject getGameObject(int i) {
-        return objects.get(i);
+        return OBJECTS.get(i);
     }
 
     //
@@ -218,10 +253,13 @@ public class Scene {
      * @param meshComponent MeshComponent
      */
     public static void addMeshComponent(@NotNull MeshComponent meshComponent) {
-        Map<Mesh, List<MeshComponent>> map = meshes.get(meshComponent.getMaterial().getRenderer());
+        if (meshComponent.getMesh() == null || meshComponent.getMaterial() == null) {
+            return;
+        }
+        Map<Mesh, List<MeshComponent>> map = MESHES.get(meshComponent.getMaterial().getRenderer());
         if (map == null) {
             map = new HashMap<>();
-            meshes.put(meshComponent.getMaterial().getRenderer(), map);
+            MESHES.put(meshComponent.getMaterial().getRenderer(), map);
         }
         List<MeshComponent> list = map.get(meshComponent.getMesh());
         if (list == null) {
@@ -243,34 +281,72 @@ public class Scene {
      * @param meshComponent MeshComponent
      */
     public static void removeMeshComponent(@NotNull MeshComponent meshComponent) {
-        Map<Mesh, List<MeshComponent>> map = meshes.get(meshComponent.getMaterial().getRenderer());
+        if (meshComponent.getGameObject() == null) {
+            removeMeshComponent(meshComponent, meshComponent.getMaterial(), meshComponent.getMesh());
+        }
+    }
+
+    /**
+     * Removes the given MeshComponent from the Scene based on the given
+     * material and mesh.
+     *
+     * @param meshComponent MeshComponent
+     */
+    private static void removeMeshComponent(@NotNull MeshComponent meshComponent, @Nullable Material fromMaterial, @Nullable Mesh fromMesh) {
+        if (fromMesh == null || fromMaterial == null) {
+            return;
+        }
+        Map<Mesh, List<MeshComponent>> map = MESHES.get(fromMaterial.getRenderer());
         if (map == null) {
             return;
         }
-        List<MeshComponent> list = map.get(meshComponent.getMesh());
+        List<MeshComponent> list = map.get(fromMesh);
         if (list == null) {
             return;
         }
-        if (meshComponent.getGameObject() == null) {
-            Utility.removeReference(list, meshComponent);
-            if (list.isEmpty()) {
-                map.remove(meshComponent.getMesh());
-                if (map.isEmpty()) {
-                    meshes.remove(meshComponent.getMaterial().getRenderer());
-                }
+        Utility.removeReference(list, meshComponent);
+        if (list.isEmpty()) {
+            map.remove(fromMesh);
+            if (map.isEmpty()) {
+                MESHES.remove(fromMaterial.getRenderer());
             }
         }
     }
 
     /**
-     * Returns the array of Meshes using the specified Renderer.
+     * Refreshes the given MeshComponent in the Scene's hierarchy after the
+     * MeshComponent's Mesh changed.
      *
-     * @param renderer Renderer
-     * @return the array of Meshes using the specified Renderer
+     * @param meshComponent meshComponent
+     * @param from          meshComponent's old Mesh
+     */
+    public static void refreshMeshComponent(@NotNull MeshComponent meshComponent, @NotNull Mesh from) {
+        removeMeshComponent(meshComponent, meshComponent.getMaterial(), from);
+        addMeshComponent(meshComponent);
+    }
+
+    /**
+     * Refreshes the given MeshComponent in the Scene's hierarchy after the
+     * MeshComponent's Material changed.
+     *
+     * @param meshComponent meshComponent
+     * @param from          meshComponent's old Material
+     */
+    public static void refreshMeshComponent(@NotNull MeshComponent meshComponent, @NotNull Material from) {
+        removeMeshComponent(meshComponent, from, meshComponent.getMesh());
+        addMeshComponent(meshComponent);
+    }
+
+    /**
+     * Returns the array of Meshes using the specified GeometryRenderer.
+     *
+     * @param renderer GeometryRenderer
+     *
+     * @return the array of Meshes using the specified GeometryRenderer
      */
     @NotNull @ReadOnly
-    public static Mesh[] getMeshes(@NotNull Class<? extends Renderer> renderer) {
-        Map<Mesh, List<MeshComponent>> map = meshes.get(renderer);
+    public static Mesh[] getMeshes(@NotNull Class<? extends GeometryRenderer> renderer) {
+        Map<Mesh, List<MeshComponent>> map = MESHES.get(renderer);
         if (map == null) {
             return new Mesh[0];
         } else {
@@ -281,35 +357,39 @@ public class Scene {
     }
 
     /**
-     * Returns the number of MeshComponents using the specified Renderer and
-     * Mesh.
+     * Returns the number of MeshComponents using the specified GeometryRenderer
+     * and Mesh.
      *
-     * @param renderer Renderer
-     * @param mesh Mesh
-     * @return number of MeshComponents using the specified Renderer and Mesh
+     * @param renderer GeometryRenderer
+     * @param mesh     Mesh
+     *
+     * @return number of MeshComponents using the specified GeometryRenderer and
+     *         Mesh
      */
-    public static int getNumberOfMeshComponents(@NotNull Class<? extends Renderer> renderer, @NotNull Mesh mesh) {
-        if (meshes.get(renderer) == null || meshes.get(renderer).get(mesh) == null) {
+    public static int getNumberOfMeshComponents(@NotNull Class<? extends GeometryRenderer> renderer, @NotNull Mesh mesh) {
+        if (MESHES.get(renderer) == null || MESHES.get(renderer).get(mesh) == null) {
             return 0;
         } else {
-            return meshes.get(renderer).get(mesh).size();
+            return MESHES.get(renderer).get(mesh).size();
         }
     }
 
     /**
-     * Returns the indexth MeshComponent using the specified Renderer and Mesh.
+     * Returns the indexth MeshComponent using the specified GeometryRenderer
+     * and Mesh.
      *
-     * @param renderer Renderer
-     * @param mesh Mesh
-     * @param index index
+     * @param renderer GeometryRenderer
+     * @param mesh     Mesh
+     * @param index    index
+     *
      * @return MeshComponent
      */
     @Nullable
-    public static MeshComponent getMeshComponent(Class<? extends Renderer> renderer, Mesh mesh, int index) {
-        if (meshes.get(renderer) == null || meshes.get(renderer).get(mesh) == null) {
+    public static MeshComponent getMeshComponent(@NotNull Class<? extends GeometryRenderer> renderer, @NotNull Mesh mesh, int index) {
+        if (MESHES.get(renderer) == null || MESHES.get(renderer).get(mesh) == null) {
             return null;
         } else {
-            return meshes.get(renderer).get(mesh).get(index);
+            return MESHES.get(renderer).get(mesh).get(index);
         }
     }
 
@@ -326,10 +406,13 @@ public class Scene {
      * @param splineComponent SplineComponent
      */
     public static void addSplineComponent(@NotNull SplineComponent splineComponent) {
-        Map<Spline, List<SplineComponent>> map = splines.get(splineComponent.getMaterial().getRenderer());
+        if (splineComponent.getSpline() == null || splineComponent.getMaterial() == null) {
+            return;
+        }
+        Map<Spline, List<SplineComponent>> map = SPLINES.get(splineComponent.getMaterial().getRenderer());
         if (map == null) {
             map = new HashMap<>();
-            splines.put(splineComponent.getMaterial().getRenderer(), map);
+            SPLINES.put(splineComponent.getMaterial().getRenderer(), map);
         }
         List<SplineComponent> list = map.get(splineComponent.getSpline());
         if (list == null) {
@@ -351,34 +434,72 @@ public class Scene {
      * @param splineComponent SplineComponent
      */
     public static void removeSplineComponent(@NotNull SplineComponent splineComponent) {
-        Map<Spline, List<SplineComponent>> map = splines.get(splineComponent.getMaterial().getRenderer());
+        if (splineComponent.getGameObject() == null) {
+            removeSplineComponent(splineComponent, splineComponent.getMaterial(), splineComponent.getSpline());
+        }
+    }
+
+    /**
+     * Removes the given SplineComponent from the Scene based on the given
+     * material and spline.
+     *
+     * @param splineComponent SplineComponent
+     */
+    private static void removeSplineComponent(@NotNull SplineComponent splineComponent, @Nullable Material fromMaterial, @Nullable Spline fromSpline) {
+        if (fromSpline == null || fromMaterial == null) {
+            return;
+        }
+        Map<Spline, List<SplineComponent>> map = SPLINES.get(fromMaterial.getRenderer());
         if (map == null) {
             return;
         }
-        List<SplineComponent> list = map.get(splineComponent.getSpline());
+        List<SplineComponent> list = map.get(fromSpline);
         if (list == null) {
             return;
         }
-        if (splineComponent.getGameObject() == null) {
-            Utility.removeReference(list, splineComponent);
-            if (list.isEmpty()) {
-                map.remove(splineComponent.getSpline());
-                if (map.isEmpty()) {
-                    splines.remove(splineComponent.getMaterial().getRenderer());
-                }
+        Utility.removeReference(list, fromSpline);
+        if (list.isEmpty()) {
+            map.remove(fromSpline);
+            if (map.isEmpty()) {
+                SPLINES.remove(fromMaterial.getRenderer());
             }
         }
     }
 
     /**
-     * Returns the array of Splines using the specified Renderer.
+     * Refreshes the given SplineComponent in the Scene's hierarchy after the
+     * SplineComponent's Spline changed.
      *
-     * @param renderer Renderer
-     * @return the array of Splines using the specified Renderer
+     * @param splineComponent splineComponent
+     * @param from            splineComponent's old Spline
+     */
+    public static void refreshSplineComponent(@NotNull SplineComponent splineComponent, @NotNull Spline from) {
+        removeSplineComponent(splineComponent, splineComponent.getMaterial(), from);
+        addSplineComponent(splineComponent);
+    }
+
+    /**
+     * Refreshes the given SplineComponent in the Scene's hierarchy after the
+     * SplineComponent's Material changed.
+     *
+     * @param splineComponent Scene
+     * @param from            Scene's old Material
+     */
+    public static void refreshSplineComponent(@NotNull SplineComponent splineComponent, @NotNull Material from) {
+        removeSplineComponent(splineComponent, from, splineComponent.getSpline());
+        addSplineComponent(splineComponent);
+    }
+
+    /**
+     * Returns the array of Splines using the specified GeometryRenderer.
+     *
+     * @param renderer GeometryRenderer
+     *
+     * @return the array of Splines using the specified GeometryRenderer
      */
     @NotNull @ReadOnly
-    public static Spline[] getSplines(@NotNull Class<? extends Renderer> renderer) {
-        Map<Spline, List<SplineComponent>> map = splines.get(renderer);
+    public static Spline[] getSplines(@NotNull Class<? extends GeometryRenderer> renderer) {
+        Map<Spline, List<SplineComponent>> map = SPLINES.get(renderer);
         if (map == null) {
             return new Spline[0];
         } else {
@@ -389,37 +510,39 @@ public class Scene {
     }
 
     /**
-     * Returns the number of SplineComponents using the specified Renderer and
-     * Spline.
+     * Returns the number of SplineComponents using the specified
+     * GeometryRenderer and Spline.
      *
-     * @param renderer Renderer
-     * @param spline Spline
-     * @return number of SplineComponents using the specified Renderer and
-     * Spline
+     * @param renderer GeometryRenderer
+     * @param spline   Spline
+     *
+     * @return number of SplineComponents using the specified GeometryRenderer
+     *         and Spline
      */
-    public static int getNumberOfSplineComponents(@NotNull Class<? extends Renderer> renderer, @NotNull Spline spline) {
-        if (splines.get(renderer) == null || splines.get(renderer).get(spline) == null) {
+    public static int getNumberOfSplineComponents(@NotNull Class<? extends GeometryRenderer> renderer, @NotNull Spline spline) {
+        if (SPLINES.get(renderer) == null || SPLINES.get(renderer).get(spline) == null) {
             return 0;
         } else {
-            return splines.get(renderer).get(spline).size();
+            return SPLINES.get(renderer).get(spline).size();
         }
     }
 
     /**
-     * Returns the indexth SplineComponent using the specified Renderer and
-     * Spline.
+     * Returns the indexth SplineComponent using the specified GeometryRenderer
+     * and Spline.
      *
-     * @param renderer Renderer
-     * @param spline Spline
-     * @param index index
+     * @param renderer GeometryRenderer
+     * @param spline   Spline
+     * @param index    index
+     *
      * @return SplineComponent
      */
     @Nullable
-    public static SplineComponent getSplineComponent(Class<? extends Renderer> renderer, Spline spline, int index) {
-        if (splines.get(renderer) == null || splines.get(renderer).get(spline) == null) {
+    public static SplineComponent getSplineComponent(@NotNull Class<? extends GeometryRenderer> renderer, @NotNull Spline spline, int index) {
+        if (SPLINES.get(renderer) == null || SPLINES.get(renderer).get(spline) == null) {
             return null;
         } else {
-            return splines.get(renderer).get(spline).get(index);
+            return SPLINES.get(renderer).get(spline).get(index);
         }
     }
 
@@ -442,7 +565,7 @@ public class Scene {
      * @param camera main camera
      *
      * @throws NullPointerException the given parameter and it's GameObject
-     * can't be null
+     *                              can't be null
      */
     public static void setCamera(@NotNull Camera camera) {
         if (camera == null || camera.getGameObject() == null) {
@@ -450,11 +573,11 @@ public class Scene {
         }
 
         if (Scene.camera != null && Scene.directionalLight != null) {
-            Scene.camera.removeInvalidatable((Invalidatable) Scene.directionalLight);
+            Scene.camera.removeInvalidatable(Scene.directionalLight);
         }
         Scene.camera = camera;
         if (Scene.directionalLight != null) {
-            camera.addInvalidatable((Invalidatable) Scene.directionalLight);
+            camera.addInvalidatable(Scene.directionalLight);
         }
         camera.invalidate();
     }
@@ -475,7 +598,7 @@ public class Scene {
      * @param directionalLight scene's directional light
      *
      * @throws NullPointerException the given parameter and it's GameObject
-     * can't be null
+     *                              can't be null
      */
     public static void setDirectionalLight(@NotNull DirectionalLight directionalLight) {
         if (directionalLight == null || directionalLight.getGameObject() == null) {
@@ -483,11 +606,11 @@ public class Scene {
         }
 
         if (Scene.camera != null && Scene.directionalLight != null) {
-            Scene.camera.removeInvalidatable((Invalidatable) Scene.directionalLight);
+            Scene.camera.removeInvalidatable(Scene.directionalLight);
         }
         Scene.directionalLight = directionalLight;
         if (Scene.camera != null) {
-            Scene.camera.addInvalidatable((Invalidatable) Scene.directionalLight);
+            Scene.camera.addInvalidatable(Scene.directionalLight);
         }
         Scene.directionalLight.invalidate();
     }
@@ -508,14 +631,25 @@ public class Scene {
      * @param audioListener scene's audio listener
      *
      * @throws NullPointerException the given parameter and it's GameObject
-     * can't be null
+     *                              can't be null
      */
     public static void setAudioListener(@NotNull AudioListenerComponent audioListener) {
         if (audioListener == null || audioListener.getGameObject() == null) {
             throw new NullPointerException();
         }
-
         Scene.audioListener = audioListener;
+    }
+
+    @Nullable
+    public static EnvironmentProbe getSkybox() {
+        return skybox;
+    }
+
+    public static void setSkybox(@Nullable EnvironmentProbe skybox) {
+        if (skybox == null) {
+            return;
+        }
+        Scene.skybox = skybox;
     }
 
     /**

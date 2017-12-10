@@ -411,10 +411,10 @@ public class Window {
      * @param click the cursor hotspot is specified in pixels, relative to the
      * upper-left corner of the cursor image
      */
-    public static void setMouseShape(@NotNull String path, @NotNull Vector2i click) {
+    public static void setMouseShape(@NotNull File path, @NotNull Vector2i click) {
         removeCursor();
         GLFWImage cursorImage = GLFWImage.create();
-        Image image = new Image(path);
+        Image image = new Image(path, false);
         cursorImage.pixels(image.getImage());
         cursorImage.width(image.getSize().x);
         cursorImage.height(image.getSize().y);
@@ -658,8 +658,8 @@ public class Window {
      * @param path image's relative path (with extension like
      * "res/textures/myTexture.png")
      */
-    public static void setIcon(@NotNull String path) {
-        Image image = new Image(path);
+    public static void setIcon(@NotNull File path) {
+        Image image = new Image(path, false);
         GLFWImage cursorImage = GLFWImage.malloc();
         GLFWImage.Buffer imagebf = GLFWImage.malloc(1);
         cursorImage.set(image.getSize().x, image.getSize().y, image.getImage());

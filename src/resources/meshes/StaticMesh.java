@@ -17,6 +17,7 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import resources.ResourceManager.ResourceState;
 import resources.*;
+import toolbox.*;
 import toolbox.annotations.*;
 
 /**
@@ -25,7 +26,7 @@ import toolbox.annotations.*;
  * StaticMesh's data store policy including when and where the data should be
  * stored.
  *
- * @see #loadModel(String path)
+ * @see #loadModel(File path)
  */
 public class StaticMesh implements Mesh {
 
@@ -54,10 +55,6 @@ public class StaticMesh implements Mesh {
      */
     private final Vector3f aabbMax = new Vector3f();
     /**
-     * This is the loaded model's indexth mesh.
-     */
-    private final int elementIndex;
-    /**
      * Stores the mesh's position data.
      */
     private AIVector3D.Buffer position;
@@ -81,6 +78,10 @@ public class StaticMesh implements Mesh {
      * Stores meta data about this mesh.
      */
     private final LoadableResourceMetaData meta = new LoadableResourceMetaData();
+    /**
+     * The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
      * Initializes a new StaticMesh to the given values.
@@ -88,14 +89,13 @@ public class StaticMesh implements Mesh {
      * @param mesh mesh
      * @param path model's relative path (with extension like
      * "res/models/myModel.obj")
-     * @param index the loadaed model's indexth mesh
+     * @param resourceId the mesh's id
      */
-    private StaticMesh(@NotNull AIMesh mesh, @NotNull String path, int index) {
+    private StaticMesh(@NotNull AIMesh mesh, @NotNull File path, @NotNull ResourceId resourceId) {
         faceCount = mesh.mNumFaces();
         vertexCount = faceCount * 3;
         computeFrustumCullingData(mesh);
-        meta.setPath(path);
-        elementIndex = index;
+        meta.setPaths(Utility.wrapObjectByList(path));
         meta.setLastActiveToNow();
         meta.setDataStorePolicy(ResourceState.ACTION);
 
@@ -103,7 +103,8 @@ public class StaticMesh implements Mesh {
         ramToVram();
 
         computeDataSize();
-        ResourceManager.addMesh(path + "." + index, this);
+        this.resourceId = resourceId;
+        ResourceManager.addMesh(this);
     }
 
     //
@@ -119,17 +120,17 @@ public class StaticMesh implements Mesh {
      * @return list of model's meshes
      */
     @NotNull
-    public static List<StaticMesh> loadModel(@NotNull String path) {
+    public static List<StaticMesh> loadModel(@NotNull File path) {
         AIScene scene = getSceneAssimp(path);
         List<StaticMesh> meshes = new ArrayList<>();
         int meshCount = scene.mNumMeshes();
         PointerBuffer meshesBuffer = scene.mMeshes();
 
+        List<ResourceId> ids = ResourceId.getResourceIds(path, meshCount);
         for (int i = 0; i < meshCount; ++i) {
-            String key = path + "." + i;
-            StaticMesh me = (StaticMesh) ResourceManager.getMesh(key);
+            StaticMesh me = (StaticMesh) ResourceManager.getMesh(new ResourceId(path));
             if (me == null) {
-                me = new StaticMesh(AIMesh.create(meshesBuffer.get(i)), path, i);
+                me = new StaticMesh(AIMesh.create(meshesBuffer.get(i)), path, ids.get(i));
             }
             meshes.add(me);
         }
@@ -145,7 +146,7 @@ public class StaticMesh implements Mesh {
      * @return list of GameObjects
      */
     @NotNull
-    public static List<GameObject> loadModelToGameObjects(@NotNull String path) {
+    public static List<GameObject> loadModelToGameObjects(@NotNull File path) {
         List<GameObject> list = new ArrayList<>();
         for (StaticMesh me : loadModel(path)) {
             GameObject g = new GameObject();
@@ -164,7 +165,7 @@ public class StaticMesh implements Mesh {
      * @return GameObject
      */
     @NotNull
-    public static GameObject loadModelToGameObject(@NotNull String path) {
+    public static GameObject loadModelToGameObject(@NotNull File path) {
         GameObject g = new GameObject();
         for (StaticMesh me : loadModel(path)) {
             g.addComponent(new MeshComponent(me));
@@ -179,16 +180,11 @@ public class StaticMesh implements Mesh {
      * "res/models/myModel.obj")
      * @return model's scene
      *
-     * @throws IllegalArgumentException if there is no file on the given path
      * @throws IllegalStateException if assimp can't load the data from the file
      */
     @NotNull
-    private static AIScene getSceneAssimp(@NotNull String path) {
-        File file = new File(path);
-        if (!file.exists()) {
-            throw new IllegalArgumentException(path + " file doesn't exist");
-        }
-        AIScene scene = aiImportFile(file.getPath(), aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+    private static AIScene getSceneAssimp(@NotNull File path) {
+        AIScene scene = aiImportFile(path.getPath(), aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
         if (scene == null) {
             throw new IllegalStateException(aiGetErrorString());
         }
@@ -276,7 +272,7 @@ public class StaticMesh implements Mesh {
      * furthest vertex distance again.
      */
     private void hddToRam() {
-        AIMesh mesh = AIMesh.create(getSceneAssimp(getPath()).mMeshes().get(elementIndex));
+        AIMesh mesh = AIMesh.create(getSceneAssimp(getPath()).mMeshes().get(resourceId.getIndex()));
         hddToRam(mesh);
     }
 
@@ -514,6 +510,12 @@ public class StaticMesh implements Mesh {
         }
     }
 
+    @NotNull
+    @Override
+    public ResourceId getResourceId() {
+        return resourceId;
+    }
+
     //
     //misc----------------------------------------------------------------------
     //
@@ -523,8 +525,8 @@ public class StaticMesh implements Mesh {
      * @return the loaded model's path
      */
     @NotNull
-    public String getPath() {
-        return meta.getPath();
+    public File getPath() {
+        return meta.getPaths().get(0);
     }
 
     /**
@@ -533,7 +535,7 @@ public class StaticMesh implements Mesh {
      * @return the mesh's index in the loaded model
      */
     public int getIndex() {
-        return elementIndex;
+        return resourceId.getIndex();
     }
 
     @Override
@@ -579,43 +581,13 @@ public class StaticMesh implements Mesh {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 41 * hash + this.elementIndex;
-        hash = 41 * hash + getPath().hashCode();
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final StaticMesh other = (StaticMesh) obj;
-        if (this.elementIndex != other.elementIndex) {
-            return false;
-        }
-        if (!this.getPath().equals(other.getPath())) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public String toString() {
         return "StaticMesh{" + "vao=" + vao + ", vertexCount=" + vertexCount
-                + ", faceCount=" + faceCount
-                + ", furthestVertexDistance=" + furthestVertexDistance
-                + ", aabbMin=" + aabbMin + ", aabbMax=" + aabbMax
-                + ", elementIndex=" + elementIndex + ", position=" + position
-                + ", uv=" + uv + ", normal=" + normal + ", tangent=" + tangent
-                + ", indices=" + indices + ", meta=" + meta + '}';
+                + ", faceCount=" + faceCount + ", furthestVertexDistance="
+                + furthestVertexDistance + ", aabbMin=" + aabbMin + ", aabbMax="
+                + aabbMax + ", position=" + position + ", uv=" + uv + ", normal="
+                + normal + ", tangent=" + tangent + ", indices=" + indices
+                + ", meta=" + meta + ", resourceId=" + resourceId + '}';
     }
 
 }
