@@ -51,7 +51,7 @@ public class AudioBuffer implements Resource {
      * Initializes a new AudioBuffer to the given value.
      *
      * @param path sound file's relative path (with extension like
-     * "res/sounds/mySound.ogg")
+     *             "res/sounds/mySound.ogg")
      */
     private AudioBuffer(@NotNull File path) {
         meta.setPaths(Utility.wrapObjectByList(path));
@@ -171,7 +171,8 @@ public class AudioBuffer implements Resource {
      * loaded one.
      *
      * @param path sound effect's relative path (with extension like
-     * "res/sounds/mySound.ogg")
+     *             "res/sounds/mySound.ogg")
+     *
      * @return audio buffer
      */
     public static AudioBuffer loadSound(@NotNull File path) {

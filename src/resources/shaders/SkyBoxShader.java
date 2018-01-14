@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.*;
 import resources.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 /**
  * This shader can draw a skybox. In theory it can render any number of meshes
@@ -70,7 +71,8 @@ public class SkyBoxShader extends Shader {
      * @param material material
      */
     public void loadUniforms() {
-        Scene.getSkybox().bindToTextureUnit(0);
+        Skybox skybox = Scene.getParameters().getParameter(Skybox.class);
+        skybox.getValue().bindToTextureUnit(0);
         loadBoolean("isThereCubeMap", true);
     }
 

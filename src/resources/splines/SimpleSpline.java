@@ -207,7 +207,8 @@ public class SimpleSpline implements Spline {
      * -1 (except if it's a loop spline).
      *
      * @param startIndex start control point's index
-     * @param t "time"
+     * @param t          "time"
+     *
      * @return the specified point of the spline
      *
      * @see #getNumberOfControlPoints()
@@ -268,7 +269,7 @@ public class SimpleSpline implements Spline {
      * spline to dynamic if you want to change the spline's data frequently.
      *
      * @param dynamic true if the spline's data should be dynamic, false
-     * otherwise
+     *                otherwise
      */
     public void setDynamic(boolean dynamic) {
         this.dynamic = dynamic;
@@ -301,6 +302,7 @@ public class SimpleSpline implements Spline {
      * the control points.
      *
      * @return the number of points stored in the VAO
+     *
      * @see #getNumberOfControlPoints()
      */
     @Override
@@ -350,6 +352,7 @@ public class SimpleSpline implements Spline {
      * Returns the specified control point.
      *
      * @param index control point's index
+     *
      * @return control point
      */
     @NotNull @ReadOnly
@@ -412,7 +415,7 @@ public class SimpleSpline implements Spline {
     //frustum culling-----------------------------------------------------------
     //
     @Override
-    public float getFurthestVertexDistance() {
+    public float getRadius() {
         refresh();
         if (vao != null) {
             return furthestVertexDistance;

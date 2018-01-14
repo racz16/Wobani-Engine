@@ -10,7 +10,7 @@ public class BezierSpline extends CubicSpline {
 
     /**
      * Initializes a new BezierSpline.
-     *
+     * <p>
      */
     public BezierSpline() {
         super();
@@ -47,6 +47,7 @@ public class BezierSpline extends CubicSpline {
      * Returns the specified control point's left helper point.
      *
      * @param index specifies the control point
+     *
      * @return the specified control point's left helper point
      */
     @NotNull @ReadOnly
@@ -58,6 +59,7 @@ public class BezierSpline extends CubicSpline {
      * Returns the specified control point's right helper point.
      *
      * @param index specifies the control point
+     *
      * @return the specified control point's right helper point
      */
     @NotNull @ReadOnly
@@ -68,7 +70,7 @@ public class BezierSpline extends CubicSpline {
     /**
      * Sets the specified control point's left helper point to the given value.
      *
-     * @param index specifies the control point
+     * @param index       specifies the control point
      * @param helperPoint left helper point
      */
     public void setLeftHelperPoint(int index, @NotNull Vector3f helperPoint) {
@@ -79,7 +81,7 @@ public class BezierSpline extends CubicSpline {
     /**
      * Sets the specified control point's right helper point to the given value.
      *
-     * @param index specifies the control point
+     * @param index       specifies the control point
      * @param helperPoint right helper point
      */
     public void setRightHelperPoint(int index, @NotNull Vector3f helperPoint) {

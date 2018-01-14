@@ -147,16 +147,16 @@ public abstract class DefaultLightComponent extends Component {
     }
 
     @Override
-    protected void removeFromGameObject() {
+    protected void detachFromGameObject() {
         getGameObject().getTransform().removeInvalidatable(this);
-        super.removeFromGameObject();
+        super.detachFromGameObject();
         invalidate();
         removeLightFromUbo();
     }
 
     @Override
-    protected void addToGameObject(@NotNull GameObject g) {
-        super.addToGameObject(g);
+    protected void attachToGameObject(@NotNull GameObject g) {
+        super.attachToGameObject(g);
         invalidate();
         getGameObject().getTransform().addInvalidatable(this);
         addLightToUbo();

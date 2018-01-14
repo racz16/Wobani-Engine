@@ -645,6 +645,7 @@ public class Input {
          * Returns the corresponding key to the specified GLFW keycode.
          *
          * @param key GLFW keycode
+         *
          * @return key
          */
         @Nullable
@@ -671,7 +672,8 @@ public class Input {
          * this function returns null.
          *
          * @param scancode the system-specific scancode of the key (only used if
-         * the key is KEY_UNKNOWN)
+         *                 the key is KEY_UNKNOWN)
+         *
          * @return the layout-specific name of the key
          */
         @Nullable
@@ -935,7 +937,8 @@ public class Input {
      * Returns the last state reported for the specified mouse button.
      *
      * @param button mouse button in (0;8) (where 0 is the left mouse button, 1
-     * is the right and 2 is the middle)
+     *               is the right and 2 is the middle)
+     *
      * @return true if the buttin pressed, false otherwise
      *
      * @throws IllegalArgumentException button must be in (0;8)
@@ -1087,6 +1090,7 @@ public class Input {
      * and override the charCallback or the charModsCallback method.
      *
      * @param key key
+     *
      * @return true if the specified key is pressed, false otherwise
      */
     public static boolean isKeyPressed(@NotNull Key key) {
@@ -1097,6 +1101,7 @@ public class Input {
      * Returns the platform dependent scancode of the specified key.
      *
      * @param key key
+     *
      * @return scancode
      */
     public static int getKeyScancode(@NotNull Key key) {
@@ -1107,6 +1112,7 @@ public class Input {
      * Determines whether the shift button is pressed.
      *
      * @param mods modifyers
+     *
      * @return true if the shift button is pressed, false otherwise
      */
     private static boolean isShiftPressed(int mods) {
@@ -1117,6 +1123,7 @@ public class Input {
      * Determines whether the control button is pressed.
      *
      * @param mods modifyers
+     *
      * @return true if the control button is pressed, false otherwise
      */
     private static boolean isControlPressed(int mods) {
@@ -1127,6 +1134,7 @@ public class Input {
      * Determines whether the alt button is pressed.
      *
      * @param mods modifyers
+     *
      * @return true if the alt button is pressed, false otherwise
      */
     private static boolean isAltPressed(int mods) {
@@ -1137,6 +1145,7 @@ public class Input {
      * Determines whether the super button is pressed.
      *
      * @param mods modifyers
+     *
      * @return true if the super button is pressed, false otherwise
      */
     private static boolean isSuperPressed(int mods) {
@@ -1242,6 +1251,7 @@ public class Input {
      * given slot, it returns null.
      *
      * @param index index in (0;15)
+     *
      * @return the specified joystick
      */
     @Nullable

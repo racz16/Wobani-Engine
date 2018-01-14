@@ -1,5 +1,7 @@
 package toolbox.annotations;
 
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import java.lang.annotation.*;
 
 /**
@@ -8,6 +10,7 @@ import java.lang.annotation.*;
  * errors.
  */
 @Documented
+@Target({METHOD, PARAMETER})
 public @interface NotNull {
 
 }

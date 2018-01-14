@@ -27,6 +27,7 @@ public interface Spline extends Renderable {
      * means the start of the spline and t=1 means the end of the spline.
      *
      * @param t "time"
+     *
      * @return forward vector (normalized)
      */
     public Vector3f getForwardVector(float t);
@@ -36,6 +37,7 @@ public interface Spline extends Renderable {
      * t=0 means the start of the spline and t=1 means the end of the spline.
      *
      * @param t "time"
+     *
      * @return position
      */
     public Vector3f getApproximatedPosition(float t);

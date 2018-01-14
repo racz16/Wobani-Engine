@@ -36,7 +36,7 @@ public class Ubo implements Resource {
     /**
      * Allocates memory for the UBO.
      *
-     * @param size memory size to allocate (in bytes)
+     * @param size    memory size to allocate (in bytes)
      * @param dynamic true if the data should be dynamic, false otherwise
      *
      * @throws IllegalArgumentException size must be positive
@@ -53,7 +53,7 @@ public class Ubo implements Resource {
     /**
      * Stores the given data on the specified position.
      *
-     * @param data data to store
+     * @param data   data to store
      * @param offset data's offset (in bytes)
      */
     @Bind
@@ -69,11 +69,12 @@ public class Ubo implements Resource {
     /**
      * Stores the given data on the specified position.
      *
-     * @param data data to store
+     * @param data   data to store
      * @param offset data's offset (in bytes)
      *
      * @throws IllegalArgumentException offset can't be lower than 0
-     * @throws IllegalStateException didn't allocated enough memory for the data
+     * @throws IllegalStateException    didn't allocated enough memory for the
+     *                                  data
      */
     @Bind
     public void storeData(@NotNull FloatBuffer data, long offset) {
@@ -89,7 +90,7 @@ public class Ubo implements Resource {
     /**
      * Stores the given data on the specified position.
      *
-     * @param data data to store
+     * @param data   data to store
      * @param offset data's offset (in bytes)
      */
     @Bind
@@ -105,11 +106,12 @@ public class Ubo implements Resource {
     /**
      * Stores the given data on the specified position.
      *
-     * @param data data to store
+     * @param data   data to store
      * @param offset data's offset (in bytes)
      *
      * @throws IllegalArgumentException offset can't be lower than 0
-     * @throws IllegalStateException didn't allocated enough memory for the data
+     * @throws IllegalStateException    didn't allocated enough memory for the
+     *                                  data
      */
     @Bind
     public void storeData(@NotNull IntBuffer data, long offset) {

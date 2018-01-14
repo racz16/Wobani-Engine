@@ -3,9 +3,11 @@ package resources.shaders.postProcessing;
 import core.*;
 import java.io.*;
 import java.util.*;
+import rendering.*;
 import resources.*;
 import resources.shaders.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 /**
  * Performs gamma correction on the image.
@@ -73,7 +75,8 @@ public class GammaCorrectionShader extends Shader {
      * @see Settings#getGamma()
      */
     public void loadGammaUniform() {
-        loadFloat("gamma", Settings.getGamma());
+        Parameter<Float> gamma = RenderingPipeline.getParameters().getFloatParameter(RenderingPipeline.FLOAT_GAMMA);
+        loadFloat("gamma", Parameter.getValueOrDefault(gamma, 1f));
     }
 
     @NotNull

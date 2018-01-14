@@ -5,7 +5,7 @@ import toolbox.annotations.*;
 
 /**
  * Implementation of the Catmull-Rom spline.
- *
+ * <p>
  */
 public class CatmullRomSpline extends CubicSpline {
 

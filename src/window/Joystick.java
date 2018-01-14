@@ -191,7 +191,7 @@ public class Joystick {
      * @param name joystick's name
      * @param slot joystick's slot
      *
-     * @throws NullPointerException name can't be null
+     * @throws NullPointerException     name can't be null
      * @throws IllegalArgumentException slot must be in the (0;15) interval
      */
     Joystick(@NotNull String name, int slot) {
@@ -228,7 +228,7 @@ public class Joystick {
      * Swaps the two specified axes. It may be helpful if the default
      * configuration already swapped these axes.
      *
-     * @param first first axe
+     * @param first  first axe
      * @param second second axe
      */
     public void swapAxes(@NotNull JoystickAxe first, @NotNull JoystickAxe second) {
@@ -248,6 +248,7 @@ public class Joystick {
      * Returns the specified axe's position in (-1;1).
      *
      * @param axe one of the joystick's axes
+     *
      * @return the specified axe's position
      */
     public float getAxePosition(@NotNull JoystickAxe axe) {
@@ -260,7 +261,7 @@ public class Joystick {
      * Swaps the two specified buttons. It may be helpful if the default
      * configuration already swapped these buttons.
      *
-     * @param first first button
+     * @param first  first button
      * @param second second button
      */
     public void swapButtons(@NotNull JoystickButton first, @NotNull JoystickButton second) {
@@ -280,6 +281,7 @@ public class Joystick {
      * Determines whether the specified button is pressed.
      *
      * @param button one of the joystick's buttons
+     *
      * @return true if the specified button is pressed, false otherwise
      */
     public boolean isButtonDown(@NotNull JoystickButton button) {

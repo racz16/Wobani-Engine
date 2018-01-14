@@ -1,6 +1,5 @@
 package resources.textures.cubeMapTexture;
 
-import core.*;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
@@ -32,8 +31,8 @@ public class StaticCubeMapTexture extends StaticTexture implements CubeMapTextur
      * Initializes a new StaticCubeMapTexture to the given parameters.
      *
      * @param paths textures' relative path (with extension like
-     * "res/textures/myTexture.png")
-     * @param sRgb determines whether the texture is in sRgb color space
+     *              "res/textures/myTexture.png")
+     * @param sRgb  determines whether the texture is in sRgb color space
      */
     public StaticCubeMapTexture(@NotNull List<File> paths, boolean sRgb) {
         basesRgb = sRgb;
@@ -41,7 +40,7 @@ public class StaticCubeMapTexture extends StaticTexture implements CubeMapTextur
         meta.setPaths(paths);
         meta.setLastActiveToNow();
         meta.setDataStorePolicy(ResourceManager.ResourceState.ACTION);
-        filtering = Settings.getTextureFiltering();
+        filtering = ResourceManager.getTextureFiltering();
 
         hddToRam();
         ramToVram();
@@ -63,8 +62,9 @@ public class StaticCubeMapTexture extends StaticTexture implements CubeMapTextur
      * you try to load it twice, you get reference to the already loaded one.
      *
      * @param paths texture's relative path (with extension like
-     * "res/textures/myTexture.png")
-     * @param sRgb determines whether the texture is in sRGB color space
+     *              "res/textures/myTexture.png")
+     * @param sRgb  determines whether the texture is in sRGB color space
+     *
      * @return texture
      */
     @NotNull
@@ -149,7 +149,7 @@ public class StaticCubeMapTexture extends StaticTexture implements CubeMapTextur
      * Returns the texture's specified path.
      *
      * @param index the method returns the indexth path, it must be in the (0;6)
-     * interval
+     *              interval
      *
      * @return the texture's specified path
      */

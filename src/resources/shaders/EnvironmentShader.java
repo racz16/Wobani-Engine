@@ -1,13 +1,14 @@
 package resources.shaders;
 
-import core.*;
 import java.io.*;
 import java.util.*;
 import materials.*;
 import org.joml.*;
+import rendering.*;
 import resources.*;
 import resources.textures.texture2D.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 public class EnvironmentShader extends Shader {
 
@@ -76,7 +77,8 @@ public class EnvironmentShader extends Shader {
      * position, gamma value etc.
      */
     public void loadGlobalUniforms(@NotNull Matrix4f projectionMatrix) {
-        loadBoolean("gamma", Settings.getGamma() != 1);
+        Parameter<Float> gamma = RenderingPipeline.getParameters().getFloatParameter(RenderingPipeline.FLOAT_GAMMA);
+        loadBoolean("gamma", Parameter.getValueOrDefault(gamma, 1f) != 1);
         loadMatrix4("projectionMatrix", projectionMatrix);
     }
 
@@ -87,10 +89,10 @@ public class EnvironmentShader extends Shader {
     /**
      * Loads per object data to the shader as uniform variables.
      *
-     * @param modelMatrix model matrix
+     * @param modelMatrix           model matrix
      * @param inverseModelMatrix3x3 the 3x3 inverse of the model matrix
-     * @param receiveShadow true if the Renderable is receive shadows, false
-     * otherwise
+     * @param receiveShadow         true if the Renderable is receive shadows,
+     *                              false otherwise
      */
     public void loadObjectUniforms(@NotNull Matrix4f modelMatrix, @NotNull Matrix3f inverseModelMatrix3x3) {
         loadMatrix4("modelMatrix", modelMatrix);

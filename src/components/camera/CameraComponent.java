@@ -8,6 +8,7 @@ import org.lwjgl.*;
 import resources.*;
 import toolbox.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 /**
  * Implements basic camera functions. It has two projection modes: perspective
@@ -75,6 +76,32 @@ public class CameraComponent extends Component implements Camera {
      */
     private static FloatBuffer temp;
 
+    /**
+     * Determines whether the frustum culling is enabled.
+     */
+    private boolean frustumCulling = true;
+
+    /**
+     * Determines whether frustum culling is enabled.
+     *
+     * @return true if frustum culling is enabled, false otherwise
+     */
+    @Override
+    public boolean isFrustumCulling() {
+        return frustumCulling;
+    }
+
+    /**
+     * Sets whether or not frustum culling is enabled.
+     *
+     * @param frustumCulling true if frustum culling should be enabled, false
+     *                       otherwise
+     */
+    @Override
+    public void setFrustumCulling(boolean frustumCulling) {
+        this.frustumCulling = frustumCulling;
+    }
+
     static {
         createUbo();
         temp = BufferUtils.createFloatBuffer(32);
@@ -97,9 +124,9 @@ public class CameraComponent extends Component implements Camera {
      * plane's distance must be higher than 0 and lower than the far plane's
      * distance. Fov must be higher than 0 and lower than 180.
      *
-     * @param fov vertical field of view (in degrees)
+     * @param fov       vertical field of view (in degrees)
      * @param nearPlane near plane's distance
-     * @param farPlane far plane's distance
+     * @param farPlane  far plane's distance
      */
     public CameraComponent(float fov, float nearPlane, float farPlane) {
         this();
@@ -113,6 +140,7 @@ public class CameraComponent extends Component implements Camera {
      * perspective mode.
      *
      * @return vertical field of view (in degrees)
+     *
      * @see #getProjectionMode()
      */
     public float getFov() {
@@ -127,7 +155,7 @@ public class CameraComponent extends Component implements Camera {
      * @param fov vertical field of view (in degrees)
      *
      * @throws IllegalArgumentException field of view must be higher than 0 and
-     * lower than 180
+     *                                  lower than 180
      * @see #getProjectionMode()
      */
     public void setFov(float fov) {
@@ -157,7 +185,8 @@ public class CameraComponent extends Component implements Camera {
      * @param nearPlaneDistance near plane's distance
      *
      * @throws IllegalArgumentException near plane's distance must be higher
-     * than 0 and lower than the far plane distance
+     *                                  than 0 and lower than the far plane
+     *                                  distance
      */
     public void setNearPlaneDistance(float nearPlaneDistance) {
         if (nearPlaneDistance <= 0 || nearPlaneDistance >= farPlaneDistance) {
@@ -183,7 +212,7 @@ public class CameraComponent extends Component implements Camera {
      * @param farPlaneDistance far plane's distance
      *
      * @throws IllegalArgumentException far plane's distance must be higher than
-     * near plane's distance
+     *                                  near plane's distance
      */
     public void setFarPlaneDistance(float farPlaneDistance) {
         if (nearPlaneDistance >= farPlaneDistance) {
@@ -198,6 +227,7 @@ public class CameraComponent extends Component implements Camera {
      * mode.
      *
      * @return scale value
+     *
      * @see #getProjectionMode()
      */
     public float getScale() {
@@ -311,10 +341,11 @@ public class CameraComponent extends Component implements Camera {
      * isn't connected to a GameObject this method always returns true.
      *
      * @param position position
-     * @param radius radius
+     * @param radius   radius
+     *
      * @return false if the sphere is fully outside the frustum, true otherwise
      *
-     * @throws NullPointerException position can't be null
+     * @throws NullPointerException     position can't be null
      * @throws IllegalArgumentException radius can't be negative
      * @see Settings#isFrustumCulling()
      */
@@ -326,7 +357,7 @@ public class CameraComponent extends Component implements Camera {
         if (radius < 0) {
             throw new IllegalArgumentException("Radius can't be negative");
         }
-        if (Settings.isFrustumCulling() && getGameObject() != null) {
+        if (isFrustumCulling() && getGameObject() != null) {
             refresh();
             return frustum.testSphere(position, radius);
         } else {
@@ -343,8 +374,9 @@ public class CameraComponent extends Component implements Camera {
      *
      * @param aabbMin the axis alligned bounding box's minimum x, y and z values
      * @param aabbMax the axis alligned bounding box's maximum x, y and z values
+     *
      * @return false if the bounding box is fully outside the frustum, true
-     * otherwise
+     *         otherwise
      *
      * @throws NullPointerException the parameters can't be null
      * @see Settings#isFrustumCulling()
@@ -354,7 +386,7 @@ public class CameraComponent extends Component implements Camera {
         if (aabbMin == null || aabbMax == null) {
             throw new NullPointerException();
         }
-        if (Settings.isFrustumCulling() && getGameObject() != null) {
+        if (isFrustumCulling() && getGameObject() != null) {
             refresh();
             return frustum.testAab(aabbMin, aabbMax);
         } else {
@@ -389,6 +421,7 @@ public class CameraComponent extends Component implements Camera {
      * connected to a GameObject, this method returns null.
      *
      * @param cornerPoint corner point
+     *
      * @return frustum's specified corner point
      *
      * @throws NullPointerException parameter can't be null
@@ -457,7 +490,9 @@ public class CameraComponent extends Component implements Camera {
      * Updates the matrices in the UBO.
      */
     protected void updateUbo() {
-        if (Scene.getCamera() != this || ubo == null || !ubo.isUsable()) {
+        MainCamera mainCamera = Scene.getParameters().getParameter(MainCamera.class);
+        Camera camera = mainCamera == null ? null : mainCamera.getValue();
+        if (camera != this || ubo == null || !ubo.isUsable()) {
             return;
         }
         temp.position(0);
@@ -494,15 +529,15 @@ public class CameraComponent extends Component implements Camera {
     }
 
     @Override
-    protected void removeFromGameObject() {
+    protected void detachFromGameObject() {
         getGameObject().getTransform().removeInvalidatable(this);
-        super.removeFromGameObject();
+        super.detachFromGameObject();
         invalidate();
     }
 
     @Override
-    protected void addToGameObject(@NotNull GameObject g) {
-        super.addToGameObject(g);
+    protected void attachToGameObject(@NotNull GameObject g) {
+        super.attachToGameObject(g);
         invalidate();
         getGameObject().getTransform().addInvalidatable(this);
     }

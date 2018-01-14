@@ -1,14 +1,16 @@
 package resources;
 
-import core.*;
 import java.nio.*;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
+import rendering.*;
+import static rendering.RenderingPipeline.INT_MSAA_LEVEL;
 import resources.textures.texture2D.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 /**
  * Object oriented wrapper class above the native FBO. Supports 8 color
@@ -953,8 +955,10 @@ public class Fbo implements Resource {
                 return false;
             }
 
+            Parameter<Integer> msaaParameter = RenderingPipeline.getParameters().getIntParameter(INT_MSAA_LEVEL);
+            int msaaLevel = Parameter.getValueOrDefault(msaaParameter, 2);
             if (type == FboAttachmentType.TEXTURE) {
-                texture = new DynamicTexture2D(slot, size, floatingPoint, multisampled, Settings.getMsaaLevel(), null);
+                texture = new DynamicTexture2D(slot, size, floatingPoint, multisampled, msaaLevel, null);
                 if (multisampled) {
                     GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot.getAttachmet() + index, GL32.GL_TEXTURE_2D_MULTISAMPLE, texture.getId(), 0);
                 } else {
@@ -964,7 +968,7 @@ public class Fbo implements Resource {
                 rbo = GL30.glGenRenderbuffers();
                 GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, rbo);
                 if (multisampled) {
-                    GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, Settings.getMsaaLevel(), slot.getInternalFormat(floatingPoint), size.x, size.y);
+                    GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, msaaLevel, slot.getInternalFormat(floatingPoint), size.x, size.y);
                 } else {
                     GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, slot.getInternalFormat(floatingPoint), size.x, size.y);
                 }

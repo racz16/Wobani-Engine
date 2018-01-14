@@ -29,9 +29,10 @@ public class StaticEnvironmentProbe implements EnvironmentProbe {
         cubeMap.bindToTextureUnit(textureUnit);
     }
 
+    @NotNull @ReadOnly
     @Override
-    public void setPosition(@Nullable Vector3f position) {
-
+    public Vector2i getSize() {
+        return cubeMap.getSize();
     }
 
 }

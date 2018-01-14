@@ -6,7 +6,7 @@ import toolbox.annotations.*;
 /**
  * This class extends SimpleSpline to it can store a cubic spline based on a 4x4
  * basis matrix.
- *
+ * <p>
  */
 public abstract class CubicSpline extends SimpleSpline {
 
@@ -82,7 +82,7 @@ public abstract class CubicSpline extends SimpleSpline {
      *
      * @param aabbMax AABB's max values to refresh
      * @param aabbMin AABB's min values to refresh
-     * @param pos one of the spline's points
+     * @param pos     one of the spline's points
      */
     private void refreshAabbs(@NotNull Vector3f aabbMax, @NotNull Vector3f aabbMin, @NotNull Vector3f pos) {
         for (int i = 0; i < 3; i++) {
@@ -109,9 +109,9 @@ public abstract class CubicSpline extends SimpleSpline {
      * spline.
      *
      * @param step step
-     * 
+     *
      * @throws IllegalArgumentException step must be higher than 0 but it can't
-     * be higher than 1
+     *                                  be higher than 1
      */
     public void setStep(float step) {
         if (step <= 0 || step > 1) {

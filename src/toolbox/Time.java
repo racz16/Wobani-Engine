@@ -45,6 +45,10 @@ public class Time {
      * or rotation) with this value every frame, it'll be FPS independent.
      */
     private static float deltaTimeFactor;
+    /**
+     * The number of elapsed frames.
+     */
+    private static int frameCount;
 
     /**
      * To can't create Time instance.
@@ -56,6 +60,7 @@ public class Time {
      * It computes the delta time factor and updates the FPS value.
      */
     public static void timing() {
+        frameCount++;
         long now = System.nanoTime();
         updateLength = now - lastLoopTime;
         lastLoopTime = now;
@@ -97,6 +102,15 @@ public class Time {
      */
     public static double getTime() {
         return GLFW.glfwGetTime();
+    }
+
+    /**
+     * Returns the number of elapsed frames.
+     *
+     * @return the number of elapsed frames
+     */
+    public static int getFrameCount() {
+        return frameCount;
     }
 
 }

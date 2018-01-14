@@ -235,7 +235,7 @@ public class AudioSource implements Resource {
      * relative to the audio listener.
      *
      * @return true if the audio source's position, velocity and direction is
-     * relative to the audio listener, false if they are absolute
+     *         relative to the audio listener, false if they are absolute
      */
     public boolean isDataRelativeToTheListener() {
         return AL10.alGetSourcei(id, AL10.AL_SOURCE_RELATIVE) == AL10.AL_TRUE;
@@ -246,7 +246,7 @@ public class AudioSource implements Resource {
      * is relative to the audio listener.
      *
      * @param relative the audio source's position, velocity and direction
-     * should be relative to the audio listener or not
+     *                 should be relative to the audio listener or not
      */
     public void setDataRelativeToTheListener(boolean relative) {
         AL10.alSourcei(id, AL10.AL_SOURCE_RELATIVE, relative ? AL10.AL_TRUE : AL10.AL_FALSE);

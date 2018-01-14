@@ -86,9 +86,9 @@ public class StaticMesh implements Mesh {
     /**
      * Initializes a new StaticMesh to the given values.
      *
-     * @param mesh mesh
-     * @param path model's relative path (with extension like
-     * "res/models/myModel.obj")
+     * @param mesh       mesh
+     * @param path       model's relative path (with extension like
+     *                   "res/models/myModel.obj")
      * @param resourceId the mesh's id
      */
     private StaticMesh(@NotNull AIMesh mesh, @NotNull File path, @NotNull ResourceId resourceId) {
@@ -116,7 +116,8 @@ public class StaticMesh implements Mesh {
      * loaded one.
      *
      * @param path model's relative path (with extension like
-     * "res/models/myModel.obj")
+     *             "res/models/myModel.obj")
+     *
      * @return list of model's meshes
      */
     @NotNull
@@ -139,10 +140,11 @@ public class StaticMesh implements Mesh {
 
     /**
      * Loads a model from the given path into meshes, and adds each mesh as a
-     * MeshComponent to it's own GameObject.
+     * OldMeshComponent to it's own GameObject.
      *
      * @param path model's relative path (with extension like
-     * "res/models/myModel.obj")
+     *             "res/models/myModel.obj")
+     *
      * @return list of GameObjects
      */
     @NotNull
@@ -150,7 +152,7 @@ public class StaticMesh implements Mesh {
         List<GameObject> list = new ArrayList<>();
         for (StaticMesh me : loadModel(path)) {
             GameObject g = new GameObject();
-            g.addComponent(new MeshComponent(me));
+            g.getComponents().add(new MeshComponent(me));
             list.add(g);
         }
         return list;
@@ -161,14 +163,15 @@ public class StaticMesh implements Mesh {
      * MeshComponents to a single GameObject.
      *
      * @param path model's relative path (with extension like
-     * "res/models/myModel.obj")
+     *             "res/models/myModel.obj")
+     *
      * @return GameObject
      */
     @NotNull
     public static GameObject loadModelToGameObject(@NotNull File path) {
         GameObject g = new GameObject();
         for (StaticMesh me : loadModel(path)) {
-            g.addComponent(new MeshComponent(me));
+            g.getComponents().add(new MeshComponent(me));
         }
         return g;
     }
@@ -177,7 +180,8 @@ public class StaticMesh implements Mesh {
      * Returns the model's scene stored in the given path.
      *
      * @param path model's relative path (with extension like
-     * "res/models/myModel.obj")
+     *             "res/models/myModel.obj")
+     *
      * @return model's scene
      *
      * @throws IllegalStateException if assimp can't load the data from the file
@@ -212,6 +216,7 @@ public class StaticMesh implements Mesh {
      * Computes the mesh's indices buffer.
      *
      * @param mesh mesh
+     *
      * @return indices buffer
      *
      * @throws IllegalStateException a face is not a triangle
@@ -564,7 +569,7 @@ public class StaticMesh implements Mesh {
     }
 
     @Override
-    public float getFurthestVertexDistance() {
+    public float getRadius() {
         return furthestVertexDistance;
     }
 

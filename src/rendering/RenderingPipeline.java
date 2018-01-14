@@ -1,7 +1,5 @@
 package rendering;
 
-import components.camera.*;
-import components.light.lightTypes.*;
 import core.*;
 import java.util.*;
 import org.joml.*;
@@ -10,9 +8,9 @@ import rendering.postProcessing.*;
 import rendering.prepare.*;
 import rendering.stages.*;
 import resources.*;
-import resources.textures.texture2D.*;
 import toolbox.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 import window.*;
 
 /**
@@ -38,23 +36,12 @@ public class RenderingPipeline {
     private static ScreenRenderer screenRenderer;
 
     private static SkyBoxRenderer skyboxRenderer;
-    /**
-     * Map of texture parameters.
-     */
-    private static final Map<String, Texture2D> textureParameters = new HashMap<>();
-    /**
-     * Map of matrix parameters.
-     */
-    private static final Map<String, Matrix4f> matrixParameters = new HashMap<>();
-    /**
-     * Map of float parameters.
-     */
-    private static final Map<String, Float> floatParameters = new HashMap<>();
+
+    private static final Parameters parameters = new Parameters();
 
     private static PrepareRenderingStage prepare = new PrepareRenderingStage();
     private static final List<GeometryRenderingStage> geometry = new ArrayList<>();
     private static PostProcessingRenderingStage post = new PostProcessingRenderingStage();
-
     /**
      * Shadowmap key.
      */
@@ -65,6 +52,16 @@ public class RenderingPipeline {
      * texture at the end of the rendering).
      */
     public static final String TEXTURE_WORK = "TEXTURE_WORK";
+
+    public static final String MATRIX_SHADOW_PROJECTION_VIEW = "MATRIX_SHADOW_PROJECTION_VIEW";
+    public static final String FLOAT_GAMMA = "FLOAT_GAMMA";
+    public static final String BOOLEAN_WIREFRAME_MODE = "BOOLEAN_WIREFRAME_MODE";
+    public static final String INT_MSAA_LEVEL = "INT_MSAA_LEVEL";
+
+    @NotNull
+    public static Parameters getParameters() {
+        return parameters;
+    }
 
     /**
      * To can't create RenderingPipeline instance.
@@ -77,8 +74,43 @@ public class RenderingPipeline {
      * using it. However the GameLoop's initialize methods call it.
      */
     public static void initialize() {
+        addDefaultParameters();
         useBlinnPhongPipeline();
         refresh();
+    }
+
+    private static void addDefaultParameters() {
+        getParameters().setBooleanParameter(BOOLEAN_WIREFRAME_MODE, new Parameter<>(false));
+        getParameters().setFloatParameter(FLOAT_GAMMA, new Parameter<Float>(2.2f) {
+            @Override
+            public void setValue(@NotNull Float value) {
+                if (value < 1) {
+                    throw new IllegalArgumentException("Gamma can't be lower than 1");
+                }
+                super.setValue(value);
+                ResourceManager.changeTextureColorSpace();
+            }
+
+            @Override
+            protected void removedFromParameters(@Nullable Parameter<Float> added) {
+                ResourceManager.changeTextureColorSpace();
+            }
+
+            @Override
+            protected void addedToParameters(@Nullable Parameter<Float> removed) {
+                ResourceManager.changeTextureColorSpace();
+            }
+
+        });
+        getParameters().setIntParameter(INT_MSAA_LEVEL, new Parameter<Integer>(2) {
+            @Override
+            public void setValue(@NotNull Integer value) {
+                if (value < 1) {
+                    throw new IllegalArgumentException("MSAA can't be lower than 1");
+                }
+                super.setValue(value);
+            }
+        });
     }
 
     /**
@@ -86,12 +118,14 @@ public class RenderingPipeline {
      * the screen renderer if released.
      */
     private static void refresh() {
-        if (fbo == null || !fbo.isUsable() || Settings.getMsaaLevel() != fbo.getNumberOfSamples() || !getRenderingSize().equals(fbo.getSize())) {
+        Parameter<Integer> msaaParameter = getParameters().getIntParameter(INT_MSAA_LEVEL);
+        int msaaLevel = Parameter.getValueOrDefault(msaaParameter, 2);
+        if (fbo == null || !fbo.isUsable() || msaaLevel != fbo.getNumberOfSamples() || !getRenderingSize().equals(fbo.getSize())) {
             //geometry FBO
             if (fbo != null) {
                 fbo.release();
             }
-            fbo = new Fbo(getRenderingSize(), Settings.getMsaaLevel() != 1, Settings.getMsaaLevel(), true);
+            fbo = new Fbo(getRenderingSize(), msaaLevel != 1, msaaLevel, true);
             fbo.bind();
             fbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
             fbo.addAttachment(Fbo.FboAttachmentSlot.DEPTH, Fbo.FboAttachmentType.RBO, 0);
@@ -181,97 +215,6 @@ public class RenderingPipeline {
     }
 
     //
-    //parameters----------------------------------------------------------------
-    //
-    /**
-     * Returns the specified texture parameter. The general rule is that you
-     * shouldn't release texture parameters unless yout put it to the
-     * parameters. Try to not destroy other renderers' work. On the other hand,
-     * yout should take care of your own texture parameters' release. You should
-     * always chechk whether the return value is null.
-     *
-     * @param key parameter's key
-     *
-     * @return texture parameter
-     */
-    @Nullable
-    public static Texture2D getTextureParameter(@NotNull String key) {
-        return textureParameters.get(key);
-    }
-
-    /**
-     * Sets specified texture parameter to the given value. The general rule is
-     * that you shouldn't override texture parameters unless yout put it to the
-     * parameters. Try to not destroy other renderers' work. On the other hand,
-     * yout should take care of your own texture parameters' release.
-     *
-     * @param key     parameter's key
-     * @param texture parameter's value
-     */
-    public static void setTextureParameter(@NotNull String key, @Nullable Texture2D texture) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        textureParameters.put(key, texture);
-    }
-
-    /**
-     * Returns the specified matrix parameter. You should always chechk whether
-     * the return value is null.
-     *
-     * @param key parameter's key
-     *
-     * @return matrix parameter
-     */
-    @Nullable
-    public static Matrix4f getMatrixParameter(@NotNull String key) {
-        return matrixParameters.get(key);
-    }
-
-    /**
-     * Sets specified matrix parameter to the given value. The general rule is
-     * that you shouldn't override matrix parameters unless yout put it to the
-     * parameters. Try to not destroy other renderers' work.
-     *
-     * @param key    parameter's key
-     * @param matrix parameter's value
-     */
-    public static void setMatrixParameter(@NotNull String key, @Nullable Matrix4f matrix) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        matrixParameters.put(key, matrix);
-    }
-
-    /**
-     * Returns the specified matrix parameter. You should always chechk whether
-     * the return value is null.
-     *
-     * @param key parameter's key
-     *
-     * @return matrix parameter
-     */
-    @Nullable
-    public static Float getFloatParameter(@NotNull String key) {
-        return floatParameters.get(key);
-    }
-
-    /**
-     * Sets specified float parameter to the given value. The general rule is
-     * that you shouldn't override float parameters unless yout put it to the
-     * parameters. Try to not destroy other renderers' work.
-     *
-     * @param key   parameter's key
-     * @param value parameter's value
-     */
-    public static void setFloatParameter(@NotNull String key, @Nullable Float value) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        floatParameters.put(key, value);
-    }
-
-    //
     //rendering-----------------------------------------------------------------
     //
     /**
@@ -300,9 +243,9 @@ public class RenderingPipeline {
         bindFbo();
         OpenGl.clear(true, true, false);
         //is there camera and dir light?
-        Camera camera = Scene.getCamera();
-        DirectionalLight light = Scene.getDirectionalLight();
-        if (camera == null || !camera.isActive() || light == null || !light.isActive()) {
+        MainCamera mainCamera = Scene.getParameters().getParameter(MainCamera.class);
+        MainDirectionalLight dirLight = Scene.getParameters().getParameter(MainDirectionalLight.class);
+        if (mainCamera == null || !mainCamera.getValue().isActive() || dirLight == null || !dirLight.getValue().isActive()) {
             throw new IllegalStateException("There is no active main directiona light or camera");
         }
     }
@@ -312,7 +255,7 @@ public class RenderingPipeline {
      */
     private static void afterRender() {
         screenRenderer.render();
-        setTextureParameter(TEXTURE_WORK, null);
+        getParameters().setTextureParameter(TEXTURE_WORK, null);
     }
 
     //
@@ -330,11 +273,7 @@ public class RenderingPipeline {
         if (fbo != null) {
             fbo.release();
         }
-        for (Texture2D texture : textureParameters.values()) {
-            if (texture != null && texture.isUsable()) {
-                texture.release();
-            }
-        }
+        getParameters().release();
     }
 
     /**

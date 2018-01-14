@@ -9,6 +9,7 @@ import resources.meshes.*;
 import resources.shaders.*;
 import toolbox.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 /**
  * This renderer can draw a skybox. In theory it can render any number of meshes
@@ -56,6 +57,9 @@ public class SkyBoxRenderer extends Renderer {
      */
     @Override
     public void render() {
+        if (Scene.getParameters().getParameter(Skybox.class) == null) {
+            return;
+        }
         beforeDrawShader();
 
         beforeDrawRenderable(box);
@@ -71,9 +75,6 @@ public class SkyBoxRenderer extends Renderer {
      * Prepares the shader to the rendering.
      */
     private void beforeDrawShader() {
-        if (Scene.getSkybox() == null) {
-            return;
-        }
         if (shader == null || !shader.isUsable()) {
             shader = SkyBoxShader.getInstance();
         }
@@ -81,7 +82,8 @@ public class SkyBoxRenderer extends Renderer {
         RenderingPipeline.bindFbo();
         OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS_OR_EQUAL);
         OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
-        OpenGl.setWireframe(Settings.isWireframeMode());
+        Parameter<Boolean> wirefreame = RenderingPipeline.getParameters().getBooleanParameter(RenderingPipeline.BOOLEAN_WIREFRAME_MODE);
+        OpenGl.setWireframe(Parameter.getValueOrDefault(wirefreame, false));
     }
 
     /**

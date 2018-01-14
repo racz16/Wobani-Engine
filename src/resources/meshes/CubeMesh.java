@@ -113,7 +113,7 @@ public class CubeMesh implements Mesh {
     }
 
     @Override
-    public float getFurthestVertexDistance() {
+    public float getRadius() {
         return (float) Math.sqrt(3);
     }
 

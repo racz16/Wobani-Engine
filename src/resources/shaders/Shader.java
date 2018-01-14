@@ -83,16 +83,21 @@ public abstract class Shader implements Resource {
      * It creates the shader program and stores the ids of the uniform
      * variables.
      *
-     * @param vertexFile relative path of the vertex shader's source (with
-     * extension like "res/shaders/myShader.glsl")
-     * @param fragmentFile relative path of the fragment shader's source (with
-     * extension like "res/shaders/myShader.glsl")
-     * @param geometryFile relative path of the geometry shader's source (with
-     * extension like "res/shaders/myShader.glsl")
-     * @param tessControlFil relative path of the tessellation control shader's
-     * source (with extension like "res/shaders/myShader.glsl")
+     * @param vertexFile         relative path of the vertex shader's source
+     *                           (with extension like
+     *                           "res/shaders/myShader.glsl")
+     * @param fragmentFile       relative path of the fragment shader's source
+     *                           (with extension like
+     *                           "res/shaders/myShader.glsl")
+     * @param geometryFile       relative path of the geometry shader's source
+     *                           (with extension like
+     *                           "res/shaders/myShader.glsl")
+     * @param tessControlFil     relative path of the tessellation control
+     *                           shader's source (with extension like
+     *                           "res/shaders/myShader.glsl")
      * @param tessEvaluationFile relative path of the tessellation evaluation
-     * shader's source (with extension like "res/shaders/myShader.glsl")
+     *                           shader's source (with extension like
+     *                           "res/shaders/myShader.glsl")
      */
     public Shader(@NotNull String vertexFile, @NotNull String fragmentFile, @Nullable String geometryFile, @Nullable String tessControlFil, @Nullable String tessEvaluationFile) {
         //load, compile, check shaders
@@ -138,7 +143,7 @@ public abstract class Shader implements Resource {
      * Loads a float as a uniform variable to the shader.
      *
      * @param uniform uniform variable
-     * @param value value
+     * @param value   value
      */
     protected void loadFloat(@NotNull String uniform, float value) {
         GL20.glUniform1f(getUniformId(uniform), value);
@@ -148,7 +153,7 @@ public abstract class Shader implements Resource {
      * Loads an int as a uniform variable to the shader.
      *
      * @param uniform uniform variable
-     * @param value value
+     * @param value   value
      */
     protected void loadInt(@NotNull String uniform, int value) {
         GL20.glUniform1i(getUniformId(uniform), value);
@@ -158,7 +163,7 @@ public abstract class Shader implements Resource {
      * Loads a 2D vector as a uniform variable to the shader.
      *
      * @param uniform uniform variable
-     * @param vector vector
+     * @param vector  vector
      */
     protected void loadVector2(@NotNull String uniform, @NotNull Vector2f vector) {
         GL20.glUniform2f(getUniformId(uniform), vector.x, vector.y);
@@ -168,7 +173,7 @@ public abstract class Shader implements Resource {
      * Loads a 3D vector as a uniform variable to the shader.
      *
      * @param uniform uniform variable
-     * @param vector vector
+     * @param vector  vector
      */
     protected void loadVector3(@NotNull String uniform, @NotNull Vector3f vector) {
         GL20.glUniform3f(getUniformId(uniform), vector.x, vector.y, vector.z);
@@ -178,7 +183,7 @@ public abstract class Shader implements Resource {
      * Loads a 4D vector as a uniform variable to the shader.
      *
      * @param uniform uniform variable
-     * @param vector vector
+     * @param vector  vector
      */
     protected void loadVector4(@NotNull String uniform, @NotNull Vector4f vector) {
         GL20.glUniform4f(getUniformId(uniform), vector.x, vector.y, vector.z, vector.w);
@@ -188,7 +193,7 @@ public abstract class Shader implements Resource {
      * Loads a boolean as a uniform variable to the shader.
      *
      * @param uniform uniform variable
-     * @param value value
+     * @param value   value
      */
     protected void loadBoolean(@NotNull String uniform, boolean value) {
         GL20.glUniform1f(getUniformId(uniform), value ? 1 : 0);
@@ -198,7 +203,7 @@ public abstract class Shader implements Resource {
      * Loads a 4x4 matrix as a uniform variable to the shader.
      *
      * @param uniform uniform variable
-     * @param matrix matrix
+     * @param matrix  matrix
      */
     protected void loadMatrix4(@NotNull String uniform, @NotNull Matrix4f matrix) {
         temp.position(0);
@@ -210,7 +215,7 @@ public abstract class Shader implements Resource {
      * Loads a 3x3 matrix as a uniform variable to the shader.
      *
      * @param uniform uniform variable
-     * @param matrix matrix
+     * @param matrix  matrix
      */
     protected void loadMatrix3(@NotNull String uniform, @NotNull Matrix3f matrix) {
         temp.position(0);
@@ -221,7 +226,7 @@ public abstract class Shader implements Resource {
     /**
      * Connects the specified texture unit to the given uniform variable.
      *
-     * @param uniform uniform variable
+     * @param uniform     uniform variable
      * @param textureUnit texture unit (0;31)
      *
      * @throws IllegalArgumentException invalid texture unit
@@ -240,7 +245,7 @@ public abstract class Shader implements Resource {
      * @param uniformName uniform variable
      *
      * @throws IllegalArgumentException the specified uniform variable doesn't
-     * exist
+     *                                  exist
      */
     protected void connectUniform(@NotNull String uniformName) {
         if (uniformName == null) {
@@ -257,10 +262,11 @@ public abstract class Shader implements Resource {
      * Returns the specified uniform variable's id.
      *
      * @param uniformName uniform variable
+     *
      * @return uniform variable's id
      *
      * @throws IllegalArgumentException the specified uniform variable doesn't
-     * exist
+     *                                  exist
      */
     protected int getUniformId(@NotNull String uniformName) {
         Integer id = uniforms.get(uniformName);
@@ -313,8 +319,9 @@ public abstract class Shader implements Resource {
      * the given type and returns the shader's id.
      *
      * @param shaderFilePath relative path of the shader's source (with
-     * extension like "res/shaders/myShader.glsl")
-     * @param stage shader's stage
+     *                       extension like "res/shaders/myShader.glsl")
+     * @param stage          shader's stage
+     *
      * @return shader's id
      *
      * @throws RuntimeException if the shader's compilation failed

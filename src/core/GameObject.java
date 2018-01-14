@@ -6,14 +6,13 @@ import toolbox.*;
 import toolbox.annotations.*;
 
 /**
- * If you would like to create a new entity which has it's own position, mesh or
- * any other properties, you should create a new GameObject. A GameObjct can
- * store any number of Components, including cameras, meshes and materials,
- * splines, light sources etc. Of course you can create youe own Component. It
- * also offers parent-child relations between GameObjects.
+ * Represents an entity which has it's own position, Mesh or any other
+ * properties, you should create a new GameObject. A GameObjct can store any
+ * number of Components, including Cameras, Meshes, Splines, Materials, light
+ * sources etc. Of course you can create youe own Component. It also offers
+ * parent-child relations between GameObjects.
  *
  * @see Component
- *
  */
 public class GameObject {
 
@@ -26,10 +25,6 @@ public class GameObject {
      */
     private GameObject root;
     /**
-     * List of the GameObject's children.
-     */
-    private final ArrayList<GameObject> children = new ArrayList<>();
-    /**
      * GameObject's name.
      */
     private String name;
@@ -38,21 +33,27 @@ public class GameObject {
      */
     private Transform transform = new Transform();
     /**
-     * List of the GameObject's Components.
+     * Contains the GameObject's Components.
      */
-    private final ArrayList<Component> components = new ArrayList<>();
+    private final GameObjectComponents components;
+    /**
+     * Contains the GameObject's children.
+     */
+    private final GameObjectChildren children;
 
     /**
      * Initializes a new GameObject.
      */
     public GameObject() {
-        transform.addToGameObject(this);
+        transform.attachToGameObject(this);
         root = this;
-        Scene.addGameObject(this);
+        components = new GameObjectComponents(this);
+        children = new GameObjectChildren(this);
+        Scene.getGameObjects().addGameObject(this);
     }
 
     /**
-     * Initializes a new GameObject to the given value.
+     * Initializes a new GameObject to the given name.
      *
      * @param name GameObject's name
      */
@@ -66,8 +67,6 @@ public class GameObject {
      * returns the hash code.
      *
      * @return name
-     *
-     * @see #hashCode()
      */
     @NotNull
     public String getName() {
@@ -84,122 +83,20 @@ public class GameObject {
     }
 
     /**
-     * Calls the update method of all the GameObject's Components and
-     * GameObject's Transform.
+     * Updates all the GameObject's Components and GameObject's Transform.
      *
      * @see Component#update()
      * @see Transform#update()
      */
+    @Internal
     protected void update() {
         transform.update();
-        for (Component component : components) {
-            component.update();
-        }
+        components.update();
     }
 
     //
     //children------------------------------------------------------------------
     //
-    /**
-     * Returns the GameObject's indexth child.
-     *
-     * @param index index
-     *
-     * @return GameObject's indexth child
-     *
-     * @see #getNumberOfChildren()
-     */
-    @NotNull
-    public GameObject getChild(int index) {
-        return children.get(index);
-    }
-
-    /**
-     * Determines whether the given GameObject is the child of this GameObject.
-     *
-     * @param child child
-     *
-     * @return true if the given GameObject is the child of this GameObject,
-     *         false otherwise
-     *
-     * @see #containsChildDeep(GameObject child)
-     */
-    public boolean containsChild(@Nullable GameObject child) {
-        return Utility.containsReference(children, child);
-    }
-
-    /**
-     * Determines whether the given GameObject is the child of this GameObject
-     * or descendant of it.
-     *
-     * @param child child
-     *
-     * @return true if the given GameObject is the child of this GameObject or
-     *         descendant of it, false otherwise
-     *
-     * @see #containsChild(GameObject child)
-     */
-    public boolean containsChildDeep(@Nullable GameObject child) {
-        if (containsChild(child)) {
-            return true;
-        }
-        for (int i = 0; i < children.size(); i++) {
-            if (children.get(i).containsChildDeep(child)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Removes the specified GameObject from the GameObject's children.
-     *
-     * @param child child to remove
-     *
-     * @return true if the children contained the specified element, false
-     *         otherwise
-     */
-    public boolean removeChild(@Nullable GameObject child) {
-        if (containsChild(child)) {
-            child.setParent(null);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Removes the GameObject's indexth child from children.
-     *
-     * @param index index
-     *
-     * @return the removed child
-     *
-     * @see #getNumberOfChildren()
-     */
-    @NotNull
-    public GameObject removeChild(int index) {
-        GameObject child = children.get(index);
-        child.setParent(null);
-        return child;
-    }
-
-    /**
-     * Removes the given GameObject from children.
-     *
-     * @param child child
-     *
-     * @return true if this list contained the specified element, false
-     *         otherwise
-     */
-    private boolean remove(@Nullable GameObject child) {
-        boolean ret = Utility.removeReference(children, child);
-        if (ret) {
-            child.parent = null;
-        }
-        return ret;
-    }
-
     /**
      * Returns the GameObject's parent.
      *
@@ -221,16 +118,12 @@ public class GameObject {
     }
 
     /**
-     * Sets the given value to this GameObect's root.
+     * Sets the given value to this GameObect's (and all of it's descandent's)
+     * root.
      *
-     * @param root root
-     *
-     * @throws NullPointerException root can't be null
+     * @param root GameObject
      */
     private void setRoot(@NotNull GameObject root) {
-        if (root == null) {
-            throw new NullPointerException();
-        }
         this.root = root;
         for (int i = 0; i < children.size(); i++) {
             children.get(i).setRoot(root);
@@ -238,93 +131,92 @@ public class GameObject {
     }
 
     /**
-     * Returns the number of the GameObject's children.
-     *
-     * @return number of the GameObject's children
-     */
-    public int getNumberOfChildren() {
-        return children.size();
-    }
-
-    /**
-     * Adds the given GameObject to this GameObject's children. The parameter
-     * can't be this, null, the ancestor of this or child of this.
-     *
-     * @param child add to children
-     *
-     * @return true if the parameter added successfully to the children, false
-     *         otherwise
-     */
-    public boolean addChild(@NotNull GameObject child) {
-        if (child == null || child == this || child.containsChildDeep(this) || containsChild(child)) {
-            return false;
-        }
-
-        Vector3f absPos = new Vector3f(child.getTransform().getAbsolutePosition());
-        Vector3f absRot = new Vector3f(child.getTransform().getAbsoluteRotation());
-        Vector3f absScale = new Vector3f(child.getTransform().getAbsoluteScale());
-
-        children.add(child);
-        getTransform().addInvalidatable(child.getTransform());
-
-        if (child.getParent() != null) {
-            child.getParent().getTransform().removeInvalidatable(child.getTransform());
-            child.getParent().remove(child);
-        }
-        child.parent = this;
-        child.setRoot(root);
-
-        child.getTransform().setAbsolutePosition(absPos);
-        child.getTransform().setAbsoluteRotation(absRot);
-        child.getTransform().setAbsoluteScale(absScale);
-
-        return true;
-    }
-
-    /**
-     * Sets the given GameObject to this GameObject's parent. The parameter
-     * can't be this, the descendant of this or the parent of this.
+     * Sets the given parameter to this GameObject's parent. The parameter can't
+     * be this, and the descendant of this.
      *
      * @param parent parent
      *
-     * @return true if the parameter set successfully to the parent of this,
-     *         false otherwise
+     * @throws IllegalArgumentException parent can't be this and the descendant
+     *                                  of this
      */
-    public boolean setParent(@Nullable GameObject parent) {
-        if (parent == this || containsChildDeep(parent) || parent == getParent()) {
-            return false;
+    public void setParent(@Nullable GameObject parent) {
+        if (parent == getParent()) {
+            return;
         }
-        Vector3f absPos = new Vector3f(getTransform().getAbsolutePosition());
-        Vector3f absRot = new Vector3f(getTransform().getAbsoluteRotation());
-        Vector3f absScale = new Vector3f(getTransform().getAbsoluteScale());
+        if (parent == this || children.containsDeep(parent)) {
+            throw new IllegalArgumentException("Parent can't be this and the descendant of this");
+        }
+        setParentWithoutInspection(parent);
+    }
 
-        if (getParent() != null) {
-            this.parent.remove(this);
-            this.parent.getTransform().removeInvalidatable(getTransform());
-        }
-        this.parent = parent;
-        if (parent == null) {
+    /**
+     * Sets the given parameter to this GameObject's parent.
+     *
+     * @param parent parent
+     */
+    private void setParentWithoutInspection(@Nullable GameObject parent) {
+        TransformHolder holder = getCurrentTransformData();
+        removeParent();
+        addParent(parent);
+        setTransform(holder);
+    }
+
+    /**
+     * Saves the Transform's current data to a TransformHolder.
+     *
+     * @return TransformHolder
+     */
+    @NotNull
+    private TransformHolder getCurrentTransformData() {
+        return new TransformHolder(transform.getAbsolutePosition(),
+                transform.getAbsoluteRotation(),
+                transform.getAbsoluteScale());
+    }
+
+    /**
+     * Sets the Transform's data to the given value.
+     *
+     * @param holder TransformHolder
+     */
+    private void setTransform(@NotNull TransformHolder holder) {
+        transform.setAbsolutePosition(holder.getPosition());
+        transform.setAbsoluteRotation(holder.getRotation());
+        transform.setAbsoluteScale(holder.getScale());
+    }
+
+    /**
+     * Removes this GameObject from the children of it's parent.
+     */
+    private void removeParent() {
+        if (parent != null) {
+            parent.getChildren().removeChild(this);
+            parent.getTransform().removeInvalidatable(transform);
+            parent = null;
             setRoot(this);
-        } else {
+        }
+    }
+
+    /**
+     * Adds this GameObject to the children of the given parent.
+     *
+     * @param parent GameObject
+     */
+    private void addParent(@Nullable GameObject parent) {
+        this.parent = parent;
+        if (parent != null) {
             setRoot(parent.getRoot());
-            parent.children.add(this);
+            parent.getChildren().addChild(this);
             parent.getTransform().addInvalidatable(getTransform());
         }
-
-        getTransform().setAbsolutePosition(absPos);
-        getTransform().setAbsoluteRotation(absRot);
-        getTransform().setAbsoluteScale(absScale);
-
-        return true;
     }
 
     //
-    //transform-----------------------------------------------------------------
+    //transform, components, children-------------------------------------------
     //
     /**
      * Returns the GameObject's Transform.
      *
-     * @return transform
+     * @return Transform
      */
     @NotNull
     public Transform getTransform() {
@@ -334,178 +226,38 @@ public class GameObject {
     /**
      * Sets the GameObject's Transform to the given value.
      *
-     * @param transform transform
+     * @param transform Transform
      *
-     * @throws IllegalArgumentException you can't assign a Transform to multiple
-     *                                  GameObjects
+     * @throws AttachmentException you can't attach a Transform to multiple
+     *                             GameObjects
      */
     public void setTransform(@NotNull Transform transform) {
         if (transform.getGameObject() != null) {
-            throw new IllegalArgumentException("You can't assign a Transform to multiple GameObjects");
+            throw new AttachmentException(transform.getGameObject(), transform);
         }
-        this.transform.removeFromGameObject();
-        transform.addToGameObject(this);
+        this.transform.detacheFromGameObject();
+        transform.attachToGameObject(this);
         this.transform = transform;
     }
 
-    //
-    //components----------------------------------------------------------------
-    //
     /**
-     * Adds the given Component to this GameObject.
+     * Returns the GameObject's Components.
      *
-     * @param component component
-     *
-     * @return false if the GameObject already contained the given Component,
-     *         true otherwise
-     *
-     * @throws NullPointerException     Component can't be null
-     * @throws IllegalArgumentException you can't assign a Component to multiple
-     *                                  GameObjects
-     */
-    public boolean addComponent(@NotNull Component component) {
-        if (component == null) {
-            throw new NullPointerException();
-        }
-        if (Utility.containsReference(components, component)) {
-            return false;
-        }
-        if (component.getGameObject() != null) {
-            throw new IllegalArgumentException("You can't assign a Component to multiple GameObjects");
-        }
-        component.addToGameObject(this);
-        components.add(component);
-        return true;
-    }
-
-    /**
-     * Removes the given Component from the GameObject's components.
-     *
-     * @param component component
-     *
-     * @return true if the GameObject's components contained the given
-     *         Component, false otherwise
-     */
-    public boolean removeComponent(@Nullable Component component) {
-        if (component == Scene.getDirectionalLight() || component == Scene.getCamera()) {
-            return false;
-        }
-        boolean result = Utility.removeReference(components, component);
-        if (result) {
-            component.removeFromGameObject();
-        }
-        return result;
-    }
-
-    /**
-     * Removes the GameObject's indexth Component.
-     *
-     * @param index index
-     *
-     * @return true if the component removed successfully, false otherwise
-     *
-     * @see #getNumberOfComponents()
-     */
-    public boolean removeComponent(int index) {
-        Component component = components.get(index);
-        if (component == Scene.getDirectionalLight() || component == Scene.getCamera()) {
-            return false;
-        } else {
-            components.remove(index).removeFromGameObject();
-            return true;
-        }
-    }
-
-    /**
-     * Removes from the GameObject all the Components that's class is the given
-     * type or extends it.
-     *
-     * @param type type
-     */
-    public void removeComponents(@NotNull Class<?> type) {
-        for (Component comp : components) {
-            if (type.isInstance(comp) && comp != Scene.getDirectionalLight() && comp != Scene.getCamera()) {
-                comp.removeFromGameObject();
-                Utility.removeReference(components, comp);
-            }
-        }
-    }
-
-    /**
-     * Removes all the Components from the GameObject.
-     * <p>
-     */
-    public void clearComponents() {
-        removeComponents(Component.class);
-    }
-
-    /**
-     * Returns the GameObject's indexth Component.
-     *
-     * @param index index
-     *
-     * @return indexth Component
-     *
-     * @see #getNumberOfComponents()
+     * @return the GameObject's Components
      */
     @NotNull
-    public Component getComponent(int index) {
-        return components.get(index);
+    public GameObjectComponents getComponents() {
+        return components;
     }
 
     /**
-     * Returns one of the GameObject's Components that's class is the given type
-     * or extends it.
+     * Returns the GameObject's children.
      *
-     * @param <T>  type
-     * @param type type
-     *
-     * @return one of the GameObject's Components that's class is the given type
-     *         or extends it
-     *
-     * @see #getComponents(Class type)
-     */
-    @Nullable
-    public <T> T getComponent(@NotNull Class<T> type) {
-        for (Component comp : components) {
-            if (type.isInstance(comp)) {
-                return (T) comp;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns a list containing all the GameObject's Components that's class is
-     * the given type or extends it. If there's no such a Component, it returns
-     * an empty list.
-     *
-     * @param <T>  type
-     * @param type type
-     *
-     * @return a list containing all the GameObject's Components that's class is
-     *         the given type or extends it
-     *
-     * @see #getComponent(Class type)
+     * @return the GameObject's children
      */
     @NotNull
-    public <T> List<T> getComponents(@NotNull Class<T> type) {
-        List<T> list = new ArrayList<>();
-        for (Component comp : components) {
-            if (type.isInstance(comp)) {
-                list.add(type.cast(comp));
-            }
-        }
-        return list;
-    }
-
-    /**
-     * Returns the number of Components.
-     *
-     * @return number of Components
-     */
-    public int getNumberOfComponents() {
-        return components.size();
+    public GameObjectChildren getChildren() {
+        return children;
     }
 
     //
@@ -548,19 +300,116 @@ public class GameObject {
     public String toString() {
         String parentName = parent == null ? "null" : parent.getName();
         String rootName = root == this ? "this" : root.getName();
-        StringBuilder childrenName = new StringBuilder("[");
-        for (GameObject child : children) {
-            childrenName.append(child.getName()).append(", ");
-        }
-        childrenName.append("]");
-        StringBuilder componentsName = new StringBuilder("[");
-        for (Component component : components) {
-            componentsName.append(component).append(", \n");
-        }
-        componentsName.append("]");
         return "GameObject{" + "parent=" + parentName + ", root=" + rootName
-                + ", children=" + childrenName + ", name=" + name
-                + ", transform=\n" + transform + ", \ncomponents=\n" + componentsName + '}';
+                + ", children=" + children + ", name=" + name
+                + ", transform=\n" + transform + ", \ncomponents=\n" + components + '}';
+    }
+
+    /**
+     * Holds a Transform's data.
+     */
+    private class TransformHolder {
+
+        /**
+         * Position.
+         */
+        private final Vector3f position;
+        /**
+         * Rotation.
+         */
+        private final Vector3f rotation;
+        /**
+         * Scale.
+         */
+        private final Vector3f scale;
+
+        /**
+         * Initializes a new TransformHolder to the given values.
+         *
+         * @param position position
+         * @param rotation rotation
+         * @param scale    scale
+         *
+         * @throws NullPointerException parameters can't be null
+         */
+        public TransformHolder(Vector3f position, Vector3f rotation, Vector3f scale) {
+            if (position == null || rotation == null || scale == null) {
+                throw new NullPointerException();
+            }
+            this.position = new Vector3f(position);
+            this.rotation = new Vector3f(rotation);
+            this.scale = new Vector3f(scale);
+        }
+
+        /**
+         * Returns the position.
+         *
+         * @return position
+         */
+        @NotNull
+        public Vector3f getPosition() {
+            return position;
+        }
+
+        /**
+         * Returns the rotation.
+         *
+         * @return rotation
+         */
+        @NotNull
+        public Vector3f getRotation() {
+            return rotation;
+        }
+
+        /**
+         * Returns the scale.
+         *
+         * @return scale
+         */
+        @NotNull
+        public Vector3f getScale() {
+            return scale;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 97 * hash + Objects.hashCode(this.position);
+            hash = 97 * hash + Objects.hashCode(this.rotation);
+            hash = 97 * hash + Objects.hashCode(this.scale);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final TransformHolder other = (TransformHolder) obj;
+            if (!Objects.equals(this.position, other.position)) {
+                return false;
+            }
+            if (!Objects.equals(this.rotation, other.rotation)) {
+                return false;
+            }
+            if (!Objects.equals(this.scale, other.scale)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "TransformHolder{" + "position=" + position + ", rotation="
+                    + rotation + ", scale=" + scale + '}';
+        }
+
     }
 
 }

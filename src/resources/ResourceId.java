@@ -118,6 +118,7 @@ public class ResourceId {
      * Returns the indexth path of the resource.
      *
      * @param index index
+     *
      * @return the indexth path of the resource
      */
     @NotNull @ReadOnly
@@ -140,8 +141,9 @@ public class ResourceId {
      * a model and create more than one meshes. In that case each resource get
      * the same path, but also get a unique index.
      *
-     * @param path resource's file
+     * @param path     resource's file
      * @param segments number of ResourceIds you want to create
+     *
      * @return list of ResourceIds
      */
     @NotNull

@@ -8,6 +8,7 @@ import resources.textures.*;
 import resources.textures.texture2D.*;
 import toolbox.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 public class PostProcessingRenderingStage {
 
@@ -76,7 +77,7 @@ public class PostProcessingRenderingStage {
         int temp = draw;
         draw = notDraw;
         notDraw = temp;
-        RenderingPipeline.setTextureParameter(RenderingPipeline.TEXTURE_WORK, postProcessingFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, notDraw));
+        RenderingPipeline.getParameters().setTextureParameter(RenderingPipeline.TEXTURE_WORK, new Parameter<>(postProcessingFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, notDraw)));
     }
 
     public boolean addRendererToTheEnd(@NotNull PostProcessingRenderer renderer) {
@@ -147,7 +148,7 @@ public class PostProcessingRenderingStage {
      */
     public void render() {
         renderStage();
-        RenderingPipeline.setTextureParameter(RenderingPipeline.TEXTURE_WORK, postProcessingFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, notDraw));
+        RenderingPipeline.getParameters().setTextureParameter(RenderingPipeline.TEXTURE_WORK, new Parameter<>(postProcessingFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, notDraw)));
     }
 
     /**
@@ -156,7 +157,7 @@ public class PostProcessingRenderingStage {
     public void beforeRender(Fbo geometryFbo) {
         refresh();
         geometryFbo.resolveFbo(postProcessingFbo, Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 0, 0);
-        RenderingPipeline.setTextureParameter(RenderingPipeline.TEXTURE_WORK, postProcessingFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 0));
+        RenderingPipeline.getParameters().setTextureParameter(RenderingPipeline.TEXTURE_WORK, new Parameter<>(postProcessingFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 0)));
         notDraw = 0;
         draw = 1;
         bindFbo();

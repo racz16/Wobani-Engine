@@ -4,6 +4,7 @@ import core.*;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.openal.*;
+import toolbox.parameters.*;
 
 /**
  * The scene's audio listener and it's position, orientation and velocity
@@ -23,7 +24,9 @@ public class AudioListenerComponent extends Component {
     public void update() {
         if (getGameObject() != null) {
             Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
-            if (Scene.getAudioListener() == this) {
+            MainAudioListener mainAudio = Scene.getParameters().getParameter(MainAudioListener.class);
+            AudioListenerComponent audioListener = mainAudio == null ? null : mainAudio.getValue();
+            if (audioListener == this) {
                 Vector3f velocity = new Vector3f();
                 currentPosition.sub(lastPosition, velocity);
                 AL10.alListener3f(AL10.AL_POSITION, currentPosition.x, currentPosition.y, currentPosition.z);

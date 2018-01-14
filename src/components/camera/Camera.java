@@ -1,6 +1,7 @@
 package components.camera;
 
-import components.*;
+import toolbox.invalidatable.Invalidatable;
+import core.*;
 import java.util.*;
 import org.joml.*;
 import toolbox.annotations.*;
@@ -8,7 +9,7 @@ import toolbox.annotations.*;
 /**
  * Base interface for Components with camera features.
  */
-public interface Camera extends IComponent {
+public interface Camera extends Invalidatable {
 
     /**
      * One of the camera frustum's corner points.
@@ -113,6 +114,7 @@ public interface Camera extends IComponent {
      * Returns the frustum's specified corner point.
      *
      * @param cornerPoint corner point
+     *
      * @return frustum's specified corner point
      */
     public Vector3f getFrustumCornerPoint(@NotNull CornerPoint cornerPoint);
@@ -125,12 +127,28 @@ public interface Camera extends IComponent {
     public List<Vector3f> getFrustumCornerPoints();
 
     /**
+     * Determines whether frustum culling is enabled.
+     *
+     * @return true if frustum culling is enabled, false otherwise
+     */
+    public boolean isFrustumCulling();
+
+    /**
+     * Sets whether or not frustum culling is enabled.
+     *
+     * @param frustumCulling true if frustum culling should be enabled, false
+     *                       otherwise
+     */
+    public void setFrustumCulling(boolean frustumCulling);
+
+    /**
      * Returns true if the sphere (determined by the given parameters) is
      * inside, or intersects the frustum and returns false if it is fully
      * outside.
      *
      * @param position position
-     * @param radius radius
+     * @param radius   radius
+     *
      * @return false if the sphere is fully outside the frustum, true otherwise
      */
     public boolean isInsideFrustum(Vector3f position, float radius);
@@ -142,8 +160,17 @@ public interface Camera extends IComponent {
      *
      * @param aabbMin the axis alligned bounding box's minimum x, y and z values
      * @param aabbMax the axis alligned bounding box's maximum x, y and z values
+     *
      * @return false if the bounding box is fully outside the frustum, true
-     * otherwise
+     *         otherwise
      */
     public boolean isInsideFrustum(Vector3f aabbMin, Vector3f aabbMax);
+
+    public GameObject getGameObject();
+
+    public void addInvalidatable(@NotNull Invalidatable invalidatable);
+
+    public void removeInvalidatable(@Nullable Invalidatable invalidatable);
+
+    public boolean isActive();
 }

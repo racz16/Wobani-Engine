@@ -54,7 +54,7 @@ public abstract class PostProcessingRenderer extends Renderer {
         quad.beforeDraw();
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
-        Texture2D image = RenderingPipeline.getTextureParameter(RenderingPipeline.TEXTURE_WORK);
+        Texture2D image = RenderingPipeline.getParameters().getTextureParameter(RenderingPipeline.TEXTURE_WORK).getValue();
         image.bindToTextureUnit(0);
     }
 

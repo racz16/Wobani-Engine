@@ -21,7 +21,7 @@ public abstract class GeometryRenderer extends Renderer {
      * Determines whether or not the GeometryRenderer is active.
      *
      * @param active true if the GeometryRenderer should be active, false
-               otherwise
+     *               otherwise
      */
     @Override
     public void setActive(boolean active) {
@@ -34,10 +34,10 @@ public abstract class GeometryRenderer extends Renderer {
 
     /**
      * Returns the number of faces rendererd by this GeometryRenderer in the
- last frame.
+     * last frame.
      *
      * @return the number of faces rendererd by this GeometryRenderer in the
-         last frame
+     *         last frame
      */
     public int getNumberOfRenderedFaces() {
         return numberOfRenderedFaces;
@@ -45,10 +45,10 @@ public abstract class GeometryRenderer extends Renderer {
 
     /**
      * Returns the number of meshes and splines rendererd by this
- GeometryRenderer in the last frame.
+     * GeometryRenderer in the last frame.
      *
      * @return the number of meshes and splines rendererd by this
-         GeometryRenderer in the last frame
+     *         GeometryRenderer in the last frame
      */
     public int getNumberOfRenderedElements() {
         return numberOfRenderedElements;

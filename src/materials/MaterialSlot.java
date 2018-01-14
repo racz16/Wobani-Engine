@@ -80,7 +80,7 @@ public class MaterialSlot {
      * Initializes a new MaterialSlot to the given values.
      *
      * @param path texture's relative path (with extension like
-     * "res/textures/myTexture.png")
+     *             "res/textures/myTexture.png")
      * @param sRgb determines whether the texture is in sRGB color space
      *
      */

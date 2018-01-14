@@ -11,6 +11,7 @@ import java.util.logging.*;
 import org.joml.*;
 import org.lwjgl.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 import window.*;
 
 /**
@@ -124,7 +125,7 @@ public class Utility {
         return new Matrix4f().translationRotateScale(
                 position,
                 new Quaternionf()
-                        .rotation(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
+                        .rotationXYZ(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
                 scale);
     }
 
@@ -142,7 +143,7 @@ public class Utility {
         return new Matrix4f().translationRotateScaleInvert(
                 position,
                 new Quaternionf()
-                        .rotation(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
+                        .rotationXYZ(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
                 scale);
     }
 
@@ -203,12 +204,14 @@ public class Utility {
      * @return the main directional light's projection view matrix
      */
     @NotNull
-    public static Matrix4f computeDirectionalLightProjectionViewMatrix() {
-        Camera camera = Scene.getCamera();
-        GameObject lightGameObject = Scene.getDirectionalLight().getGameObject();
+    public static Matrix4f computeDirectionalLightProjectionViewMatrix(float distance, float nearDistance, float farDistance) {
+        MainCamera mainCamera = Scene.getParameters().getParameter(MainCamera.class);
+        Camera camera = mainCamera.getValue();
+        MainDirectionalLight dirLight = Scene.getParameters().getParameter(MainDirectionalLight.class);
+        GameObject lightGameObject = dirLight.getValue().getGameObject();
         Vector3f right = lightGameObject.getTransform().getRightVector();
         Vector3f up = lightGameObject.getTransform().getUpVector();
-        Vector3f lightPosition = camera.getFrustumCenter().add(lightGameObject.getTransform().getForwardVector().negate().mul(Settings.getShadowCameraDistance()));
+        Vector3f lightPosition = camera.getFrustumCenter().add(lightGameObject.getTransform().getForwardVector().negate().mul(distance));
         Matrix4f lightSpaceMatrix = computeViewMatrix(lightPosition, lightGameObject.getTransform().getAbsoluteRotation());
         float maxX = Float.NEGATIVE_INFINITY;
         float minX = Float.POSITIVE_INFINITY;
@@ -238,7 +241,7 @@ public class Utility {
         float topBottom = (maxY - minY) / 2;
         lightPosition.add(up.mul(compensation));
 
-        Matrix4f lightProjectionMatrix = new Matrix4f().setOrtho(-rightLeft, rightLeft, -topBottom, topBottom, Settings.getShadowCameraNearDistance(), Settings.getShadowCameraFarDistance());
+        Matrix4f lightProjectionMatrix = new Matrix4f().setOrtho(-rightLeft, rightLeft, -topBottom, topBottom, nearDistance, farDistance);
         Vector3f rotation = new Vector3f(lightGameObject.getTransform().getAbsoluteRotation());
         Matrix4f lightViewMatrix = Utility.computeViewMatrix(lightPosition, rotation);
         return lightProjectionMatrix.mulOrthoAffine(lightViewMatrix);
@@ -276,8 +279,8 @@ public class Utility {
      * @return true if the given object successfully removed from the
      *         Collection, false otherwise
      */
-    public static boolean removeReference(@NotNull Collection collection, @Nullable Object object) {
-        return collection.removeIf((Object t) -> t == object);
+    public static <T> boolean removeReference(@NotNull Collection<T> collection, @Nullable T object) {
+        return collection.removeIf((T t) -> t == object);
 
     }
 
@@ -294,6 +297,11 @@ public class Utility {
         return angle / 180 * PI;
     }
 
+    @NotNull
+    public static Vector3f toRadians(@NotNull Vector3f angles) {
+        return new Vector3f(toRadians(angles.x), toRadians(angles.y), toRadians(angles.z));
+    }
+
     /**
      * Converts an angle measured in radians to an approximately equivalent
      * angle measured in degrees. The conversion from radians to degrees is
@@ -307,6 +315,11 @@ public class Utility {
      */
     public static float toDegrees(float angle) {
         return angle * 180 / PI;
+    }
+
+    @NotNull
+    public static Vector3f toDegrees(@NotNull Vector3f angles) {
+        return new Vector3f(toDegrees(angles.x), toDegrees(angles.y), toDegrees(angles.z));
     }
 
     /**
@@ -384,38 +397,20 @@ public class Utility {
      * Determines whether the given mesh component is inside the main camera's
      * view frustum.
      *
-     * @param meshComponent mesh component
+     * @param renderableComponent mesh component
      *
      * @return true if the mesh component is inside the main camera's view
      *         frustum, false otherwise
      */
-    public static boolean isInsideFrustum(@NotNull MeshComponent meshComponent) {
-        Camera camera = Scene.getCamera();
-        Transform transform = meshComponent.getGameObject().getTransform();
-        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
-            return camera.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax());
-        } else {
-            return camera.isInsideFrustum(transform.getAbsolutePosition(), meshComponent.getRealFurthestVertexDistance());
-        }
-    }
-
-    /**
-     * Determines whether the given spline component is inside the main camera's
-     * view frustum.
-     *
-     * @param splineComponent spline component
-     *
-     * @return true if the spline component is inside the main camera's view
-     *         frustum, false otherwise
-     */
-    public static boolean isInsideFrustum(@NotNull SplineComponent splineComponent) {
-        Camera camera = Scene.getCamera();
-        Transform transform = splineComponent.getGameObject().getTransform();
-        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
-            return camera.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax());
-        } else {
-            return camera.isInsideFrustum(transform.getAbsolutePosition(), splineComponent.getRealFurthestVertexDistance());
-        }
+    public static boolean isInsideFrustum(@NotNull RenderableComponent renderableComponent) {
+        MainCamera mainCamera = Scene.getParameters().getParameter(MainCamera.class);
+        Camera camera = mainCamera.getValue();
+        Transform transform = renderableComponent.getGameObject().getTransform();
+//        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
+            return camera.isInsideFrustum(renderableComponent.getRealAabbMin(), renderableComponent.getRealAabbMax());
+//        } else {
+//            return camera.isInsideFrustum(transform.getAbsolutePosition(), renderableComponent.getRealRadius());
+//        }
     }
 
 }

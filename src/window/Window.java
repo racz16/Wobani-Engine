@@ -10,6 +10,7 @@ import org.lwjgl.opengl.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import toolbox.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 import window.eventHandlers.*;
 
 /**
@@ -157,7 +158,7 @@ public class Window {
      * @param parameters for initialization
      *
      * @throws IllegalStateException unable to initialize GLFW
-     * @throws RuntimeException failed to create the GLFW window
+     * @throws RuntimeException      failed to create the GLFW window
      */
     public static void initialize(@Nullable WindowParameters parameters) {
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
@@ -310,7 +311,8 @@ public class Window {
             glfwSetWindowSizeCallback(id, windowSizeCallback = new GLFWWindowSizeCallback() {
                 @Override
                 public void invoke(long window, int width, int height) {
-                    Scene.getCamera().invalidate();
+                    MainCamera mainCamera = Scene.getParameters().getParameter(MainCamera.class);
+                    mainCamera.getValue().invalidate();
                     for (WindowEventHandler eventHandler : eventHandlers) {
                         eventHandler.sizeCallback(new Vector2i(width, height));
                     }
@@ -406,10 +408,10 @@ public class Window {
     /**
      * Sets the cursor shape to the specified image.
      *
-     * @param path image's relative path (with extension like
-     * "res/textures/myTexture.png")
+     * @param path  image's relative path (with extension like
+     *              "res/textures/myTexture.png")
      * @param click the cursor hotspot is specified in pixels, relative to the
-     * upper-left corner of the cursor image
+     *              upper-left corner of the cursor image
      */
     public static void setMouseShape(@NotNull File path, @NotNull Vector2i click) {
         removeCursor();
@@ -499,14 +501,15 @@ public class Window {
     /**
      * Sets the size limits of the window's client area to the given values.
      *
-     * @param minWidth minimum width
+     * @param minWidth  minimum width
      * @param minHeight minimum height
-     * @param maxWidth maximum width
+     * @param maxWidth  maximum width
      * @param maxHeight maximum height
      *
      * @throws IllegalArgumentException the minWidth and minHeight can't be
-     * lower than 0, the maxWidth can't be lower than minWidth and the maxHeight
-     * can't be lower than the minHeight
+     *                                  lower than 0, the maxWidth can't be
+     *                                  lower than minWidth and the maxHeight
+     *                                  can't be lower than the minHeight
      */
     public static void setClientAreaSizeLimits(int minWidth, int minHeight, int maxWidth, int maxHeight) {
         if (minWidth < 0 || minHeight < 0 || maxHeight < minWidth || maxHeight < minHeight) {
@@ -544,7 +547,7 @@ public class Window {
      * immediately to a windowed mode window and may cause it to be resized.
      *
      * @param denominator denominator
-     * @param numerator numerator
+     * @param numerator   numerator
      *
      * @throws IllegalArgumentException width and heigh must be positive
      * @see #disableAspectRatioConstraint()
@@ -656,7 +659,7 @@ public class Window {
      * Sets the window's icon to the specified image.
      *
      * @param path image's relative path (with extension like
-     * "res/textures/myTexture.png")
+     *             "res/textures/myTexture.png")
      */
     public static void setIcon(@NotNull File path) {
         Image image = new Image(path, false);

@@ -1,9 +1,9 @@
 package core;
 
-import org.joml.*;
 import rendering.*;
 import resources.*;
 import toolbox.*;
+import toolbox.annotations.*;
 import window.*;
 
 /**
@@ -18,37 +18,56 @@ public class GameLoop {
     }
 
     /**
-     * The number of elapsed frames.
-     */
-    private static int frameCount;
-
-    /**
      * Initializes the engine including the windowing system, the input
      * handling, the rendering pipeline and much more. You should call it before
-     * any OpenGL related code and before the GameLoop's run method.
+     * any OpenGL or OpenAL related code and before the GameLoop's run method.
      *
      * @param parameters parameters for the window
      */
-    public static void initialize(WindowParameters parameters) {
+    public static void initialize(@Nullable WindowParameters parameters) {
         try {
-            Window.initialize(parameters);
-            Input.initialize();
+            initializeWindowAndInput(parameters);
             RenderingPipeline.initialize();
-            OpenGl.initializeToDefaults();
-            Scene.setEnvironmentColor(new Vector3f(0, 1, 0));
-            OpenAl.initialize();
+            initializeOpenGlOpenAl();
         } catch (Exception e) {
-            Utility.logException(e);
-            ResourceManager.releaseResources();
-            OpenAl.release();
-            System.exit(1);
+            handleException(e);
         }
+    }
+
+    /**
+     * Initializes the window and the input system.
+     *
+     * @param parameters parameters for the window
+     */
+    private static void initializeWindowAndInput(@Nullable WindowParameters parameters) {
+        Window.initialize(parameters);
+        Input.initialize();
+    }
+
+    /**
+     * Initializes OpenGL and OpenAL.
+     */
+    private static void initializeOpenGlOpenAl() {
+        OpenGl.initializeToDefaults();
+        OpenAl.initialize();
+    }
+
+    /**
+     * Handles the given exception. It logs the exception, releases the
+     * resoruces and closes the program.
+     *
+     * @param ex Exception
+     */
+    private static void handleException(@NotNull Exception ex) {
+        Utility.logException(ex);
+        release();
+        System.exit(1);
     }
 
     /**
      * Initializes the engine including the windowing system, the input
      * handling, the rendering pipeline and much more. You should call it before
-     * any OpenGL related code and before the GameLoop's run method.
+     * any OpenGL or OpenAL related code and before the GameLoop's run method.
      */
     public static void initialize() {
         initialize(new WindowParameters());
@@ -56,35 +75,60 @@ public class GameLoop {
 
     /**
      * The engine's game loop. It updates all Components of the GameObjects,
-     * updates the resources ,renders the scene, handles the input and swaps the
-     * buffers in every frame.
+     * updates the Resources, renders the scene, handles the input and swaps the
+     * buffers and handle exceptions. Before calling this method, you should
+     * initialize the engine. You can do it by by calling the initialize method.
      */
     public static void run() {
         try {
-            while (!Window.isWindowShouldClose()) {
-                Time.timing();
-                ResourceManager.updateResources();
-                Scene.updateComponents();
-                RenderingPipeline.render();
-                Window.swapBuffers();
-                Window.pollEvents();
-                frameCount++;
-            }
+            gameLoop();
         } catch (Exception e) {
             Utility.logException(e);
         } finally {
-            ResourceManager.releaseResources();
-            OpenAl.release();
+            release();
         }
     }
 
     /**
-     * Returns the number of elapsed frames.
-     *
-     * @return the number of elapsed frames
+     * The engine's game loop. It updates all Components of the GameObjects,
+     * updates the resources, renders the scene, handles the input and swaps the
+     * buffers in every frame.
      */
-    public static int getFrameCount() {
-        return frameCount;
+    private static void gameLoop() {
+        while (!Window.isWindowShouldClose()) {
+            update();
+            RenderingPipeline.render();
+            windowing();
+        }
+    }
+
+    /**
+     * Updates the Resources, the Components and timing.
+     */
+    private static void update() {
+        Time.timing();
+        ResourceManager.updateResources();
+        Scene.getGameObjects().updateComponents();
+    }
+
+    /**
+     * Swaps the window's buffers and poll events.
+     */
+    private static void windowing() {
+        Window.swapBuffers();
+        Window.pollEvents();
+    }
+
+    /**
+     * Releases all the Resources, the windowing system and the OpenAL. After
+     * calling this method you can no longer use Meshes, Splines, Textures,
+     * sounds, FBOs, the rendering pipeline or the window.
+     */
+    public static void release() {
+        ResourceManager.releaseResources();
+        Input.release();
+        Window.release();
+        OpenAl.release();
     }
 
 }

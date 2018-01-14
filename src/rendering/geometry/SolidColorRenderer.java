@@ -1,6 +1,5 @@
 package rendering.geometry;
 
-import components.camera.*;
 import components.renderables.*;
 import core.*;
 import materials.*;
@@ -8,15 +7,14 @@ import org.joml.*;
 import org.lwjgl.opengl.*;
 import rendering.*;
 import resources.*;
-import resources.meshes.*;
 import resources.shaders.*;
-import resources.splines.*;
 import toolbox.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 /**
- * It can render Renderables by drawing them with one color. Shadows and
- * lighting not affect the final color. It only uses the material's diffuse
+ * It can render RenderableComponents by drawing them with one color. Shadows
+ * and lighting not affect the final color. It only uses the material's diffuse
  * color, if there is no diffuse color in the material, it uses as default the
  * mid-gray color.
  */
@@ -58,36 +56,21 @@ public class SolidColorRenderer extends GeometryRenderer {
     public void render() {
         beforeShader();
         shader.start();
-        Camera camera = Scene.getCamera();
         Class<SolidColorRenderer> renderer = SolidColorRenderer.class;
-        //meshes
-        for (Mesh mesh : Scene.getMeshes(renderer)) {
-            beforeDrawRenderable(mesh);
-            MeshComponent meshComponent;
-            for (int i = 0; i < Scene.getNumberOfMeshComponents(renderer, mesh); i++) {
-                meshComponent = Scene.getMeshComponent(renderer, mesh, i);
-                if (meshComponent.isActive() && meshComponent.isMeshActive() && Utility.isInsideFrustum(meshComponent)) {
-                    beforeDrawRenderableInstance(meshComponent.getMaterial(), meshComponent.getGameObject().getTransform().getModelMatrix());
-                    mesh.draw();
+        RenderableComponents renderables = Scene.getRenderableComponents();
+        for (Renderable renderable : renderables.getRenderables(renderer)) {
+            beforeDrawRenderable(renderable);
+            RenderableComponent renderableComponent;
+            for (int i = 0; i < renderables.getRenderableComponentCount(renderer, renderable); i++) {
+                renderableComponent = renderables.getRenderableComponent(renderer, renderable, i);
+                if (renderableComponent.isActive() && renderableComponent.isRenderableActive() && Utility.isInsideFrustum(renderableComponent)) {
+                    beforeDrawRenderableInstance(renderableComponent.getMaterial(), renderableComponent.getGameObject().getTransform().getModelMatrix());
+                    renderable.draw();
                     numberOfRenderedElements++;
-                    numberOfRenderedFaces += mesh.getFaceCount();
+                    numberOfRenderedFaces += renderableComponent.getFaceCount();
                 }
             }
-            afterDrawRenderable(mesh);
-        }
-        //splines
-        for (Spline spline : Scene.getSplines(renderer)) {
-            beforeDrawRenderable(spline);
-            SplineComponent splineComponent;
-            for (int i = 0; i < Scene.getNumberOfSplineComponents(renderer, spline); i++) {
-                splineComponent = Scene.getSplineComponent(renderer, spline, i);
-                if (splineComponent.isActive() && splineComponent.isSplineActive() && Utility.isInsideFrustum(splineComponent)) {
-                    beforeDrawRenderableInstance(splineComponent.getMaterial(), splineComponent.getGameObject().getTransform().getModelMatrix());
-                    spline.draw();
-                    numberOfRenderedElements++;
-                }
-            }
-            afterDrawRenderable(spline);
+            afterDrawRenderable(renderable);
         }
         shader.stop();
     }
@@ -100,7 +83,8 @@ public class SolidColorRenderer extends GeometryRenderer {
             shader = SolidColorShader.getInstance();
         }
         RenderingPipeline.bindFbo();
-        OpenGl.setWireframe(Settings.isWireframeMode());
+        Parameter<Boolean> wirefreame = RenderingPipeline.getParameters().getBooleanParameter(RenderingPipeline.BOOLEAN_WIREFRAME_MODE);
+        OpenGl.setWireframe(Parameter.getValueOrDefault(wirefreame, false));
         OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
         numberOfRenderedElements = 0;
         numberOfRenderedFaces = 0;

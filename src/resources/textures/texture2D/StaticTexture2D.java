@@ -1,13 +1,12 @@
 package resources.textures.texture2D;
 
-import core.*;
 import java.io.*;
 import java.nio.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.stb.*;
 import resources.*;
 import resources.ResourceManager.ResourceState;
-import resources.textures.StaticTexture;
+import resources.textures.*;
 import toolbox.*;
 import toolbox.annotations.*;
 
@@ -32,7 +31,7 @@ public class StaticTexture2D extends StaticTexture implements Texture2D {
      * Initializes a new StaticTexture to the given parameters.
      *
      * @param path texture's relative path (with extension like
-     * "res/textures/myTexture.png")
+     *             "res/textures/myTexture.png")
      * @param sRgb determines whether the texture is in sRgb color space
      */
     private StaticTexture2D(@NotNull File path, boolean sRgb) {
@@ -41,7 +40,7 @@ public class StaticTexture2D extends StaticTexture implements Texture2D {
         meta.setPaths(Utility.wrapObjectByList(path));
         meta.setLastActiveToNow();
         meta.setDataStorePolicy(ResourceState.ACTION);
-        filtering = Settings.getTextureFiltering();
+        filtering = ResourceManager.getTextureFiltering();
 
         hddToRam();
         ramToVram();
@@ -59,8 +58,9 @@ public class StaticTexture2D extends StaticTexture implements Texture2D {
      * you try to load it twice, you get reference to the already loaded one.
      *
      * @param path texture's relative path (with extension like
-     * "res/textures/myTexture.png")
+     *             "res/textures/myTexture.png")
      * @param sRgb determines whether the texture is in sRGB color space
+     *
      * @return texture
      */
     @NotNull
@@ -122,6 +122,7 @@ public class StaticTexture2D extends StaticTexture implements Texture2D {
      * Returns the texture's specified wrap mode.
      *
      * @param type texture wrap direction
+     *
      * @return the texture's specified wrap mode
      *
      * @throws IllegalArgumentException w direction can't apply to a 2D texture
@@ -139,7 +140,7 @@ public class StaticTexture2D extends StaticTexture implements Texture2D {
      * Sets the texture's specified wrap mode to the given value.
      *
      * @param type texture wrap direction
-     * @param tw texture wrap
+     * @param tw   texture wrap
      *
      * @throws IllegalArgumentException w direction can't apply to a 2D texture
      */

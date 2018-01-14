@@ -1,14 +1,15 @@
 package resources.shaders;
 
-import components.light.*;
 import core.*;
 import java.io.*;
 import java.util.*;
 import materials.*;
 import org.joml.*;
+import rendering.*;
 import resources.*;
 import resources.textures.texture2D.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 /**
  * This shader can draw meshes and splines by using the Blinn-Phong shading. You
@@ -126,22 +127,23 @@ public class BlinnPhongShader extends Shader {
      * position, gamma value etc.
      */
     public void loadGlobalUniforms() {
-        //directional light
-        DirectionalLightComponent light = (DirectionalLightComponent) Scene.getDirectionalLight();
-        loadMatrix4("shadowProjectionViewMatrix", light.getProjectionViewMatrix());
+        MainCamera mainCamera = Scene.getParameters().getParameter(MainCamera.class);
+        loadMatrix4("shadowProjectionViewMatrix", RenderingPipeline.getParameters().getMatrixParameter(RenderingPipeline.MATRIX_SHADOW_PROJECTION_VIEW).getValue());
         //others
-        loadVector3("viewPosition", Scene.getCamera().getGameObject().getTransform().getAbsolutePosition());
-        loadBoolean("gamma", Settings.getGamma() != 1);
-        loadBoolean("wireframe", Settings.isWireframeMode());
+        loadVector3("viewPosition", mainCamera.getValue().getGameObject().getTransform().getAbsolutePosition());
+        Parameter<Float> gamma = RenderingPipeline.getParameters().getFloatParameter(RenderingPipeline.FLOAT_GAMMA);
+        loadBoolean("gamma", Parameter.getValueOrDefault(gamma, 1f) != 1);
+        Parameter<Boolean> wireframe = RenderingPipeline.getParameters().getBooleanParameter(RenderingPipeline.BOOLEAN_WIREFRAME_MODE);
+        loadBoolean("wireframe", Parameter.getValueOrDefault(wireframe, false));
     }
 
     /**
      * Loads per object data to the shader as uniform variables.
      *
-     * @param modelMatrix model matrix
+     * @param modelMatrix           model matrix
      * @param inverseModelMatrix3x3 the 3x3 inverse of the model matrix
-     * @param receiveShadow true if the Renderable is receive shadows, false
-     * otherwise
+     * @param receiveShadow         true if the Renderable is receive shadows,
+     *                              false otherwise
      */
     public void loadObjectUniforms(@NotNull Matrix4f modelMatrix, @NotNull Matrix3f inverseModelMatrix3x3, boolean receiveShadow) {
         loadMatrix4("modelMatrix", modelMatrix);

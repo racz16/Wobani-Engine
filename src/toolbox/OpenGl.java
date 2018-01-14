@@ -144,7 +144,7 @@ public class OpenGl {
      * Sets whether or not enable the multisampling.
      *
      * @param multisample true if you would like to enable multisampling, false
-     * otheriwse
+     *                    otheriwse
      */
     public static void setMultisample(boolean multisample) {
         if (multisample) {
@@ -167,7 +167,7 @@ public class OpenGl {
      * Sets whether or not enable the depth testing.
      *
      * @param depthTest true if you would like to enable depth testing, false
-     * otheriwse
+     *                  otheriwse
      */
     public static void setDepthTest(boolean depthTest) {
         if (depthTest) {
@@ -194,7 +194,7 @@ public class OpenGl {
      * Sets whether or not enable the depth mask.
      *
      * @param depthMask true if you would like to enable the depth maks, false
-     * otheriwse
+     *                  otheriwse
      */
     public static void setDepthMask(boolean depthMask) {
         GL11.glDepthMask(depthMask);
@@ -240,7 +240,7 @@ public class OpenGl {
      * Sets whether or not enable the alpha blending (alpha - (1-alpa)).
      *
      * @param alphaBlending true if you would like to enable alpha blending,
-     * false otheriwse
+     *                      false otheriwse
      */
     public static void setAlphaBlending(boolean alphaBlending) {
         if (alphaBlending) {
@@ -268,7 +268,7 @@ public class OpenGl {
      * Sets whether or not enable the wireframe rendering mode.
      *
      * @param wireframeMode true if you would like to enable wireframe mode,
-     * false otheriwse
+     *                      false otheriwse
      */
     public static void setWireframe(boolean wireframeMode) {
         if (wireframeMode) {
@@ -281,7 +281,7 @@ public class OpenGl {
     /**
      * Sets the rendering viewport to the given values.
      *
-     * @param size rendering width and height
+     * @param size   rendering width and height
      * @param offset rendering offset
      *
      * @throws IllegalArgumentException width and height must be positive
@@ -306,7 +306,7 @@ public class OpenGl {
      * Sets whether or not enable the face culling.
      *
      * @param faceCulling true if you would like to enable face culling, false
-     * otheriwse
+     *                    otheriwse
      */
     public static void setFaceCulling(boolean faceCulling) {
         if (faceCulling) {
@@ -382,8 +382,8 @@ public class OpenGl {
     /**
      * Clears the currently bound FBO's specified attachmets.
      *
-     * @param color color attachments
-     * @param depth depth attachment
+     * @param color   color attachments
+     * @param depth   depth attachment
      * @param stencil stencil attachment
      */
     public static void clear(boolean color, boolean depth, boolean stencil) {

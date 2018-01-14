@@ -1,20 +1,16 @@
 package core;
 
-import java.util.*;
-import toolbox.*;
 import toolbox.annotations.*;
+import toolbox.invalidatable.*;
 
 /**
  * All of a GameObject's Components based on this abstract class. The GameLoop
  * call it's update method once a frame, before rendering.
- *
- * @see GameObject
- *
  */
 public abstract class Component implements Invalidatable {
 
     /**
-     * The assigned GameObject.
+     * The attached GameObject.
      */
     private GameObject gameObject;
     /**
@@ -24,57 +20,39 @@ public abstract class Component implements Invalidatable {
      */
     private boolean active = true;
     /**
-     * List of invalidatables.
+     * Contains the Component's Invalidatables.
      */
-    private final List<Invalidatable> invalidatables = new ArrayList<>();
-    /**
-     * Prevents invalidation mechanism from causing deadlock.
-     */
-    private boolean invalidatable = true;
+    private final InvalidatableContainer invalidatables = new InvalidatableContainer(this);
 
     /**
-     * Adds the given Invalidatable to the list of invalidatables.
+     * Adds the given Invalidatable to this Component's Invalidatables.
      *
-     * @param invalidatable invalidatable
-     *
-     * @return true if the given parameter added successfully (the parameter
-     *         isn't already in the list and if it isn't this Component), false
-     *         otherwise
-     *
-     * @throws NullPointerException can't add null to the list of invalidatables
+     * @param invalidatable Invalidatable
      */
-    public boolean addInvalidatable(@NotNull Invalidatable invalidatable) {
-        if (invalidatable == null) {
-            throw new NullPointerException();
-        }
-        if (!containsInvalidatable(invalidatable) && invalidatable != this) {
-            invalidatables.add(invalidatable);
-            return true;
-        } else {
-            return false;
-        }
+    public void addInvalidatable(@NotNull Invalidatable invalidatable) {
+        invalidatables.addInvalidatable(invalidatable);
     }
 
     /**
-     * Returns true if the list of invalidatables contains the specified
+     * Returns true if this Component's Invalidatables contains the specified
      * element.
      *
-     * @param invalidatable invalidatable
+     * @param invalidatable Invalidatable
      *
-     * @return true if the list of invalidatables contains the specified
+     * @return true if this Component's Invalidatables contains the specified
      *         element, false otherwise
      */
     public boolean containsInvalidatable(@Nullable Invalidatable invalidatable) {
-        return Utility.containsReference(invalidatables, invalidatable);
+        return invalidatables.containsInvalidatable(invalidatable);
     }
 
     /**
-     * Removes the parameter from the list of invalidatables.
+     * Removes the parameter from this Component's Invalidatables.
      *
-     * @param invalidatable invalidatable
+     * @param invalidatable Invalidatable
      */
     public void removeInvalidatable(@Nullable Invalidatable invalidatable) {
-        Utility.removeReference(invalidatables, invalidatable);
+        invalidatables.removeInvalidatable(invalidatable);
     }
 
     /**
@@ -98,9 +76,9 @@ public abstract class Component implements Invalidatable {
     }
 
     /**
-     * Returns the GameObject that assigned to this Component.
+     * Returns the GameObject that attached to this Component.
      *
-     * @return GameObject gameObject
+     * @return GameObject
      */
     @Nullable
     public GameObject getGameObject() {
@@ -108,66 +86,58 @@ public abstract class Component implements Invalidatable {
     }
 
     /**
-     * Adds this Component to the specified GameObject.
+     * Attaches this Component to the given GameObject.
      *
      * @param object this Component's new GameObject
      *
      * @throws NullPointerException object can't be null
      */
-    protected void addToGameObject(@NotNull GameObject object) {
+    @Internal
+    protected void attachToGameObject(@NotNull GameObject object) {
         if (object == null) {
             throw new NullPointerException();
         }
         gameObject = object;
-        Scene.addComponentToLists(this);
+        Scene.getComponentLists().addComponentToLists(this);
     }
 
     /**
-     * Removes this Component from it's GameObject.
+     * Detaches this Component from it's GameObject.
      */
-    protected void removeFromGameObject() {
-        Scene.removeComponentFromLists(this);
+    @Internal
+    protected void detachFromGameObject() {
+        Scene.getComponentLists().removeComponentFromLists(this);
         gameObject = null;
     }
 
     /**
-     * Assigns this Component to the specified GameObject.
+     * Attaches this Component to the specified GameObject.
      *
-     * @param object gameObject
+     * @param object GameObject
      */
     public void setGameObject(@Nullable GameObject object) {
         if (object == null) {
             if (gameObject != null) {
-                gameObject.removeComponent(this);
+                gameObject.getComponents().remove(this);
             }
         } else {
-            object.addComponent(this);
+            object.getComponents().add(this);
         }
     }
 
     /**
      * This method runs once per frame, before rendering.
      */
+    @Internal
     protected void update() {
     }
 
     /**
-     * Invalidates this Component's data and the Component's invalidatables'
-     * data.
+     * Invalidates this Component and the Component's Invalidatables.
      */
     @Override
     public void invalidate() {
-        if (invalidatable) {
-            invalidatable = false;
-            for (Invalidatable inv : invalidatables) {
-                inv.invalidate();
-            }
-            invalidatable = true;
-        }
-    }
-
-    public void afterLoading() {
-        //TODO XStream load
+        invalidatables.invalidate();
     }
 
     @Override
@@ -198,14 +168,8 @@ public abstract class Component implements Invalidatable {
     @Override
     public String toString() {
         String gameObjectName = gameObject == null ? "null" : gameObject.getName();
-        StringBuilder isb = new StringBuilder().append('[');
-        for (Invalidatable inv : invalidatables) {
-            isb.append(inv.getClass().getSimpleName()).append(", ");
-        }
-        isb.append(']');
-
-        return "Component{" + "gameObject=" + gameObjectName + ", active=" + active
-                + ", invalidatables=" + isb + ", invalidatable=" + invalidatable + '}';
+        return "Component{" + "gameObject=" + gameObjectName + ", active="
+                + active + ", invalidatables=" + invalidatables + '}';
     }
 
 }

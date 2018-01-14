@@ -63,7 +63,7 @@ public class SolidColorShader extends Shader {
      * Loads the model matrix and the Renderable's color as uniform variables.
      *
      * @param modelMatrix model matrix
-     * @param color Renderable's color
+     * @param color       Renderable's color
      */
     public void loadUniforms(@NotNull Matrix4f modelMatrix, @NotNull Vector3f color) {
         loadMatrix4("modelMatrix", modelMatrix);

@@ -97,7 +97,8 @@ public class SpotLightComponent extends DefaultLightComponent implements SpotLig
      * @param cutoff cutoff component (in degrees)
      *
      * @throws IllegalArgumentException cutoff component must be higher than 0
-     * and lower than the outer cutoff component
+     *                                  and lower than the outer cutoff
+     *                                  component
      */
     public void setCutoff(float cutoff) {
         if (cutoff <= 0 || cutoff >= outerCutoff) {
@@ -124,7 +125,7 @@ public class SpotLightComponent extends DefaultLightComponent implements SpotLig
      * @param outerCutoff outer cutoff component (in degrees)
      *
      * @throws IllegalArgumentException outer cutoff component must be higher
-     * than the cutoff component
+     *                                  than the cutoff component
      */
     public void setOuterCutoff(float outerCutoff) {
         if (cutoff >= outerCutoff) {

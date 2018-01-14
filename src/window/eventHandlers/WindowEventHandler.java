@@ -43,7 +43,7 @@ public interface WindowEventHandler {
      * minization.
      *
      * @param minimized true if the window minimized, false if restored from
-     * minimization
+     *                  minimization
      */
     public void minimizationCallback(boolean minimized);
 
@@ -51,7 +51,7 @@ public interface WindowEventHandler {
      * This method is called when the window gains or loses input focus.
      *
      * @param focused true if the window gains the focus, false if it loses the
-     * focus
+     *                focus
      */
     public void focusCallback(boolean focused);
 }

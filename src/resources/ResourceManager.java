@@ -2,7 +2,6 @@ package resources;
 
 import components.camera.*;
 import components.light.*;
-import core.*;
 import java.util.*;
 import org.joml.*;
 import rendering.*;
@@ -12,7 +11,7 @@ import resources.shaders.*;
 import resources.splines.*;
 import resources.textures.*;
 import toolbox.annotations.*;
-import window.*;
+import toolbox.parameters.*;
 
 /**
  * Manages the loaded models, textures and splines.
@@ -50,7 +49,7 @@ public class ResourceManager {
     /**
      * Contains all the splines.
      */
-    private static final Map<ResourceId, Spline> splines = new HashMap<>();
+    private static final Map<ResourceId, Renderable> splines = new HashMap<>();
     /**
      * Contains all the FBOs.
      */
@@ -83,6 +82,38 @@ public class ResourceManager {
      * Resources' update time period (in miliseconds).
      */
     private static long resourceUpdatePeriod = 5000;
+
+    /**
+     * Texture filtering mode.
+     */
+    private static EasyFiltering.TextureFiltering textureFiltering = EasyFiltering.TextureFiltering.ANISOTROPIC_2X;
+
+    /**
+     * Returns the texture filtering mode.
+     *
+     * @return texture filtering mode
+     */
+    @NotNull
+    public static EasyFiltering.TextureFiltering getTextureFiltering() {
+        return textureFiltering;
+    }
+
+    /**
+     * Sets the textures' filtering mode to the given value.
+     *
+     * @param tf textures' filtering mode
+     *
+     * @throws NullPointerException texture filtering can't be null
+     */
+    public static void setTextureFiltering(@NotNull EasyFiltering.TextureFiltering tf) {
+        if (tf == null) {
+            throw new NullPointerException();
+        }
+        if (textureFiltering != tf) {
+            textureFiltering = tf;
+            changeTextureFiltering();
+        }
+    }
 
     /**
      * To can't initialize a new ResourceManager.
@@ -199,7 +230,7 @@ public class ResourceManager {
             if (EasyFiltering.class.isInstance(textures.get(key))) {
                 EasyFiltering texture = (EasyFiltering) textures.get(key);
                 texture.bind();
-                texture.setTextureFiltering(Settings.getTextureFiltering());
+                texture.setTextureFiltering(getTextureFiltering());
                 texture.unbind();
             }
         }
@@ -213,7 +244,8 @@ public class ResourceManager {
      * @see Settings#getGamma()
      */
     public static void changeTextureColorSpace() {
-        boolean sRgb = Settings.getGamma() != 1;
+        Parameter<Float> gamma = RenderingPipeline.getParameters().getFloatParameter(RenderingPipeline.FLOAT_GAMMA);
+        boolean sRgb = Parameter.getValueOrDefault(gamma, 1f) != 1;
         for (ResourceId key : textures.keySet()) {
             if (ChangableColorSpace.class.isInstance(textures.get(key))) {
                 ChangableColorSpace texture = (ChangableColorSpace) textures.get(key);
@@ -303,7 +335,7 @@ public class ResourceManager {
      * @return spline
      */
     @Nullable
-    public static Spline getSpline(@Nullable ResourceId key) {
+    public static Renderable getSpline(@Nullable ResourceId key) {
         return splines.get(key);
     }
 
@@ -313,7 +345,7 @@ public class ResourceManager {
      * @param spline spline
      *
      */
-    public static void addSpline(@NotNull Spline spline) {
+    public static void addSpline(@NotNull Renderable spline) {
         if (!splines.containsKey(spline.getResourceId())) {
             splines.put(spline.getResourceId(), spline);
         }
@@ -331,7 +363,7 @@ public class ResourceManager {
         int ram = 0;
         int vram = 0;
         int count = 0;
-        for (Spline spline : splines.values()) {
+        for (Renderable spline : splines.values()) {
             if (spline.isUsable()) {
                 count++;
                 ram += spline.getDataSizeInRam();
@@ -669,8 +701,6 @@ public class ResourceManager {
         DefaultLightComponent.releaseUbo();
         CameraComponent.releaseUbo();
         RenderingPipeline.release();
-        Input.release();
-        Window.release();
     }
 
     /**

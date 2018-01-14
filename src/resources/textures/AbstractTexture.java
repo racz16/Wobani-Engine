@@ -115,9 +115,9 @@ public abstract class AbstractTexture implements Texture {
      * Transfers image data to the texture based on the given values.
      *
      * @param internalFormat internal format
-     * @param format format
-     * @param type type
-     * @param data image data
+     * @param format         format
+     * @param type           type
+     * @param data           image data
      */
     @Bind
     protected void glTexImage(int internalFormat, int format, int type, @Nullable ByteBuffer data) {
@@ -139,7 +139,7 @@ public abstract class AbstractTexture implements Texture {
      *
      * @param borderColor border color
      *
-     * @throws NullPointerException borderColor can't be null
+     * @throws NullPointerException     borderColor can't be null
      * @throws IllegalArgumentException border color can't be lower than 0
      */
     @Bind
@@ -160,6 +160,7 @@ public abstract class AbstractTexture implements Texture {
      * Returns the texture's specified wrap mode.
      *
      * @param type texture wrap direction
+     *
      * @return the texture's specified wrap mode
      *
      * @throws NullPointerException parameter can't be null
@@ -183,7 +184,7 @@ public abstract class AbstractTexture implements Texture {
     /**
      * Sets the texture's specified wrap mode to the given value.
      *
-     * @param type texture wrap direction
+     * @param type  texture wrap direction
      * @param value texture wrap
      *
      * @throws NullPointerException type and value can't be null
@@ -211,6 +212,7 @@ public abstract class AbstractTexture implements Texture {
      * Returns the texture's specified filter mode.
      *
      * @param type texture filter type
+     *
      * @return the texture's specified filter mode
      *
      * @throws NullPointerException parameter can't be null
@@ -230,7 +232,7 @@ public abstract class AbstractTexture implements Texture {
     /**
      * Sets the texture's specified filter to the given value.
      *
-     * @param type texture filter type
+     * @param type  texture filter type
      * @param value texture filter
      *
      * @throws NullPointerException type and value can't be null

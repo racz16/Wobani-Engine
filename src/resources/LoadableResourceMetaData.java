@@ -144,7 +144,7 @@ public class LoadableResourceMetaData {
      * @param actionTimeLimit ACTION time limit (in miliseconds)
      *
      * @throws IllegalArgumentException ACTION time limit have to be higher than
-     * 0 and lower than RAM time limit
+     *                                  0 and lower than RAM time limit
      */
     public void setActionTimeLimit(long actionTimeLimit) {
         if (actionTimeLimit <= 0 || actionTimeLimit >= ramTimeLimit) {
@@ -173,7 +173,7 @@ public class LoadableResourceMetaData {
      * @param ramTimeLimit RAM time limit (in miliseconds)
      *
      * @throws IllegalArgumentException RAM time limit have to be higher than
-     * ACTION time limit
+     *                                  ACTION time limit
      */
     public void setRamTimeLimit(long ramTimeLimit) {
         if (vramTimeLimit >= ramTimeLimit) {

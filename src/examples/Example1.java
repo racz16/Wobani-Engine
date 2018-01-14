@@ -1,8 +1,8 @@
 package examples;
 
-import components.*;
 import components.audio.*;
 import components.camera.*;
+import components.environmentProbes.*;
 import components.light.*;
 import components.renderables.*;
 import core.*;
@@ -19,6 +19,7 @@ import resources.meshes.*;
 import resources.splines.*;
 import resources.textures.cubeMapTexture.*;
 import toolbox.*;
+import toolbox.parameters.*;
 import window.Input.Key;
 import window.*;
 import window.eventHandlers.*;
@@ -102,26 +103,74 @@ public class Example1 {
         dragonMat.setFloatParameter(Material.PARAM_REFRACTION_INDEX_F, 1f / 1.33f);
 
         GameObject dragon = StaticMesh.loadModelToGameObject(new File("res/models/dragon.obj"));
-        dragon.getComponent(MeshComponent.class).setMaterial(dragonMat);
-        dragon.getComponent(MeshComponent.class).setReflectable(true);
+        dragon.getComponents().getOne(MeshComponent.class).setMaterial(dragonMat);
+        dragon.getComponents().getOne(MeshComponent.class).setReflectable(true);
         dragon.setName("dragon");
         dragon.getTransform().setRelativePosition(new Vector3f(0, -5, -15));
         dragon.getTransform().setRelativeScale(new Vector3f(2.5f));
 
         GameObject dragon2 = StaticMesh.loadModelToGameObject(new File("res/models/dragon.obj"));
-        dragon2.getComponent(MeshComponent.class).setMaterial(dragonMat);
-        dragon2.getComponent(MeshComponent.class).setReflectable(true);
+        dragon2.getComponents().getOne(MeshComponent.class).setMaterial(dragonMat);
+        dragon2.getComponents().getOne(MeshComponent.class).setReflectable(true);
         dragon2.setName("dragon2");
         dragon2.getTransform().setRelativePosition(new Vector3f(50, -40, 0));
-        dragon.addChild(dragon2);
+        dragon.getChildren().add(dragon2);
 
-        dragon.addComponent(new Component() {
+        dragon2.getTransform().rotate(new Vector3f(45, 0, 0));
+
+        dragon.getComponents().add(new Component() {
+            private final Vector3f rot = new Vector3f();
+
             @Override
             public void update() {
                 getGameObject().getTransform().rotate(new Vector3f(0, 0.35f * Time.getDeltaTimeFactor(), 0));
+//                boolean keyPressed = false;
+//                if (Input.isKeyPressed(Key.KEY_KP_5)) {
+//                    rot.y += 0.35 * Time.getDeltaTimeFactor();
+//                    keyPressed = true;
+//                }
+//                if (Input.isKeyPressed(Key.KEY_KP_2)) {
+//                    rot.y -= 0.35 * Time.getDeltaTimeFactor();
+//                    keyPressed = true;
+//                }
+//                if (Input.isKeyPressed(Key.KEY_KP_4)) {
+//                    rot.x += 0.35 * Time.getDeltaTimeFactor();
+//                    keyPressed = true;
+//                }
+//                if (Input.isKeyPressed(Key.KEY_KP_1)) {
+//                    rot.x -= 0.35 * Time.getDeltaTimeFactor();
+//                    keyPressed = true;
+//                }
+//                if (Input.isKeyPressed(Key.KEY_KP_6)) {
+//                    rot.z += 0.35 * Time.getDeltaTimeFactor();
+//                    keyPressed = true;
+//                }
+//                if (Input.isKeyPressed(Key.KEY_KP_3)) {
+//                    rot.z -= 0.35 * Time.getDeltaTimeFactor();
+//                    keyPressed = true;
+//                }
+//
+//                if (Input.isKeyPressed(Key.KEY_KP_0)) {
+//                    rot.set(180, 0, 180);
+//                    keyPressed = true;
+//                }
+//
+//                if (keyPressed) {
+//                    dragon.getTransform().setRelativeRotation(rot);
+//
+//                    Matrix4f mod = dragon.getTransform().getModelMatrix();
+//                    Quaternionf rot = mod.getUnnormalizedRotation(new Quaternionf());
+//                    Vector3f euler = rot.getEulerAnglesXYZ(new Vector3f());
+//                    euler.x = Utility.toDegrees(euler.x);
+//                    euler.y = Utility.toDegrees(euler.y);
+//                    euler.z = Utility.toDegrees(euler.z);
+//                    System.out.println(this.rot.x + "   " + this.rot.y + "   " + this.rot.z);
+//                    System.out.println(euler.x + "   " + euler.y + "   " + euler.z);
+//                    System.out.println("");
+//                }
             }
         });
-        dragon2.addComponent(new Component() {
+        dragon2.getComponents().add(new Component() {
             @Override
             public void update() {
                 getGameObject().getTransform().rotate(new Vector3f(0, 0.35f * Time.getDeltaTimeFactor(), 0));
@@ -145,18 +194,19 @@ public class Example1 {
 //        boxMaterial.setFloatParameter(Material.PARAM_POM_MAX_LAYERS_F, 100f);
 //        boxMaterial.setSlot(Material.ENVIRONTMENT_INTENSITY, new MaterialSlot(new Vector4f(0, 1, 0, 0)));
 
+        Scene.getComponentLists().addToTrackedTypes(DynamicEnvironmentProbeComponent.class);
         probe = new DynamicEnvironmentProbe();
-        EnvironmentProbeComponent probeComponent = new EnvironmentProbeComponent(probe);
+        DynamicEnvironmentProbeComponent probeComponent = new DynamicEnvironmentProbeComponent(probe);
         boxMaterial.setSlot(Material.REFLECTION, new MaterialSlot(probe));
         GameObject g = new GameObject();
         g.getTransform().setRelativePosition(new Vector3f(0, -40, 0));
-        g.addComponent(probeComponent);
+        g.getComponents().add(probeComponent);
 
         GameObject box = new GameObject("bigBox");
         box.getTransform().setRelativePosition(new Vector3f(0, -40, -20));
         box.getTransform().setRelativeScale(new Vector3f(30f));
         for (Mesh m : StaticMesh.loadModel(new File("res/models/sphere.obj"))) {
-            box.addComponent(new MeshComponent(m, boxMaterial));
+            box.getComponents().add(new MeshComponent(m, boxMaterial));
         }
     }
 
@@ -168,36 +218,36 @@ public class Example1 {
         //directional light
         GameObject light = new GameObject("directionalLight");
         light.getTransform().setRelativeRotation(new Vector3f(-45, 10, 0));
-        light.addComponent(new DirectionalLightComponent());
-        Scene.setDirectionalLight(light.getComponent(DirectionalLightComponent.class));
+        light.getComponents().add(new DirectionalLightComponent());
+        Scene.getParameters().setParameter(new MainDirectionalLight(light.getComponents().getOne(DirectionalLightComponent.class)));
 
         //point light
         GameObject pointLight = new GameObject("pointLight");
         pointLight.getTransform().setRelativePosition(new Vector3f(-5, -1, 0));
         for (StaticMesh mod : boxModel) {
-            pointLight.addComponent(new MeshComponent(mod));
+            pointLight.getComponents().add(new MeshComponent(mod));
         }
         PointLightComponent plc = new PointLightComponent();
         plc.setDiffuseColor(new Vector3f(1, 0, 0));
-        pointLight.addComponent(plc);
+        pointLight.getComponents().add(plc);
 
         //spotlight
         GameObject spotLight = new GameObject("spotLight");
         spotLight.getTransform().setRelativePosition(new Vector3f(0, -1, 0));
         for (StaticMesh mod : boxModel) {
-            spotLight.addComponent(new MeshComponent(mod));
+            spotLight.getComponents().add(new MeshComponent(mod));
         }
         SpotLightComponent slc = new SpotLightComponent();
         slc.setDiffuseColor(new Vector3f(0, 1, 0));
-        spotLight.addComponent(slc);
-        spotLight.addComponent(new Component() {
+        spotLight.getComponents().add(slc);
+        spotLight.getComponents().add(new Component() {
             private float t = 0;
 
             @Override
             public void update() {
-                getGameObject().getTransform().setAbsolutePosition(spline.getApproximatedPosition(t));
+                getGameObject().getTransform().setRelativePosition(spline.getApproximatedPosition(t));
                 t += 0.0005f * Time.getDeltaTimeFactor();
-                SpotLightComponent slc = getGameObject().getComponent(SpotLightComponent.class);
+                SpotLightComponent slc = getGameObject().getComponents().getOne(SpotLightComponent.class);
                 if (GLFW.glfwGetTime() % 2 > 1) {
                     slc.setActive(true);
                 } else {
@@ -213,10 +263,10 @@ public class Example1 {
     private static void camera() {
         GameObject camera = new GameObject("camera");
         camera.getTransform().setRelativePosition(new Vector3f(0, 0, 30));
-        camera.addComponent(new FreeCameraComponent());
-        camera.addComponent(new AudioListenerComponent());
-        Scene.setAudioListener(camera.getComponent(AudioListenerComponent.class));
-        Scene.setCamera(camera.getComponent(Camera.class));
+        camera.getComponents().add(new FreeCameraComponent());
+        camera.getComponents().add(new AudioListenerComponent());
+        Scene.getParameters().setParameter(new MainAudioListener(camera.getComponents().getOne(AudioListenerComponent.class)));
+        Scene.getParameters().setParameter(new MainCamera(camera.getComponents().getOne(Camera.class)));
     }
 
     /**
@@ -240,9 +290,7 @@ public class Example1 {
         GameObject splineGameObject = new GameObject("Spline");
         Material splineMat = new Material(SolidColorRenderer.class);
         splineMat.setSlot(Material.DIFFUSE, new MaterialSlot(new Vector4f(0, 0, 1, 1)));
-        splineGameObject.addComponent(new SplineComponent(spline, splineMat));
-
-        splineGameObject.getTransform().setBillboardingMode(Transform.BillboardingMode.SPHERICAL_BILLBOARDING);
+        splineGameObject.getComponents().add(new SplineComponent(spline, splineMat));
     }
 
     /**
@@ -258,17 +306,17 @@ public class Example1 {
         paths.add(new File("res/textures/ely_hills/hills_ft.tga"));
         skybox = new StaticCubeMapTexture(paths, true);
         StaticEnvironmentProbe skyboxProbe = new StaticEnvironmentProbe(skybox);
-        Scene.setSkybox(skyboxProbe);
+        Scene.getParameters().setParameter(new Skybox(skyboxProbe));
 
 //        environment = StaticCubeMapTexture.loadTexture(paths, true);
 //        GameObject skybox = new GameObject("skybox");
 //        Material sky = new Material(SkyBoxRenderer.class);
 //        sky.setSlot(Material.DIFFUSE, new MaterialSlot(environment));
 ////        sky.setSlot(Material.DIFFUSE, new MaterialSlot(probe));
-//        MeshComponent mc = new MeshComponent(CubeMesh.getInstance(), sky);
+//        OldMeshComponent mc = new OldMeshComponent(CubeMesh.getInstance(), sky);
 //        mc.setCastShadow(false);
 //        mc.setReceiveShadows(false);
-//        skybox.addComponent(mc);
+//        skybox.add(mc);
     }
 
     /**
@@ -276,7 +324,7 @@ public class Example1 {
      */
     private static void other() {
         GameObject stats = new GameObject();
-        stats.addComponent(new Component() {
+        stats.getComponents().add(new Component() {
             long lastUpdate = System.nanoTime();
             long updateLengthSum;
 
@@ -346,9 +394,9 @@ public class Example1 {
         });
 
         GameObject sound = StaticMesh.loadModelToGameObject(new File("res/models/box.obj"));
-        sound.getComponent(MeshComponent.class).getMaterial().setSlot(Material.DIFFUSE, new MaterialSlot(new Vector4f(0, 0, 1, 1)));
+        sound.getComponents().getOne(MeshComponent.class).getMaterial().setSlot(Material.DIFFUSE, new MaterialSlot(new Vector4f(0, 0, 1, 1)));
         AudioSource source = new AudioSource(AudioBuffer.loadSound(new File("res/sounds/music.ogg")));
-        sound.addComponent(new AudioSourceComponent(source));
+        sound.getComponents().add(new AudioSourceComponent(source));
         source.play();
     }
 

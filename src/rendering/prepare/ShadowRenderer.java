@@ -1,23 +1,19 @@
 package rendering.prepare;
 
-import components.light.*;
-import components.light.lightTypes.*;
 import components.renderables.*;
 import core.*;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import rendering.*;
-import rendering.geometry.GeometryRenderer;
-import rendering.prepare.*;
+import rendering.geometry.*;
 import rendering.stages.*;
 import resources.*;
-import resources.meshes.*;
 import resources.shaders.*;
-import resources.splines.*;
 import resources.textures.texture2D.*;
 import toolbox.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 /**
  * Performs shadow map rendering.
@@ -37,13 +33,60 @@ public class ShadowRenderer extends PrepareRenderer {
      */
     private static ShadowRenderer instance;
 
+    private int resolution = 2048;
+    /**
+     * The directional light's shadow camera's distance from the user's camera's
+     * center.
+     */
+    private float distance = 400;
+    /**
+     * The directional light's shadow camera's near plane's distance.
+     */
+    private float nearDistance = 0.1f;
+    /**
+     * The directional light's shadow camera's far plane's distance.
+     */
+    private float farDistance = 10000;
+    /**
+     * Light's projection view matrix.
+     */
+    private final Matrix4f projectionViewMatrix = new Matrix4f();
+    /**
+     * Performs the frustum intersection tests for shadow mapping.
+     */
+    private final FrustumIntersection frustum = new FrustumIntersection();
+
+    /**
+     * Determines whether the frustum culling is enabled.
+     */
+    private boolean frustumCulling = true;
+
+    /**
+     * Determines whether frustum culling is enabled.
+     *
+     * @return true if frustum culling is enabled, false otherwise
+     */
+    public boolean isFrustumCulling() {
+        return frustumCulling;
+    }
+
+    /**
+     * Sets whether or not frustum culling is enabled.
+     *
+     * @param frustumCulling true if frustum culling should be enabled, false
+     *                       otherwise
+     */
+    public void setFrustumCulling(boolean frustumCulling) {
+        this.frustumCulling = frustumCulling;
+    }
+
     /**
      * Creates a new ShadowRenderer.
      * <p>
      */
     private ShadowRenderer() {
         shader = ShadowShader.getInstance();
-        refresh();
+        //refresh();
     }
 
     /**
@@ -60,13 +103,163 @@ public class ShadowRenderer extends PrepareRenderer {
     }
 
     /**
+     * Returns true if the sphere (determined by the given parameters) is
+     * inside, or intersects the frustum and returns false if it is fully
+     * outside. Note that if frustum culling is disabled, or this Component
+     * isn't connected to a GameObject this method always returns true.
+     *
+     * @param position position
+     * @param radius   radius
+     *
+     * @return false if the sphere is fully outside the frustum, true otherwise
+     *
+     * @throws NullPointerException     position can't be null
+     * @throws IllegalArgumentException radius can't be negative
+     * @see Settings#isFrustumCulling()
+     */
+    public boolean isInsideFrustum(@NotNull Vector3f position, float radius) {
+        if (position == null) {
+            throw new NullPointerException();
+        }
+        if (radius < 0) {
+            throw new IllegalArgumentException("Radius can't be negative");
+        }
+        if (isFrustumCulling()) {
+            refresh();
+            return frustum.testSphere(position, radius);
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Returns true if the axis alligned bounding box (determined by the given
+     * parameters) is inside, or intersects the frustum and returns false if it
+     * is fully outside. Note that if frustum culling is disabled, or this
+     * Component isn't connected to a GameObject this method always returns
+     * true.
+     *
+     * @param aabbMin the axis alligned bounding box's minimum x, y and z values
+     * @param aabbMax the axis alligned bounding box's maximum x, y and z values
+     *
+     * @return false if the bounding box is fully outside the frustum, true
+     *         otherwise
+     *
+     * @throws NullPointerException the parameters can't be null
+     * @see Settings#isFrustumCulling()
+     */
+    public boolean isInsideFrustum(@NotNull Vector3f aabbMin, @NotNull Vector3f aabbMax) {
+        if (aabbMin == null || aabbMax == null) {
+            throw new NullPointerException();
+        }
+        if (isFrustumCulling()) {
+            refresh();
+            return frustum.testAab(aabbMin, aabbMax);
+        } else {
+            return true;
+        }
+    }
+
+    public int getResolution() {
+        return resolution;
+    }
+
+    public void setResolution(int resolution) {
+        if (resolution <= 0) {
+            throw new IllegalArgumentException("");
+        }
+        this.resolution = resolution;
+    }
+
+    /**
+     * Returns the shadow camera's distance from the user's camera's center.
+     *
+     * @return the shadow camera's distance from the user's camera's center
+     */
+    public float getShadowCameraDistance() {
+        return distance;
+    }
+
+    /**
+     * Sets the shadow camera's distance from the user's camera's center to the
+     * given value.
+     *
+     * @param shadowCameraDistance the shadow camera's distance from the user's
+     *                             camera's center
+     *
+     * @throws IllegalArgumentException the parameter have to be higher than
+     *                                  zero
+     */
+    public void setShadowCameraDistance(float shadowCameraDistance) {
+        if (shadowCameraDistance <= 0) {
+            throw new IllegalArgumentException("the parameter have to be higher than zero");
+        }
+        this.distance = shadowCameraDistance;
+    }
+
+    /**
+     * Returns the shadow camera's near plane's distance.
+     *
+     * @return the shadow camera's near plane's distance
+     */
+    public float getShadowCameraNearDistance() {
+        return nearDistance;
+    }
+
+    /**
+     * Sets the shadow camera's near plane's distance to the given value.
+     *
+     * @param shadowCameraNearDistance the shadow camera's near plane's distance
+     *
+     * @throws IllegalArgumentException near plane's distance must be higher
+     *                                  than 0 and it can't be higher than the
+     *                                  far plane's distance
+     */
+    public void setShadowCameraNearDistance(float shadowCameraNearDistance) {
+        if (shadowCameraNearDistance <= 0) {
+            throw new IllegalArgumentException("Near plane's distance must be higher than 0");
+        }
+        if (shadowCameraNearDistance > farDistance) {
+            throw new IllegalArgumentException("Near plane's distance can't be higher than the far plane's distance");
+        }
+        this.nearDistance = shadowCameraNearDistance;
+    }
+
+    /**
+     * Returns the shadow camera's far plane's distance.
+     *
+     * @return the shadow camera's far plane's distance
+     */
+    public float getShadowCameraFarDistance() {
+        return farDistance;
+    }
+
+    /**
+     * Sets the shadow camera's far plane's distance to the given value.
+     *
+     * @param shadowCameraFarDistance the shadow camera's far plane's distance
+     *
+     * @throws IllegalArgumentException far plane's distance must be higher than
+     *                                  the near plane's distance
+     */
+    public void setShadowCameraFarDistance(float shadowCameraFarDistance) {
+        if (nearDistance > shadowCameraFarDistance) {
+            throw new IllegalArgumentException("Far plane's distance must be higher than the near plane's distance");
+        }
+        this.farDistance = shadowCameraFarDistance;
+    }
+
+    /**
      * Refreshes the FBO.
      *
      * @see Settings#getShadowMapResolution()
      */
     private void refresh() {
-        if (Settings.isShadowMapping() && isActive()) {
-            if (fbo == null || !fbo.isUsable() || Settings.getShadowMapResolution() != fbo.getSize().x) {
+        if (isActive()) {
+            projectionViewMatrix.set(Utility.computeDirectionalLightProjectionViewMatrix(getShadowCameraDistance(), getShadowCameraNearDistance(), getShadowCameraFarDistance()));
+            frustum.set(projectionViewMatrix);
+            RenderingPipeline.getParameters().setMatrixParameter(RenderingPipeline.MATRIX_SHADOW_PROJECTION_VIEW, new Parameter<>(new Matrix4f(projectionViewMatrix)));
+            if (fbo == null || !fbo.isUsable() || getResolution() != fbo.getSize().x) {
                 releaseFbo();
                 generateFbo();
             }
@@ -84,15 +277,9 @@ public class ShadowRenderer extends PrepareRenderer {
     @Override
     public void render() {
         refresh();
-        if (!Settings.isShadowMapping()) {
-            return;
-        }
 
         beforeShader();
         shader.start();
-
-        DirectionalLightComponent light = (DirectionalLightComponent) Scene.getDirectionalLight();
-        Matrix4f projectionViewMatrix = light.getProjectionViewMatrix();
 
         List<Class<? extends GeometryRenderer>> renderers = new ArrayList<>();
         for (int j = 0; j < RenderingPipeline.getRenderingStageCount(); j++) {
@@ -104,40 +291,26 @@ public class ShadowRenderer extends PrepareRenderer {
                 }
             }
         }
+        RenderableComponents renderables = Scene.getRenderableComponents();
         for (Class<? extends GeometryRenderer> renderer : renderers) {
-            //meshes
-            for (Mesh mesh : Scene.getMeshes(renderer)) {
-                beforeDrawRenderable(mesh);
-                MeshComponent meshComponent;
-                for (int i = 0; i < Scene.getNumberOfMeshComponents(renderer, mesh); i++) {
-                    meshComponent = Scene.getMeshComponent(renderer, mesh, i);
-                    if (meshComponent.isActive() && meshComponent.isMeshActive() && meshComponent.isCastShadow() && isInsideFrustum(meshComponent)) {
-                        beforeDrawMeshInstance(meshComponent, projectionViewMatrix, meshComponent.getGameObject().getTransform().getModelMatrix());
-                        mesh.draw();
+            for (Renderable renderable : renderables.getRenderables(renderer)) {
+                beforeDrawRenderable(renderable);
+                RenderableComponent renderableComponent;
+                for (int i = 0; i < renderables.getRenderableComponentCount(renderer, renderable); i++) {
+                    renderableComponent = renderables.getRenderableComponent(renderer, renderable, i);
+                    if (renderableComponent.isActive() && renderableComponent.isRenderableActive() && renderableComponent.isCastShadow() && isInsideFrustum(renderableComponent)) {
+                        beforeDrawMeshInstance(renderableComponent, projectionViewMatrix, renderableComponent.getGameObject().getTransform().getModelMatrix());
+                        renderable.draw();
                         numberOfRenderedElements++;
-                        numberOfRenderedFaces += mesh.getFaceCount();
+                        numberOfRenderedFaces += renderableComponent.getFaceCount();
                     }
                 }
-                afterDrawRenderable(mesh);
-            }
-            //splines
-            for (Spline spline : Scene.getSplines(renderer)) {
-                beforeDrawRenderable(spline);
-                SplineComponent splineComponent;
-                for (int i = 0; i < Scene.getNumberOfSplineComponents(renderer, spline); i++) {
-                    splineComponent = Scene.getSplineComponent(renderer, spline, i);
-                    if (splineComponent.isActive() && splineComponent.isSplineActive() && splineComponent.isCastShadow() && isInsideFrustum(splineComponent)) {
-                        beforeDrawSplineInstance(projectionViewMatrix, splineComponent.getGameObject().getTransform().getModelMatrix());
-                        spline.draw();
-                        numberOfRenderedElements++;
-                    }
-                }
-                afterDrawRenderable(spline);
+                afterDrawRenderable(renderable);
             }
         }
         shader.stop();
         afterShader();
-        RenderingPipeline.setTextureParameter(RenderingPipeline.TEXTURE_SHADOWMAP, fbo.getTextureAttachment(Fbo.FboAttachmentSlot.DEPTH, 0));
+        RenderingPipeline.getParameters().setTextureParameter(RenderingPipeline.TEXTURE_SHADOWMAP, new Parameter<>(fbo.getTextureAttachment(Fbo.FboAttachmentSlot.DEPTH, 0)));
     }
 
     /**
@@ -188,29 +361,20 @@ public class ShadowRenderer extends PrepareRenderer {
     /**
      * Prepares for rendering the Mesh.
      *
-     * @param meshComponent        MeshComponent
+     * @param renderableComponent  OldMeshComponent
      * @param projectionViewMatrix projection view matrix
      * @param modelMatrix          model matrix
      */
-    private void beforeDrawMeshInstance(MeshComponent meshComponent, @NotNull Matrix4f projectionViewMatrix, @NotNull Matrix4f modelMatrix) {
+    private void beforeDrawMeshInstance(RenderableComponent renderableComponent, @NotNull Matrix4f projectionViewMatrix, @NotNull Matrix4f modelMatrix) {
         loadProjectionViewModelMatrix(projectionViewMatrix, modelMatrix);
-        if (!meshComponent.isTwoSided()) {
-            OpenGl.setFaceCulling(true);
-            GL11.glEnable(GL11.GL_CULL_FACE);
-        } else {
-            OpenGl.setFaceCulling(true);
-            GL11.glDisable(GL11.GL_CULL_FACE);
-        }
-    }
-
-    /**
-     * Prepares for rendering the Spline.
-     *
-     * @param projectionViewMatrix projection view matrix
-     * @param modelMatrix          model matrix
-     */
-    private void beforeDrawSplineInstance(@NotNull Matrix4f projectionViewMatrix, @NotNull Matrix4f modelMatrix) {
-        loadProjectionViewModelMatrix(projectionViewMatrix, modelMatrix);
+        //FIXME two sided
+//        if (!renderableComponent.isTwoSided()) {
+//            OpenGl.setFaceCulling(true);
+//            GL11.glEnable(GL11.GL_CULL_FACE);
+//        } else {
+//            OpenGl.setFaceCulling(true);
+//            GL11.glDisable(GL11.GL_CULL_FACE);
+//        }
     }
 
     /**
@@ -230,8 +394,7 @@ public class ShadowRenderer extends PrepareRenderer {
      */
     private void generateFbo() {
         if (fbo == null || !fbo.isUsable()) {
-            int size = Settings.getShadowMapResolution();
-            fbo = new Fbo(new Vector2i(size), false, 1, false);
+            fbo = new Fbo(new Vector2i(getResolution()), false, 1, false);
             fbo.bind();
             fbo.addAttachment(Fbo.FboAttachmentSlot.DEPTH, Fbo.FboAttachmentType.TEXTURE, 0);
             fbo.setActiveDraw(false, 0);
@@ -247,38 +410,18 @@ public class ShadowRenderer extends PrepareRenderer {
      * Determines whether the given mesh component is inside the directional
      * light's view frustum.
      *
-     * @param meshComponent mesh component
+     * @param renderableComponent mesh component
      *
      * @return true if the mesh component is inside the directional light's view
      *         frustum, false otherwise
      */
-    private boolean isInsideFrustum(@NotNull MeshComponent meshComponent) {
-        DirectionalLight light = Scene.getDirectionalLight();
-        Transform transform = meshComponent.getGameObject().getTransform();
-        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
-            return light.isInsideFrustum(meshComponent.getRealAabbMin(), meshComponent.getRealAabbMax());
-        } else {
-            return light.isInsideFrustum(transform.getAbsolutePosition(), meshComponent.getRealFurthestVertexDistance());
-        }
-    }
-
-    /**
-     * Determines whether the given spline component is inside the directional
-     * light's view frustum.
-     *
-     * @param splineComponent spline component
-     *
-     * @return true if the spline component is inside the directional light's
-     *         view frustum, false otherwise
-     */
-    private boolean isInsideFrustum(@NotNull SplineComponent splineComponent) {
-        DirectionalLight light = Scene.getDirectionalLight();
-        Transform transform = splineComponent.getGameObject().getTransform();
-        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
-            return light.isInsideFrustum(splineComponent.getRealAabbMin(), splineComponent.getRealAabbMax());
-        } else {
-            return light.isInsideFrustum(transform.getAbsolutePosition(), splineComponent.getRealFurthestVertexDistance());
-        }
+    private boolean isInsideFrustum(@NotNull RenderableComponent renderableComponent) {
+        Transform transform = renderableComponent.getGameObject().getTransform();
+//        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
+            return isInsideFrustum(renderableComponent.getRealAabbMin(), renderableComponent.getRealAabbMax());
+//        } else {
+//            return isInsideFrustum(transform.getAbsolutePosition(), renderableComponent.getRealRadius());
+//        }
     }
 
     /**
@@ -293,7 +436,7 @@ public class ShadowRenderer extends PrepareRenderer {
 
     /**
      * Removes the shader program and the FBO from the GPU's memory. After this
- method call you can't use this GeometryRenderer.
+     * method call you can't use this GeometryRenderer.
      */
     @Override
     public void release() {
@@ -316,12 +459,12 @@ public class ShadowRenderer extends PrepareRenderer {
 
     @Override
     public void removeFromRenderingPipeline() {
-        Texture2D shadowMap = RenderingPipeline.getTextureParameter(RenderingPipeline.TEXTURE_SHADOWMAP);
+        Texture2D shadowMap = RenderingPipeline.getParameters().getTextureParameter(RenderingPipeline.TEXTURE_SHADOWMAP).getValue();
         if (shadowMap != null) {
             if (shadowMap.isUsable()) {
                 shadowMap.release();
             }
-            RenderingPipeline.setTextureParameter(RenderingPipeline.TEXTURE_SHADOWMAP, null);
+            RenderingPipeline.getParameters().setTextureParameter(RenderingPipeline.TEXTURE_SHADOWMAP, null);
         }
     }
 

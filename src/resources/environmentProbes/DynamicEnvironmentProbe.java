@@ -1,6 +1,5 @@
 package resources.environmentProbes;
 
-import core.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import resources.*;
@@ -16,18 +15,20 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe {
     private int resolution = 128;
     private int renderingFrequency = 1;
     private final Vector3f position;
-    private static Matrix4f projectionMatrix;
+    private static final Matrix4f projectionMatrix;
     private final Matrix4f[] viewMatrices;
     private Fbo fbo;
+
+    static {
+        projectionMatrix = new Matrix4f().setPerspective(Utility.toRadians(90), 1, 0.001f, 1000);
+    }
 
     //render now and than static
     public DynamicEnvironmentProbe() {
         refresh();
         position = new Vector3f();
-        projectionMatrix = new Matrix4f().setPerspective(Utility.toRadians(90), 1, 0.001f, 1000);
         viewMatrices = new Matrix4f[6];
         refresshViewMatrices();
-        Scene.addProbe(this);
     }
 
     public void refresh() {
@@ -38,7 +39,7 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe {
     public boolean shouldRenderNow() {
         if (renderingFrequency == 0) {
             return true;
-        } else if (GameLoop.getFrameCount() % renderingFrequency == 0) {
+        } else if (Time.getFrameCount() % renderingFrequency == 0) {
             return true;
         }
         return false;
@@ -138,6 +139,12 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe {
         refresh();
     }
 
+    @NotNull @ReadOnly
+    @Override
+    public Vector2i getSize() {
+        return new Vector2i(resolution);
+    }
+
     public int getRenderingFrequency() {
         return renderingFrequency;
     }
@@ -164,7 +171,6 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe {
         return position;
     }
 
-    @Override
     public void setPosition(@NotNull Vector3f position) {
         this.position.set(position);
         refresshViewMatrices();

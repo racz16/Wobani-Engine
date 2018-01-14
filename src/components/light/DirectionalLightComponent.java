@@ -4,8 +4,8 @@ import static components.light.DefaultLightComponent.ubo;
 import components.light.lightTypes.*;
 import core.*;
 import org.joml.*;
-import toolbox.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 /**
  * Basic implementation of a directional light source. It offers you methods for
@@ -17,17 +17,9 @@ import toolbox.annotations.*;
 public class DirectionalLightComponent extends DefaultLightComponent implements DirectionalLight {
 
     /**
-     * Light's projection view matrix.
-     */
-    private final Matrix4f projectionViewMatrix = new Matrix4f();
-    /**
      * Determines wheter the light's data is valid.
      */
     protected boolean valid;
-    /**
-     * Performs the frustum intersection tests for shadow mapping.
-     */
-    private final FrustumIntersection frustum = new FrustumIntersection();
 
     /**
      * Initializes a new DirectionalLightComponent.
@@ -39,9 +31,9 @@ public class DirectionalLightComponent extends DefaultLightComponent implements 
      * Initializes a new DirectionalLightComponent to the given values. All of
      * the parameters's components must be min. 0.
      *
-     * @param diffuse diffuse color
+     * @param diffuse  diffuse color
      * @param specular specular color
-     * @param ambient ambient color
+     * @param ambient  ambient color
      */
     public DirectionalLightComponent(@NotNull Vector3f diffuse, @NotNull Vector3f specular, @NotNull Vector3f ambient) {
         setDiffuseColor(diffuse);
@@ -49,102 +41,11 @@ public class DirectionalLightComponent extends DefaultLightComponent implements 
         setAmbientColor(ambient);
     }
 
-    /**
-     * Returns true if the sphere (determined by the given parameters) is
-     * inside, or intersects the frustum and returns false if it is fully
-     * outside. Note that if frustum culling is disabled, or this Component
-     * isn't connected to a GameObject this method always returns true.
-     *
-     * @param position position
-     * @param radius radius
-     * @return false if the sphere is fully outside the frustum, true otherwise
-     *
-     * @throws NullPointerException position can't be null
-     * @throws IllegalArgumentException radius can't be negative
-     * @see Settings#isFrustumCulling()
-     */
-    @Override
-    public boolean isInsideFrustum(@NotNull Vector3f position, float radius) {
-        if (position == null) {
-            throw new NullPointerException();
-        }
-        if (radius < 0) {
-            throw new IllegalArgumentException("Radius can't be negative");
-        }
-        if (Settings.isFrustumCulling() && getGameObject() != null) {
-            refresh();
-            return frustum.testSphere(position, radius);
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * Returns true if the axis alligned bounding box (determined by the given
-     * parameters) is inside, or intersects the frustum and returns false if it
-     * is fully outside. Note that if frustum culling is disabled, or this
-     * Component isn't connected to a GameObject this method always returns
-     * true.
-     *
-     * @param aabbMin the axis alligned bounding box's minimum x, y and z values
-     * @param aabbMax the axis alligned bounding box's maximum x, y and z values
-     * @return false if the bounding box is fully outside the frustum, true
-     * otherwise
-     *
-     * @throws NullPointerException the parameters can't be null
-     * @see Settings#isFrustumCulling()
-     */
-    @Override
-    public boolean isInsideFrustum(@NotNull Vector3f aabbMin, @NotNull Vector3f aabbMax) {
-        if (aabbMin == null || aabbMax == null) {
-            throw new NullPointerException();
-        }
-        if (Settings.isFrustumCulling() && getGameObject() != null) {
-            refresh();
-            return frustum.testAab(aabbMin, aabbMax);
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * Refreshes this Component's data if it's invalid.
-     */
-    private void refresh() {
-        if (!valid) {
-            if (getGameObject() != null) {
-                projectionViewMatrix.set(Utility.computeDirectionalLightProjectionViewMatrix());
-                frustum.set(projectionViewMatrix);
-            }
-            valid = true;
-        }
-    }
-
-    /**
-     * Returns the light's projection view matrix. If this Component isn't
-     * connected to a GameObject, this method returns null.
-     *
-     * @return the light's projection view matrix
-     */
-    @Nullable @ReadOnly
-    public Matrix4f getProjectionViewMatrix() {
-        if (getGameObject() != null) {
-            refresh();
-            return new Matrix4f(projectionViewMatrix);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void invalidate() {
-        super.invalidate();
-        valid = false;
-    }
-
     @Override
     protected void addLightToUbo() {
-        if (Scene.getDirectionalLight() != this || getUboIndex() != -1 || ubo == null || !ubo.isUsable()) {
+        MainDirectionalLight dirLight = Scene.getParameters().getParameter(MainDirectionalLight.class);
+        DirectionalLight light = dirLight == null ? null : dirLight.getValue();
+        if (light != this || getUboIndex() != -1 || ubo == null || !ubo.isUsable()) {
             return;
         }
         setUboIndex(getMaxNumberOfLights());
@@ -153,7 +54,9 @@ public class DirectionalLightComponent extends DefaultLightComponent implements 
 
     @Override
     protected void removeLightFromUbo() {
-        if (Scene.getDirectionalLight() == this || getUboIndex() == -1 || ubo == null || !ubo.isUsable()) {
+        MainDirectionalLight dirLight = Scene.getParameters().getParameter(MainDirectionalLight.class);
+        DirectionalLight light = dirLight == null ? null : dirLight.getValue();
+        if (light == this || getUboIndex() == -1 || ubo == null || !ubo.isUsable()) {
             return;
         }
         intBuffer.limit(1);
@@ -168,7 +71,9 @@ public class DirectionalLightComponent extends DefaultLightComponent implements 
 
     @Override
     protected void updateUbo() {
-        if (this != Scene.getDirectionalLight() || ubo == null || !ubo.isUsable()) {
+        MainDirectionalLight dirLight = Scene.getParameters().getParameter(MainDirectionalLight.class);
+        DirectionalLight light = dirLight == null ? null : dirLight.getValue();
+        if (this != light || ubo == null || !ubo.isUsable()) {
             return;
         }
         if (getUboIndex() == -1) {
@@ -219,9 +124,11 @@ public class DirectionalLightComponent extends DefaultLightComponent implements 
 
     @Override
     public String toString() {
-        return super.toString() + "\nDirectionalLightComponent{"
-                + "projectionViewMatrix=\n" + projectionViewMatrix
-                + ", valid=" + valid + ", frustum=" + frustum + '}';
+        return "";
+        //FIXME dirlight toString
+//        return super.toString() + "\nDirectionalLightComponent{"
+//                + "projectionViewMatrix=\n" + projectionViewMatrix
+//                + ", valid=" + valid + ", frustum=" + frustum + '}';
     }
 
 }

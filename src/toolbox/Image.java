@@ -29,9 +29,9 @@ public class Image {
      * the STBI library.
      *
      * @param path image's relative path (with extension like
-     * "res/textures/myTexture.png")
+     *             "res/textures/myTexture.png")
      * @param flip true if you want to flip the image upside down, false
-     * otherwise
+     *             otherwise
      *
      * @throws RuntimeException stbi can't load the image
      */

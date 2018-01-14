@@ -87,6 +87,7 @@ public class Vao implements Resource {
      * Creates a new VBO. Each VBO's name must be unique.
      *
      * @param name VBO's name
+     *
      * @return true if the VBO successfully created, false otherwise
      *
      * @throws NullPointerException name can't be null
@@ -108,11 +109,12 @@ public class Vao implements Resource {
     /**
      * Binds the specified VBO and stores the given data in it.
      *
-     * @param vboName vbo's name
+     * @param vboName         vbo's name
      * @param attributeNumber shader's attribute number
-     * @param coordinateSize number of a vector's coordinates
-     * @param data data
-     * @param dynamic true if the data should be dynamic, false otherwise
+     * @param coordinateSize  number of a vector's coordinates
+     * @param data            data
+     * @param dynamic         true if the data should be dynamic, false
+     *                        otherwise
      */
     public void bindAndAddData(@NotNull String vboName, int attributeNumber, int coordinateSize, @NotNull float[] data, boolean dynamic) {
         try (MemoryStack stack = stackPush()) {
@@ -126,15 +128,17 @@ public class Vao implements Resource {
     /**
      * Binds the specified VBO and stores the given data in it.
      *
-     * @param vboName vbo's name
+     * @param vboName         vbo's name
      * @param attributeNumber shader's attribute number
-     * @param coordinateSize number of a vector's coordinates
-     * @param data data
-     * @param dynamic true if the data should be dynamic, false otherwise
+     * @param coordinateSize  number of a vector's coordinates
+     * @param data            data
+     * @param dynamic         true if the data should be dynamic, false
+     *                        otherwise
      *
      * @throws IllegalArgumentException attribute number can't be lower than 0
-     * and coordinate size must be in the (1;4) interval
-     * @throws NullPointerException arguments can't be null
+     *                                  and coordinate size must be in the (1;4)
+     *                                  interval
+     * @throws NullPointerException     arguments can't be null
      */
     public void bindAndAddData(@NotNull String vboName, int attributeNumber, int coordinateSize, @NotNull FloatBuffer data, boolean dynamic) {
         if (data == null) {
@@ -152,14 +156,16 @@ public class Vao implements Resource {
     /**
      * Binds the specified VBO and stores the given data in it.
      *
-     * @param vboName vbo's name
+     * @param vboName         vbo's name
      * @param attributeNumber shader's attribute number
-     * @param coordinateSize number of a vector's coordinates
-     * @param data data
-     * @param dynamic true if the data should be dynamic, false otherwise
+     * @param coordinateSize  number of a vector's coordinates
+     * @param data            data
+     * @param dynamic         true if the data should be dynamic, false
+     *                        otherwise
      *
      * @throws IllegalArgumentException attribute number can't be lower than 0
-     * and coordinate size must be in the (1;4) interval
+     *                                  and coordinate size must be in the (1;4)
+     *                                  interval
      */
     public void bindAndAddData(@NotNull String vboName, int attributeNumber, int coordinateSize, @NotNull AIVector3D.Buffer data, boolean dynamic) {
         if (attributeNumber < 0 || coordinateSize < 1 || coordinateSize > 4) {
@@ -191,9 +197,10 @@ public class Vao implements Resource {
      * Returns the specified VBO's id.
      *
      * @param name VBO's name
+     *
      * @return VBO's id
      *
-     * @throws NullPointerException name can't be null
+     * @throws NullPointerException     name can't be null
      * @throws IllegalArgumentException there is no such a VBO
      */
     public int getVbo(@NotNull String name) {
@@ -211,7 +218,7 @@ public class Vao implements Resource {
      *
      * @param name VBO's name
      *
-     * @throws NullPointerException name can't be null
+     * @throws NullPointerException     name can't be null
      * @throws IllegalArgumentException there is no such a VBO
      */
     public void removeVbo(@NotNull String name) {

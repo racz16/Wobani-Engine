@@ -17,6 +17,7 @@ public abstract class DynamicTexture extends AbstractTexture {
      * Returns the texture's specified wrap mode.
      *
      * @param type texture wrap direction
+     *
      * @return the texture's specified wrap mode
      */
     @NotNull
@@ -28,7 +29,7 @@ public abstract class DynamicTexture extends AbstractTexture {
      * Sets the texture's specified wrap mode to the given value.
      *
      * @param type texture wrap direction
-     * @param tw texture wrap
+     * @param tw   texture wrap
      */
     @Bind
     public void setTextureWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap tw) {
@@ -39,6 +40,7 @@ public abstract class DynamicTexture extends AbstractTexture {
      * Returns the texture's specified filter mode.
      *
      * @param type texture filter type
+     *
      * @return the texture's specified filter mode
      */
     @NotNull
@@ -49,7 +51,7 @@ public abstract class DynamicTexture extends AbstractTexture {
     /**
      * Sets the texture's specified filter to the given value.
      *
-     * @param type texture filter type
+     * @param type  texture filter type
      * @param value texture filter
      */
     @Bind

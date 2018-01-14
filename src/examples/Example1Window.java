@@ -12,6 +12,7 @@ import resources.*;
 import resources.textures.EasyFiltering.TextureFiltering;
 import toolbox.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 import window.*;
 
 /**
@@ -60,10 +61,9 @@ public class Example1Window extends javax.swing.JFrame {
         spWidth.setValue(Window.getClientAreaSize().x);
         spHeight.setValue(Window.getClientAreaSize().y);
         cbFullscreen.setSelected(Window.isFullscreen());
-        cbShadows.setSelected(Settings.isShadowMapping());
-        setSelectedItem(Settings.getShadowMapResolution(), cbShadowMapSize);
-        setSelectedItem(Settings.getMsaaLevel(), cbMsaa);
-        cbTextureFiltering.setSelectedIndex(Settings.getTextureFiltering().getIndex());
+        Parameter<Integer> msaaParameter = RenderingPipeline.getParameters().getIntParameter(RenderingPipeline.INT_MSAA_LEVEL);
+        setSelectedItem(Parameter.getValueOrDefault(msaaParameter, 2), cbMsaa);
+        cbTextureFiltering.setSelectedIndex(ResourceManager.getTextureFiltering().getIndex());
         cbVSync.setSelectedIndex(Window.getVSync());
     }
 
@@ -253,25 +253,25 @@ public class Example1Window extends javax.swing.JFrame {
         if (textureFilteringChanged) {
             switch (cbTextureFiltering.getSelectedIndex()) {
                 case 0:
-                    Settings.setTextureFiltering(TextureFiltering.NONE);
+                    ResourceManager.setTextureFiltering(TextureFiltering.NONE);
                     break;
                 case 1:
-                    Settings.setTextureFiltering(TextureFiltering.BILINEAR);
+                    ResourceManager.setTextureFiltering(TextureFiltering.BILINEAR);
                     break;
                 case 2:
-                    Settings.setTextureFiltering(TextureFiltering.TRILINEAR);
+                    ResourceManager.setTextureFiltering(TextureFiltering.TRILINEAR);
                     break;
                 case 3:
-                    Settings.setTextureFiltering(TextureFiltering.ANISOTROPIC_2X);
+                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_2X);
                     break;
                 case 4:
-                    Settings.setTextureFiltering(TextureFiltering.ANISOTROPIC_4X);
+                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_4X);
                     break;
                 case 5:
-                    Settings.setTextureFiltering(TextureFiltering.ANISOTROPIC_8X);
+                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_8X);
                     break;
                 case 6:
-                    Settings.setTextureFiltering(TextureFiltering.ANISOTROPIC_16X);
+                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_16X);
                     break;
                 default:
                     Utility.log("Undefined texture filtering");
@@ -283,10 +283,11 @@ public class Example1Window extends javax.swing.JFrame {
             vSyncChanged = false;
         }
         if (gammaChanged) {
+            Parameter<Float> gamma = RenderingPipeline.getParameters().getFloatParameter(RenderingPipeline.FLOAT_GAMMA);
             if (!cbGammaCorrection.isSelected()) {
-                Settings.setGamma(1);
+                gamma.setValue(1f);
             } else {
-                Settings.setGamma((float) spGammaValue.getValue());
+                gamma.setValue((float) spGammaValue.getValue());
             }
             gammaChanged = false;
         }
@@ -763,6 +764,7 @@ public class Example1Window extends javax.swing.JFrame {
         jLabel7.setText("Texture filtering");
 
         cbTextureFiltering.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "Bilinear", "Trilinear", "Anisotropic 2x", "Anisotropic 4x", "Anisotropic 8x", "Anisotropic 16x" }));
+        cbTextureFiltering.setSelectedIndex(3);
         cbTextureFiltering.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 setTextureFiltering(evt);
@@ -1007,7 +1009,8 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setShadowMapSize(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setShadowMapSize
-        Settings.setShadowMapResolution(Integer.valueOf(cbShadowMapSize.getItemAt(cbShadowMapSize.getSelectedIndex())));
+        //FIXME shadowmap resolution change
+//        Settings.setShadowMapResolution(Integer.valueOf(cbShadowMapSize.getItemAt(cbShadowMapSize.getSelectedIndex())));
     }//GEN-LAST:event_setShadowMapSize
 
     /**
@@ -1035,7 +1038,7 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setWireframeMode(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setWireframeMode
-        Settings.setWireframeMode(cbWireframe.isSelected());
+        RenderingPipeline.getParameters().setBooleanParameter(RenderingPipeline.BOOLEAN_WIREFRAME_MODE, new Parameter<>(cbWireframe.isSelected()));
     }//GEN-LAST:event_setWireframeMode
 
     /**
@@ -1044,7 +1047,10 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setFrustumCulling(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setFrustumCulling
-        Settings.setFrustumCulling(cbFrustumCulling.isSelected());
+        MainCamera mainCamera = Scene.getParameters().getParameter(MainCamera.class);
+        if (mainCamera != null) {//????
+            mainCamera.getValue().setFrustumCulling(cbFrustumCulling.isSelected());
+        }
     }//GEN-LAST:event_setFrustumCulling
 
     /**
@@ -1053,7 +1059,15 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setShadows(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setShadows
-        Settings.setShadowMapping(cbShadows.isSelected());
+        //FIXME: shadow rendering on/off
+//        Renderer renderer;
+//        for (int i = 0; i < RenderingPipeline.getRenderingStage(0).getRendererCount(); i++) {
+//            renderer = RenderingPipeline.getRenderingStage(0).getRenderer(i);
+//            if (renderer.getClass() == ShadowRenderer.class) {
+//                renderer.setActive(cbShadows.isSelected());
+//                return;
+//            }
+//        }
     }//GEN-LAST:event_setShadows
 
     /**
@@ -1098,11 +1112,17 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setMsaa(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setMsaa
+        Parameter<Integer> msaa = RenderingPipeline.getParameters().getIntParameter(RenderingPipeline.INT_MSAA_LEVEL);
+        if (msaa == null) {
+            msaa = new Parameter<>(2);
+            RenderingPipeline.getParameters().setIntParameter(RenderingPipeline.INT_MSAA_LEVEL, msaa);
+        }
+
         if (cbMsaa.getSelectedIndex() == 0) {
-            Settings.setMsaaLevel(1);
+            msaa.setValue(1);
             return;
         }
-        Settings.setMsaaLevel(2 << cbMsaa.getSelectedIndex() - 1);
+        msaa.setValue(2 << cbMsaa.getSelectedIndex() - 1);
     }//GEN-LAST:event_setMsaa
 
     /**

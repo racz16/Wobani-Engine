@@ -1,5 +1,6 @@
 package rendering.prepare;
 
+import components.environmentProbes.*;
 import components.renderables.*;
 import core.*;
 import java.util.*;
@@ -11,7 +12,6 @@ import rendering.geometry.*;
 import rendering.stages.*;
 import resources.*;
 import resources.environmentProbes.*;
-import resources.meshes.*;
 import resources.shaders.*;
 import toolbox.*;
 import toolbox.annotations.*;
@@ -58,13 +58,13 @@ public class EnvironmentMapRenderer extends PrepareRenderer {
             }
         }
 
-        for (int probeIndex = 0; probeIndex < Scene.getProbeCount(); probeIndex++) {
-            DynamicEnvironmentProbe probe = Scene.getProbe(probeIndex);
+        for (int probeIndex = 0; probeIndex < Scene.getComponentLists().getComponentCount(DynamicEnvironmentProbeComponent.class); probeIndex++) {
+            DynamicEnvironmentProbe probe = Scene.getComponentLists().getComponent(DynamicEnvironmentProbeComponent.class, probeIndex).getProbe();
             if (!probe.shouldRenderNow()) {
                 continue;
             }
             probe.refresh();
-            OpenGl.setViewport(new Vector2i(probe.getResolution()), new Vector2i());
+            OpenGl.setViewport(probe.getSize(), new Vector2i());
 
             probe.bindCubeMap();
             probe.bindFbo();
@@ -86,25 +86,26 @@ public class EnvironmentMapRenderer extends PrepareRenderer {
 //                    OpenGl.setClearColor(new Vector4f(0, 1, 1, 1));
 //                }
                 OpenGl.clear(true, true, false);
+                RenderableComponents renderables = Scene.getRenderableComponents();
                 for (Class<? extends GeometryRenderer> renderer : renderers) {
-                    for (Mesh mesh : Scene.getMeshes(renderer)) {
-                        beforeDrawRenderable(mesh);
-                        MeshComponent meshComponent;
-                        for (int i = 0; i < Scene.getNumberOfMeshComponents(renderer, mesh); i++) {
-                            meshComponent = Scene.getMeshComponent(renderer, mesh, i);
-                            if (meshComponent.isActive() && meshComponent.isMeshActive() && meshComponent.getRealFurthestVertexDistance() >= probe.getMinSize() && meshComponent.getGameObject().getTransform().getAbsolutePosition().distance(probe.getPosition()) <= probe.getMaxDistance()) {
-                                beforeDrawInstance(meshComponent);
-                                meshComponent.getMesh().draw();
+                    for (Renderable renderable : renderables.getRenderables(renderer)) {
+                        beforeDrawRenderable(renderable);
+                        RenderableComponent renderableComponent;
+                        for (int i = 0; i < renderables.getRenderableComponentCount(renderer, renderable); i++) {
+                            renderableComponent = renderables.getRenderableComponent(renderer, renderable, i);
+                            if (renderableComponent.isActive() && renderableComponent.isRenderableActive() && renderableComponent.getRealRadius() >= probe.getMinSize() && renderableComponent.getGameObject().getTransform().getAbsolutePosition().distance(probe.getPosition()) <= probe.getMaxDistance()) {
+                                beforeDrawInstance(renderableComponent);
+                                renderableComponent.getRenderable().draw();
                                 numberOfRenderedElements++;
-                                numberOfRenderedFaces += mesh.getFaceCount();
+                                numberOfRenderedFaces += renderableComponent.getFaceCount();
                             }
                         }
-                        afterDrawRenderable(mesh);
+                        afterDrawRenderable(renderable);
                     }
                 }
 
 //                for (int meshIndex = 0; meshIndex < Scene.getReflectablesCount(); meshIndex++) {
-//                    MeshComponent meshComponent = Scene.getReflectable(meshIndex);
+//                    OldMeshComponent meshComponent = Scene.getReflectable(meshIndex);
 //                    beforeDrawRenderable(meshComponent.getMesh());
 //                    if (meshComponent.isActive() && meshComponent.isMeshActive() && meshComponent.getRealFurthestVertexDistance() >= probe.getMinSize() && meshComponent.getGameObject().getTransform().getAbsolutePosition().distance(probe.getPosition()) <= probe.getMaxDistance()) {
 //                        beforeDrawInstance(meshComponent);
@@ -164,22 +165,23 @@ public class EnvironmentMapRenderer extends PrepareRenderer {
     }
 
     /**
-     * Prepares the MeshComponent to the rendering.
+     * Prepares the OldMeshComponent to the rendering.
      *
-     * @param rc MeshComponent
+     * @param rc OldMeshComponent
      */
-    private void beforeDrawInstance(@NotNull MeshComponent rc) {
-//        numberOfRenderedElements++;
-//        numberOfRenderedFaces += rc.getMesh().getFaceCount();
+    private void beforeDrawInstance(@NotNull RenderableComponent rc) {
+        numberOfRenderedElements++;
+        numberOfRenderedFaces += rc.getFaceCount();
         Transform transform = rc.getGameObject().getTransform();
         shader.loadObjectUniforms(transform.getModelMatrix(), new Matrix3f(transform.getInverseModelMatrix()));
         Material material = rc.getMaterial();
         shader.loadMaterial(material);
-        if (!rc.isTwoSided()) {
-            OpenGl.setFaceCulling(true);
-        } else {
-            OpenGl.setFaceCulling(false);
-        }
+        //FIXME two sided
+//        if (!rc.isTwoSided()) {
+//            OpenGl.setFaceCulling(true);
+//        } else {
+//            OpenGl.setFaceCulling(false);
+//        }
     }
 
     @Override

@@ -5,6 +5,7 @@ import java.util.*;
 import org.joml.*;
 import resources.audio.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 /**
  * Audio sources can emit sounds. The audio sources' position, orientation and
@@ -83,7 +84,7 @@ public class AudioSourceComponent extends Component {
      * audio listener.
      *
      * @param directional true if it should be a directional audio source, false
-     * otherwise
+     *                    otherwise
      */
     public void setDirectionalSource(boolean directional) {
         directionalSource = directional;
@@ -101,12 +102,12 @@ public class AudioSourceComponent extends Component {
             if (isDirectionalSource()) {
                 source.setDirection(forward);
             } else {
-                AudioListenerComponent alc = Scene.getAudioListener();
-                if (alc == null) {
+                MainAudioListener mainAudio = Scene.getParameters().getParameter(MainAudioListener.class);
+                if (mainAudio == null) {
                     source.setDirection(forward);
                 } else {
                     Vector3f direction = new Vector3f();
-                    alc.getGameObject().getTransform().getAbsolutePosition().sub(currentPosition, direction);
+                    mainAudio.getValue().getGameObject().getTransform().getAbsolutePosition().sub(currentPosition, direction);
                     source.setDirection(direction.normalize());
                 }
             }

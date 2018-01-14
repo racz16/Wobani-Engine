@@ -14,13 +14,14 @@ public interface KeyboardEventHandler {
      * standard US keyboard layout. If you want to input text, use the other two
      * methods.
      *
-     * @param key the keyboard key that was pressed or released
-     * @param scancode the system-specific scancode of the key
-     * @param action determines whether the key pressed, repeated or released
-     * @param shiftPressed determines whether the shift is pressed
+     * @param key            the keyboard key that was pressed or released
+     * @param scancode       the system-specific scancode of the key
+     * @param action         determines whether the key pressed, repeated or
+     *                       released
+     * @param shiftPressed   determines whether the shift is pressed
      * @param controlPressed determines whether the control is pressed
-     * @param altPressed determines whether the alt is pressed
-     * @param superPressed determines whether the super is pressed
+     * @param altPressed     determines whether the alt is pressed
+     * @param superPressed   determines whether the super is pressed
      */
     public void keyCallback(Key key, int scancode, KeyStatus action, boolean shiftPressed, boolean controlPressed, boolean altPressed, boolean superPressed);
 
@@ -36,7 +37,7 @@ public interface KeyboardEventHandler {
      * key on Windows. There is SetCharModsCallback that receives these events.
      *
      * @param codepoint the Unicode code point of the character (you may cast it
-     * to char)
+     *                  to char)
      */
     public void charCallback(int codepoint);
 
@@ -50,12 +51,12 @@ public interface KeyboardEventHandler {
      * may produce zero, one or more characters. If you want to know whether a
      * specific physical key was pressed or released, see keyCallback instead.
      *
-     * @param codepoint the Unicode code point of the character (you may cast it
-     * to char)
-     * @param shiftPressed determines whether the shift is pressed
+     * @param codepoint      the Unicode code point of the character (you may
+     *                       cast it to char)
+     * @param shiftPressed   determines whether the shift is pressed
      * @param controlPressed determines whether the control is pressed
-     * @param altPressed determines whether the alt is pressed
-     * @param superPressed determines whether the super is pressed
+     * @param altPressed     determines whether the alt is pressed
+     * @param superPressed   determines whether the super is pressed
      */
     public void charModsCallback(int codepoint, boolean shiftPressed, boolean controlPressed, boolean altPressed, boolean superPressed);
 }

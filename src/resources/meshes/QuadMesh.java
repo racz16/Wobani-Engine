@@ -102,7 +102,7 @@ public class QuadMesh implements Mesh {
     }
 
     @Override
-    public float getFurthestVertexDistance() {
+    public float getRadius() {
         return (float) Math.sqrt(2);
     }
 

@@ -7,21 +7,20 @@ import org.joml.*;
 import org.lwjgl.opengl.*;
 import rendering.*;
 import resources.*;
-import resources.meshes.*;
 import resources.shaders.*;
-import resources.splines.*;
 import resources.textures.texture2D.*;
 import toolbox.*;
 import toolbox.annotations.*;
+import toolbox.parameters.*;
 
 /**
  * This GeometryRenderer can draw meshes and splines by using the Blinn-Phong
- shading. You can fill the materials with diffuse color or diffuse map,
- specular color or specular map and normal map. If you set the appropirate
- parameters, the specular map's alpha channel used as the glossiness value and
- the normal map's alpha channel as a parallax map. If you don't fill the
- diffuse or specular slots, the shader uses default values (basically you can
- even use this GeometryRenderer with an empty material).
+ * shading. You can fill the materials with diffuse color or diffuse map,
+ * specular color or specular map and normal map. If you set the appropirate
+ * parameters, the specular map's alpha channel used as the glossiness value and
+ * the normal map's alpha channel as a parallax map. If you don't fill the
+ * diffuse or specular slots, the shader uses default values (basically you can
+ * even use this GeometryRenderer with an empty material).
  *
  * @see Material#PARAM_POM_MAX_LAYERS_F
  * @see Material#PARAM_POM_MIN_LAYERS_F
@@ -68,31 +67,18 @@ public class BlinnPhongRenderer extends GeometryRenderer {
     public void render() {
         beforeDrawShader();
         Class<BlinnPhongRenderer> renderer = BlinnPhongRenderer.class;
-        //meshes
-        for (Mesh mesh : Scene.getMeshes(renderer)) {
-            beforeDrawRenderable(mesh);
-            MeshComponent meshComponent;
-            for (int i = 0; i < Scene.getNumberOfMeshComponents(renderer, mesh); i++) {
-                meshComponent = Scene.getMeshComponent(renderer, mesh, i);
-                if (meshComponent.isActive() && meshComponent.isMeshActive() && Utility.isInsideFrustum(meshComponent)) {
-                    beforeDrawInstance(meshComponent);
-                    mesh.draw();
+        RenderableComponents renderables = Scene.getRenderableComponents();
+        for (Renderable renderable : renderables.getRenderables(renderer)) {
+            beforeDrawRenderable(renderable);
+            RenderableComponent<?> renderableComponent;
+            for (int i = 0; i < renderables.getRenderableComponentCount(renderer, renderable); i++) {
+                renderableComponent = renderables.getRenderableComponent(renderer, renderable, i);
+                if (renderableComponent.isActive() && renderableComponent.isRenderableActive() && Utility.isInsideFrustum(renderableComponent)) {
+                    beforeDrawInstance(renderableComponent);
+                    renderable.draw();
                 }
             }
-            afterDrawRenderable(mesh);
-        }
-        //splines
-        for (Spline spline : Scene.getSplines(renderer)) {
-            beforeDrawRenderable(spline);
-            SplineComponent splineComponent;
-            for (int i = 0; i < Scene.getNumberOfSplineComponents(renderer, spline); i++) {
-                splineComponent = Scene.getSplineComponent(renderer, spline, i);
-                if (splineComponent.isActive() && splineComponent.isSplineActive() && Utility.isInsideFrustum(splineComponent)) {
-                    beforeDrawInstance(splineComponent);
-                    spline.draw();
-                }
-            }
-            afterDrawRenderable(spline);
+            afterDrawRenderable(renderable);
         }
         shader.stop();
         OpenGl.setFaceCulling(true);
@@ -109,13 +95,14 @@ public class BlinnPhongRenderer extends GeometryRenderer {
         shader.loadGlobalUniforms();
         RenderingPipeline.bindFbo();
         OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
-        OpenGl.setWireframe(Settings.isWireframeMode());
+        Parameter<Boolean> wirefreame = RenderingPipeline.getParameters().getBooleanParameter(RenderingPipeline.BOOLEAN_WIREFRAME_MODE);
+        OpenGl.setWireframe(Parameter.getValueOrDefault(wirefreame, false));
         numberOfRenderedElements = 0;
         numberOfRenderedFaces = 0;
         //shadow map
-        Texture2D shadowMap = RenderingPipeline.getTextureParameter(RenderingPipeline.TEXTURE_SHADOWMAP);
+        Parameter<Texture2D> shadowMap = RenderingPipeline.getParameters().getTextureParameter(RenderingPipeline.TEXTURE_SHADOWMAP);
         if (shadowMap != null) {
-            shadowMap.bindToTextureUnit(0);
+            shadowMap.getValue().bindToTextureUnit(0);
         }
     }
 
@@ -145,36 +132,19 @@ public class BlinnPhongRenderer extends GeometryRenderer {
         renderable.afterDraw();
     }
 
-    /**
-     * Prepares the MeshComponent to the rendering.
-     *
-     * @param rc MeshComponent
-     */
-    private void beforeDrawInstance(@NotNull MeshComponent rc) {
+    private void beforeDrawInstance(@NotNull RenderableComponent rc) {
         numberOfRenderedElements++;
-        numberOfRenderedFaces += rc.getMesh().getFaceCount();
+        numberOfRenderedFaces += rc.getFaceCount();
         Transform transform = rc.getGameObject().getTransform();
         shader.loadObjectUniforms(transform.getModelMatrix(), new Matrix3f(transform.getInverseModelMatrix()), rc.isReceiveShadows());
         Material material = rc.getMaterial();
         shader.loadMaterial(material);
-        if (!rc.isTwoSided()) {
-            OpenGl.setFaceCulling(true);
-        } else {
-            OpenGl.setFaceCulling(false);
-        }
-    }
-
-    /**
-     * Prepares the SplineComponent to the rendering.
-     *
-     * @param rc SplineComponent
-     */
-    private void beforeDrawInstance(@NotNull SplineComponent rc) {
-        numberOfRenderedElements++;
-        Transform transform = rc.getGameObject().getTransform();
-        shader.loadObjectUniforms(transform.getModelMatrix(), new Matrix3f(transform.getInverseModelMatrix()), rc.isReceiveShadows());
-        Material material = rc.getMaterial();
-        shader.loadMaterial(material);
+        //FIXME two sided
+//        if (!rc.isTwoSided()) {
+//            OpenGl.setFaceCulling(true);
+//        } else {
+//            OpenGl.setFaceCulling(false);
+//        }
     }
 
     /**

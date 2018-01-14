@@ -24,10 +24,11 @@ public interface Renderable extends Resource {
      * getScaledFurthestVertexDistance() method.
      *
      * @return furthest vertex distance
+     *
      * @see MeshComponent#getRealFurthestVertexDistance()
      * @see SplineComponent#getRealFurthestVertexDistance()
      */
-    public float getFurthestVertexDistance();
+    public float getRadius();
 
     /**
      * Returns the axis alligned bounding box's minimum x, y and z values.

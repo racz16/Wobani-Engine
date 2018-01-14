@@ -6,5 +6,5 @@ public interface EnvironmentProbe {
 
     public void bindToTextureUnit(int textureUnit);
 
-    public void setPosition(Vector3f position);
+    public Vector2i getSize();
 }

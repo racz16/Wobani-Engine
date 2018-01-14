@@ -34,16 +34,16 @@ public class DynamicTexture2D extends DynamicTexture implements Texture2D {
      * Initializes a new DynamicTexture to the given parameter.
      *
      * @param attachmentType texture's attachment type
-     * @param size texture's width and height
-     * @param floatingPoint texture store color attachments as floating point
-     * values or not
-     * @param multisampled multisampled
-     * @param samples number of samples, if the texture isn't multisampled, it
-     * can be anything
-     * @param image texture's image data, if the texture is multisampled, it
-     * doesn't used
+     * @param size           texture's width and height
+     * @param floatingPoint  texture store color attachments as floating point
+     *                       values or not
+     * @param multisampled   multisampled
+     * @param samples        number of samples, if the texture isn't
+     *                       multisampled, it can be anything
+     * @param image          texture's image data, if the texture is
+     *                       multisampled, it doesn't used
      *
-     * @throws NullPointerException attachmentType and size can't be null
+     * @throws NullPointerException     attachmentType and size can't be null
      * @throws IllegalArgumentException width and height must be positive
      * @throws IllegalArgumentException samples can't be lower than 1
      */
@@ -113,6 +113,7 @@ public class DynamicTexture2D extends DynamicTexture implements Texture2D {
      * Returns the texture's specified wrap mode.
      *
      * @param type texture wrap direction
+     *
      * @return the texture's specified wrap mode
      *
      * @throws IllegalArgumentException w direction can't apply to a 2D texture
@@ -130,7 +131,7 @@ public class DynamicTexture2D extends DynamicTexture implements Texture2D {
      * Sets the texture's specified wrap mode to the given value.
      *
      * @param type texture wrap direction
-     * @param tw texture wrap
+     * @param tw   texture wrap
      *
      * @throws IllegalArgumentException w direction can't apply to a 2D texture
      */
