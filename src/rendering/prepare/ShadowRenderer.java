@@ -299,8 +299,8 @@ public class ShadowRenderer extends PrepareRenderer {
                 for (int i = 0; i < renderables.getRenderableComponentCount(renderer, renderable); i++) {
                     renderableComponent = renderables.getRenderableComponent(renderer, renderable, i);
                     if (renderableComponent.isActive() && renderableComponent.isRenderableActive() && renderableComponent.isCastShadow() && isInsideFrustum(renderableComponent)) {
-                        beforeDrawMeshInstance(renderableComponent, projectionViewMatrix, renderableComponent.getGameObject().getTransform().getModelMatrix());
-                        renderable.draw();
+                        beforeDrawMeshInstance(projectionViewMatrix, renderableComponent.getGameObject().getTransform().getModelMatrix());
+                        renderableComponent.draw();
                         numberOfRenderedElements++;
                         numberOfRenderedFaces += renderableComponent.getFaceCount();
                     }
@@ -365,25 +365,7 @@ public class ShadowRenderer extends PrepareRenderer {
      * @param projectionViewMatrix projection view matrix
      * @param modelMatrix          model matrix
      */
-    private void beforeDrawMeshInstance(RenderableComponent renderableComponent, @NotNull Matrix4f projectionViewMatrix, @NotNull Matrix4f modelMatrix) {
-        loadProjectionViewModelMatrix(projectionViewMatrix, modelMatrix);
-        //FIXME two sided
-//        if (!renderableComponent.isTwoSided()) {
-//            OpenGl.setFaceCulling(true);
-//            GL11.glEnable(GL11.GL_CULL_FACE);
-//        } else {
-//            OpenGl.setFaceCulling(true);
-//            GL11.glDisable(GL11.GL_CULL_FACE);
-//        }
-    }
-
-    /**
-     * Loads the projection view model matrix to the shader as uniform variable.
-     *
-     * @param projectionViewMatrix projection view matrix
-     * @param modelMatrix          model matrix
-     */
-    private void loadProjectionViewModelMatrix(@NotNull Matrix4f projectionViewMatrix, @NotNull Matrix4f modelMatrix) {
+    private void beforeDrawMeshInstance(@NotNull Matrix4f projectionViewMatrix, @NotNull Matrix4f modelMatrix) {
         Matrix4f projectionViewModelMatrix = new Matrix4f();
         projectionViewMatrix.mul(modelMatrix, projectionViewModelMatrix);
         shader.loadProjectionViewModelMatrix(projectionViewModelMatrix);
@@ -418,7 +400,7 @@ public class ShadowRenderer extends PrepareRenderer {
     private boolean isInsideFrustum(@NotNull RenderableComponent renderableComponent) {
         Transform transform = renderableComponent.getGameObject().getTransform();
 //        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
-            return isInsideFrustum(renderableComponent.getRealAabbMin(), renderableComponent.getRealAabbMax());
+        return isInsideFrustum(renderableComponent.getBoundingShape().getRealAabbMin(), renderableComponent.getBoundingShape().getRealAabbMax());
 //        } else {
 //            return isInsideFrustum(transform.getAbsolutePosition(), renderableComponent.getRealRadius());
 //        }

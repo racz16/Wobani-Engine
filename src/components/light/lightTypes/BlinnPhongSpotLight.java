@@ -1,9 +1,9 @@
 package components.light.lightTypes;
 
 /**
- * This interface signs that the Component is a spot light source.
+ * This interface signs that the Component is a Blinn-Phong spot light source.
  */
-public interface SpotLight extends Light {
+public interface BlinnPhongSpotLight extends BlinnPhongLight {
 
     /**
      * Returns the attenuation's constant component.

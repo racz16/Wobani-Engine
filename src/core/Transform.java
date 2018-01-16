@@ -341,7 +341,7 @@ public class Transform implements Invalidatable {
      */
     private void refreshMatrices() {
         modelMatrix.set(Utility.computeModelMatrix(absolutePosition, absoluteRotation, absoluteScale));
-        inverseModelMatrix.set(Utility.computetInverseModelMatrix(new Vector3f(0), absoluteRotation, absoluteScale));
+        inverseModelMatrix.set(Utility.computetInverseModelMatrix(absolutePosition, absoluteRotation, absoluteScale));
     }
 
     /**

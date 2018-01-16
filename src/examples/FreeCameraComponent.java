@@ -1,6 +1,6 @@
 package examples;
 
-import components.camera.CameraComponent;
+import components.camera.*;
 import core.*;
 import org.joml.*;
 import toolbox.*;
@@ -33,7 +33,6 @@ public class FreeCameraComponent extends CameraComponent {
      * This method allows the user to control camera movement and rotation the
      * following ways: W - move forward, A - move left, S - move backward, D -
      * move right, Q - turn left, E - turn right, SHIFT - boost movement speed.
-     * <p>
      */
     @Override
     public void update() {

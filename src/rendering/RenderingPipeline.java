@@ -244,7 +244,7 @@ public class RenderingPipeline {
         OpenGl.clear(true, true, false);
         //is there camera and dir light?
         MainCamera mainCamera = Scene.getParameters().getParameter(MainCamera.class);
-        MainDirectionalLight dirLight = Scene.getParameters().getParameter(MainDirectionalLight.class);
+        BlinnPhongMainDirectionalLight dirLight = Scene.getParameters().getParameter(BlinnPhongMainDirectionalLight.class);
         if (mainCamera == null || !mainCamera.getValue().isActive() || dirLight == null || !dirLight.getValue().isActive()) {
             throw new IllegalStateException("There is no active main directiona light or camera");
         }

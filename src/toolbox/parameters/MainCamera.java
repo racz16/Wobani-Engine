@@ -21,7 +21,7 @@ public class MainCamera extends UniqueParameter<Camera> {
 
     @Override
     protected void removedFromParameters(@Nullable UniqueParameter<Camera> added) {
-        MainDirectionalLight dirLight = Scene.getParameters().getParameter(MainDirectionalLight.class);
+        BlinnPhongMainDirectionalLight dirLight = Scene.getParameters().getParameter(BlinnPhongMainDirectionalLight.class);
         if (dirLight != null) {
             getValue().removeInvalidatable(dirLight.getValue());
         }
@@ -32,7 +32,7 @@ public class MainCamera extends UniqueParameter<Camera> {
         if (getValue().getGameObject() == null) {
             throw new IllegalArgumentException();
         }
-        MainDirectionalLight dirLight = Scene.getParameters().getParameter(MainDirectionalLight.class);
+        BlinnPhongMainDirectionalLight dirLight = Scene.getParameters().getParameter(BlinnPhongMainDirectionalLight.class);
         if (dirLight != null) {
             getValue().addInvalidatable(dirLight.getValue());
         }

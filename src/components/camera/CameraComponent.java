@@ -75,32 +75,10 @@ public class CameraComponent extends Component implements Camera {
      * FloatBuffer for frequent UBO updates.
      */
     private static FloatBuffer temp;
-
     /**
      * Determines whether the frustum culling is enabled.
      */
     private boolean frustumCulling = true;
-
-    /**
-     * Determines whether frustum culling is enabled.
-     *
-     * @return true if frustum culling is enabled, false otherwise
-     */
-    @Override
-    public boolean isFrustumCulling() {
-        return frustumCulling;
-    }
-
-    /**
-     * Sets whether or not frustum culling is enabled.
-     *
-     * @param frustumCulling true if frustum culling should be enabled, false
-     *                       otherwise
-     */
-    @Override
-    public void setFrustumCulling(boolean frustumCulling) {
-        this.frustumCulling = frustumCulling;
-    }
 
     static {
         createUbo();
@@ -133,6 +111,27 @@ public class CameraComponent extends Component implements Camera {
         setFov(fov);
         setNearPlaneDistance(nearPlane);
         setFarPlaneDistance(farPlane);
+    }
+
+    /**
+     * Determines whether frustum culling is enabled.
+     *
+     * @return true if frustum culling is enabled, false otherwise
+     */
+    @Override
+    public boolean isFrustumCulling() {
+        return frustumCulling;
+    }
+
+    /**
+     * Sets whether or not frustum culling is enabled.
+     *
+     * @param frustumCulling true if frustum culling should be enabled, false
+     *                       otherwise
+     */
+    @Override
+    public void setFrustumCulling(boolean frustumCulling) {
+        this.frustumCulling = frustumCulling;
     }
 
     /**
@@ -284,7 +283,7 @@ public class CameraComponent extends Component implements Camera {
     public void invalidate() {
         valid = false;
         super.invalidate();
-        updateUbo();
+        refreshUbo();
     }
 
     /**
@@ -292,45 +291,77 @@ public class CameraComponent extends Component implements Camera {
      */
     protected void refresh() {
         if (!valid) {
-            //projection matrix
-            if (projectionMode == ProjectionMode.PERSPECTIVE) {
-                projectionMatrix.set(Utility.computePerspectiveProjectionMatrix(fov, nearPlaneDistance, farPlaneDistance));
-            } else {
-                projectionMatrix.set(Utility.computeOrthographicProjectionMatrix(scale, nearPlaneDistance, farPlaneDistance));
-            }
-            if (getGameObject() != null) {
-                //view matrix and frustumintersection
-                viewMatrix.set(Utility.computeViewMatrix(getGameObject().getTransform().getAbsolutePosition(), getGameObject().getTransform().getAbsoluteRotation()));
-                frustum.set(new Matrix4f(projectionMatrix).mul(viewMatrix));
-                //frustum corner points and center
-                setPlaneVertices();
-                center.set(0, 0, 0);
-                for (CornerPoint cp : CornerPoint.values()) {
-                    center.add(cornerPoints.get(cp));
-                }
-                center.div(8);
-            }
+            refreshProjectionMatrix();
+            refreshViewMatrixAndFrustum();
             valid = true;
         }
     }
 
     /**
-     * Computes the frustum's corner points.
+     * Refreshes the projection matrix.
      */
-    private void setPlaneVertices() {
-        Matrix4f inverseViewPorjectionMatrix = new Matrix4f();
+    private void refreshProjectionMatrix() {
         if (projectionMode == ProjectionMode.PERSPECTIVE) {
-            projectionMatrix.invertPerspectiveView(viewMatrix, inverseViewPorjectionMatrix);
+            projectionMatrix.set(Utility.computePerspectiveProjectionMatrix(fov, nearPlaneDistance, farPlaneDistance));
         } else {
-            projectionMatrix.mulAffine(viewMatrix, inverseViewPorjectionMatrix);
-            inverseViewPorjectionMatrix.invertAffine();
+            projectionMatrix.set(Utility.computeOrthographicProjectionMatrix(scale, nearPlaneDistance, farPlaneDistance));
         }
+    }
 
+    /**
+     * Refreshes the view matrix and the view frustum.
+     */
+    private void refreshViewMatrixAndFrustum() {
+        if (getGameObject() != null) {
+            viewMatrix.set(Utility.computeViewMatrix(getGameObject().getTransform().getAbsolutePosition(), getGameObject().getTransform().getAbsoluteRotation()));
+            frustum.set(new Matrix4f(projectionMatrix).mul(viewMatrix));
+            refreshFrustumVertices();
+        }
+    }
+
+    /**
+     * Computes the frustum's corner points and center.
+     */
+    private void refreshFrustumVertices() {
+        refreshFrustumCornerPoints();
+        refreshFrustumCenterPoint();
+    }
+
+    /**
+     * Refreshes the frustum's corner points.
+     */
+    private void refreshFrustumCornerPoints() {
+        Matrix4f inverseViewPorjectionMatrix = computeInverseViewPorjectionMatrix();
         Vector4f vec = new Vector4f();
         for (CornerPoint cp : CornerPoint.values()) {
             vec.set(cp.getClipSpacePosition().mul(inverseViewPorjectionMatrix));
             vec.div(vec.w);
             cornerPoints.get(cp).set(vec.x, vec.y, vec.z);
+        }
+    }
+
+    /**
+     * Refreshes the frustum's center point.
+     */
+    private void refreshFrustumCenterPoint() {
+        center.set(0, 0, 0);
+        for (CornerPoint cp : CornerPoint.values()) {
+            center.add(cornerPoints.get(cp));
+        }
+        center.div(8);
+    }
+
+    /**
+     * Computes the inverse of the view projection matrix.
+     *
+     * @return the inverse of the view projection matrix
+     */
+    @NotNull
+    private Matrix4f computeInverseViewPorjectionMatrix() {
+        if (projectionMode == ProjectionMode.PERSPECTIVE) {
+            return projectionMatrix.invertPerspectiveView(viewMatrix, new Matrix4f());
+        } else {
+            return projectionMatrix.mulAffine(viewMatrix, new Matrix4f()).invertAffine();
         }
     }
 
@@ -347,7 +378,7 @@ public class CameraComponent extends Component implements Camera {
      *
      * @throws NullPointerException     position can't be null
      * @throws IllegalArgumentException radius can't be negative
-     * @see Settings#isFrustumCulling()
+     *
      */
     @Override
     public boolean isInsideFrustum(@NotNull Vector3f position, float radius) {
@@ -357,6 +388,21 @@ public class CameraComponent extends Component implements Camera {
         if (radius < 0) {
             throw new IllegalArgumentException("Radius can't be negative");
         }
+        return isInsideFrustumWithoutInspection(position, radius);
+    }
+
+    /**
+     * Returns true if the sphere (determined by the given parameters) is
+     * inside, or intersects the frustum and returns false if it is fully
+     * outside. Note that if frustum culling is disabled, or this Component
+     * isn't connected to a GameObject this method always returns true.
+     *
+     * @param position position
+     * @param radius   radius
+     *
+     * @return false if the sphere is fully outside the frustum, true otherwise
+     */
+    private boolean isInsideFrustumWithoutInspection(@NotNull Vector3f position, float radius) {
         if (isFrustumCulling() && getGameObject() != null) {
             refresh();
             return frustum.testSphere(position, radius);
@@ -379,7 +425,6 @@ public class CameraComponent extends Component implements Camera {
      *         otherwise
      *
      * @throws NullPointerException the parameters can't be null
-     * @see Settings#isFrustumCulling()
      */
     @Override
     public boolean isInsideFrustum(@NotNull Vector3f aabbMin, @NotNull Vector3f aabbMax) {
@@ -398,22 +443,20 @@ public class CameraComponent extends Component implements Camera {
      * Returns the frustum's corner points in the following order: far-top-left,
      * far-top-right, far-bottom-left, far-bottom-right, near-top-left,
      * near-top-right, near-bottom-left, near-bottom-right. If this Component
-     * isn't connected to a GameObject, this method returns null.
+     * isn't connected to a GameObject, this method returns an empty list.
      *
      * @return frustum's corner points
      */
-    @Nullable @ReadOnly
+    @NotNull @ReadOnly
     @Override
     public List<Vector3f> getFrustumCornerPoints() {
+        List<Vector3f> ret = new ArrayList<>(8);
         if (getGameObject() != null) {
-            ArrayList<Vector3f> ret = new ArrayList<>(8);
             for (CornerPoint cp : CornerPoint.values()) {
                 ret.add(getFrustumCornerPoint(cp));
             }
-            return ret;
-        } else {
-            return null;
         }
+        return ret;
     }
 
     /**
@@ -428,7 +471,8 @@ public class CameraComponent extends Component implements Camera {
      */
     @Nullable @ReadOnly
     @Override
-    public Vector3f getFrustumCornerPoint(@NotNull CornerPoint cornerPoint) {
+    public Vector3f getFrustumCornerPoint(@NotNull CornerPoint cornerPoint
+    ) {
         if (cornerPoint == null) {
             throw new NullPointerException();
         }
@@ -487,14 +531,21 @@ public class CameraComponent extends Component implements Camera {
     }
 
     /**
-     * Updates the matrices in the UBO.
+     * Refreshes the matrices in the UBO.
      */
-    protected void updateUbo() {
+    @Internal
+    protected void refreshUbo() {
         MainCamera mainCamera = Scene.getParameters().getParameter(MainCamera.class);
         Camera camera = mainCamera == null ? null : mainCamera.getValue();
-        if (camera != this || ubo == null || !ubo.isUsable()) {
-            return;
+        if (camera == this && ubo != null && ubo.isUsable()) {
+            refreshUboWithoutInspection();
         }
+    }
+
+    /**
+     * Refreshes the matrices in the UBO.
+     */
+    private void refreshUboWithoutInspection() {
         temp.position(0);
         getViewMatrix().get(temp);
         getProjectionMatrix().get(16, temp);
@@ -508,7 +559,7 @@ public class CameraComponent extends Component implements Camera {
      * Creates the UBO.
      */
     private static void createUbo() {
-        if (ubo == null) {
+        if (ubo == null || !ubo.isUsable()) {
             ubo = new Ubo();
             ubo.bind();
             ubo.allocateMemory(128, false);
@@ -522,12 +573,15 @@ public class CameraComponent extends Component implements Camera {
      * UBO and can't recreate it. Note that some renderers (like the
      * BlinnPhongRenderer) may expect to access to the Matrices UBO (which isn't
      * possible after calling this method).
+     *
+     * @see #createUbo()
      */
     public static void releaseUbo() {
         ubo.release();
         ubo = null;
     }
 
+    @Internal
     @Override
     protected void detachFromGameObject() {
         getGameObject().getTransform().removeInvalidatable(this);
@@ -535,6 +589,7 @@ public class CameraComponent extends Component implements Camera {
         invalidate();
     }
 
+    @Internal
     @Override
     protected void attachToGameObject(@NotNull GameObject g) {
         super.attachToGameObject(g);
@@ -544,12 +599,13 @@ public class CameraComponent extends Component implements Camera {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 61 * hash + Float.floatToIntBits(this.nearPlaneDistance);
-        hash = 61 * hash + Float.floatToIntBits(this.farPlaneDistance);
-        hash = 61 * hash + Float.floatToIntBits(this.fov);
-        hash = 61 * hash + Float.floatToIntBits(this.scale);
-        hash = 61 * hash + Objects.hashCode(this.projectionMode);
+        int hash = 5 + super.hashCode();
+        hash = 67 * hash + Float.floatToIntBits(this.nearPlaneDistance);
+        hash = 67 * hash + Float.floatToIntBits(this.farPlaneDistance);
+        hash = 67 * hash + Float.floatToIntBits(this.fov);
+        hash = 67 * hash + Float.floatToIntBits(this.scale);
+        hash = 67 * hash + Objects.hashCode(this.projectionMode);
+        hash = 67 * hash + (this.frustumCulling ? 1 : 0);
         return hash;
     }
 
@@ -571,6 +627,9 @@ public class CameraComponent extends Component implements Camera {
         if (Float.floatToIntBits(this.scale) != Float.floatToIntBits(other.scale)) {
             return false;
         }
+        if (this.frustumCulling != other.frustumCulling) {
+            return false;
+        }
         if (this.projectionMode != other.projectionMode) {
             return false;
         }
@@ -579,13 +638,13 @@ public class CameraComponent extends Component implements Camera {
 
     @Override
     public String toString() {
-        return super.toString() + "\nCameraComponent{"
-                + "nearPlaneDistance=" + nearPlaneDistance
-                + ", farPlaneDistance=" + farPlaneDistance + ", fov=" + fov
-                + ", scale=" + scale + ", projectionMode=" + projectionMode
-                + ", frustum=" + frustum + ", valid=" + valid
+        return super.toString() + "\nCameraComponent{" + "nearPlaneDistance="
+                + nearPlaneDistance + ", farPlaneDistance=" + farPlaneDistance
+                + ", fov=" + fov + ", scale=" + scale + ", projectionMode="
+                + projectionMode + ", frustum=" + frustum + ", valid=" + valid
                 + ", viewMatrix=" + viewMatrix + ", projectionMatrix=" + projectionMatrix
-                + ", cornerPoints=" + cornerPoints + ", center=" + center + '}';
+                + ", cornerPoints=" + cornerPoints + ", center=" + center
+                + ", frustumCulling=" + frustumCulling + '}';
     }
 
 }

@@ -93,31 +93,86 @@ public class AudioSourceComponent extends Component {
     @Override
     public void update() {
         if (getGameObject() != null && source.isUsable()) {
-            Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
-            Vector3f velocity = new Vector3f();
-            currentPosition.sub(lastPosition, velocity);
-            source.setPosition(currentPosition);
-            source.setVelocity(velocity);
-            Vector3f forward = getGameObject().getTransform().getForwardVector();
-            if (isDirectionalSource()) {
-                source.setDirection(forward);
-            } else {
-                MainAudioListener mainAudio = Scene.getParameters().getParameter(MainAudioListener.class);
-                if (mainAudio == null) {
-                    source.setDirection(forward);
-                } else {
-                    Vector3f direction = new Vector3f();
-                    mainAudio.getValue().getGameObject().getTransform().getAbsolutePosition().sub(currentPosition, direction);
-                    source.setDirection(direction.normalize());
-                }
-            }
-            lastPosition.set(currentPosition);
+            refreshSource();
         }
+    }
+
+    /**
+     * Refreshes the audio source.
+     */
+    private void refreshSource() {
+        refreshPositionAndVelocity();
+        if (isDirectionalSource()) {
+            refreshDirectionalSource();
+        } else {
+            refreshNonDirectionalSource();
+        }
+        refreshLastPosition();
+    }
+
+    /**
+     * Refreshes the audio source's position and velocity.
+     */
+    private void refreshPositionAndVelocity() {
+        Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
+        Vector3f velocity = new Vector3f();
+        currentPosition.sub(lastPosition, velocity);
+        source.setPosition(currentPosition);
+        source.setVelocity(velocity);
+    }
+
+    /**
+     * Refreshes the audio source if it's a directional source.
+     */
+    private void refreshDirectionalSource() {
+        Vector3f forward = getGameObject().getTransform().getForwardVector();
+        source.setDirection(forward);
+    }
+
+    /**
+     * Refreshes the audio source if it's not a directional source.
+     */
+    private void refreshNonDirectionalSource() {
+        MainAudioListener mainAudio = Scene.getParameters().getParameter(MainAudioListener.class);
+        if (mainAudio == null) {
+            refreshSourceIfThereisNoListener();
+        } else {
+            refreshSourceIfThereisAListener();
+        }
+    }
+
+    /**
+     * Refreshes the audio source if it's not a directional source and there is
+     * an audio listener in the world.
+     */
+    private void refreshSourceIfThereisAListener() {
+        Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
+        MainAudioListener mainAudio = Scene.getParameters().getParameter(MainAudioListener.class);
+        Vector3f direction = new Vector3f();
+        mainAudio.getValue().getGameObject().getTransform().getAbsolutePosition().sub(currentPosition, direction);
+        source.setDirection(direction.normalize());
+    }
+
+    /**
+     * Refreshes the audio source if it's not a directional source and there
+     * isn't an audio listener in the world.
+     */
+    private void refreshSourceIfThereisNoListener() {
+        Vector3f forward = getGameObject().getTransform().getForwardVector();
+        source.setDirection(forward);
+    }
+
+    /**
+     * Refreshes the audio source's last position.
+     */
+    private void refreshLastPosition() {
+        Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
+        lastPosition.set(currentPosition);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
+        int hash = 7 + super.hashCode();
         hash = 17 * hash + Objects.hashCode(this.source);
         hash = 17 * hash + Objects.hashCode(this.lastPosition);
         hash = 17 * hash + (this.directionalSource ? 1 : 0);

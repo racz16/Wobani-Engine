@@ -93,9 +93,9 @@ public class EnvironmentMapRenderer extends PrepareRenderer {
                         RenderableComponent renderableComponent;
                         for (int i = 0; i < renderables.getRenderableComponentCount(renderer, renderable); i++) {
                             renderableComponent = renderables.getRenderableComponent(renderer, renderable, i);
-                            if (renderableComponent.isActive() && renderableComponent.isRenderableActive() && renderableComponent.getRealRadius() >= probe.getMinSize() && renderableComponent.getGameObject().getTransform().getAbsolutePosition().distance(probe.getPosition()) <= probe.getMaxDistance()) {
+                            if (renderableComponent.isActive() && renderableComponent.isRenderableActive() && renderableComponent.getBoundingShape().getRealRadius() >= probe.getMinSize() && renderableComponent.getGameObject().getTransform().getAbsolutePosition().distance(probe.getPosition()) <= probe.getMaxDistance()) {
                                 beforeDrawInstance(renderableComponent);
-                                renderableComponent.getRenderable().draw();
+                                renderableComponent.draw();
                                 numberOfRenderedElements++;
                                 numberOfRenderedFaces += renderableComponent.getFaceCount();
                             }
@@ -176,12 +176,6 @@ public class EnvironmentMapRenderer extends PrepareRenderer {
         shader.loadObjectUniforms(transform.getModelMatrix(), new Matrix3f(transform.getInverseModelMatrix()));
         Material material = rc.getMaterial();
         shader.loadMaterial(material);
-        //FIXME two sided
-//        if (!rc.isTwoSided()) {
-//            OpenGl.setFaceCulling(true);
-//        } else {
-//            OpenGl.setFaceCulling(false);
-//        }
     }
 
     @Override

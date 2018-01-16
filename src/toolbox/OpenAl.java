@@ -1,6 +1,7 @@
 package toolbox;
 
 import java.nio.*;
+import org.joml.*;
 import org.lwjgl.openal.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import toolbox.annotations.*;
@@ -98,6 +99,19 @@ public class OpenAl {
      */
     public static void setDistanceModel(@NotNull AudioDistanceModel distanceModel) {
         AL10.alDistanceModel(distanceModel.getCode());
+    }
+
+    public static void updateAudioListenerPosition(@NotNull Vector3f position) {
+        AL10.alListener3f(AL10.AL_POSITION, position.x, position.y, position.z);
+    }
+
+    public static void updateAudioListenerVelocity(@NotNull Vector3f velocity) {
+        AL10.alListener3f(AL10.AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+    }
+
+    public static void updateAudioListenerOrientation(@NotNull Vector3f forward, @NotNull Vector3f up) {
+        float[] orientation = {forward.x, forward.y, forward.z, up.x, up.y, up.z};
+        AL10.alListenerfv(AL10.AL_ORIENTATION, orientation);
     }
 
     /**

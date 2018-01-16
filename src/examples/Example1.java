@@ -151,7 +151,7 @@ public class Example1 {
 //                }
 //
 //                if (Input.isKeyPressed(Key.KEY_KP_0)) {
-//                    rot.set(180, 0, 180);
+//                    rot.set(0, 0, 0);
 //                    keyPressed = true;
 //                }
 //
@@ -218,8 +218,8 @@ public class Example1 {
         //directional light
         GameObject light = new GameObject("directionalLight");
         light.getTransform().setRelativeRotation(new Vector3f(-45, 10, 0));
-        light.getComponents().add(new DirectionalLightComponent());
-        Scene.getParameters().setParameter(new MainDirectionalLight(light.getComponents().getOne(DirectionalLightComponent.class)));
+        light.getComponents().add(new BlinnPhongDirectionalLightComponent());
+        Scene.getParameters().setParameter(new BlinnPhongMainDirectionalLight(light.getComponents().getOne(BlinnPhongDirectionalLightComponent.class)));
 
         //point light
         GameObject pointLight = new GameObject("pointLight");
@@ -227,7 +227,7 @@ public class Example1 {
         for (StaticMesh mod : boxModel) {
             pointLight.getComponents().add(new MeshComponent(mod));
         }
-        PointLightComponent plc = new PointLightComponent();
+        BlinnPhongPointLightComponent plc = new BlinnPhongPointLightComponent();
         plc.setDiffuseColor(new Vector3f(1, 0, 0));
         pointLight.getComponents().add(plc);
 
@@ -237,7 +237,7 @@ public class Example1 {
         for (StaticMesh mod : boxModel) {
             spotLight.getComponents().add(new MeshComponent(mod));
         }
-        SpotLightComponent slc = new SpotLightComponent();
+        BlinnPhongSpotLightComponent slc = new BlinnPhongSpotLightComponent();
         slc.setDiffuseColor(new Vector3f(0, 1, 0));
         spotLight.getComponents().add(slc);
         spotLight.getComponents().add(new Component() {
@@ -247,7 +247,7 @@ public class Example1 {
             public void update() {
                 getGameObject().getTransform().setRelativePosition(spline.getApproximatedPosition(t));
                 t += 0.0005f * Time.getDeltaTimeFactor();
-                SpotLightComponent slc = getGameObject().getComponents().getOne(SpotLightComponent.class);
+                BlinnPhongSpotLightComponent slc = getGameObject().getComponents().getOne(BlinnPhongSpotLightComponent.class);
                 if (GLFW.glfwGetTime() % 2 > 1) {
                     slc.setActive(true);
                 } else {

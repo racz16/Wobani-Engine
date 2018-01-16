@@ -1,7 +1,6 @@
 package components.camera;
 
-import toolbox.invalidatable.Invalidatable;
-import core.*;
+import components.*;
 import java.util.*;
 import org.joml.*;
 import toolbox.annotations.*;
@@ -9,7 +8,7 @@ import toolbox.annotations.*;
 /**
  * Base interface for Components with camera features.
  */
-public interface Camera extends Invalidatable {
+public interface Camera extends IComponent {
 
     /**
      * One of the camera frustum's corner points.
@@ -53,7 +52,7 @@ public interface Camera extends Invalidatable {
          *
          * @param pos position in clip space
          */
-        CornerPoint(@NotNull Vector4f pos) {
+        private CornerPoint(@NotNull Vector4f pos) {
             clipSpacePosition = new Vector4f(pos.x, pos.y, pos.z, pos.w);
         }
 
@@ -165,12 +164,4 @@ public interface Camera extends Invalidatable {
      *         otherwise
      */
     public boolean isInsideFrustum(Vector3f aabbMin, Vector3f aabbMax);
-
-    public GameObject getGameObject();
-
-    public void addInvalidatable(@NotNull Invalidatable invalidatable);
-
-    public void removeInvalidatable(@Nullable Invalidatable invalidatable);
-
-    public boolean isActive();
 }

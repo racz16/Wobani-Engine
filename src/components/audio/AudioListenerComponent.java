@@ -3,15 +3,14 @@ package components.audio;
 import core.*;
 import java.util.*;
 import org.joml.*;
-import org.lwjgl.openal.*;
+import toolbox.*;
 import toolbox.parameters.*;
 
 /**
  * The scene's audio listener and it's position, orientation and velocity
  * affects how we hear audio sources' sounds.
  *
- * @see Scene#getAudioListener()
- * @see Scene#setAudioListener(AudioListenerComponent)
+ * @see MainAudioListener
  */
 public class AudioListenerComponent extends Component {
 
@@ -23,26 +22,65 @@ public class AudioListenerComponent extends Component {
     @Override
     public void update() {
         if (getGameObject() != null) {
-            Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
-            MainAudioListener mainAudio = Scene.getParameters().getParameter(MainAudioListener.class);
-            AudioListenerComponent audioListener = mainAudio == null ? null : mainAudio.getValue();
-            if (audioListener == this) {
-                Vector3f velocity = new Vector3f();
-                currentPosition.sub(lastPosition, velocity);
-                AL10.alListener3f(AL10.AL_POSITION, currentPosition.x, currentPosition.y, currentPosition.z);
-                AL10.alListener3f(AL10.AL_VELOCITY, velocity.x, velocity.y, velocity.z);
-                Vector3f forward = getGameObject().getTransform().getForwardVector();
-                Vector3f up = getGameObject().getTransform().getUpVector();
-                float[] orientation = {forward.x, forward.y, forward.z, up.x, up.y, up.z};
-                AL10.alListenerfv(AL10.AL_ORIENTATION, orientation);
-            }
-            lastPosition.set(currentPosition);
+            refreshListener();
         }
+    }
+
+    /**
+     * Refreshes the audio listener.
+     */
+    private void refreshListener() {
+        if (isTheMainAudioListener()) {
+            refreshListenerPositionAndVelocity();
+            refreshListenerOrientation();
+        }
+        refreshLastPosition();
+    }
+
+    /**
+     * Refreshes the audio listener's position and velocity.
+     */
+    private void refreshListenerPositionAndVelocity() {
+        Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
+        Vector3f velocity = new Vector3f();
+        currentPosition.sub(lastPosition, velocity);
+        OpenAl.updateAudioListenerPosition(currentPosition);
+        OpenAl.updateAudioListenerVelocity(velocity);
+    }
+
+    /**
+     * Refreshes the audio listener's orientation.
+     */
+    private void refreshListenerOrientation() {
+        Vector3f forward = getGameObject().getTransform().getForwardVector();
+        Vector3f up = getGameObject().getTransform().getUpVector();
+        OpenAl.updateAudioListenerOrientation(forward, up);
+    }
+
+    /**
+     * Refreshes the audio listener's last position.
+     */
+    private void refreshLastPosition() {
+        Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
+        lastPosition.set(currentPosition);
+    }
+
+    /**
+     * Returns true if it's the Scene's main audio listener.
+     *
+     * @return true if it's the Scene's main audio listener, false otherwise
+     *
+     * @see MainAudioListener
+     */
+    private boolean isTheMainAudioListener() {
+        MainAudioListener mainAudio = Scene.getParameters().getParameter(MainAudioListener.class);
+        AudioListenerComponent audioListener = mainAudio == null ? null : mainAudio.getValue();
+        return audioListener == this;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
+        int hash = 7 + super.hashCode();
         hash = 89 * hash + Objects.hashCode(this.lastPosition);
         return hash;
     }

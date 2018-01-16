@@ -65,7 +65,7 @@ public class PrepareRenderingStage {
      *
      * @throws NullPointerException stage can't be null
      */
-    public void removeRenderer(int index) {//FIXME miért public??
+    public void removeRenderer(int index) {//FIXME why public??
         renderers.remove(index).removeFromRenderingPipeline();
     }
 

@@ -1,16 +1,15 @@
 package components.light;
 
-import static components.light.DefaultLightComponent.ubo;
 import components.light.lightTypes.*;
 import core.*;
+import toolbox.annotations.*;
 
 /**
  * Basic implementation of a spot light source.
  *
  * @see GameObject
  */
-//TODO shadow mapping, frustum culling
-public class SpotLightComponent extends DefaultLightComponent implements SpotLight {
+public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent implements BlinnPhongSpotLight {
 
     /**
      * Attenuation's constant component.
@@ -46,7 +45,7 @@ public class SpotLightComponent extends DefaultLightComponent implements SpotLig
      */
     public void setConstant(float constant) {
         this.constant = constant;
-        updateUbo();
+        refreshUbo();
     }
 
     @Override
@@ -61,7 +60,7 @@ public class SpotLightComponent extends DefaultLightComponent implements SpotLig
      */
     public void setLinear(float linear) {
         this.linear = linear;
-        updateUbo();
+        refreshUbo();
     }
 
     @Override
@@ -76,7 +75,7 @@ public class SpotLightComponent extends DefaultLightComponent implements SpotLig
      */
     public void setQuadratic(float quadratic) {
         this.quadratic = quadratic;
-        updateUbo();
+        refreshUbo();
     }
 
     /**
@@ -105,7 +104,7 @@ public class SpotLightComponent extends DefaultLightComponent implements SpotLig
             throw new IllegalArgumentException("Cutoff component must be higher than 0 and lower than the outer cutoff component");
         }
         this.cutoff = cutoff;
-        updateUbo();
+        refreshUbo();
     }
 
     /**
@@ -132,59 +131,31 @@ public class SpotLightComponent extends DefaultLightComponent implements SpotLig
             throw new IllegalArgumentException("Cutoff component must be lower than the outer cutoff component");
         }
         this.outerCutoff = outerCutoff;
-        updateUbo();
+        refreshUbo();
     }
 
+    @Internal
     @Override
-    protected void updateUbo() {
-        if (getUboIndex() == -1 || getGameObject() == null || ubo == null || !ubo.isUsable()) {
-            return;
+    protected void refreshUbo() {
+        if (getGameObject() != null && getUboIndex() != -1) {
+            BlinnPhongLightSources.refreshLight(this);
         }
-        floatBuffer.position(0);
-        //position
-        for (int i = 0; i < 3; i++) {
-            floatBuffer.put(getGameObject().getTransform().getAbsolutePosition().get(i));
+    }
+
+    @Internal
+    @Override
+    protected void removeLight() {
+        if (getGameObject() == null && getUboIndex() != -1) {
+            BlinnPhongLightSources.removeLight(this);
         }
-        floatBuffer.put(-1);
-        //direction
-        for (int i = 0; i < 3; i++) {
-            floatBuffer.put(getGameObject().getTransform().getForwardVector().get(i));
+    }
+
+    @Internal
+    @Override
+    protected void addLight() {
+        if (getGameObject() != null && getUboIndex() == -1) {
+            BlinnPhongLightSources.addLight(this);
         }
-        floatBuffer.put(-1);
-        //attenutation
-        floatBuffer.put(getConstant());
-        floatBuffer.put(getLinear());
-        floatBuffer.put(getQuadratic());
-        floatBuffer.put(-1);
-        //ambient
-        for (int i = 0; i < 3; i++) {
-            floatBuffer.put(getAmbientColor().get(i));
-        }
-        floatBuffer.put(-1);
-        //diffuse
-        for (int i = 0; i < 3; i++) {
-            floatBuffer.put(getDiffuseColor().get(i));
-        }
-        floatBuffer.put(-1);
-        //specular
-        for (int i = 0; i < 3; i++) {
-            floatBuffer.put(getSpecularColor().get(i));
-        }
-        floatBuffer.put(-1);
-        //cutoff
-        floatBuffer.put((float) java.lang.Math.cos(java.lang.Math.toRadians(getCutoff())));
-        floatBuffer.put((float) java.lang.Math.cos(java.lang.Math.toRadians(getOuterCutoff())));
-        floatBuffer.position(0);
-        //type, active
-        intBuffer.limit(2);
-        intBuffer.position(0);
-        intBuffer.put(2);
-        intBuffer.put(isActive() ? 1 : 0);
-        intBuffer.position(0);
-        ubo.bind();
-        ubo.storeData(floatBuffer, getUboIndex() * 112);
-        ubo.storeData(intBuffer, getUboIndex() * 112 + 104);
-        ubo.unbind();
     }
 
     @Override
@@ -203,7 +174,7 @@ public class SpotLightComponent extends DefaultLightComponent implements SpotLig
         if (!super.equals(obj)) {
             return false;
         }
-        final SpotLightComponent other = (SpotLightComponent) obj;
+        final BlinnPhongSpotLightComponent other = (BlinnPhongSpotLightComponent) obj;
         if (Float.floatToIntBits(this.constant) != Float.floatToIntBits(other.constant)) {
             return false;
         }

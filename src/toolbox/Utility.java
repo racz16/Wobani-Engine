@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.logging.*;
 import org.joml.*;
 import org.lwjgl.*;
+import resources.*;
 import toolbox.annotations.*;
 import toolbox.parameters.*;
 import window.*;
@@ -125,7 +126,7 @@ public class Utility {
         return new Matrix4f().translationRotateScale(
                 position,
                 new Quaternionf()
-                        .rotationXYZ(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
+                        .rotation(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
                 scale);
     }
 
@@ -143,7 +144,7 @@ public class Utility {
         return new Matrix4f().translationRotateScaleInvert(
                 position,
                 new Quaternionf()
-                        .rotationXYZ(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
+                        .rotation(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
                 scale);
     }
 
@@ -207,7 +208,7 @@ public class Utility {
     public static Matrix4f computeDirectionalLightProjectionViewMatrix(float distance, float nearDistance, float farDistance) {
         MainCamera mainCamera = Scene.getParameters().getParameter(MainCamera.class);
         Camera camera = mainCamera.getValue();
-        MainDirectionalLight dirLight = Scene.getParameters().getParameter(MainDirectionalLight.class);
+        BlinnPhongMainDirectionalLight dirLight = Scene.getParameters().getParameter(BlinnPhongMainDirectionalLight.class);
         GameObject lightGameObject = dirLight.getValue().getGameObject();
         Vector3f right = lightGameObject.getTransform().getRightVector();
         Vector3f up = lightGameObject.getTransform().getUpVector();
@@ -407,10 +408,14 @@ public class Utility {
         Camera camera = mainCamera.getValue();
         Transform transform = renderableComponent.getGameObject().getTransform();
 //        if (transform.getBillboardingMode() == Transform.BillboardingMode.NO_BILLBOARDING) {
-            return camera.isInsideFrustum(renderableComponent.getRealAabbMin(), renderableComponent.getRealAabbMax());
+        return camera.isInsideFrustum(renderableComponent.getBoundingShape().getRealAabbMin(), renderableComponent.getBoundingShape().getRealAabbMax());
 //        } else {
 //            return camera.isInsideFrustum(transform.getAbsolutePosition(), renderableComponent.getRealRadius());
 //        }
+    }
+
+    public static boolean isUsable(@Nullable Resource resource) {
+        return resource != null && resource.isUsable();
     }
 
 }

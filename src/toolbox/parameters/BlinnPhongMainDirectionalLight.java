@@ -3,15 +3,15 @@ package toolbox.parameters;
 import components.light.lightTypes.*;
 import core.*;
 
-public class MainDirectionalLight extends UniqueParameter<DirectionalLight> {
+public class BlinnPhongMainDirectionalLight extends UniqueParameter<BlinnPhongDirectionalLight> {
 
-    public MainDirectionalLight(DirectionalLight value) {
+    public BlinnPhongMainDirectionalLight(BlinnPhongDirectionalLight value) {
         super(value);
     }
 
     @Override
-    public DirectionalLight getValue() {
-        DirectionalLight ret = super.getValue();
+    public BlinnPhongDirectionalLight getValue() {
+        BlinnPhongDirectionalLight ret = super.getValue();
         if (ret.getGameObject() == null) {
             throw new RuntimeException("main directional light detached");
         }
@@ -19,7 +19,7 @@ public class MainDirectionalLight extends UniqueParameter<DirectionalLight> {
     }
 
     @Override
-    protected void removedFromParameters(UniqueParameter<DirectionalLight> added) {
+    protected void removedFromParameters(UniqueParameter<BlinnPhongDirectionalLight> added) {
         MainCamera camera = Scene.getParameters().getParameter(MainCamera.class);
         if (camera != null) {
             camera.getValue().removeInvalidatable(getValue());
@@ -27,7 +27,7 @@ public class MainDirectionalLight extends UniqueParameter<DirectionalLight> {
     }
 
     @Override
-    protected void addedToParameters(UniqueParameter<DirectionalLight> removed) {
+    protected void addedToParameters(UniqueParameter<BlinnPhongDirectionalLight> removed) {
         if (getValue().getGameObject() == null) {
             throw new NullPointerException();
         }

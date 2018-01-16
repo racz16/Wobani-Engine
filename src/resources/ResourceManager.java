@@ -8,7 +8,6 @@ import rendering.*;
 import resources.audio.*;
 import resources.meshes.*;
 import resources.shaders.*;
-import resources.splines.*;
 import resources.textures.*;
 import toolbox.annotations.*;
 import toolbox.parameters.*;
@@ -698,7 +697,7 @@ public class ResourceManager {
         releaseResourceMap(shaders);
         releaseResourceMap(audioBuffers);
         releaseResourceMap(audioSources);
-        DefaultLightComponent.releaseUbo();
+        BlinnPhongLightSources.releaseUbo();
         CameraComponent.releaseUbo();
         RenderingPipeline.release();
     }

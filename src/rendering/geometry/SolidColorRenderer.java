@@ -65,7 +65,7 @@ public class SolidColorRenderer extends GeometryRenderer {
                 renderableComponent = renderables.getRenderableComponent(renderer, renderable, i);
                 if (renderableComponent.isActive() && renderableComponent.isRenderableActive() && Utility.isInsideFrustum(renderableComponent)) {
                     beforeDrawRenderableInstance(renderableComponent.getMaterial(), renderableComponent.getGameObject().getTransform().getModelMatrix());
-                    renderable.draw();
+                    renderableComponent.draw();
                     numberOfRenderedElements++;
                     numberOfRenderedFaces += renderableComponent.getFaceCount();
                 }

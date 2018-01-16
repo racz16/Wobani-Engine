@@ -167,4 +167,34 @@ public class TransformTest {
         t.move(null);
     }
 
+    //
+    //directions
+    //
+    @Test
+    public void testDirectionVectors() {
+        Transform t = new Transform();
+
+        assertEquals(0, t.getForwardVector().x(), DELTA_FLOAT);
+        assertEquals(0, t.getForwardVector().y(), DELTA_FLOAT);
+        assertEquals(-1, t.getForwardVector().z(), DELTA_FLOAT);
+        assertEquals(0, t.getUpVector().x(), DELTA_FLOAT);
+        assertEquals(1, t.getUpVector().y(), DELTA_FLOAT);
+        assertEquals(0, t.getUpVector().z(), DELTA_FLOAT);
+        assertEquals(1, t.getRightVector().x(), DELTA_FLOAT);
+        assertEquals(0, t.getRightVector().y(), DELTA_FLOAT);
+        assertEquals(0, t.getRightVector().z(), DELTA_FLOAT);
+
+        //change rotation
+        t.setRelativeRotation(new Vector3f(0, 90, 0));
+        assertEquals(-1, t.getForwardVector().x(), DELTA_FLOAT);
+        assertEquals(0, t.getForwardVector().y(), DELTA_FLOAT);
+        assertEquals(0, t.getForwardVector().z(), DELTA_FLOAT);
+        assertEquals(0, t.getUpVector().x(), DELTA_FLOAT);
+        assertEquals(1, t.getUpVector().y(), DELTA_FLOAT);
+        assertEquals(0, t.getUpVector().z(), DELTA_FLOAT);
+        assertEquals(0, t.getRightVector().x(), DELTA_FLOAT);
+        assertEquals(0, t.getRightVector().y(), DELTA_FLOAT);
+        assertEquals(-1, t.getRightVector().z(), DELTA_FLOAT);
+    }
+
 }

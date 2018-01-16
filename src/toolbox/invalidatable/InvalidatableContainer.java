@@ -127,7 +127,7 @@ public class InvalidatableContainer {
     @Override
     public String toString() {
         return "InvalidatableContainer{" + "invalidatables=" + invalidatables
-                + ", invalidatable=" + invalidatable + ", container=" + container + '}';
+                + ", invalidatable=" + invalidatable + ", container=" /*+ container*/ + '}';
     }
 
 }

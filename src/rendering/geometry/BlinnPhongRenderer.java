@@ -75,7 +75,7 @@ public class BlinnPhongRenderer extends GeometryRenderer {
                 renderableComponent = renderables.getRenderableComponent(renderer, renderable, i);
                 if (renderableComponent.isActive() && renderableComponent.isRenderableActive() && Utility.isInsideFrustum(renderableComponent)) {
                     beforeDrawInstance(renderableComponent);
-                    renderable.draw();
+                    renderableComponent.draw();
                 }
             }
             afterDrawRenderable(renderable);
@@ -113,6 +113,7 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      */
     private void beforeDrawRenderable(@NotNull Renderable renderable) {
         renderable.beforeDraw();
+        //TODO: to Renderable
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
@@ -125,6 +126,7 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      * @param renderable Renderable
      */
     private void afterDrawRenderable(@NotNull Renderable renderable) {
+        //TODO: to Renderable
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);
         GL20.glDisableVertexAttribArray(2);
@@ -139,12 +141,6 @@ public class BlinnPhongRenderer extends GeometryRenderer {
         shader.loadObjectUniforms(transform.getModelMatrix(), new Matrix3f(transform.getInverseModelMatrix()), rc.isReceiveShadows());
         Material material = rc.getMaterial();
         shader.loadMaterial(material);
-        //FIXME two sided
-//        if (!rc.isTwoSided()) {
-//            OpenGl.setFaceCulling(true);
-//        } else {
-//            OpenGl.setFaceCulling(false);
-//        }
     }
 
     /**

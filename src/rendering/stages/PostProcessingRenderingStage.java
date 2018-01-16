@@ -126,7 +126,7 @@ public class PostProcessingRenderingStage {
      *
      * @throws NullPointerException stage can't be null
      */
-    public void removeRenderer(int index) {//FIXME miért public??
+    public void removeRenderer(int index) {//FIXME why public??
         postProcessingRenderers.remove(index).removeFromRenderingPipeline();
     }
 

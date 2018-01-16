@@ -1,5 +1,6 @@
 package core;
 
+import components.*;
 import toolbox.annotations.*;
 import toolbox.invalidatable.*;
 
@@ -7,7 +8,7 @@ import toolbox.invalidatable.*;
  * All of a GameObject's Components based on this abstract class. The GameLoop
  * call it's update method once a frame, before rendering.
  */
-public abstract class Component implements Invalidatable {
+public abstract class Component implements IComponent {
 
     /**
      * The attached GameObject.
@@ -24,63 +25,33 @@ public abstract class Component implements Invalidatable {
      */
     private final InvalidatableContainer invalidatables = new InvalidatableContainer(this);
 
-    /**
-     * Adds the given Invalidatable to this Component's Invalidatables.
-     *
-     * @param invalidatable Invalidatable
-     */
+    @Override
     public void addInvalidatable(@NotNull Invalidatable invalidatable) {
         invalidatables.addInvalidatable(invalidatable);
     }
 
-    /**
-     * Returns true if this Component's Invalidatables contains the specified
-     * element.
-     *
-     * @param invalidatable Invalidatable
-     *
-     * @return true if this Component's Invalidatables contains the specified
-     *         element, false otherwise
-     */
+    @Override
     public boolean containsInvalidatable(@Nullable Invalidatable invalidatable) {
         return invalidatables.containsInvalidatable(invalidatable);
     }
 
-    /**
-     * Removes the parameter from this Component's Invalidatables.
-     *
-     * @param invalidatable Invalidatable
-     */
+    @Override
     public void removeInvalidatable(@Nullable Invalidatable invalidatable) {
         invalidatables.removeInvalidatable(invalidatable);
     }
 
-    /**
-     * Determines whether the Component is active. If it's not, your changes may
-     * not affect the end result, and the data you get from this Component may
-     * be invalid.
-     *
-     * @return true if the Component is active, false otherwise
-     */
+    @Override
     public boolean isActive() {
         return active;
     }
 
-    /**
-     * Sets whether or not the Component is active.
-     *
-     * @param active true if this Component should be active, false otherwise
-     */
+    @Override
     public void setActive(boolean active) {
         this.active = active;
     }
 
-    /**
-     * Returns the GameObject that attached to this Component.
-     *
-     * @return GameObject
-     */
     @Nullable
+    @Override
     public GameObject getGameObject() {
         return gameObject;
     }
@@ -110,11 +81,7 @@ public abstract class Component implements Invalidatable {
         gameObject = null;
     }
 
-    /**
-     * Attaches this Component to the specified GameObject.
-     *
-     * @param object GameObject
-     */
+    @Override
     public void setGameObject(@Nullable GameObject object) {
         if (object == null) {
             if (gameObject != null) {
@@ -132,9 +99,6 @@ public abstract class Component implements Invalidatable {
     protected void update() {
     }
 
-    /**
-     * Invalidates this Component and the Component's Invalidatables.
-     */
     @Override
     public void invalidate() {
         invalidatables.invalidate();
