@@ -1,4 +1,4 @@
-# Engine
+# Wobani Engine
 My own OpenGL game engine. I write the code in Java, using the LWJGL.
 
 ## Features
