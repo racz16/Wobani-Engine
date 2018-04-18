@@ -1,6 +1,13 @@
 # Wobani Engine
 My own OpenGL game engine. I write the code in Java, using the LWJGL.
 
+## Version 0.2 main goals
+- PBR rendering
+- terrain system
+- UI
+- level editor
+- loading/saving
+
 ## Features
 - GameObject based scene graph
 - Component system, including dependency handling
