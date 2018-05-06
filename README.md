@@ -1,4 +1,7 @@
 # Wobani Engine
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8d2dcf1afc754bcdb5576bebc5493988)](https://app.codacy.com/app/racz1666/Wobani-Engine?utm_source=github.com&utm_medium=referral&utm_content=racz16/Wobani-Engine&utm_campaign=badger)
+
 My own OpenGL game engine. I write the code in Java, using the LWJGL.
 
 ## Version 0.2 main goals
