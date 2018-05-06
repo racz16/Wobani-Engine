@@ -2,14 +2,14 @@ package wobani.core;
 
 import wobani.components.audio.*;
 import wobani.components.camera.*;
-import wobani.components.light.lightTypes.*;
-import wobani.resources.environmentProbes.*;
+import wobani.resources.environmentprobes.*;
 import wobani.toolbox.annotations.*;
 import wobani.toolbox.parameters.*;
 
 /**
- * Scene contains all the GameObjectContainer, the RenderableContainer, unique lists of
- Components and parameters like the main Camera or the main DirectionalLight.
+ * Scene contains all the GameObjectContainer, the RenderableContainer, unique
+ * lists of Components and parameters like the main Camera or the main
+ * DirectionalLight.
  */
 public class Scene {
 
@@ -18,11 +18,6 @@ public class Scene {
      */
     private static final GameObjectContainer GAMEOBJECTS = new GameObjectContainer();
     /**
-     * Stores all the RenderableContainer groupped by Renderers and
- Renderables.
-     */
-    private static final RenderableContainer RENDERABLE_COMPONENTS = new RenderableContainer();
-    /**
      * Stores Components in user defined lists.
      */
     private static final ComponentLists COMPONENT_LISTS = new ComponentLists();
@@ -30,14 +25,11 @@ public class Scene {
      * Stores the Scene's parameters.
      */
     private static final ParameterContainer PARAMETERS = new ParameterContainer();
+
     /**
      * Key of the main Camera Parameter.
      */
     public static final ParameterKey<Camera> MAIN_CAMERA = new ParameterKey<>(Camera.class, "MAIN_CAMERA");
-    /**
-     * Key of the main BlinnPhongDirectionalLight Parameter.
-     */
-    public static final ParameterKey<BlinnPhongDirectionalLight> MAIN_DIRECTIONAL_LIGHT = new ParameterKey<>(BlinnPhongDirectionalLight.class, "MAIN_CAMERA");
     /**
      * Key of the main skybox Parameter.
      */
@@ -60,17 +52,7 @@ public class Scene {
      */
     @NotNull
     public static GameObjectContainer getGameObjects() {
-        return GAMEOBJECTS;
-    }
-
-    /**
-     * Returns all the RenderableContainer.
-     *
-     * @return all the RenderableContainer
-     */
-    @NotNull
-    public static RenderableContainer getRenderableComponents() {
-        return RENDERABLE_COMPONENTS;
+	return GAMEOBJECTS;
     }
 
     /**
@@ -80,7 +62,7 @@ public class Scene {
      */
     @NotNull
     public static ComponentLists getComponentLists() {
-        return COMPONENT_LISTS;
+	return COMPONENT_LISTS;
     }
 
     /**
@@ -90,7 +72,7 @@ public class Scene {
      */
     @NotNull
     public static ParameterContainer getParameters() {
-        return PARAMETERS;
+	return PARAMETERS;
     }
 
 }

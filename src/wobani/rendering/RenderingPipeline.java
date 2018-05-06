@@ -3,14 +3,14 @@ package wobani.rendering;
 import java.util.*;
 import org.joml.*;
 import wobani.components.camera.*;
-import wobani.components.light.lightTypes.*;
+import wobani.components.light.*;
 import wobani.core.*;
 import wobani.rendering.geometry.*;
-import wobani.rendering.postProcessing.*;
+import wobani.rendering.postprocessing.*;
 import wobani.rendering.prepare.*;
 import wobani.rendering.stages.*;
 import wobani.resources.*;
-import wobani.resources.textures.texture2D.*;
+import wobani.resources.textures.texture2d.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotations.*;
 import wobani.toolbox.parameters.*;
@@ -62,9 +62,24 @@ public class RenderingPipeline {
     public static final ParameterKey<Boolean> WIREFRAME_MODE = new ParameterKey<>(Boolean.class, "WIREFRAME_MODE");
     public static final ParameterKey<Integer> MSAA_LEVEL = new ParameterKey<>(Integer.class, "MSAA_LEVEL");
 
+    /**
+     * Stores all the RenderableContainer groupped by Renderers and Renderables.
+     */
+    private static final RenderableContainer RENDERABLE_COMPONENTS = new RenderableContainer();
+
+    /**
+     * Returns the RenderableContainer.
+     *
+     * @return the RenderableContainer
+     */
+    @NotNull
+    public static RenderableContainer getRenderableComponents() {
+	return RENDERABLE_COMPONENTS;
+    }
+
     @NotNull
     public static ParameterContainer getParameters() {
-        return parameters;
+	return parameters;
     }
 
     /**
@@ -78,43 +93,43 @@ public class RenderingPipeline {
      * using it. However the GameLoop's initialize methods call it.
      */
     public static void initialize() {
-        addDefaultParameters();
-        useBlinnPhongPipeline();
-        refresh();
+	addDefaultParameters();
+	useBlinnPhongPipeline();
+	refresh();
     }
 
     private static void addDefaultParameters() {
-        getParameters().set(WIREFRAME_MODE, new Parameter<>(false));
-        getParameters().set(GAMMA, new Parameter<Float>(2.2f) {
-            @Override
-            public void setValue(@NotNull Float value) {
-                if (value < 1) {
-                    throw new IllegalArgumentException("Gamma can't be lower than 1");
-                }
-                super.setValue(value);
-                ResourceManager.changeTextureColorSpace();
-            }
+	getParameters().set(WIREFRAME_MODE, new Parameter<>(false));
+	getParameters().set(GAMMA, new Parameter<Float>(2.2f) {
+	    @Override
+	    public void setValue(@NotNull Float value) {
+		if (value < 1) {
+		    throw new IllegalArgumentException("Gamma can't be lower than 1");
+		}
+		super.setValue(value);
+		ResourceManager.changeTextureColorSpace();
+	    }
 
-            @Override
-            protected void removedFromParameters(@Nullable Parameter<Float> added) {
-                ResourceManager.changeTextureColorSpace();
-            }
+	    @Override
+	    protected void removedFromParameters(@Nullable Parameter<Float> added) {
+		ResourceManager.changeTextureColorSpace();
+	    }
 
-            @Override
-            protected void addedToParameters(@Nullable Parameter<Float> removed) {
-                ResourceManager.changeTextureColorSpace();
-            }
+	    @Override
+	    protected void addedToParameters(@Nullable Parameter<Float> removed) {
+		ResourceManager.changeTextureColorSpace();
+	    }
 
-        });
-        getParameters().set(MSAA_LEVEL, new Parameter<Integer>(2) {
-            @Override
-            public void setValue(@NotNull Integer value) {
-                if (value < 1) {
-                    throw new IllegalArgumentException("MSAA can't be lower than 1");
-                }
-                super.setValue(value);
-            }
-        });
+	});
+	getParameters().set(MSAA_LEVEL, new Parameter<Integer>(2) {
+	    @Override
+	    public void setValue(@NotNull Integer value) {
+		if (value < 1) {
+		    throw new IllegalArgumentException("MSAA can't be lower than 1");
+		}
+		super.setValue(value);
+	    }
+	});
     }
 
     /**
@@ -122,28 +137,28 @@ public class RenderingPipeline {
      * the screen renderer if released.
      */
     private static void refresh() {
-        int msaaLevel = getParameters().getValueOrDefault(MSAA_LEVEL, 2);
-        if (fbo == null || !fbo.isUsable() || msaaLevel != fbo.getNumberOfSamples() || !getRenderingSize().equals(fbo.getSize())) {
-            //geometry FBO
-            if (fbo != null) {
-                fbo.release();
-            }
-            fbo = new Fbo(getRenderingSize(), msaaLevel != 1, msaaLevel, true);
-            fbo.bind();
-            fbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
-            fbo.addAttachment(Fbo.FboAttachmentSlot.DEPTH, Fbo.FboAttachmentType.RBO, 0);
-            if (!fbo.isComplete()) {
-                Utility.logError(fbo.getStatus().name());
-                throw new RuntimeException("Incomplete FBO");
-            }
-            fbo.unbind();
-        }
-        if (screenRenderer == null || !screenRenderer.isUsable()) {
-            screenRenderer = ScreenRenderer.getInstance();
-        }
-        if (skyboxRenderer == null || !skyboxRenderer.isUsable()) {
-            skyboxRenderer = SkyBoxRenderer.getInstance();
-        }
+	int msaaLevel = getParameters().getValueOrDefault(MSAA_LEVEL, 2);
+	if (fbo == null || !fbo.isUsable() || msaaLevel != fbo.getNumberOfSamples() || !getRenderingSize().equals(fbo.getSize())) {
+	    //geometry FBO
+	    if (fbo != null) {
+		fbo.release();
+	    }
+	    fbo = new Fbo(getRenderingSize(), msaaLevel != 1, msaaLevel, true);
+	    fbo.bind();
+	    fbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
+	    fbo.addAttachment(Fbo.FboAttachmentSlot.DEPTH, Fbo.FboAttachmentType.RBO, 0);
+	    if (!fbo.isComplete()) {
+		Utility.logError(fbo.getStatus().name());
+		throw new RuntimeException("Incomplete FBO");
+	    }
+	    fbo.unbind();
+	}
+	if (screenRenderer == null || !screenRenderer.isUsable()) {
+	    screenRenderer = ScreenRenderer.getInstance();
+	}
+	if (skyboxRenderer == null || !skyboxRenderer.isUsable()) {
+	    skyboxRenderer = SkyBoxRenderer.getInstance();
+	}
     }
 
     /**
@@ -153,7 +168,7 @@ public class RenderingPipeline {
      * @return rendering scale
      */
     public static float getRenderingScale() {
-        return renderingScale;
+	return renderingScale;
     }
 
     /**
@@ -165,11 +180,11 @@ public class RenderingPipeline {
      * @throws IllegalArgumentException rendering scale must be higher than 0
      */
     public static void setRenderingScale(float renderingScale) {
-        if (renderingScale <= 0) {
-            throw new IllegalArgumentException("Rendering scale must be higher than 0");
-        }
-        RenderingPipeline.renderingScale = renderingScale;
-        refresh();
+	if (renderingScale <= 0) {
+	    throw new IllegalArgumentException("Rendering scale must be higher than 0");
+	}
+	RenderingPipeline.renderingScale = renderingScale;
+	refresh();
     }
 
     /**
@@ -180,41 +195,41 @@ public class RenderingPipeline {
      */
     @NotNull @ReadOnly
     public static Vector2i getRenderingSize() {
-        Vector2i renderingSize = new Vector2i();
-        renderingSize.x = (int) (Window.getClientAreaSize().x * renderingScale);
-        renderingSize.y = (int) (Window.getClientAreaSize().y * renderingScale);
-        return renderingSize;
+	Vector2i renderingSize = new Vector2i();
+	renderingSize.x = (int) (Window.getClientAreaSize().x * renderingScale);
+	renderingSize.y = (int) (Window.getClientAreaSize().y * renderingScale);
+	return renderingSize;
     }
 
     /**
      * Binds the pipelin's FBO for rendering.
      */
     public static void bindFbo() {
-        fbo.bind();
+	fbo.bind();
     }
 
     public static void addRenderingStage(int index) {
-        geometry.add(index, new GeometryRenderingStage());
+	geometry.add(index, new GeometryRenderingStage());
     }
 
     public static void addRenderingStageToTheEnd() {
-        geometry.add(new GeometryRenderingStage());
+	geometry.add(new GeometryRenderingStage());
     }
 
     public static GeometryRenderingStage getRenderingStage(int index) {
-        return geometry.get(index);
+	return geometry.get(index);
     }
 
     public static void removeRenderingStage(int index) {
-        geometry.remove(index).release();
+	geometry.remove(index).release();
     }
 
     public static int getRenderingStageCount() {
-        return geometry.size();
+	return geometry.size();
     }
 
     public static PostProcessingRenderingStage getPostProcessingRenderingStage() {
-        return post;
+	return post;
     }
 
     //
@@ -224,42 +239,42 @@ public class RenderingPipeline {
      * Renders the scene.
      */
     public static void render() {
-        
-        beforeRender();
-        OpenGl.setDepthTest(true);
-        prepare.render();
-        for (GeometryRenderingStage stage : geometry) {
-            stage.render();
-        }
-        skyboxRenderer.render();
-        post.beforeRender(fbo);
-        post.render();
-        afterRender();
+
+	beforeRender();
+	OpenGl.setDepthTest(true);
+	prepare.render();
+	for (GeometryRenderingStage stage : geometry) {
+	    stage.render();
+	}
+	skyboxRenderer.render();
+	post.beforeRender(fbo);
+	post.render();
+	afterRender();
     }
 
     /**
      * Preperes for the rendering.
      */
     private static void beforeRender() {
-        OpenGl.bindDefaultFrameBuffer();
-        OpenGl.clear(true, true, false);
-        refresh();
-        bindFbo();
-        OpenGl.clear(true, true, false);
-        //is there camera and dir light?
-        Parameter<Camera> mainCamera = Scene.getParameters().get(Scene.MAIN_CAMERA);
-        Parameter<BlinnPhongDirectionalLight> dirLight = Scene.getParameters().get(Scene.MAIN_DIRECTIONAL_LIGHT);
-        if (mainCamera == null || !mainCamera.getValue().isActive() || dirLight == null || !dirLight.getValue().isActive()) {
-            throw new IllegalStateException("There is no active main directiona light or camera");
-        }
+	OpenGl.bindDefaultFrameBuffer();
+	OpenGl.clear(true, true, false);
+	refresh();
+	bindFbo();
+	OpenGl.clear(true, true, false);
+	//is there camera and dir light?
+	Parameter<Camera> mainCamera = Scene.getParameters().get(Scene.MAIN_CAMERA);
+	Parameter<BlinnPhongDirectionalLightComponent> dirLight = Scene.getParameters().get(BlinnPhongRenderer.MAIN_DIRECTIONAL_LIGHT);
+	if (mainCamera == null || !mainCamera.getValue().isActive() || dirLight == null || !dirLight.getValue().isActive()) {
+	    throw new IllegalStateException("There is no active main directiona light or camera");
+	}
     }
 
     /**
      * Renders the final image to the screen.
      */
     private static void afterRender() {
-        screenRenderer.render();
-        getParameters().set(WORK, null);
+	screenRenderer.render();
+	getParameters().set(WORK, null);
     }
 
     //
@@ -269,14 +284,14 @@ public class RenderingPipeline {
      * Releases the rendering pipeline.
      */
     public static void release() {
-        for (GeometryRenderingStage stage : geometry) {
-            stage.release();
-        }
-        post.release();
-        screenRenderer.release();
-        if (fbo != null) {
-            fbo.release();
-        }
+	for (GeometryRenderingStage stage : geometry) {
+	    stage.release();
+	}
+	post.release();
+	screenRenderer.release();
+	if (fbo != null) {
+	    fbo.release();
+	}
     }
 
     /**
@@ -286,32 +301,32 @@ public class RenderingPipeline {
      */
     @NotNull
     public static void useBlinnPhongPipeline() {
-        //remove all
-        prepare.addRendererToTheEnd(ShadowRenderer.getInstance());
-        prepare.addRendererToTheEnd(EnvironmentMapRenderer.getInstance());
+	//remove all
+	prepare.addRendererToTheEnd(ShadowRenderer.getInstance());
+	prepare.addRendererToTheEnd(EnvironmentMapRenderer.getInstance());
 
-        addRenderingStageToTheEnd();
-        GeometryRenderingStage main = getRenderingStage(getRenderingStageCount() - 1);
-        main.addRendererToTheEnd(BlinnPhongRenderer.getInstance());
-        main.addRendererToTheEnd(SolidColorRenderer.getInstance());
+	addRenderingStageToTheEnd();
+	GeometryRenderingStage main = getRenderingStage(getRenderingStageCount() - 1);
+	main.addRendererToTheEnd(BlinnPhongRenderer.getInstance());
+	main.addRendererToTheEnd(SolidColorRenderer.getInstance());
 
-        PostProcessingRenderer renderer = InvertRenderer.getInstance();
-        renderer.setActive(false);
-        post.addRendererToTheEnd(renderer);
+	PostProcessingRenderer renderer = InvertRenderer.getInstance();
+	renderer.setActive(false);
+	post.addRendererToTheEnd(renderer);
 //
-        renderer = GrayscaleRenderer.getInstance();
-        renderer.setActive(false);
-        post.addRendererToTheEnd(renderer);
+	renderer = GrayscaleRenderer.getInstance();
+	renderer.setActive(false);
+	post.addRendererToTheEnd(renderer);
 //
-        renderer = FxaaRenderer.getInstance();
-        renderer.setActive(false);
-        post.addRendererToTheEnd(renderer);
+	renderer = FxaaRenderer.getInstance();
+	renderer.setActive(false);
+	post.addRendererToTheEnd(renderer);
 
-        renderer = ReinhardToneMappingRenderer.getInstance();
-        renderer.setActive(false);
-        post.addRendererToTheEnd(renderer);
+	renderer = ReinhardToneMappingRenderer.getInstance();
+	renderer.setActive(false);
+	post.addRendererToTheEnd(renderer);
 
-        post.addRendererToTheEnd(GammaCorrectionRenderer.getInstance());
+	post.addRendererToTheEnd(GammaCorrectionRenderer.getInstance());
     }
 
 }

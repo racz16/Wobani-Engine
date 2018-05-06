@@ -10,6 +10,7 @@ import wobani.components.camera.*;
 import wobani.components.camera.Camera.CornerPoint;
 import wobani.components.renderables.*;
 import wobani.core.*;
+import wobani.rendering.geometry.*;
 import wobani.resources.*;
 import wobani.toolbox.annotations.*;
 import wobani.window.*;
@@ -49,52 +50,57 @@ public class Utility {
      */
     @NotNull
     public static Logger getWobaniLogger() {
-        return WOBANI_LOG;
+	return WOBANI_LOG;
     }
 
     /**
      * Sets the logging level for the engine's root logger and all of it's
      * handlers to the given value.
+     * <p>
+     * Info level used when big systems like OpenGL start or end, Fine used when
+     * Resources created or released, Finer used when computation intensive
+     * tasks like matrix calculation ran, Finer used for other fairly important
+     * events.
      *
      * @param level logging level
      *
      * @see #getWobaniLogger()
      */
     public static void setLoggingLevel(@NotNull Level level) {
-        WOBANI_LOG.setLevel(level);
-        for (Handler handler : WOBANI_LOG.getHandlers()) {
-            handler.setLevel(level);
-        }
+	WOBANI_LOG.setLevel(level);
+	for (Handler handler : WOBANI_LOG.getHandlers()) {
+	    handler.setLevel(level);
+	}
     }
 
     /**
      * Initializes the engine's root logger and the exception logger.
      */
     public static void initializeLogging() {
-        initializeWobaniLogger();
-        initializeErrorLogger();
-        setLoggingLevel(Level.SEVERE);
+	initializeWobaniLogger();
+	initializeErrorLogger();
+	setLoggingLevel(Level.SEVERE);
     }
 
     /**
      * Initializes the engine's root logger.
      */
     private static void initializeWobaniLogger() {
-        WOBANI_LOG.setUseParentHandlers(false);
-        WOBANI_LOG.addHandler(new ConsoleHandler());
+	WOBANI_LOG.setUseParentHandlers(false);
+	WOBANI_LOG.addHandler(new ConsoleHandler());
     }
 
     /**
      * Initializes the engine's error logger.
      */
     private static void initializeErrorLogger() {
-        try {
-            ERROR_LOG.setUseParentHandlers(false);
-            ERROR_LOG.addHandler(createFileHandler("errors.log"));
-            ERROR_LOG.addHandler(new ConsoleHandler());
-        } catch (IOException | SecurityException ex) {
-            Logger.getLogger("").severe(ex.toString());
-        }
+	try {
+	    ERROR_LOG.setUseParentHandlers(false);
+	    ERROR_LOG.addHandler(createFileHandler("errors.log"));
+	    ERROR_LOG.addHandler(new ConsoleHandler());
+	} catch (IOException | SecurityException ex) {
+	    Logger.getLogger("").severe(ex.toString());
+	}
     }
 
     /**
@@ -108,9 +114,9 @@ public class Utility {
      */
     @NotNull
     private static FileHandler createFileHandler(@NotNull String fileName) throws IOException {
-        FileHandler fh = new FileHandler(fileName, true);
-        fh.setFormatter(new SimpleFormatter());
-        return fh;
+	FileHandler fh = new FileHandler(fileName, true);
+	fh.setFormatter(new SimpleFormatter());
+	return fh;
     }
 
     /**
@@ -119,7 +125,7 @@ public class Utility {
      * @param ex exception
      */
     public static void logException(@NotNull Throwable ex) {
-        ERROR_LOG.log(Level.SEVERE, ex.toString(), ex);
+	ERROR_LOG.log(Level.SEVERE, ex.toString(), ex);
     }
 
     /**
@@ -128,7 +134,7 @@ public class Utility {
      * @param ex error message
      */
     public static void logError(@NotNull String ex) {
-        ERROR_LOG.severe(ex);
+	ERROR_LOG.severe(ex);
     }
 
     //
@@ -145,11 +151,11 @@ public class Utility {
      */
     @NotNull
     public static Matrix4f computeModelMatrix(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Vector3f scale) {
-        return new Matrix4f().translationRotateScale(
-                position,
-                new Quaternionf()
-                        .rotation(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
-                scale);
+	return new Matrix4f().translationRotateScale(
+		position,
+		new Quaternionf()
+			.rotation(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
+		scale);
     }
 
     /**
@@ -163,11 +169,11 @@ public class Utility {
      */
     @NotNull
     public static Matrix4f computetInverseModelMatrix(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Vector3f scale) {
-        return new Matrix4f().translationRotateScaleInvert(
-                position,
-                new Quaternionf()
-                        .rotation(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
-                scale);
+	return new Matrix4f().translationRotateScaleInvert(
+		position,
+		new Quaternionf()
+			.rotation(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)),
+		scale);
     }
 
     /**
@@ -180,7 +186,7 @@ public class Utility {
      */
     @NotNull
     public static Matrix4f computeViewMatrix(@NotNull Vector3f position, @NotNull Vector3f rotation) {
-        return computetInverseModelMatrix(position, rotation, new Vector3f(1));
+	return computetInverseModelMatrix(position, rotation, new Vector3f(1));
     }
 
     /**
@@ -198,13 +204,13 @@ public class Utility {
      */
     @NotNull
     public static Matrix4f computePerspectiveProjectionMatrix(float fov, float nearPlane, float farPlane) {
-        if (fov <= 0 || fov >= 180 || nearPlane <= 0 || farPlane <= nearPlane) {
-            throw new IllegalArgumentException("Fov must be in the (0;180) interval, the near plane must be higher than 0 and the far plane higher than the near plane");
-        }
-        return new Matrix4f().setPerspective(toRadians(fov),
-                Window.getAspectRatio(),
-                nearPlane,
-                farPlane);
+	if (fov <= 0 || fov >= 180 || nearPlane <= 0 || farPlane <= nearPlane) {
+	    throw new IllegalArgumentException("Fov must be in the (0;180) interval, the near plane must be higher than 0 and the far plane higher than the near plane");
+	}
+	return new Matrix4f().setPerspective(toRadians(fov),
+		Window.getAspectRatio(),
+		nearPlane,
+		farPlane);
     }
 
     /**
@@ -222,11 +228,11 @@ public class Utility {
      */
     @NotNull
     public static Matrix4f computeOrthographicProjectionMatrix(float scale, float nearPlane, float farPlane) {
-        if (scale <= 0 || nearPlane <= 0 || farPlane <= nearPlane) {
-            throw new IllegalArgumentException("Scale must be higher than 0, the near plane must be higher than 0 and the far plane higher than the near plane");
-        }
-        float ar = Window.getAspectRatio();
-        return new Matrix4f().setOrtho(-scale * ar, scale * ar, -scale, scale, nearPlane, farPlane);
+	if (scale <= 0 || nearPlane <= 0 || farPlane <= nearPlane) {
+	    throw new IllegalArgumentException("Scale must be higher than 0, the near plane must be higher than 0 and the far plane higher than the near plane");
+	}
+	float ar = Window.getAspectRatio();
+	return new Matrix4f().setOrtho(-scale * ar, scale * ar, -scale, scale, nearPlane, farPlane);
     }
 
     /**
@@ -245,10 +251,10 @@ public class Utility {
      */
     @NotNull
     public static Matrix4f computeShadowMapProjectionViewMatrix(float distance, float nearDistance, float farDistance) {
-        if (distance <= 0 || nearDistance <= 0 || nearDistance >= farDistance) {
-            throw new IllegalArgumentException("All parameters must be positive and nearDistance must be lower than farDistance");
-        }
-        return ShadowMapMatrixSolver.computeMatrix(distance, nearDistance, farDistance);
+	if (distance <= 0 || nearDistance <= 0 || nearDistance >= farDistance) {
+	    throw new IllegalArgumentException("All parameters must be positive and nearDistance must be lower than farDistance");
+	}
+	return ShadowMapMatrixSolver.computeMatrix(distance, nearDistance, farDistance);
     }
 
     //
@@ -265,12 +271,12 @@ public class Utility {
      *         object, false otherwise
      */
     public static boolean containsReference(@NotNull Collection<?> collection, @Nullable Object object) {
-        for (Object collectionObject : collection) {
-            if (collectionObject == object) {
-                return true;
-            }
-        }
-        return false;
+	for (Object collectionObject : collection) {
+	    if (collectionObject == object) {
+		return true;
+	    }
+	}
+	return false;
     }
 
     /**
@@ -285,7 +291,7 @@ public class Utility {
      *         Collection, false otherwise
      */
     public static <T> boolean removeReference(@NotNull Collection<T> collection, @Nullable T object) {
-        return collection.removeIf((T t) -> t == object);
+	return collection.removeIf((T t) -> t == object);
 
     }
 
@@ -302,7 +308,7 @@ public class Utility {
      * @return the measurement of the angle angdeg in radians.
      */
     public static float toRadians(float angle) {
-        return angle / 180 * PI;
+	return angle / 180 * PI;
     }
 
     /**
@@ -314,7 +320,7 @@ public class Utility {
      */
     @NotNull
     public static Vector3f toRadians(@NotNull Vector3f angles) {
-        return new Vector3f(toRadians(angles.x), toRadians(angles.y), toRadians(angles.z));
+	return new Vector3f(toRadians(angles.x), toRadians(angles.y), toRadians(angles.z));
     }
 
     /**
@@ -329,7 +335,7 @@ public class Utility {
      * @return the measurement of the angle {@code angrad} in degrees.
      */
     public static float toDegrees(float angle) {
-        return angle * 180 / PI;
+	return angle * 180 / PI;
     }
 
     /**
@@ -341,7 +347,7 @@ public class Utility {
      */
     @NotNull
     public static Vector3f toDegrees(@NotNull Vector3f angles) {
-        return new Vector3f(toDegrees(angles.x), toDegrees(angles.y), toDegrees(angles.z));
+	return new Vector3f(toDegrees(angles.x), toDegrees(angles.y), toDegrees(angles.z));
     }
 
     //
@@ -357,7 +363,7 @@ public class Utility {
      *         than zero, false otherwise
      */
     public static boolean isHdrColor(@NotNull Vector3f color) {
-        return color.get(color.minComponent()) >= 0;
+	return color.get(color.minComponent()) >= 0;
     }
 
     /**
@@ -370,7 +376,7 @@ public class Utility {
      *         one, false otherwise
      */
     public static boolean isLdrColor(@NotNull Vector3f color) {
-        return color.get(color.minComponent()) >= 0 && color.get(color.maxComponent()) <= 1;
+	return color.get(color.minComponent()) >= 0 && color.get(color.maxComponent()) <= 1;
     }
 
     /**
@@ -383,9 +389,9 @@ public class Utility {
      */
     @NotNull
     public static <T> List<T> wrapObjectByList(@Nullable T object) {
-        List<T> list = new ArrayList<>(1);
-        list.add(object);
-        return list;
+	List<T> list = new ArrayList<>(1);
+	list.add(object);
+	return list;
     }
 
     /**
@@ -397,10 +403,10 @@ public class Utility {
      */
     @NotNull
     public static IntBuffer storeDataInIntBuffer(@NotNull int[] data) {
-        IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
-        buffer.put(data);
-        buffer.flip();
-        return buffer;
+	IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
+	buffer.put(data);
+	buffer.flip();
+	return buffer;
     }
 
     /**
@@ -412,10 +418,10 @@ public class Utility {
      */
     @NotNull
     public static FloatBuffer storeDataInFloatBuffer(@NotNull float[] data) {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
-        buffer.put(data);
-        buffer.flip();
-        return buffer;
+	FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
+	buffer.put(data);
+	buffer.flip();
+	return buffer;
     }
 
     /**
@@ -428,12 +434,12 @@ public class Utility {
      *         frustum, false otherwise
      */
     public static boolean isInsideMainCameraFrustumAabb(@NotNull RenderableComponent<?> renderableComponent) {
-        Camera camera = Scene.getParameters().getValue(Scene.MAIN_CAMERA);
-        if (camera != null) {
-            return camera.isInsideFrustum(renderableComponent.getBoundingShape().getRealAabbMin(), renderableComponent.getBoundingShape().getRealAabbMax());
-        } else {
-            return false;
-        }
+	Camera camera = Scene.getParameters().getValue(Scene.MAIN_CAMERA);
+	if (camera != null) {
+	    return camera.isInsideFrustum(renderableComponent.getBoundingShape().getRealAabbMin(), renderableComponent.getBoundingShape().getRealAabbMax());
+	} else {
+	    return false;
+	}
     }
 
     /**
@@ -446,12 +452,12 @@ public class Utility {
      *         frustum, false otherwise
      */
     public static boolean isInsideMainCameraFrustumSphere(@NotNull RenderableComponent<?> renderableComponent) {
-        Camera camera = Scene.getParameters().getValue(Scene.MAIN_CAMERA);
-        if (camera != null) {
-            return camera.isInsideFrustum(renderableComponent.getGameObject().getTransform().getAbsolutePosition(), renderableComponent.getBoundingShape().getRealRadius());
-        } else {
-            return false;
-        }
+	Camera camera = Scene.getParameters().getValue(Scene.MAIN_CAMERA);
+	if (camera != null) {
+	    return camera.isInsideFrustum(renderableComponent.getGameObject().getTransform().getAbsolutePosition(), renderableComponent.getBoundingShape().getRealRadius());
+	} else {
+	    return false;
+	}
     }
 
     /**
@@ -463,7 +469,7 @@ public class Utility {
      *         otherwise
      */
     public static boolean isUsable(@Nullable Resource resource) {
-        return resource != null && resource.isUsable();
+	return resource != null && resource.isUsable();
     }
 
     /**
@@ -473,176 +479,177 @@ public class Utility {
      */
     private static class ShadowMapMatrixSolver {
 
-        /**
-         * Scene's main camera.
-         */
-        private static Camera camera;
-        /**
-         * Main directional light's right direction.
-         */
-        private static Vector3f lightRight;
-        /**
-         * Main directional light's up direction.
-         */
-        private static Vector3f lightUp;
-        /**
-         * Main directional light's computed position.
-         */
-        private static Vector3f lightPosition;
-        /**
-         * Main directional light's absolute rotation.
-         */
-        private static Vector3f lightRotation;
-        /**
-         * Maximum x coordinate of the main camera's frustum corner points in
-         * light space.
-         */
-        private static float lightSpaceXMax;
-        /**
-         * Minimum x coordinate of the main camera's frustum corner points in
-         * light space.
-         */
-        private static float lightSpaceXMin;
-        /**
-         * Maximum y coordinate of the main camera's frustum corner points in
-         * light space.
-         */
-        private static float lightSpaceYMax;
-        /**
-         * Minimum y coordinate of the main camera's frustum corner points in
-         * light space.
-         */
-        private static float lightSpaceYMin;
+	/**
+	 * Scene's main camera.
+	 */
+	private static Camera camera;
+	/**
+	 * Main directional light's right direction.
+	 */
+	private static Vector3f lightRight;
+	/**
+	 * Main directional light's up direction.
+	 */
+	private static Vector3f lightUp;
+	/**
+	 * Main directional light's computed position.
+	 */
+	private static Vector3f lightPosition;
+	/**
+	 * Main directional light's absolute rotation.
+	 */
+	private static Vector3f lightRotation;
+	/**
+	 * Maximum x coordinate of the main camera's frustum corner points in
+	 * light space.
+	 */
+	private static float lightSpaceXMax;
+	/**
+	 * Minimum x coordinate of the main camera's frustum corner points in
+	 * light space.
+	 */
+	private static float lightSpaceXMin;
+	/**
+	 * Maximum y coordinate of the main camera's frustum corner points in
+	 * light space.
+	 */
+	private static float lightSpaceYMax;
+	/**
+	 * Minimum y coordinate of the main camera's frustum corner points in
+	 * light space.
+	 */
+	private static float lightSpaceYMin;
 
-        /**
-         * To can't create ShadowMapMatrixSolver instance.
-         */
-        private ShadowMapMatrixSolver() {
-        }
+	/**
+	 * To can't create ShadowMapMatrixSolver instance.
+	 */
+	private ShadowMapMatrixSolver() {
+	}
 
-        /**
-         * Computes the main directional light's projection view matrix based on
-         * the given data.
-         *
-         * @param distance     distance from the camera frustum center
-         * @param nearDistance near plane distance
-         * @param farDistance  far plane distance
-         *
-         * @return the main directional light's projection view matrix
-         */
-        public static Matrix4f computeMatrix(float distance, float nearDistance, float farDistance) {
-            initializeCamera();
-            initializeLight(distance);
-            initializeMinMax();
-            refreshMinMaxValues();
-            refreshLightPosition();
-            return computeMatrix(nearDistance, farDistance);
-        }
+	/**
+	 * Computes the main directional light's projection view matrix based on
+	 * the given data.
+	 *
+	 * @param distance     distance from the camera frustum center
+	 * @param nearDistance near plane distance
+	 * @param farDistance  far plane distance
+	 *
+	 * @return the main directional light's projection view matrix
+	 */
+	public static Matrix4f computeMatrix(float distance, float nearDistance, float farDistance) {
+	    initializeCamera();
+	    initializeLight(distance);
+	    initializeMinMax();
+	    refreshMinMaxValues();
+	    refreshLightPosition();
+	    return computeMatrix(nearDistance, farDistance);
+	}
 
-        /**
-         * Initializes the main camera related fields.
-         */
-        private static void initializeCamera() {
-            camera = Scene.getParameters().getValue(Scene.MAIN_CAMERA);
-        }
+	/**
+	 * Initializes the main camera related fields.
+	 */
+	private static void initializeCamera() {
+	    camera = Scene.getParameters().getValue(Scene.MAIN_CAMERA);
+	}
 
-        /**
-         * Initializes the main directional light related fields.
-         *
-         * @param distance distance from the camera frustum center
-         */
-        private static void initializeLight(float distance) {
-            GameObject lightGameObject = Scene.getParameters().getValue(Scene.MAIN_DIRECTIONAL_LIGHT).getGameObject();
-            lightRight = lightGameObject.getTransform().getRightVector();
-            lightUp = lightGameObject.getTransform().getUpVector();
-            lightRotation = lightGameObject.getTransform().getAbsoluteRotation();
-            lightPosition = camera.getFrustumCenter().add(lightGameObject.getTransform().getForwardVector().negate().mul(distance));
-        }
+	/**
+	 * Initializes the main directional light related fields.
+	 *
+	 * @param distance distance from the camera frustum center
+	 */
+	private static void initializeLight(float distance) {
+	    //FIXME what about PBR dir light?
+	    GameObject lightGameObject = Scene.getParameters().getValue(BlinnPhongRenderer.MAIN_DIRECTIONAL_LIGHT).getGameObject();
+	    lightRight = lightGameObject.getTransform().getRightVector();
+	    lightUp = lightGameObject.getTransform().getUpVector();
+	    lightRotation = lightGameObject.getTransform().getAbsoluteRotation();
+	    lightPosition = camera.getFrustumCenter().add(lightGameObject.getTransform().getForwardVector().negate().mul(distance));
+	}
 
-        /**
-         * Initializes the light space minimum an maximum values.
-         */
-        private static void initializeMinMax() {
-            lightSpaceXMax = Float.NEGATIVE_INFINITY;
-            lightSpaceXMin = Float.POSITIVE_INFINITY;
-            lightSpaceYMax = Float.NEGATIVE_INFINITY;
-            lightSpaceYMin = Float.POSITIVE_INFINITY;
-        }
+	/**
+	 * Initializes the light space minimum an maximum values.
+	 */
+	private static void initializeMinMax() {
+	    lightSpaceXMax = Float.NEGATIVE_INFINITY;
+	    lightSpaceXMin = Float.POSITIVE_INFINITY;
+	    lightSpaceYMax = Float.NEGATIVE_INFINITY;
+	    lightSpaceYMin = Float.POSITIVE_INFINITY;
+	}
 
-        /**
-         * Refreshes the light space minimum and maximum values based on the
-         * camera's frustum corner points.
-         */
-        private static void refreshMinMaxValues() {
-            Vector4f vec = new Vector4f();
-            Matrix4f lightSpaceMatrix = computeViewMatrix(lightPosition, lightRotation);
-            for (CornerPoint cp : Camera.CornerPoint.values()) {
-                vec.set(camera.getFrustumCornerPoint(cp), 1).mul(lightSpaceMatrix);
-                refreshMinValues(vec.x(), vec.y());
-                refreshMaxValues(vec.x(), vec.y());
-            }
-        }
+	/**
+	 * Refreshes the light space minimum and maximum values based on the
+	 * camera's frustum corner points.
+	 */
+	private static void refreshMinMaxValues() {
+	    Vector4f vec = new Vector4f();
+	    Matrix4f lightSpaceMatrix = computeViewMatrix(lightPosition, lightRotation);
+	    for (CornerPoint cp : Camera.CornerPoint.values()) {
+		vec.set(camera.getFrustumCornerPoint(cp), 1).mul(lightSpaceMatrix);
+		refreshMinValues(vec.x(), vec.y());
+		refreshMaxValues(vec.x(), vec.y());
+	    }
+	}
 
-        /**
-         * Refreshes the light space minimum values based on the camera's given
-         * frustum corner point.
-         *
-         * @param x one of the main camera's frustum corner point's x coordinate
-         * @param y one of the main camera's frustum corner point's y coordinate
-         */
-        private static void refreshMinValues(float x, float y) {
-            if (x < lightSpaceXMin) {
-                lightSpaceXMin = x;
-            }
-            if (y < lightSpaceYMin) {
-                lightSpaceYMin = y;
-            }
-        }
+	/**
+	 * Refreshes the light space minimum values based on the camera's given
+	 * frustum corner point.
+	 *
+	 * @param x one of the main camera's frustum corner point's x coordinate
+	 * @param y one of the main camera's frustum corner point's y coordinate
+	 */
+	private static void refreshMinValues(float x, float y) {
+	    if (x < lightSpaceXMin) {
+		lightSpaceXMin = x;
+	    }
+	    if (y < lightSpaceYMin) {
+		lightSpaceYMin = y;
+	    }
+	}
 
-        /**
-         * Refreshes the light space maximum values based on the camera's given
-         * frustum corner point.
-         *
-         * @param x one of the main camera's frustum corner point's x coordinate
-         * @param y one of the main camera's frustum corner point's y coordinate
-         */
-        private static void refreshMaxValues(float x, float y) {
-            if (x > lightSpaceXMax) {
-                lightSpaceXMax = x;
-            }
-            if (y > lightSpaceYMax) {
-                lightSpaceYMax = y;
-            }
-        }
+	/**
+	 * Refreshes the light space maximum values based on the camera's given
+	 * frustum corner point.
+	 *
+	 * @param x one of the main camera's frustum corner point's x coordinate
+	 * @param y one of the main camera's frustum corner point's y coordinate
+	 */
+	private static void refreshMaxValues(float x, float y) {
+	    if (x > lightSpaceXMax) {
+		lightSpaceXMax = x;
+	    }
+	    if (y > lightSpaceYMax) {
+		lightSpaceYMax = y;
+	    }
+	}
 
-        /**
-         * Refreshes the light's position based on the light space minimum and
-         * maximum values.
-         */
-        private static void refreshLightPosition() {
-            float compensation = (lightSpaceXMax + lightSpaceXMin) / 2;
-            lightPosition.add(lightRight.mul(compensation));
-            compensation = (lightSpaceYMax + lightSpaceYMin) / 2;
-            lightPosition.add(lightUp.mul(compensation));
-        }
+	/**
+	 * Refreshes the light's position based on the light space minimum and
+	 * maximum values.
+	 */
+	private static void refreshLightPosition() {
+	    float compensation = (lightSpaceXMax + lightSpaceXMin) / 2;
+	    lightPosition.add(lightRight.mul(compensation));
+	    compensation = (lightSpaceYMax + lightSpaceYMin) / 2;
+	    lightPosition.add(lightUp.mul(compensation));
+	}
 
-        /**
-         * Computes the main directional light's projection view matrix based on
-         * the already computed light space min, max and position values.
-         *
-         * @param near near plane distance
-         * @param far  far plane distance
-         *
-         * @return the main directional light's projection view
-         */
-        @NotNull
-        private static Matrix4f computeMatrix(float near, float far) {
-            float horizontalScale = (lightSpaceXMax - lightSpaceXMin) / 2;
-            float verticalScale = (lightSpaceYMax - lightSpaceYMin) / 2;
-            Matrix4f lightProjectionMatrix = new Matrix4f().setOrtho(-horizontalScale, horizontalScale, -verticalScale, verticalScale, near, far);
-            Matrix4f lightViewMatrix = Utility.computeViewMatrix(lightPosition, lightRotation);
-            return lightProjectionMatrix.mulOrthoAffine(lightViewMatrix);
-        }
+	/**
+	 * Computes the main directional light's projection view matrix based on
+	 * the already computed light space min, max and position values.
+	 *
+	 * @param near near plane distance
+	 * @param far  far plane distance
+	 *
+	 * @return the main directional light's projection view
+	 */
+	@NotNull
+	private static Matrix4f computeMatrix(float near, float far) {
+	    float horizontalScale = (lightSpaceXMax - lightSpaceXMin) / 2;
+	    float verticalScale = (lightSpaceYMax - lightSpaceYMin) / 2;
+	    Matrix4f lightProjectionMatrix = new Matrix4f().setOrtho(-horizontalScale, horizontalScale, -verticalScale, verticalScale, near, far);
+	    Matrix4f lightViewMatrix = Utility.computeViewMatrix(lightPosition, lightRotation);
+	    return lightProjectionMatrix.mulOrthoAffine(lightViewMatrix);
+	}
 
     }
 

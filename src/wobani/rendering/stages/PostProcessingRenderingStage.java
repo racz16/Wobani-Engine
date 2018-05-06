@@ -1,11 +1,11 @@
 package wobani.rendering.stages;
 
+import wobani.resources.textures.texture2d.DynamicTexture2D;
+import wobani.rendering.postprocessing.PostProcessingRenderer;
 import java.util.*;
 import wobani.rendering.*;
-import wobani.rendering.postProcessing.*;
 import wobani.resources.*;
 import wobani.resources.textures.*;
-import wobani.resources.textures.texture2D.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotations.*;
 import wobani.toolbox.parameters.*;

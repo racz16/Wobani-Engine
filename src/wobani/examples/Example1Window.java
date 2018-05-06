@@ -1,5 +1,9 @@
 package wobani.examples;
 
+import wobani.rendering.postprocessing.GrayscaleRenderer;
+import wobani.rendering.postprocessing.InvertRenderer;
+import wobani.rendering.postprocessing.FxaaRenderer;
+import wobani.rendering.postprocessing.ReinhardToneMappingRenderer;
 import javax.swing.*;
 import org.joml.*;
 import wobani.components.camera.*;
@@ -7,7 +11,6 @@ import wobani.core.*;
 import wobani.rendering.Renderer;
 import wobani.rendering.*;
 import wobani.rendering.geometry.*;
-import wobani.rendering.postProcessing.*;
 import wobani.rendering.stages.*;
 import wobani.resources.*;
 import wobani.resources.textures.EasyFiltering.TextureFiltering;

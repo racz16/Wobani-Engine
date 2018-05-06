@@ -1,4 +1,4 @@
-#version 420 core
+#version 420 core 
 
 struct Material {
     bool isThereDiffuseMap;
@@ -49,10 +49,11 @@ struct Light {              //base alignment        alignment offset
     bool lightActive;       //4                     108
 };                          //                      112
 
-#define DIRECTIONAL_LIGHT 0
-#define POINT_LIGHT 1
-#define SPOT_LIGHT 2
-#define lightNumber 16
+const int DIRECTIONAL_LIGHT = 0;
+const int POINT_LIGHT = 1;
+const int SPOT_LIGHT = 2;
+const int lightNumber = 16;
+
 layout (std140, binding = 1) uniform LightSources {
     Light lights[lightNumber];                      //i * 112
     Light directionalLight;                         //1792

@@ -179,11 +179,11 @@ public class Joystick {
     /**
      * Joystick's name.
      */
-    private final String name;
+    private String name;
     /**
      * Joystick's slot.
      */
-    private final int slot;
+    private int slot;
 
     /**
      * Initializes a new Joystick to the givan values.
@@ -201,6 +201,16 @@ public class Joystick {
         if (slot < GLFW.GLFW_JOYSTICK_1 || slot > GLFW.GLFW_JOYSTICK_LAST) {
             throw new IllegalArgumentException("Slot must be in the (0;15) interval");
         }
+        initializeWithoutInspection(name, slot);
+    }
+
+    /**
+     * Initializes the Joystick to the given values.
+     *
+     * @param name joystick's name
+     * @param slot joystick's slot
+     */
+    private void initializeWithoutInspection(@NotNull String name, int slot) {
         this.name = name;
         this.slot = slot;
     }
@@ -237,11 +247,23 @@ public class Joystick {
         }
         int firstIndex = axes[first.getIndex()].getIndex();
         int secondIndex = axes[second.getIndex()].getIndex();
-        JoystickAxe f = axes[first.getIndex()];
-        JoystickAxe s = axes[second.getIndex()];
+        swapAxes(first.getIndex(), firstIndex, second.getIndex(), secondIndex);
+    }
 
-        axes[firstIndex] = s;
-        axes[secondIndex] = f;
+    /**
+     * Swaps the two specified axes. It may be helpful if the default
+     * configuration already swapped these axes.
+     *
+     * @param firstIndex1  original first axe
+     * @param firstIndex2  configured first axe
+     * @param secondIndex1 original second axe
+     * @param secondIndex2 configured second axe
+     */
+    private void swapAxes(int firstIndex1, int firstIndex2, int secondIndex1, int secondIndex2) {
+        JoystickAxe f = axes[firstIndex1];
+        JoystickAxe s = axes[secondIndex1];
+        axes[firstIndex2] = s;
+        axes[secondIndex2] = f;
     }
 
     /**
@@ -270,11 +292,23 @@ public class Joystick {
         }
         int firstIndex = buttons[first.getIndex()].getIndex();
         int secondIndex = buttons[second.getIndex()].getIndex();
-        JoystickButton f = buttons[first.getIndex()];
-        JoystickButton s = buttons[second.getIndex()];
+        swapButtons(first.getIndex(), firstIndex, second.getIndex(), secondIndex);
+    }
 
-        buttons[firstIndex] = s;
-        buttons[secondIndex] = f;
+    /**
+     * Swaps the two specified buttons. It may be helpful if the default
+     * configuration already swapped these buttons.
+     *
+     * @param firstIndex1  original first button
+     * @param firstIndex2  configured first button
+     * @param secondIndex1 original second button
+     * @param secondIndex2 configured second button
+     */
+    private void swapButtons(int firstIndex1, int firstIndex2, int secondIndex1, int secondIndex2) {
+        JoystickButton f = buttons[firstIndex1];
+        JoystickButton s = buttons[secondIndex1];
+        buttons[firstIndex2] = s;
+        buttons[secondIndex2] = f;
     }
 
     /**
@@ -338,9 +372,14 @@ public class Joystick {
 
     @Override
     public String toString() {
-        return "Joystick{" + "axes=" + Arrays.toString(axes)
-                + ", buttons=" + Arrays.toString(buttons) + ", name=" + name
-                + ", slot=" + slot + '}';
+        StringBuilder res = new StringBuilder()
+                .append("Joystick(")
+                .append(" name: ").append(name)
+                .append(", axes: ").append(Arrays.toString(axes))
+                .append(", buttons: ").append(Arrays.toString(buttons))
+                .append(", slot: ").append(slot)
+                .append(")");
+        return res.toString();
     }
 
 }

@@ -74,7 +74,7 @@ public class Transform implements Invalidatable {
     /**
      * Contains the Transform's Invalidatables.
      */
-    private final InvalidatableContainer invalidatables = new InvalidatableContainer(this);
+    private final InvalidatableContainer<Transform> invalidatables = new InvalidatableContainer<>(this);
     /**
      * The class's logger.
      */

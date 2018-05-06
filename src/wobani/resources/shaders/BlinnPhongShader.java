@@ -1,5 +1,6 @@
 package wobani.resources.shaders;
 
+import wobani.resources.textures.texture2d.Texture2D;
 import java.io.*;
 import java.util.*;
 import org.joml.*;
@@ -8,7 +9,6 @@ import wobani.core.*;
 import wobani.materials.*;
 import wobani.rendering.*;
 import wobani.resources.*;
-import wobani.resources.textures.texture2D.*;
 import wobani.toolbox.annotations.*;
 
 /**
@@ -212,7 +212,7 @@ public class BlinnPhongShader extends Shader {
                 loadBoolean(isThereMapUniformName, true);
                 loadVector2(tileName, slot.getTextureTile());
                 loadVector2(offsetName, slot.getTextureOffset());
-                Float isThereGlossiness = material.getFloatParameter(Material.PARAM_USE_GLOSSINESS_F);
+                Float isThereGlossiness = slot.getParameters().getValue(MaterialSlot.USE_GLOSSINESS);
                 if (isThereGlossiness == null || isThereGlossiness != 1f) {
                     loadBoolean(useGlossiness, false);
                     if (color != null) {
@@ -265,14 +265,14 @@ public class BlinnPhongShader extends Shader {
                 loadBoolean(useNormalUniformName, true);
                 loadVector2(tileName, slot.getTextureTile());
                 loadVector2(offsetName, slot.getTextureOffset());
-                Float usePom = material.getFloatParameter(Material.PARAM_USE_POM_F);
+                Float usePom = material.getParameters().getValue(MaterialSlot.USE_POM);
                 if (usePom != null && usePom == 1f) {
                     loadBoolean(isTherePomUniformName, true);
-                    Float value = material.getFloatParameter(Material.PARAM_POM_SCALE_F);
+                    Float value = material.getParameters().getValue(MaterialSlot.POM_SCALE);
                     loadFloat(POMScale, value == null ? defPOMScale : value);
-                    value = material.getFloatParameter(Material.PARAM_POM_MIN_LAYERS_F);
+                    value = material.getParameters().getValue(MaterialSlot.POM_MIN_LAYERS);
                     loadFloat(POMMinLayers, value == null ? defPOMMinLayers : value);
-                    value = material.getFloatParameter(Material.PARAM_POM_MAX_LAYERS_F);
+                    value = material.getParameters().getValue(MaterialSlot.POM_MAX_LAYERS);
                     loadFloat(POMMaxLayers, value == null ? defPOMMaxLayers : value);
                 } else {
                     loadBoolean(isTherePomUniformName, false);
@@ -304,7 +304,7 @@ public class BlinnPhongShader extends Shader {
         String isThereRefractionMap = "material.isThereRefractionMap";
         int refractionTextureUnit = 5;
         String refractionIndex = "material.refractionIndex";
-        float index = material.getFloatParameter(Material.PARAM_REFRACTION_INDEX_F) == null ? 1f / 1.33f : material.getFloatParameter(Material.PARAM_REFRACTION_INDEX_F);
+        float index = material.getParameters().getValue(Material.REFRACTION_INDEX) == null ? 1f / 1.33f : material.getParameters().getValue(Material.REFRACTION_INDEX);
         boolean refractionUsable = refractionSlot != null && refractionSlot.isActive() && refractionSlot.getEnvironmentProbe() != null;
         //intensity
         MaterialSlot intensitySlot = material.getSlot(Material.ENVIRONTMENT_INTENSITY);

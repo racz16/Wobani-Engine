@@ -3,6 +3,7 @@ package wobani.components.renderables;
 import java.util.*;
 import wobani.core.*;
 import wobani.materials.*;
+import wobani.rendering.*;
 import wobani.rendering.geometry.*;
 import wobani.resources.*;
 import wobani.toolbox.annotations.*;
@@ -53,10 +54,10 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @param renderable Renderable
      */
     public RenderableComponent(@NotNull T renderable) {
-        setRenderable(renderable);
-        setMaterial(new Material(BlinnPhongRenderer.class));
-        boundingShape = new RenderableBoundingShape(this);
-        addInvalidatable(boundingShape);
+	setRenderable(renderable);
+	setMaterial(new Material(BlinnPhongRenderer.class));
+	boundingShape = new RenderableBoundingShape(this);
+	addInvalidatable(boundingShape);
     }
 
     /**
@@ -66,10 +67,10 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @param material   Renderable's material
      */
     public RenderableComponent(@NotNull T renderable, @NotNull Material material) {
-        setRenderable(renderable);
-        setMaterial(material);
-        boundingShape = new RenderableBoundingShape(this);
-        addInvalidatable(boundingShape);
+	setRenderable(renderable);
+	setMaterial(material);
+	boundingShape = new RenderableBoundingShape(this);
+	addInvalidatable(boundingShape);
     }
 
     /**
@@ -79,7 +80,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      */
     @NotNull
     public T getRenderable() {
-        return renderable;
+	return renderable;
     }
 
     /**
@@ -90,13 +91,13 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @throws NullPointerException parameter can't be null
      */
     public void setRenderable(@NotNull T renderable) {
-        if (renderable == null) {
-            throw new NullPointerException();
-        }
-        Renderable old = this.renderable;
-        this.renderable = renderable;
-        Scene.getRenderableComponents().refreshRenderableChange(this, old);
-        invalidate();
+	if (renderable == null) {
+	    throw new NullPointerException();
+	}
+	Renderable old = this.renderable;
+	this.renderable = renderable;
+	RenderingPipeline.getRenderableComponents().refreshRenderableChange(this, old);
+	invalidate();
     }
 
     /**
@@ -106,7 +107,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      */
     @NotNull
     public Material getMaterial() {
-        return material;
+	return material;
     }
 
     /**
@@ -117,12 +118,12 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @throws NullPointerException parameter can't be null
      */
     public void setMaterial(@NotNull Material material) {
-        if (material == null) {
-            throw new NullPointerException();
-        }
-        Material old = this.material;
-        this.material = material;
-        Scene.getRenderableComponents().refreshMaterialChange(this, old);
+	if (material == null) {
+	    throw new NullPointerException();
+	}
+	Material old = this.material;
+	this.material = material;
+	RenderingPipeline.getRenderableComponents().refreshMaterialChange(this, old);
     }
 
     /**
@@ -132,12 +133,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      */
     @NotNull
     public RenderableBoundingShape getBoundingShape() {
-        return boundingShape;
-    }
-
-    @Override
-    public void invalidate() {
-        super.invalidate();
+	return boundingShape;
     }
 
     /**
@@ -146,7 +142,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @return true if the Renderable is reflectable, false otherwise
      */
     public boolean isReflectable() {
-        return reflectable;
+	return reflectable;
     }
 
     /**
@@ -155,7 +151,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @param reflectable true if the Renderable is reflectable, false otherwise
      */
     public void setReflectable(boolean reflectable) {
-        this.reflectable = reflectable;
+	this.reflectable = reflectable;
     }
 
     /**
@@ -164,7 +160,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @return true if the Renderable casts shadow, false otherwise
      */
     public boolean isCastShadow() {
-        return castShadow;
+	return castShadow;
     }
 
     /**
@@ -174,7 +170,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      *                   otherwise
      */
     public void setCastShadow(boolean castShadow) {
-        this.castShadow = castShadow;
+	this.castShadow = castShadow;
     }
 
     /**
@@ -183,7 +179,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @return true if the Renderable receives shadows, false otherwise
      */
     public boolean isReceiveShadows() {
-        return receiveShadow;
+	return receiveShadow;
     }
 
     /**
@@ -193,7 +189,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      *                       false otherwise
      */
     public void setReceiveShadows(boolean receiveShadows) {
-        this.receiveShadow = receiveShadows;
+	this.receiveShadow = receiveShadows;
     }
 
     /**
@@ -202,7 +198,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @return true if the Renderable is active, false otherwise
      */
     public boolean isRenderableActive() {
-        return renderableActive;
+	return renderableActive;
     }
 
     /**
@@ -211,7 +207,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @param renderableActive true if the Renderable is active, false otherwise
      */
     public void setRenderableActive(boolean renderableActive) {
-        this.renderableActive = renderableActive;
+	this.renderableActive = renderableActive;
     }
 
     /**
@@ -220,7 +216,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @return true if the Material is active, false otherwise
      */
     public boolean isMaterialActive() {
-        return materialActive;
+	return materialActive;
     }
 
     /**
@@ -229,7 +225,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * @param materialActive true if the Material is active, false otherwise
      */
     public void setMaterialActive(boolean materialActive) {
-        this.materialActive = materialActive;
+	this.materialActive = materialActive;
     }
 
     /**
@@ -243,76 +239,76 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
      * Draws the Renderable.
      */
     public void draw() {
-        renderable.draw();
+	renderable.draw();
     }
 
     @Override
     protected void detachFromGameObject() {
-        getGameObject().getTransform().removeInvalidatable(this);
-        super.detachFromGameObject();
-        Scene.getRenderableComponents().remove(this);
-        invalidate();
+	getGameObject().getTransform().removeInvalidatable(this);
+	super.detachFromGameObject();
+	RenderingPipeline.getRenderableComponents().remove(this);
+	invalidate();
     }
 
     @Override
     protected void attachToGameObject(@NotNull GameObject object) {
-        super.attachToGameObject(object);
-        Scene.getRenderableComponents().add(this);
-        getGameObject().getTransform().addInvalidatable(this);
-        invalidate();
+	super.attachToGameObject(object);
+	getGameObject().getTransform().addInvalidatable(this);
+	RenderingPipeline.getRenderableComponents().add(this);
+	invalidate();
     }
 
     @Override
     public int hashCode() {
-        int hash = 7 + super.hashCode();
-        hash = 47 * hash + Objects.hashCode(this.renderable);
-        hash = 47 * hash + Objects.hashCode(this.material);
-        hash = 47 * hash + (this.renderableActive ? 1 : 0);
-        hash = 47 * hash + (this.materialActive ? 1 : 0);
-        hash = 47 * hash + (this.castShadow ? 1 : 0);
-        hash = 47 * hash + (this.receiveShadow ? 1 : 0);
-        hash = 47 * hash + (this.reflectable ? 1 : 0);
-        return hash;
+	int hash = 7 + super.hashCode();
+	hash = 47 * hash + Objects.hashCode(this.renderable);
+	hash = 47 * hash + Objects.hashCode(this.material);
+	hash = 47 * hash + (this.renderableActive ? 1 : 0);
+	hash = 47 * hash + (this.materialActive ? 1 : 0);
+	hash = 47 * hash + (this.castShadow ? 1 : 0);
+	hash = 47 * hash + (this.receiveShadow ? 1 : 0);
+	hash = 47 * hash + (this.reflectable ? 1 : 0);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        final RenderableComponent<?> other = (RenderableComponent<?>) obj;
-        if (this.renderableActive != other.renderableActive) {
-            return false;
-        }
-        if (this.materialActive != other.materialActive) {
-            return false;
-        }
-        if (this.castShadow != other.castShadow) {
-            return false;
-        }
-        if (this.receiveShadow != other.receiveShadow) {
-            return false;
-        }
-        if (this.reflectable != other.reflectable) {
-            return false;
-        }
-        if (!Objects.equals(this.renderable, other.renderable)) {
-            return false;
-        }
-        if (!Objects.equals(this.material, other.material)) {
-            return false;
-        }
-        return true;
+	if (!super.equals(obj)) {
+	    return false;
+	}
+	final RenderableComponent<?> other = (RenderableComponent<?>) obj;
+	if (this.renderableActive != other.renderableActive) {
+	    return false;
+	}
+	if (this.materialActive != other.materialActive) {
+	    return false;
+	}
+	if (this.castShadow != other.castShadow) {
+	    return false;
+	}
+	if (this.receiveShadow != other.receiveShadow) {
+	    return false;
+	}
+	if (this.reflectable != other.reflectable) {
+	    return false;
+	}
+	if (!Objects.equals(this.renderable, other.renderable)) {
+	    return false;
+	}
+	if (!Objects.equals(this.material, other.material)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append(super.toString()).append("\n")
-                .append("RenderableComponent(")
-                .append(" faces: ").append(getFaceCount())
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(super.toString()).append("\n")
+		.append("RenderableComponent(")
+		.append(" faces: ").append(getFaceCount())
+		.append(")");
+	return res.toString();
     }
 
 }

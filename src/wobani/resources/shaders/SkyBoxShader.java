@@ -1,10 +1,10 @@
 package wobani.resources.shaders;
 
+import wobani.resources.environmentprobes.EnvironmentProbe;
 import java.io.*;
 import java.util.*;
 import wobani.core.*;
 import wobani.resources.*;
-import wobani.resources.environmentProbes.*;
 import wobani.toolbox.annotations.*;
 import wobani.toolbox.parameters.*;
 

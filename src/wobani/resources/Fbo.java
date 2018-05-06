@@ -1,5 +1,7 @@
 package wobani.resources;
 
+import wobani.resources.textures.texture2d.DynamicTexture2D;
+import wobani.resources.textures.texture2d.Texture2D;
 import java.nio.*;
 import java.util.*;
 import org.joml.*;
@@ -7,7 +9,6 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import wobani.rendering.*;
-import wobani.resources.textures.texture2D.*;
 import wobani.toolbox.annotations.*;
 
 /**

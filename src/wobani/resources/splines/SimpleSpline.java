@@ -74,37 +74,37 @@ public class SimpleSpline implements Spline {
      * Initializes a new SimpleSpline.
      */
     public SimpleSpline() {
-        resourceId = new ResourceId();
-        ResourceManager.addSpline(this);
+	resourceId = new ResourceId();
+	ResourceManager.addSpline(this);
     }
 
     /**
      * If the data stored in the VAO isn't valid, this method refreshes it.
      */
     protected void refresh() {
-        if (!valid) {
-            if (getRequiredControlPoints() <= getNumberOfControlPoints()) {
-                if (vao == null) {
-                    vao = new Vao();
-                    vao.bindVao();
-                    vao.createVbo("position");
-                    vao.unbindVao();
-                }
-            } else {
-                if (vao != null) {
-                    release();
-                }
-                return;
-            }
+	if (!valid) {
+	    if (getRequiredControlPoints() <= getNumberOfControlPoints()) {
+		if (vao == null) {
+		    vao = new Vao();
+		    vao.bindVao();
+		    vao.createVbo("position");
+		    vao.unbindVao();
+		}
+	    } else {
+		if (vao != null) {
+		    release();
+		}
+		return;
+	    }
 
-            float[] data = computeSplineData();
-            numberOfPoints = data.length / 3;
-            dataSize = numberOfPoints * 3 * 4;
-            vao.bindVao();
-            vao.bindAndAddData("position", 0, 3, data, isDynamic());
-            vao.unbindVao();
-            valid = true;
-        }
+	    float[] data = computeSplineData();
+	    numberOfPoints = data.length / 3;
+	    dataSize = numberOfPoints * 3 * 4;
+	    vao.bindVao();
+	    vao.bindAndAddData("position", 0, 3, data, isDynamic());
+	    vao.unbindVao();
+	    valid = true;
+	}
     }
 
     /**
@@ -115,88 +115,88 @@ public class SimpleSpline implements Spline {
      */
     @NotNull
     protected float[] computeSplineData() {
-        Vector3f aabbMax = new Vector3f();
-        Vector3f aabbMin = new Vector3f();
-        float max = 0;
+	Vector3f aabbMax = new Vector3f();
+	Vector3f aabbMin = new Vector3f();
+	float max = 0;
 
-        float[] data = new float[getNumberOfControlPoints() * 3];
-        int index = 0;
-        for (int i = 0; i < getNumberOfControlPoints(); i++) {
-            Vector3f pos = getControlPoint(i);
+	float[] data = new float[getNumberOfControlPoints() * 3];
+	int index = 0;
+	for (int i = 0; i < getNumberOfControlPoints(); i++) {
+	    Vector3f pos = getControlPoint(i);
 
-            //furthest vertex distance
-            if (max < pos.length()) {
-                max = pos.length();
-            }
-            //aabb
-            for (int j = 0; j < 3; j++) {
-                if (pos.get(j) < aabbMin.get(j)) {
-                    aabbMin.setComponent(j, pos.get(j));
-                }
-                if (pos.get(j) > aabbMax.get(j)) {
-                    aabbMax.setComponent(j, pos.get(j));
-                }
-            }
+	    //furthest vertex distance
+	    if (max < pos.length()) {
+		max = pos.length();
+	    }
+	    //aabb
+	    for (int j = 0; j < 3; j++) {
+		if (pos.get(j) < aabbMin.get(j)) {
+		    aabbMin.setComponent(j, pos.get(j));
+		}
+		if (pos.get(j) > aabbMax.get(j)) {
+		    aabbMax.setComponent(j, pos.get(j));
+		}
+	    }
 
-            data[index++] = pos.x;
-            data[index++] = pos.y;
-            data[index++] = pos.z;
-        }
+	    data[index++] = pos.x;
+	    data[index++] = pos.y;
+	    data[index++] = pos.z;
+	}
 
-        this.aabbMin.set(aabbMin);
-        this.aabbMax.set(aabbMax);
-        furthestVertexDistance = max;
+	this.aabbMin.set(aabbMin);
+	this.aabbMax.set(aabbMax);
+	furthestVertexDistance = max;
 
-        return data;
+	return data;
     }
 
     @Nullable @ReadOnly
     @Override
     public Vector3f getForwardVector(float t) {
-        if (getNumberOfControlPoints() < 2) {
-            return null;
-        } else {
-            if (t >= 0.9999) {
-                Vector3f p1 = getApproximatedPosition(t - 0.0001f);
-                Vector3f p2 = getApproximatedPosition(t);
-                return p2.sub(p1).normalize();
-            } else {
-                Vector3f p1 = getApproximatedPosition(t);
-                Vector3f p2 = getApproximatedPosition(t + 0.0001f);
-                return p2.sub(p1).normalize();
-            }
-        }
+	if (getNumberOfControlPoints() < 2) {
+	    return null;
+	} else {
+	    if (t >= 0.9999) {
+		Vector3f p1 = getApproximatedPosition(t - 0.0001f);
+		Vector3f p2 = getApproximatedPosition(t);
+		return p2.sub(p1).normalize();
+	    } else {
+		Vector3f p1 = getApproximatedPosition(t);
+		Vector3f p2 = getApproximatedPosition(t + 0.0001f);
+		return p2.sub(p1).normalize();
+	    }
+	}
     }
 
     @Nullable @ReadOnly
     @Override
     public Vector3f getApproximatedPosition(float t) {
-        t = t < 0 ? t % -1f : t % 1f;
+	t = t < 0 ? t % -1f : t % 1f;
 
-        if (getNumberOfControlPoints() < 1) {
-            return null;
-        } else if (getVertexCount() == 1) {
-            return getControlPoint(0);
-        } else {
-            refreshLength();
+	if (getNumberOfControlPoints() < 1) {
+	    return null;
+	} else if (getVertexCount() == 1) {
+	    return getControlPoint(0);
+	} else {
+	    refreshLength();
 
-            if (t == 0) {
-                return getValue(0, 0);
-            }
+	    if (t == 0) {
+		return getValue(0, 0);
+	    }
 
-            int index = 0;
-            float dist = distances.get(0);
-            float wantedDistance = length * t;
+	    int index = 0;
+	    float dist = distances.get(0);
+	    float wantedDistance = length * t;
 
-            while (dist < wantedDistance) {
-                index++;
-                dist += distances.get(index);
-            }
+	    while (dist < wantedDistance) {
+		index++;
+		dist += distances.get(index);
+	    }
 
-            float T = (wantedDistance - (dist - distances.get(index))) / distances.get(index);
+	    float T = (wantedDistance - (dist - distances.get(index))) / distances.get(index);
 
-            return getValue(index, T);
-        }
+	    return getValue(index, T);
+	}
     }
 
     /**
@@ -215,44 +215,44 @@ public class SimpleSpline implements Spline {
      */
     @Nullable
     protected Vector3f getValue(int startIndex, float t) {
-        if (getNumberOfControlPoints() < 1) {
-            return null;
-        } else if (getVertexCount() == 1) {
-            return getControlPoint(0);
-        } else {
-            Vector3f first = new Vector3f(getControlPoint(startIndex)).mul(1 - t);
-            Vector3f second = new Vector3f(getControlPoint(startIndex == getVertexCount() - 1 ? 0 : startIndex + 1));
-            return first.add(second.mul(t));
-        }
+	if (getNumberOfControlPoints() < 1) {
+	    return null;
+	} else if (getVertexCount() == 1) {
+	    return getControlPoint(0);
+	} else {
+	    Vector3f first = new Vector3f(getControlPoint(startIndex)).mul(1 - t);
+	    Vector3f second = new Vector3f(getControlPoint(startIndex == getVertexCount() - 1 ? 0 : startIndex + 1));
+	    return first.add(second.mul(t));
+	}
     }
 
     /**
      * If the stored length isn't valid, this method refreshes it.
      */
     protected void refreshLength() {
-        if (!lengthValid) {
-            distances.clear();
-            float sum = 0;
-            for (int i = 0; i < controlPoints.size() - 1; i++) {
-                float dist = getControlPoint(i).distance(getControlPoint(i + 1));
-                sum += dist;
-                distances.add(dist);
-            }
-            if (isLoopSpline()) {
-                float dist = getControlPoint(controlPoints.size() - 1).distance(getControlPoint(0));
-                sum += dist;
-                distances.add(dist);
-            }
+	if (!lengthValid) {
+	    distances.clear();
+	    float sum = 0;
+	    for (int i = 0; i < controlPoints.size() - 1; i++) {
+		float dist = getControlPoint(i).distance(getControlPoint(i + 1));
+		sum += dist;
+		distances.add(dist);
+	    }
+	    if (isLoopSpline()) {
+		float dist = getControlPoint(controlPoints.size() - 1).distance(getControlPoint(0));
+		sum += dist;
+		distances.add(dist);
+	    }
 
-            length = sum;
-            lengthValid = true;
-        }
+	    length = sum;
+	    lengthValid = true;
+	}
     }
 
     @Override
     public float getApproximatedLength() {
-        refreshLength();
-        return length;
+	refreshLength();
+	return length;
     }
 
     /**
@@ -261,7 +261,7 @@ public class SimpleSpline implements Spline {
      * @return true if the spline's data is dynamic, false otherwise
      */
     public boolean isDynamic() {
-        return dynamic;
+	return dynamic;
     }
 
     /**
@@ -272,8 +272,8 @@ public class SimpleSpline implements Spline {
      *                otherwise
      */
     public void setDynamic(boolean dynamic) {
-        this.dynamic = dynamic;
-        valid = false;
+	this.dynamic = dynamic;
+	valid = false;
     }
 
     /**
@@ -283,7 +283,7 @@ public class SimpleSpline implements Spline {
      */
     @Override
     public boolean isLoopSpline() {
-        return loopSpline;
+	return loopSpline;
     }
 
     /**
@@ -292,9 +292,9 @@ public class SimpleSpline implements Spline {
      * @param loop true if the spline should be a loop spline, false otherwise
      */
     public void setLoopSpline(boolean loop) {
-        this.loopSpline = loop;
-        valid = false;
-        lengthValid = false;
+	this.loopSpline = loop;
+	valid = false;
+	lengthValid = false;
     }
 
     /**
@@ -307,7 +307,7 @@ public class SimpleSpline implements Spline {
      */
     @Override
     public int getVertexCount() {
-        return numberOfPoints;
+	return numberOfPoints;
     }
 
     //
@@ -322,7 +322,7 @@ public class SimpleSpline implements Spline {
      * @see #getVertexCount()
      */
     public int getNumberOfControlPoints() {
-        return controlPoints.size();
+	return controlPoints.size();
     }
 
     /**
@@ -331,9 +331,9 @@ public class SimpleSpline implements Spline {
      * @param point control point
      */
     public void addControlPointToTheEnd(@NotNull Vector3f point) {
-        controlPoints.add(new SplinePoint(new Vector3f(point)));
-        valid = false;
-        lengthValid = false;
+	controlPoints.add(new SplinePoint(new Vector3f(point)));
+	valid = false;
+	lengthValid = false;
     }
 
     /**
@@ -343,9 +343,9 @@ public class SimpleSpline implements Spline {
      * @param point control point
      */
     public void addControlPointToIndex(int index, @NotNull Vector3f point) {
-        controlPoints.add(index, new SplinePoint(new Vector3f(point)));
-        valid = false;
-        lengthValid = false;
+	controlPoints.add(index, new SplinePoint(new Vector3f(point)));
+	valid = false;
+	lengthValid = false;
     }
 
     /**
@@ -357,7 +357,7 @@ public class SimpleSpline implements Spline {
      */
     @NotNull @ReadOnly
     public Vector3f getControlPoint(int index) {
-        return new Vector3f(controlPoints.get(index).getPoint());
+	return new Vector3f(controlPoints.get(index).getPoint());
     }
 
     /**
@@ -367,18 +367,18 @@ public class SimpleSpline implements Spline {
      * @param point control point
      */
     public void setControlPoint(int index, @NotNull Vector3f point) {
-        controlPoints.set(index, new SplinePoint(new Vector3f(point)));
-        valid = false;
-        lengthValid = false;
+	controlPoints.set(index, new SplinePoint(new Vector3f(point)));
+	valid = false;
+	lengthValid = false;
     }
 
     /**
      * Removes the last control point.
      */
     public void removeControlPointFromTheEnd() {
-        controlPoints.remove(controlPoints.size() - 1);
-        valid = false;
-        lengthValid = false;
+	controlPoints.remove(controlPoints.size() - 1);
+	valid = false;
+	lengthValid = false;
     }
 
     /**
@@ -387,18 +387,18 @@ public class SimpleSpline implements Spline {
      * @param index control point's index
      */
     public void removeControlPoint(int index) {
-        controlPoints.remove(index);
-        valid = false;
-        lengthValid = false;
+	controlPoints.remove(index);
+	valid = false;
+	lengthValid = false;
     }
 
     /**
      * Removes all the spline's control points.
      */
     public void removeAllControlPoints() {
-        controlPoints.clear();
-        valid = false;
-        lengthValid = false;
+	controlPoints.clear();
+	valid = false;
+	lengthValid = false;
     }
 
     /**
@@ -408,7 +408,7 @@ public class SimpleSpline implements Spline {
      * @return the required number of control points to render the spline
      */
     public int getRequiredControlPoints() {
-        return 2;
+	return 2;
     }
 
     //
@@ -416,34 +416,34 @@ public class SimpleSpline implements Spline {
     //
     @Override
     public float getRadius() {
-        refresh();
-        if (vao != null) {
-            return furthestVertexDistance;
-        } else {
-            return 0;
-        }
+	refresh();
+	if (vao != null) {
+	    return furthestVertexDistance;
+	} else {
+	    return 0;
+	}
     }
 
     @Nullable @ReadOnly
     @Override
     public Vector3f getAabbMin() {
-        refresh();
-        if (vao != null) {
-            return new Vector3f(aabbMin);
-        } else {
-            return null;
-        }
+	refresh();
+	if (vao != null) {
+	    return new Vector3f(aabbMin);
+	} else {
+	    return null;
+	}
     }
 
     @Nullable @ReadOnly
     @Override
     public Vector3f getAabbMax() {
-        refresh();
-        if (vao != null) {
-            return new Vector3f(aabbMax);
-        } else {
-            return null;
-        }
+	refresh();
+	if (vao != null) {
+	    return new Vector3f(aabbMax);
+	} else {
+	    return null;
+	}
     }
 
     //
@@ -451,26 +451,26 @@ public class SimpleSpline implements Spline {
     //
     @Override
     public void beforeDraw() {
-        if (vao != null && vao.isUsable()) {
-            vao.bindVao();
-        }
+	if (vao != null && vao.isUsable()) {
+	    vao.bindVao();
+	}
     }
 
     @Override
     public void draw() {
-        boolean shouldBind = vao == null || !vao.isUsable();
-        refresh();
-        if (shouldBind) {
-            beforeDraw();
-        }
-        GL11.glDrawArrays(isLoopSpline() ? GL11.GL_LINE_LOOP : GL11.GL_LINE_STRIP, 0, getVertexCount());
+	boolean shouldBind = vao == null || !vao.isUsable();
+	refresh();
+	if (shouldBind) {
+	    beforeDraw();
+	}
+	GL11.glDrawArrays(isLoopSpline() ? GL11.GL_LINE_LOOP : GL11.GL_LINE_STRIP, 0, getVertexCount());
     }
 
     @Override
     public void afterDraw() {
-        if (vao != null && vao.isUsable()) {
-            vao.unbindVao();
-        }
+	if (vao != null && vao.isUsable()) {
+	    vao.unbindVao();
+	}
     }
 
     //
@@ -478,12 +478,12 @@ public class SimpleSpline implements Spline {
     //
     @Override
     public int getDataSizeInRam() {
-        return dataSize;
+	return dataSize;
     }
 
     @Override
     public int getDataSizeInAction() {
-        return vao == null || !vao.isUsable() ? 0 : dataSize;
+	return vao == null || !vao.isUsable() ? 0 : dataSize;
     }
 
     @Override
@@ -493,33 +493,33 @@ public class SimpleSpline implements Spline {
 
     @Override
     public void release() {
-        if (vao != null) {
-            vao.release();
-            vao = null;
-        }
-        valid = false;
-        lengthValid = false;
+	if (vao != null) {
+	    vao.release();
+	    vao = null;
+	}
+	valid = false;
+	lengthValid = false;
     }
 
     @NotNull
     @Override
     public ResourceId getResourceId() {
-        return resourceId;
+	return resourceId;
     }
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 
     @Override
     public String toString() {
-        return "SimpleSpline{" + "controlPoints=" + controlPoints + ", vao=" + vao
-                + ", valid=" + valid + ", lengthValid=" + lengthValid
-                + ", numberOfPoints=" + numberOfPoints + ", loopSpline=" + loopSpline
-                + ", dynamic=" + dynamic + ", aabbMin=" + aabbMin + ", aabbMax=" + aabbMax
-                + ", furthestVertexDistance=" + furthestVertexDistance + ", dataSize=" + dataSize
-                + ", distances=" + distances + ", length=" + length + ", resourceId=" + resourceId + '}';
+	return "SimpleSpline{" + "controlPoints=" + controlPoints + ", vao=" + vao
+		+ ", valid=" + valid + ", lengthValid=" + lengthValid
+		+ ", numberOfPoints=" + numberOfPoints + ", loopSpline=" + loopSpline
+		+ ", dynamic=" + dynamic + ", aabbMin=" + aabbMin + ", aabbMax=" + aabbMax
+		+ ", furthestVertexDistance=" + furthestVertexDistance + ", dataSize=" + dataSize
+		+ ", distances=" + distances + ", length=" + length + ", resourceId=" + resourceId + '}';
     }
 
 }

@@ -86,8 +86,8 @@ public class AudioListenerComponent extends Component {
     @Override
     protected void attachToGameObject(@NotNull GameObject g) {
         super.attachToGameObject(g);
-        invalidate();
         getGameObject().getTransform().addInvalidatable(this);
+        invalidate();
     }
 
     @Override

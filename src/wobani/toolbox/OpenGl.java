@@ -315,6 +315,32 @@ public class OpenGl {
     }
 
     /**
+     * Returns the rendering viewport size.
+     *
+     * @return the rendering viewport size
+     */
+    public static Vector2i getViewportSize() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer ib = stack.callocInt(4);
+            GL11.glGetIntegerv(GL11.GL_VIEWPORT, ib);
+            return new Vector2i(ib.get(2), ib.get(3));
+        }
+    }
+
+    /**
+     * Returns the rendering viewport offset.
+     *
+     * @return the rendering viewport offset
+     */
+    public static Vector2i getViewportOffset() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer ib = stack.callocInt(4);
+            GL11.glGetIntegerv(GL11.GL_VIEWPORT, ib);
+            return new Vector2i(ib.get(0), ib.get(1));
+        }
+    }
+
+    /**
      * Sets the rendering viewport to the given values.
      *
      * @param size   rendering width and height
@@ -422,5 +448,64 @@ public class OpenGl {
         int depthBit = depth ? GL11.GL_DEPTH_BUFFER_BIT : 0;
         int stencilBit = stencil ? GL11.GL_STENCIL_BUFFER_BIT : 0;
         GL11.glClear(colorBit | depthBit | stencilBit);
+    }
+
+    /**
+     * Returns the company responsible for this GL implementation.
+     *
+     * @return name of the GPU's vendor
+     */
+    @NotNull
+    public static String getVendor() {
+        return GL11.glGetString(GL11.GL_VENDOR);
+    }
+
+    /**
+     * Returns the name of the renderer. This name is typically specific to a
+     * particular configuration of a hardware platform.
+     *
+     * @return name of the used GPU
+     */
+    @NotNull
+    public static String getRenderer() {
+        return GL11.glGetString(GL11.GL_RENDERER);
+    }
+
+    /**
+     * The major version number of the OpenGL API supported by the current
+     * context.
+     *
+     * @return the major version of OpenGL
+     */
+    public static int getMajorVersion() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer ib = stack.callocInt(1);
+            GL11.glGetIntegerv(GL30.GL_MAJOR_VERSION, ib);
+            return ib.get(0);
+        }
+    }
+
+    /**
+     * The minor version number of the OpenGL API supported by the current
+     * context.
+     *
+     * @return the minor version of OpenGL
+     */
+    public static int getMinorVersion() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer ib = stack.callocInt(1);
+            GL11.glGetIntegerv(GL30.GL_MINOR_VERSION, ib);
+            return ib.get(0);
+        }
+    }
+
+    /**
+     * Returns a version or release number for the shading language.
+     *
+     * @return a version or release number for the shading language
+     */
+    @NotNull
+    public static String getGlslVersion() {
+        return GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION);
     }
 }

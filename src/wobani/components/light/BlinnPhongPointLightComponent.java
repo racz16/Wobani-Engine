@@ -1,6 +1,5 @@
 package wobani.components.light;
 
-import wobani.components.light.lightTypes.*;
 import wobani.core.*;
 import wobani.toolbox.annotations.*;
 
@@ -9,7 +8,7 @@ import wobani.toolbox.annotations.*;
  *
  * @see GameObject
  */
-public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent implements BlinnPhongPointLight {
+public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent {
 
     /**
      * Attenuation's constant component.
@@ -24,7 +23,11 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent impl
      */
     private float quadratic = 0.0019f;
 
-    @Override
+    /**
+     * Returns the attenuation's constant component.
+     *
+     * @return attenuation's constant component
+     */
     public float getConstant() {
         return constant;
     }
@@ -40,7 +43,11 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent impl
         refreshUbo();
     }
 
-    @Override
+    /**
+     * Returns the attenuation's linear component.
+     *
+     * @return attenuation's linear component
+     */
     public float getLinear() {
         return linear;
     }
@@ -55,7 +62,11 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent impl
         refreshUbo();
     }
 
-    @Override
+    /**
+     * Returns the attenuation's quadratic component.
+     *
+     * @return attenuation's quadratic component
+     */
     public float getQuadratic() {
         return quadratic;
     }

@@ -2,6 +2,7 @@ package wobani.toolbox;
 
 import java.io.*;
 import java.nio.*;
+import java.util.logging.*;
 import org.joml.*;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_image_free;
@@ -24,6 +25,10 @@ public class Image {
      * Image's data.
      */
     private ByteBuffer image;
+    /**
+     * The class's logger.
+     */
+    private static final Logger LOG = Logger.getLogger(Image.class.getName());
 
     /**
      * Initializes a new Image by loading the specified image from file using
@@ -53,6 +58,7 @@ public class Image {
         if (image == null) {
             throw new RuntimeException("Failed to load an image file!\n" + stbi_failure_reason());
         }
+        LOG.log(Level.FINE, "Image loaded");
     }
 
     /**
@@ -86,7 +92,7 @@ public class Image {
      * @return image's data
      */
     @NotNull
-    public ByteBuffer getImage() {
+    public ByteBuffer getData() {
         return image;
     }
 
@@ -96,6 +102,7 @@ public class Image {
     public void release() {
         stbi_image_free(image);
         image = null;
+        LOG.log(Level.FINE, "Image released");
     }
 
     @Override

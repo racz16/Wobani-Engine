@@ -2,13 +2,14 @@ package wobani.rendering.geometry;
 
 import org.joml.*;
 import org.lwjgl.opengl.*;
+import wobani.components.light.*;
 import wobani.components.renderables.*;
 import wobani.core.*;
 import wobani.materials.*;
 import wobani.rendering.*;
 import wobani.resources.*;
 import wobani.resources.shaders.*;
-import wobani.resources.textures.texture2D.*;
+import wobani.resources.textures.texture2d.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotations.*;
 import wobani.toolbox.parameters.*;
@@ -41,10 +42,15 @@ public class BlinnPhongRenderer extends GeometryRenderer {
     private static BlinnPhongRenderer instance;
 
     /**
+     * Key of the main BlinnPhongDirectionalLight Parameter.
+     */
+    public static final ParameterKey<BlinnPhongDirectionalLightComponent> MAIN_DIRECTIONAL_LIGHT = new ParameterKey<>(BlinnPhongDirectionalLightComponent.class, "MAIN_DIRECTIONAL_LIGHT");
+
+    /**
      * Initializes a new BlinnPhongRenderer.
      */
     private BlinnPhongRenderer() {
-        shader = BlinnPhongShader.getInstance();
+	shader = BlinnPhongShader.getInstance();
     }
 
     /**
@@ -54,10 +60,10 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      */
     @NotNull
     public static BlinnPhongRenderer getInstance() {
-        if (instance == null) {
-            instance = new BlinnPhongRenderer();
-        }
-        return instance;
+	if (instance == null) {
+	    instance = new BlinnPhongRenderer();
+	}
+	return instance;
     }
 
     /**
@@ -65,45 +71,45 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      */
     @Override
     public void render() {
-        beforeDrawShader();
-        Class<BlinnPhongRenderer> renderer = BlinnPhongRenderer.class;
-        RenderableContainer renderables = Scene.getRenderableComponents();
-        for (Renderable renderable : renderables.getRenderables(renderer)) {
-            beforeDrawRenderable(renderable);
-            RenderableComponent<?> renderableComponent;
-            for (int i = 0; i < renderables.getRenderableComponentCount(renderer, renderable); i++) {
-                renderableComponent = renderables.getRenderableComponent(renderer, renderable, i);
-                if (renderableComponent.isActive() && renderableComponent.isRenderableActive() && Utility.isInsideMainCameraFrustumAabb(renderableComponent)) {
-                    beforeDrawInstance(renderableComponent);
-                    renderableComponent.draw();
-                }
-            }
-            afterDrawRenderable(renderable);
-        }
-        shader.stop();
-        OpenGl.setFaceCulling(true);
+	beforeDrawShader();
+	Class<BlinnPhongRenderer> renderer = BlinnPhongRenderer.class;
+	RenderableContainer renderables = RenderingPipeline.getRenderableComponents();
+	for (Renderable renderable : renderables.getRenderables(renderer)) {
+	    beforeDrawRenderable(renderable);
+	    RenderableComponent<?> renderableComponent;
+	    for (int i = 0; i < renderables.getRenderableComponentCount(renderer, renderable); i++) {
+		renderableComponent = renderables.getRenderableComponent(renderer, renderable, i);
+		if (renderableComponent.isActive() && renderableComponent.isRenderableActive() && Utility.isInsideMainCameraFrustumAabb(renderableComponent)) {
+		    beforeDrawInstance(renderableComponent);
+		    renderableComponent.draw();
+		}
+	    }
+	    afterDrawRenderable(renderable);
+	}
+	shader.stop();
+	OpenGl.setFaceCulling(true);
     }
 
     /**
      * Prepares the shader to the rendering.
      */
     private void beforeDrawShader() {
-        if (shader == null || !shader.isUsable()) {
-            shader = BlinnPhongShader.getInstance();
-        }
-        shader.start();
-        shader.loadGlobalUniforms();
-        RenderingPipeline.bindFbo();
-        OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
-        boolean wirefreame = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.WIREFRAME_MODE, false);
-        OpenGl.setWireframe(wirefreame);
-        numberOfRenderedElements = 0;
-        numberOfRenderedFaces = 0;
-        //shadow map
-        Parameter<Texture2D> shadowMap = RenderingPipeline.getParameters().get(RenderingPipeline.SHADOWMAP);
-        if (shadowMap != null) {
-            shadowMap.getValue().bindToTextureUnit(0);
-        }
+	if (shader == null || !shader.isUsable()) {
+	    shader = BlinnPhongShader.getInstance();
+	}
+	shader.start();
+	shader.loadGlobalUniforms();
+	RenderingPipeline.bindFbo();
+	OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
+	boolean wirefreame = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.WIREFRAME_MODE, false);
+	OpenGl.setWireframe(wirefreame);
+	numberOfRenderedElements = 0;
+	numberOfRenderedFaces = 0;
+	//shadow map
+	Parameter<Texture2D> shadowMap = RenderingPipeline.getParameters().get(RenderingPipeline.SHADOWMAP);
+	if (shadowMap != null) {
+	    shadowMap.getValue().bindToTextureUnit(0);
+	}
     }
 
     /**
@@ -112,12 +118,12 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      * @param renderable Renderable
      */
     private void beforeDrawRenderable(@NotNull Renderable renderable) {
-        renderable.beforeDraw();
-        //TODO: to Renderable
-        GL20.glEnableVertexAttribArray(0);
-        GL20.glEnableVertexAttribArray(1);
-        GL20.glEnableVertexAttribArray(2);
-        GL20.glEnableVertexAttribArray(3);
+	renderable.beforeDraw();
+	//TODO: to Renderable
+	GL20.glEnableVertexAttribArray(0);
+	GL20.glEnableVertexAttribArray(1);
+	GL20.glEnableVertexAttribArray(2);
+	GL20.glEnableVertexAttribArray(3);
     }
 
     /**
@@ -126,21 +132,21 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      * @param renderable Renderable
      */
     private void afterDrawRenderable(@NotNull Renderable renderable) {
-        //TODO: to Renderable
-        GL20.glDisableVertexAttribArray(0);
-        GL20.glDisableVertexAttribArray(1);
-        GL20.glDisableVertexAttribArray(2);
-        GL20.glDisableVertexAttribArray(3);
-        renderable.afterDraw();
+	//TODO: to Renderable
+	GL20.glDisableVertexAttribArray(0);
+	GL20.glDisableVertexAttribArray(1);
+	GL20.glDisableVertexAttribArray(2);
+	GL20.glDisableVertexAttribArray(3);
+	renderable.afterDraw();
     }
 
     private void beforeDrawInstance(@NotNull RenderableComponent rc) {
-        numberOfRenderedElements++;
-        numberOfRenderedFaces += rc.getFaceCount();
-        Transform transform = rc.getGameObject().getTransform();
-        shader.loadObjectUniforms(transform.getModelMatrix(), new Matrix3f(transform.getInverseModelMatrix()), rc.isReceiveShadows());
-        Material material = rc.getMaterial();
-        shader.loadMaterial(material);
+	numberOfRenderedElements++;
+	numberOfRenderedFaces += rc.getFaceCount();
+	Transform transform = rc.getGameObject().getTransform();
+	shader.loadObjectUniforms(transform.getModelMatrix(), new Matrix3f(transform.getInverseModelMatrix()), rc.isReceiveShadows());
+	Material material = rc.getMaterial();
+	shader.loadMaterial(material);
     }
 
     /**
@@ -149,7 +155,7 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      */
     @Override
     public void release() {
-        shader.release();
+	shader.release();
     }
 
     @Override
@@ -159,12 +165,12 @@ public class BlinnPhongRenderer extends GeometryRenderer {
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "\nBlinnPhongRenderer{" + "shader=" + shader + '}';
+	return super.toString() + "\nBlinnPhongRenderer{" + "shader=" + shader + '}';
     }
 
 }

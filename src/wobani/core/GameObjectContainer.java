@@ -5,12 +5,12 @@ import wobani.toolbox.*;
 import wobani.toolbox.annotations.*;
 
 /**
- * Stores all the GameObjectContainer.
+ * Stores all the GameObjects.
  */
 public class GameObjectContainer {
 
     /**
-     * Contains all the GameObjectContainer.
+     * Contains all the GameObjects.
      */
     private final List<GameObject> OBJECTS = new ArrayList<>();
 
@@ -90,7 +90,7 @@ public class GameObjectContainer {
     @Override
     public String toString() {
         StringBuilder res = new StringBuilder()
-                .append("GameObjects(")
+                .append("GameObjectContainer(")
                 .append(" size: ").append(OBJECTS.size())
                 .append(")");
         return res.toString();

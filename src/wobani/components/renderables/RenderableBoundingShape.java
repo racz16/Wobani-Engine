@@ -94,8 +94,8 @@ public class RenderableBoundingShape implements Invalidatable {
      * @return the AABB in object space
      */
     private Vector4f[] computeOriginalAabb() {
-        Vector3f originalAabbMin = new Vector3f(renderableComponent.getRenderable().getAabbMin());
-        Vector3f originalAabbMax = new Vector3f(renderableComponent.getRenderable().getAabbMax());
+        Vector3f originalAabbMin = getOriginalAabbMin();
+        Vector3f originalAabbMax = getOriginalAabbMax();
         Vector4f[] cornerPoints = new Vector4f[8];
         cornerPoints[0] = new Vector4f(originalAabbMax.x, originalAabbMax.y, originalAabbMax.z, 1);//right-top-front
         cornerPoints[1] = new Vector4f(originalAabbMax.x, originalAabbMin.y, originalAabbMax.z, 1);//right-bottom-front

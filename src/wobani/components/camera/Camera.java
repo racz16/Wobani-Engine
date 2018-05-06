@@ -8,7 +8,7 @@ import wobani.toolbox.annotations.*;
 /**
  * Base interface for Components with camera features.
  */
-public interface Camera extends IComponent {
+public interface Camera extends ComponentBase {
 
     /**
      * One of the camera frustum's corner points.
@@ -123,7 +123,7 @@ public interface Camera extends IComponent {
      *
      * @return frustum's corner points
      */
-    public List<Vector3f> getFrustumCornerPoints();
+    public Map<CornerPoint, Vector3f> getFrustumCornerPoints();
 
     /**
      * Determines whether frustum culling is enabled.

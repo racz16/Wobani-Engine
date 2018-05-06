@@ -1,12 +1,12 @@
 package wobani.resources.shaders;
 
+import wobani.resources.textures.texture2d.Texture2D;
 import java.io.*;
 import java.util.*;
 import org.joml.*;
 import wobani.materials.*;
 import wobani.rendering.*;
 import wobani.resources.*;
-import wobani.resources.textures.texture2D.*;
 import wobani.toolbox.annotations.*;
 
 public class EnvironmentShader extends Shader {

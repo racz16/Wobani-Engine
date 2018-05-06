@@ -8,9 +8,9 @@ import wobani.toolbox.annotations.*;
 /**
  * Represents an entity which has it's own position, Mesh or any other
  * properties, you should create a new GameObject. A GameObjct can store any
- number of Components, including Cameras, Meshes, Splines, Materials, light
- sources etc. Of course you can create youe own Component. It also offers
- parent-child relations between GameObjectContainer.
+ * number of Components, including Cameras, Meshes, Splines, Materials, light
+ * sources etc. Of course you can create youe own Component. It also offers
+ * parent-child relations between GameObjectContainer.
  *
  * @see Component
  */
@@ -49,12 +49,12 @@ public class GameObject {
      * Initializes a new GameObject.
      */
     public GameObject() {
-        transform.attachToGameObject(this);
-        root = this;
-        components = new ComponentContainer(this);
-        children = new ChildContainer(this);
-        Scene.getGameObjects().addGameObject(this);
-        LOG.finest("GameObject created");
+	transform.attachToGameObject(this);
+	root = this;
+	components = new ComponentContainer(this);
+	children = new ChildContainer(this);
+	Scene.getGameObjects().addGameObject(this);
+	LOG.log(Level.FINEST, "GameObject {0} created", getName());
     }
 
     /**
@@ -63,8 +63,8 @@ public class GameObject {
      * @param name GameObject's name
      */
     public GameObject(@Nullable String name) {
-        this();
-        setName(name);
+	this();
+	setName(name);
     }
 
     /**
@@ -75,7 +75,7 @@ public class GameObject {
      */
     @NotNull
     public String getName() {
-        return name == null ? String.valueOf(hashCode()) : name;
+	return name == null ? String.valueOf(hashCode()) : name;
     }
 
     /**
@@ -84,7 +84,7 @@ public class GameObject {
      * @param name name
      */
     public void setName(@Nullable String name) {
-        this.name = name;
+	this.name = name;
     }
 
     /**
@@ -95,8 +95,8 @@ public class GameObject {
      */
     @Internal
     protected void update() {
-        transform.update();
-        components.update();
+	transform.update();
+	components.update();
     }
 
     //
@@ -109,7 +109,7 @@ public class GameObject {
      */
     @Nullable
     public GameObject getParent() {
-        return parent;
+	return parent;
     }
 
     /**
@@ -119,7 +119,7 @@ public class GameObject {
      */
     @NotNull
     public GameObject getRoot() {
-        return root;
+	return root;
     }
 
     /**
@@ -129,10 +129,10 @@ public class GameObject {
      * @param root GameObject
      */
     private void setRoot(@NotNull GameObject root) {
-        this.root = root;
-        for (int i = 0; i < children.size(); i++) {
-            children.get(i).setRoot(root);
-        }
+	this.root = root;
+	for (int i = 0; i < children.size(); i++) {
+	    children.get(i).setRoot(root);
+	}
     }
 
     /**
@@ -145,13 +145,13 @@ public class GameObject {
      *                                  of this
      */
     public void setParent(@Nullable GameObject parent) {
-        if (parent == getParent()) {
-            return;
-        }
-        if (parent == this || children.containsDeep(parent)) {
-            throw new IllegalArgumentException("Parent can't be this and the descendant of this");
-        }
-        setParentWithoutInspection(parent);
+	if (parent == getParent()) {
+	    return;
+	}
+	if (parent == this || children.containsDeep(parent)) {
+	    throw new IllegalArgumentException("Parent can't be this and the descendant of this");
+	}
+	setParentWithoutInspection(parent);
     }
 
     /**
@@ -160,11 +160,11 @@ public class GameObject {
      * @param parent parent
      */
     private void setParentWithoutInspection(@Nullable GameObject parent) {
-        TransformHolder holder = getCurrentTransformData();
-        removeParent();
-        addParent(parent);
-        setTransform(holder);
-        LOG.finest("GameObject parent set");
+	TransformHolder holder = getCurrentTransformData();
+	removeParent();
+	addParent(parent);
+	setTransform(holder);
+	LOG.finest("GameObject parent set");
     }
 
     /**
@@ -174,9 +174,9 @@ public class GameObject {
      */
     @NotNull
     private TransformHolder getCurrentTransformData() {
-        return new TransformHolder(transform.getAbsolutePosition(),
-                transform.getAbsoluteRotation(),
-                transform.getAbsoluteScale());
+	return new TransformHolder(transform.getAbsolutePosition(),
+		transform.getAbsoluteRotation(),
+		transform.getAbsoluteScale());
     }
 
     /**
@@ -185,21 +185,21 @@ public class GameObject {
      * @param holder TransformHolder
      */
     private void setTransform(@NotNull TransformHolder holder) {
-        transform.setAbsolutePosition(holder.getPosition());
-        transform.setAbsoluteRotation(holder.getRotation());
-        transform.setAbsoluteScale(holder.getScale());
+	transform.setAbsolutePosition(holder.getPosition());
+	transform.setAbsoluteRotation(holder.getRotation());
+	transform.setAbsoluteScale(holder.getScale());
     }
 
     /**
      * Removes this GameObject from the children of it's parent.
      */
     private void removeParent() {
-        if (parent != null) {
-            parent.getChildren().removeChild(this);
-            parent.getTransform().removeInvalidatable(transform);
-            parent = null;
-            setRoot(this);
-        }
+	if (parent != null) {
+	    parent.getChildren().removeChild(this);
+	    parent.getTransform().removeInvalidatable(transform);
+	    parent = null;
+	    setRoot(this);
+	}
     }
 
     /**
@@ -208,12 +208,12 @@ public class GameObject {
      * @param parent GameObject
      */
     private void addParent(@Nullable GameObject parent) {
-        this.parent = parent;
-        if (parent != null) {
-            setRoot(parent.getRoot());
-            parent.getChildren().addChild(this);
-            parent.getTransform().addInvalidatable(getTransform());
-        }
+	this.parent = parent;
+	if (parent != null) {
+	    setRoot(parent.getRoot());
+	    parent.getChildren().addChild(this);
+	    parent.getTransform().addInvalidatable(getTransform());
+	}
     }
 
     //
@@ -226,7 +226,7 @@ public class GameObject {
      */
     @NotNull
     public Transform getTransform() {
-        return transform;
+	return transform;
     }
 
     /**
@@ -238,12 +238,12 @@ public class GameObject {
      *                                  GameObject
      */
     public void setTransform(@NotNull Transform transform) {
-        if (transform.getGameObject() != null) {
-            throw new IllegalArgumentException("Transform is already attached to a GameObject");
-        }
-        this.transform.detacheFromGameObject();
-        transform.attachToGameObject(this);
-        this.transform = transform;
+	if (transform.getGameObject() != null) {
+	    throw new IllegalArgumentException("Transform is already attached to a GameObject");
+	}
+	this.transform.detacheFromGameObject();
+	transform.attachToGameObject(this);
+	this.transform = transform;
     }
 
     /**
@@ -253,7 +253,7 @@ public class GameObject {
      */
     @NotNull
     public ComponentContainer getComponents() {
-        return components;
+	return components;
     }
 
     /**
@@ -263,7 +263,7 @@ public class GameObject {
      */
     @NotNull
     public ChildContainer getChildren() {
-        return children;
+	return children;
     }
 
     //
@@ -271,49 +271,49 @@ public class GameObject {
     //
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.children);
-        hash = 89 * hash + Objects.hashCode(this.name);
-        hash = 89 * hash + Objects.hashCode(this.components);
-        return hash;
+	int hash = 7;
+	hash = 89 * hash + Objects.hashCode(this.children);
+	hash = 89 * hash + Objects.hashCode(this.name);
+	hash = 89 * hash + Objects.hashCode(this.components);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final GameObject other = (GameObject) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        if (!Objects.equals(this.children, other.children)) {
-            return false;
-        }
-        if (!Objects.equals(this.components, other.components)) {
-            return false;
-        }
-        return true;
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	final GameObject other = (GameObject) obj;
+	if (!Objects.equals(this.name, other.name)) {
+	    return false;
+	}
+	if (!Objects.equals(this.children, other.children)) {
+	    return false;
+	}
+	if (!Objects.equals(this.components, other.components)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        String parentName = parent == null ? "null" : parent.getName();
-        StringBuilder res = new StringBuilder()
-                .append("GameObject(")
-                .append(" name: ").append(getName())
-                .append(", parent: ").append(parentName)
-                .append(",\ntransform: ").append(transform)
-                .append(",\nchildren: ").append(getChildren().size())
-                .append(",\ncomponents: ").append(components)
-                .append(")");
-        return res.toString();
+	String parentName = parent == null ? "null" : parent.getName();
+	StringBuilder res = new StringBuilder()
+		.append("GameObject(")
+		.append(" name: ").append(getName())
+		.append(", parent: ").append(parentName)
+		.append(",\ntransform: ").append(transform)
+		.append(",\nchildren: ").append(getChildren().size())
+		.append(",\ncomponents: ").append(components)
+		.append(")");
+	return res.toString();
     }
 
     /**
@@ -321,110 +321,110 @@ public class GameObject {
      */
     private class TransformHolder {
 
-        /**
-         * Position.
-         */
-        private final Vector3f position;
-        /**
-         * Rotation.
-         */
-        private final Vector3f rotation;
-        /**
-         * Scale.
-         */
-        private final Vector3f scale;
+	/**
+	 * Position.
+	 */
+	private final Vector3f position;
+	/**
+	 * Rotation.
+	 */
+	private final Vector3f rotation;
+	/**
+	 * Scale.
+	 */
+	private final Vector3f scale;
 
-        /**
-         * Initializes a new TransformHolder to the given values.
-         *
-         * @param position position
-         * @param rotation rotation
-         * @param scale    scale
-         *
-         * @throws NullPointerException parameters can't be null
-         */
-        public TransformHolder(Vector3f position, Vector3f rotation, Vector3f scale) {
-            if (position == null || rotation == null || scale == null) {
-                throw new NullPointerException();
-            }
-            this.position = new Vector3f(position);
-            this.rotation = new Vector3f(rotation);
-            this.scale = new Vector3f(scale);
-        }
+	/**
+	 * Initializes a new TransformHolder to the given values.
+	 *
+	 * @param position position
+	 * @param rotation rotation
+	 * @param scale    scale
+	 *
+	 * @throws NullPointerException parameters can't be null
+	 */
+	public TransformHolder(Vector3f position, Vector3f rotation, Vector3f scale) {
+	    if (position == null || rotation == null || scale == null) {
+		throw new NullPointerException();
+	    }
+	    this.position = new Vector3f(position);
+	    this.rotation = new Vector3f(rotation);
+	    this.scale = new Vector3f(scale);
+	}
 
-        /**
-         * Returns the position.
-         *
-         * @return position
-         */
-        @NotNull
-        public Vector3f getPosition() {
-            return position;
-        }
+	/**
+	 * Returns the position.
+	 *
+	 * @return position
+	 */
+	@NotNull
+	public Vector3f getPosition() {
+	    return position;
+	}
 
-        /**
-         * Returns the rotation.
-         *
-         * @return rotation
-         */
-        @NotNull
-        public Vector3f getRotation() {
-            return rotation;
-        }
+	/**
+	 * Returns the rotation.
+	 *
+	 * @return rotation
+	 */
+	@NotNull
+	public Vector3f getRotation() {
+	    return rotation;
+	}
 
-        /**
-         * Returns the scale.
-         *
-         * @return scale
-         */
-        @NotNull
-        public Vector3f getScale() {
-            return scale;
-        }
+	/**
+	 * Returns the scale.
+	 *
+	 * @return scale
+	 */
+	@NotNull
+	public Vector3f getScale() {
+	    return scale;
+	}
 
-        @Override
-        public int hashCode() {
-            int hash = 3;
-            hash = 97 * hash + Objects.hashCode(this.position);
-            hash = 97 * hash + Objects.hashCode(this.rotation);
-            hash = 97 * hash + Objects.hashCode(this.scale);
-            return hash;
-        }
+	@Override
+	public int hashCode() {
+	    int hash = 3;
+	    hash = 97 * hash + Objects.hashCode(this.position);
+	    hash = 97 * hash + Objects.hashCode(this.rotation);
+	    hash = 97 * hash + Objects.hashCode(this.scale);
+	    return hash;
+	}
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final TransformHolder other = (TransformHolder) obj;
-            if (!Objects.equals(this.position, other.position)) {
-                return false;
-            }
-            if (!Objects.equals(this.rotation, other.rotation)) {
-                return false;
-            }
-            if (!Objects.equals(this.scale, other.scale)) {
-                return false;
-            }
-            return true;
-        }
+	@Override
+	public boolean equals(Object obj) {
+	    if (this == obj) {
+		return true;
+	    }
+	    if (obj == null) {
+		return false;
+	    }
+	    if (getClass() != obj.getClass()) {
+		return false;
+	    }
+	    final TransformHolder other = (TransformHolder) obj;
+	    if (!Objects.equals(this.position, other.position)) {
+		return false;
+	    }
+	    if (!Objects.equals(this.rotation, other.rotation)) {
+		return false;
+	    }
+	    if (!Objects.equals(this.scale, other.scale)) {
+		return false;
+	    }
+	    return true;
+	}
 
-        @Override
-        public String toString() {
-            StringBuilder res = new StringBuilder()
-                    .append("TransformHolder(")
-                    .append(" position: ").append(position)
-                    .append(", rotation: ").append(rotation)
-                    .append(", scale: ").append(scale)
-                    .append(")");
-            return res.toString();
-        }
+	@Override
+	public String toString() {
+	    StringBuilder res = new StringBuilder()
+		    .append("TransformHolder(")
+		    .append(" position: ").append(position)
+		    .append(", rotation: ").append(rotation)
+		    .append(", scale: ").append(scale)
+		    .append(")");
+	    return res.toString();
+	}
 
     }
 

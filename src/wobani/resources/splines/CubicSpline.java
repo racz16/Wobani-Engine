@@ -20,61 +20,54 @@ public abstract class CubicSpline extends SimpleSpline {
      */
     private float step = 0.1f;
 
-    /**
-     * Initializes a new a CubicSpline.
-     */
-    public CubicSpline() {
-        super();
-    }
-
     @NotNull
     @Override
     protected float[] computeSplineData() {
-        Vector3f aabbMax = new Vector3f();
-        Vector3f aabbMin = new Vector3f();
-        Float max = 0f;
+	Vector3f aabbMax = new Vector3f();
+	Vector3f aabbMin = new Vector3f();
+	Float max = 0f;
 
-        int steps = (int) (1.0f / getStep());
-        int index = 0;
-        Vector3f pos;
-        int size = isLoopSpline() ? 3 * steps * getNumberOfControlPoints() : 3 * steps * (getNumberOfControlPoints() - 1) + 3;
-        float[] data = new float[size];
-        for (int i = 0; i < getNumberOfControlPoints() - 1; i++) {
-            for (int j = 0; j < steps; j++) {
-                pos = getValue(i, j * getStep());
-                data[index++] = pos.x;
-                data[index++] = pos.y;
-                data[index++] = pos.z;
-                //frustum culling
-                max = max < pos.length() ? pos.length() : max;
-                refreshAabbs(aabbMax, aabbMin, pos);
-            }
-        }
-        if (!isLoopSpline()) {
-            pos = getControlPoint(getNumberOfControlPoints() - 1);
-            data[index++] = pos.x;
-            data[index++] = pos.y;
-            data[index++] = pos.z;
-            //frustum culling
-            max = max < pos.length() ? pos.length() : max;
-            refreshAabbs(aabbMax, aabbMin, pos);
-        } else {
-            for (int j = 0; j < steps; j++) {
-                pos = getValue(getNumberOfControlPoints() - 1, j * getStep());
-                data[index++] = pos.x;
-                data[index++] = pos.y;
-                data[index++] = pos.z;
-                //frustum culling
-                max = max < pos.length() ? pos.length() : max;
-                refreshAabbs(aabbMax, aabbMin, pos);
-            }
-        }
+	int steps = (int) (1.0f / getStep());
+	int index = 0;
+	Vector3f pos;
+	int size = isLoopSpline() ? 3 * steps * getNumberOfControlPoints() : 3 * steps * (getNumberOfControlPoints() - 1) + 3;
+	float[] data = new float[size];
+	for (int i = 0; i < getNumberOfControlPoints() - 1; i++) {
+	    for (int j = 0; j < steps; j++) {
+		pos = getValue(i, j * getStep());
+		data[index++] = pos.x;
+		data[index++] = pos.y;
+		data[index++] = pos.z;
+		//frustum culling
+		max = max < pos.length() ? pos.length() : max;
+		refreshAabbs(aabbMax, aabbMin, pos);
+	    }
+	}
+	if (!isLoopSpline()) {
+	    pos = getControlPoint(getNumberOfControlPoints() - 1);
+	    data[index++] = pos.x;
+	    data[index++] = pos.y;
+	    data[index++] = pos.z;
+	    //frustum culling
+	    max = max < pos.length() ? pos.length() : max;
+	    refreshAabbs(aabbMax, aabbMin, pos);
+	} else {
+	    for (int j = 0; j < steps; j++) {
+		pos = getValue(getNumberOfControlPoints() - 1, j * getStep());
+		data[index++] = pos.x;
+		data[index++] = pos.y;
+		data[index++] = pos.z;
+		//frustum culling
+		max = max < pos.length() ? pos.length() : max;
+		refreshAabbs(aabbMax, aabbMin, pos);
+	    }
+	}
 
-        this.aabbMin.set(aabbMin);
-        this.aabbMax.set(aabbMax);
-        furthestVertexDistance = max;
+	this.aabbMin.set(aabbMin);
+	this.aabbMax.set(aabbMax);
+	furthestVertexDistance = max;
 
-        return data;
+	return data;
     }
 
     /**
@@ -85,14 +78,14 @@ public abstract class CubicSpline extends SimpleSpline {
      * @param pos     one of the spline's points
      */
     private void refreshAabbs(@NotNull Vector3f aabbMax, @NotNull Vector3f aabbMin, @NotNull Vector3f pos) {
-        for (int i = 0; i < 3; i++) {
-            if (pos.get(i) < aabbMin.get(i)) {
-                aabbMin.setComponent(i, pos.get(i));
-            }
-            if (pos.get(i) > aabbMax.get(i)) {
-                aabbMax.setComponent(i, pos.get(i));
-            }
-        }
+	for (int i = 0; i < 3; i++) {
+	    if (pos.get(i) < aabbMin.get(i)) {
+		aabbMin.setComponent(i, pos.get(i));
+	    }
+	    if (pos.get(i) > aabbMax.get(i)) {
+		aabbMax.setComponent(i, pos.get(i));
+	    }
+	}
     }
 
     /**
@@ -101,7 +94,7 @@ public abstract class CubicSpline extends SimpleSpline {
      * @return step
      */
     public float getStep() {
-        return step;
+	return step;
     }
 
     /**
@@ -114,11 +107,11 @@ public abstract class CubicSpline extends SimpleSpline {
      *                                  be higher than 1
      */
     public void setStep(float step) {
-        if (step <= 0 || step > 1) {
-            throw new IllegalArgumentException("Step must be higher than 0 but it can't be higher than 1");
-        }
-        this.step = step;
-        valid = false;
+	if (step <= 0 || step > 1) {
+	    throw new IllegalArgumentException("Step must be higher than 0 but it can't be higher than 1");
+	}
+	this.step = step;
+	valid = false;
     }
 
     /**
@@ -133,13 +126,13 @@ public abstract class CubicSpline extends SimpleSpline {
      */
     @ReadOnly @NotNull
     public Matrix4f getBasisMatrix() {
-        return new Matrix4f(basisMatrix);
+	return new Matrix4f(basisMatrix);
     }
 
     @Override
     public String toString() {
-        return super.toString() + "\nCubicSpline{" + "basisMatrix=" + basisMatrix
-                + ", step=" + step + '}';
+	return super.toString() + "\nCubicSpline{" + "basisMatrix=" + basisMatrix
+		+ ", step=" + step + '}';
     }
 
 }

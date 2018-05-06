@@ -1,20 +1,19 @@
 package wobani.materials;
 
-import java.io.*;
+import wobani.resources.textures.texture2d.Texture2D;
+import wobani.resources.environmentprobes.EnvironmentProbe;
 import java.util.*;
 import org.joml.*;
-import wobani.resources.environmentProbes.*;
-import wobani.resources.textures.cubeMapTexture.*;
-import wobani.resources.textures.texture2D.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotations.*;
+import wobani.toolbox.parameters.*;
 
 /**
- * The Material's slot. It can store a color, parameters, a texture, the
- * texture's tiling and offset. All of them are optional but in some cases you
- * should fill some values. For example if you use the MaterialSlot as a normal
- * map, you should set a texture, shaders can't do anything with a single color
- * as a normal map.
+ * The Material's slot. It can store a color, parameters, a 2D and a
+ * CubeMapTexture, the texture's tiling and offset. All of them are optional but
+ * in some cases you should fill some values. For example if you use the
+ * MaterialSlot as a normal map, you should set a texture, shaders can't do
+ * anything with a single color as a normal map.
  */
 public class MaterialSlot {
 
@@ -42,6 +41,33 @@ public class MaterialSlot {
      * Texture coordinates' offset along U and V directions.
      */
     private final Vector2f textureOffset = new Vector2f(0);
+    /**
+     * The MaterialSlot's parameters.
+     */
+    private final ParameterContainer parameters = new ParameterContainer();
+
+    /**
+     * Determines whether the shader use the specular map's or the specular
+     * color's alpha channel as a glossiness value.
+     */
+    public static final ParameterKey<Float> USE_GLOSSINESS = new ParameterKey<>(Float.class, "PARAM_USE_GLOSSINESS");
+    /**
+     * Determines whether the shader use the normal map's alpha channel as a
+     * parallax map.
+     */
+    public static final ParameterKey<Float> USE_POM = new ParameterKey<>(Float.class, "PARAM_USE_POM");
+    /**
+     * Parallax occlussion map's scale factor.
+     */
+    public static final ParameterKey<Float> POM_SCALE = new ParameterKey<>(Float.class, "PARAM_POM_SCALE");
+    /**
+     * Parallax occlussion map's minimum layers.
+     */
+    public static final ParameterKey<Float> POM_MIN_LAYERS = new ParameterKey<>(Float.class, "PARAM_POM_MIN_LAYERS");
+    /**
+     * Parallax occlussion map's maximum layers.
+     */
+    public static final ParameterKey<Float> POM_MAX_LAYERS = new ParameterKey<>(Float.class, "PARAM_POM_MAX_LAYERS");
 
     /**
      * Initializes a new MaterialSlot.
@@ -65,27 +91,6 @@ public class MaterialSlot {
      */
     public MaterialSlot(@Nullable EnvironmentProbe environmentProbe) {
         setEnvironmentProbe(environmentProbe);
-    }
-
-    /**
-     * Initializes a new MaterialSlot to the given value.
-     *
-     * @param cubeMapTexture cube map texture
-     */
-    public MaterialSlot(@NotNull StaticCubeMapTexture cubeMapTexture) {
-        setEnvironmentProbe(cubeMapTexture);
-    }
-
-    /**
-     * Initializes a new MaterialSlot to the given values.
-     *
-     * @param path texture's relative path (with extension like
-     *             "res/textures/myTexture.png")
-     * @param sRgb determines whether the texture is in sRGB color space
-     *
-     */
-    public MaterialSlot(@NotNull File path, boolean sRgb) {
-        setTexture(StaticTexture2D.loadTexture(path, sRgb));
     }
 
     /**
@@ -120,8 +125,9 @@ public class MaterialSlot {
      *
      * @return MaterialSlot's color
      */
+    @Nullable
     public Vector4f getColor() {
-        return color == null ? null : new Vector4f(color);
+        return color;
     }
 
     /**
@@ -177,15 +183,6 @@ public class MaterialSlot {
     }
 
     /**
-     * Sets the environment probe to the given value.
-     *
-     * @param cubeMapTexture cube map texture
-     */
-    public void setEnvironmentProbe(@NotNull StaticCubeMapTexture cubeMapTexture) {
-        this.environmentProbe = new StaticEnvironmentProbe(cubeMapTexture);
-    }
-
-    /**
      * Returns the texture's tile factor. The x coordinate is the tiling along
      * the U direction ad the y coordinate is the tiling along the V direction.
      *
@@ -226,18 +223,28 @@ public class MaterialSlot {
         this.textureOffset.set(textureOffset);
     }
 
+    /**
+     * Returns the MaterialSlot's parameters.
+     *
+     * @return the MaterialSlot's parameters
+     */
+    public ParameterContainer getParameters() {
+        return parameters;
+    }
+
     //
     //misc----------------------------------------------------------------------
     //
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 71 * hash + (this.active ? 1 : 0);
-        hash = 71 * hash + Objects.hashCode(this.color);
-        hash = 71 * hash + Objects.hashCode(this.texture);
-        hash = 71 * hash + Objects.hashCode(this.environmentProbe);
-        hash = 71 * hash + Objects.hashCode(this.textureTile);
-        hash = 71 * hash + Objects.hashCode(this.textureOffset);
+        int hash = 7;
+        hash = 29 * hash + (this.active ? 1 : 0);
+        hash = 29 * hash + Objects.hashCode(this.color);
+        hash = 29 * hash + Objects.hashCode(this.texture);
+        hash = 29 * hash + Objects.hashCode(this.environmentProbe);
+        hash = 29 * hash + Objects.hashCode(this.textureTile);
+        hash = 29 * hash + Objects.hashCode(this.textureOffset);
+        hash = 29 * hash + Objects.hashCode(this.parameters);
         return hash;
     }
 
@@ -271,14 +278,25 @@ public class MaterialSlot {
         if (!Objects.equals(this.textureOffset, other.textureOffset)) {
             return false;
         }
+        if (!Objects.equals(this.parameters, other.parameters)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "MaterialSlot{" + "active=" + active + ", color=" + color
-                + ", texture=" + texture + ", cubeMapTexture=" + environmentProbe
-                + ", textureTile=" + textureTile + ", textureOffset=" + textureOffset + '}';
+        StringBuilder res = new StringBuilder()
+                .append("MaterialSlot(")
+                .append(" active: ").append(active)
+                .append(", color: ").append(color)
+                .append(", texture: ").append(texture)
+                .append(", environment probe: ").append(environmentProbe)
+                .append(", texture tile: ").append(textureTile)
+                .append(", texture offset: ").append(textureOffset)
+                .append(", parameters: ").append(parameters)
+                .append(")");
+        return res.toString();
     }
 
 }

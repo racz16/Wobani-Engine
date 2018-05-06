@@ -35,7 +35,7 @@ public class WindowParameters {
     /**
      * The window's title at start.
      */
-    private String titleAtStart = "Engine";
+    private String titleAtStart = "Wobani Engine";
 
     /**
      * Determines whether the window is resizable.
@@ -220,10 +220,17 @@ public class WindowParameters {
 
     @Override
     public String toString() {
-        return "WindowParameters{" + "resizable=" + resizable
-                + ", visibleAtStart=" + visibleAtStart + ", decorated=" + decorated
-                + ", focusedAtStart=" + focusedAtStart + ", alwaysOnTop=" + alwaysOnTop
-                + ", maximizedAtStart=" + maximizedAtStart + ", titleAtStart=" + titleAtStart + '}';
+        StringBuilder res = new StringBuilder()
+                .append("WindowParameters(")
+                .append(" resizable: ").append(resizable)
+                .append(", visible at start: ").append(visibleAtStart)
+                .append(", decorated: ").append(decorated)
+                .append(", focused at start: ").append(focusedAtStart)
+                .append(", always on top: ").append(alwaysOnTop)
+                .append(", maximized at Start: ").append(maximizedAtStart)
+                .append(", title at start: ").append(titleAtStart)
+                .append(")");
+        return res.toString();
     }
 
 }

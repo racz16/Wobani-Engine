@@ -1,6 +1,5 @@
 package wobani.components.light;
 
-import wobani.components.light.lightTypes.*;
 import wobani.core.*;
 import wobani.toolbox.annotations.*;
 
@@ -9,7 +8,7 @@ import wobani.toolbox.annotations.*;
  *
  * @see GameObject
  */
-public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent implements BlinnPhongSpotLight {
+public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
 
     /**
      * Attenuation's constant component.
@@ -32,7 +31,11 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent imple
      */
     private float outerCutoff = 15.0f;
 
-    @Override
+    /**
+     * Returns the attenuation's constant component.
+     *
+     * @return attenuation's constant component
+     */
     public float getConstant() {
         return constant;
     }
@@ -48,7 +51,11 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent imple
         refreshUbo();
     }
 
-    @Override
+    /**
+     * Returns the attenuation's linear component.
+     *
+     * @return attenuation's linear component
+     */
     public float getLinear() {
         return linear;
     }
@@ -63,7 +70,11 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent imple
         refreshUbo();
     }
 
-    @Override
+    /**
+     * Returns the attenuation's quadratic component.
+     *
+     * @return attenuation's quadratic component
+     */
     public float getQuadratic() {
         return quadratic;
     }
@@ -83,7 +94,6 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent imple
      *
      * @return cutoff component (in degrees)
      */
-    @Override
     public float getCutoff() {
         return cutoff;
     }
@@ -112,7 +122,6 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent imple
      *
      * @return outer cutoff component (in degrees)
      */
-    @Override
     public float getOuterCutoff() {
         return outerCutoff;
     }

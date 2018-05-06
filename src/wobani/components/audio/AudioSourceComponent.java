@@ -4,6 +4,7 @@ import java.util.*;
 import org.joml.*;
 import wobani.core.*;
 import wobani.resources.audio.*;
+import wobani.toolbox.*;
 import wobani.toolbox.annotations.*;
 import wobani.toolbox.parameters.*;
 
@@ -59,7 +60,7 @@ public class AudioSourceComponent extends Component {
      *
      * @throws NullPointerException source can't be null
      */
-    public void setSource(@NotNull AudioSource source) {
+    private void setSource(@NotNull AudioSource source) {
         if (source == null) {
             throw new NullPointerException();
         }
@@ -93,7 +94,7 @@ public class AudioSourceComponent extends Component {
     @Override
     public void invalidate() {
         super.invalidate();
-        if (getGameObject() != null && source.isUsable()) {
+        if (getGameObject() != null && Utility.isUsable(source)) {
             refreshSource();
         }
     }
@@ -183,8 +184,8 @@ public class AudioSourceComponent extends Component {
     @Override
     protected void attachToGameObject(@NotNull GameObject g) {
         super.attachToGameObject(g);
-        invalidate();
         getGameObject().getTransform().addInvalidatable(this);
+        invalidate();
     }
 
     @Override

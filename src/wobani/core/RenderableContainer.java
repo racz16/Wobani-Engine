@@ -1,5 +1,6 @@
 package wobani.core;
 
+import wobani.toolbox.ComponentAttachmentException;
 import java.util.*;
 import wobani.components.renderables.*;
 import wobani.materials.*;
@@ -179,7 +180,7 @@ public class RenderableContainer {
 
     /**
      * Returns the number of RenderableContainer using the given
- GeometryRenderer and Renderable.
+     * GeometryRenderer and Renderable.
      *
      * @param renderer   GeometryRenderer
      * @param renderable Renderable
@@ -232,12 +233,12 @@ public class RenderableContainer {
          *
          * @param renderableComponent RenderableComponent you want to add
          *
-         * @throws IllegalArgumentException RenderableComponent is not yet
-         *                                  attached to a GameObject
+         * @throws ComponentAttachmentException RenderableComponent is not yet
+         *                                      attached to a GameObject
          */
         public void add(@NotNull RenderableComponent<? extends Renderable> renderableComponent) {
             if (renderableComponent.getGameObject() == null) {
-                throw new IllegalArgumentException("RenderableComponent is not yet attached to a GameObject");
+                throw new ComponentAttachmentException(renderableComponent);
             }
             RenderableComponentList list = getOrAddList(renderableComponent);
             list.add(renderableComponent);
@@ -249,12 +250,12 @@ public class RenderableContainer {
          *
          * @param renderableComponent RenderableComponent you want to remove
          *
-         * @throws IllegalArgumentException RenderableComponent already attached
-         *                                  to a GameObject
+         * @throws ComponentAttachmentException RenderableComponent already
+         *                                      attached to a GameObject
          */
         public void remove(@NotNull RenderableComponent<? extends Renderable> renderableComponent) {
             if (renderableComponent.getGameObject() != null) {
-                throw new IllegalArgumentException("RenderableComponent already attached to a GameObject");
+                throw new ComponentAttachmentException(renderableComponent);
             }
             removeRenderableComponent(renderableComponent, renderableComponent.getRenderable(), renderableComponent.getMaterial());
         }
@@ -267,12 +268,12 @@ public class RenderableContainer {
          * @param fromRenderable      Renderable
          * @param fromMaterial        Material
          *
-         * @throws IllegalArgumentException RenderableComponent is not yet
-         *                                  attached to a GameObject
+         * @throws ComponentAttachmentException RenderableComponent is not yet
+         *                                      attached to a GameObject
          */
         public void removeWhemChanged(@NotNull RenderableComponent<? extends Renderable> renderableComponent, @NotNull Renderable fromRenderable, @NotNull Material fromMaterial) {
             if (renderableComponent.getGameObject() == null) {
-                throw new IllegalArgumentException("RenderableComponent is not yet attached to a GameObject");
+                throw new ComponentAttachmentException(renderableComponent);
             }
             removeRenderableComponent(renderableComponent, fromRenderable, fromMaterial);
         }
@@ -429,7 +430,7 @@ public class RenderableContainer {
 
     /**
      * Represents a list which contains RenderableContainer using the same
- Renderable and GeometryRenderer.
+     * Renderable and GeometryRenderer.
      */
     private class RenderableComponentList {
 

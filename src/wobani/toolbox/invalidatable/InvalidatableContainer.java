@@ -6,8 +6,10 @@ import wobani.toolbox.annotations.*;
 
 /**
  * Contains a list of Invalidatables, what you can invalidate.
+ *
+ * @param <T> the container object's type
  */
-public class InvalidatableContainer {
+public class InvalidatableContainer<T> {
 
     /**
      * List of Invalidatables.
@@ -18,16 +20,16 @@ public class InvalidatableContainer {
      */
     private boolean invalidatable = true;
     /**
-     * Prevents the InvalidatableContainer to store this object
+     * Prevents the InvalidatableContainer to store this object.
      */
-    private final Object container;
+    private final T container;
 
     /**
      * Initializes a new InvalidatableContainer to the given value.
      *
      * @param container prevents the InvalidatableContainer to store this object
      */
-    public InvalidatableContainer(@Nullable Object container) {
+    public InvalidatableContainer(@Nullable T container) {
         this.container = container;
     }
 

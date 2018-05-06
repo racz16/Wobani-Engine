@@ -64,7 +64,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      */
     @NotNull
     public TextureWrap getTextureWrap(@NotNull TextureWrapDirection type) {
-        return glGetWrap(type);
+	return glGetWrap(type);
     }
 
     /**
@@ -75,7 +75,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      */
     @Bind
     public void setTextureWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap tw) {
-        glSetWrap(type, tw);
+	glSetWrap(type, tw);
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      */
     @NotNull @ReadOnly
     public Vector4f getBorderColor() {
-        return new Vector4f(glGetBorderColor());
+	return new Vector4f(glGetBorderColor());
     }
 
     /**
@@ -95,7 +95,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      */
     @Bind
     public void setBorderColor(@NotNull Vector4f borderColor) {
-        glSetBorderColor(borderColor);
+	glSetBorderColor(borderColor);
     }
 
     //
@@ -104,7 +104,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
     @NotNull
     @Override
     public TextureFiltering getTextureFiltering() {
-        return filtering;
+	return filtering;
     }
 
     /**
@@ -118,22 +118,22 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
     @Bind
     @Override
     public void setTextureFiltering(@NotNull TextureFiltering tf) {
-        if (tf == null) {
-            throw new NullPointerException();
-        }
-        if (tf != filtering) {
-            boolean fastFilteringChange = tf.getIndex() < 3 && filtering.getIndex() < 3;
-            filtering = tf;
+	if (tf == null) {
+	    throw new NullPointerException();
+	}
+	if (tf != filtering) {
+	    boolean fastFilteringChange = tf.getIndex() < 3 && filtering.getIndex() < 3;
+	    filtering = tf;
 
-            if (getState() == ResourceManager.ResourceState.ACTION) {
-                if (fastFilteringChange) {
-                    changeFiltering();
-                } else {
-                    vramToRam();
-                    ramToVram();
-                }
-            }
-        }
+	    if (getState() == ResourceManager.ResourceState.ACTION) {
+		if (fastFilteringChange) {
+		    changeFiltering();
+		} else {
+		    vramToRam();
+		    ramToVram();
+		}
+	    }
+	}
     }
 
     /**
@@ -142,32 +142,32 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      */
     @Bind
     protected void changeFiltering() {
-        glGenerateMipmaps();
-        switch (filtering) {
-            case NONE:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.NEAREST);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.NEAREST_MIPMAP_NEAREST);
-                break;
-            case BILINEAR:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_NEAREST);
-                break;
-            case TRILINEAR:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR);
-                break;
-            default:
-                glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
-                glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR);
-                if (GL.getCapabilities().GL_EXT_texture_filter_anisotropic) {
-                    float maxLevel = org.joml.Math.min(2 << filtering.getIndex() - 3, GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
-                    filtering = TextureFiltering.valueOf("ANISOTROPIC_" + (int) maxLevel + "X");
-                    GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, maxLevel);
-                } else {
-                    filtering = TextureFiltering.TRILINEAR;
-                }
-                break;
-        }
+	glGenerateMipmaps();
+	switch (filtering) {
+	    case NONE:
+		glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.NEAREST);
+		glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.NEAREST_MIPMAP_NEAREST);
+		break;
+	    case BILINEAR:
+		glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
+		glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_NEAREST);
+		break;
+	    case TRILINEAR:
+		glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
+		glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR);
+		break;
+	    default:
+		glSetFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
+		glSetFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR);
+		if (GL.getCapabilities().GL_EXT_texture_filter_anisotropic) {
+		    float maxLevel = org.joml.Math.min(2 << filtering.getIndex() - 3, GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
+		    filtering = TextureFiltering.valueOf("ANISOTROPIC_" + (int) maxLevel + "X");
+		    GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, maxLevel);
+		} else {
+		    filtering = TRILINEAR;
+		}
+		break;
+	}
     }
 
     //
@@ -175,32 +175,32 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
     //
     @Override
     public void bind() {
-        glBind();
+	glBind();
     }
 
     @Override
     public int getId() {
-        return id;
+	return id;
     }
 
     @Override
     public void unbind() {
-        glUnbind();
+	glUnbind();
     }
 
     @Override
     public void bindToTextureUnit(int textureUnit) {
-        if (getState() != ResourceManager.ResourceState.ACTION) {
-            if (getState() == ResourceManager.ResourceState.HDD) {
-                hddToRam();
-            }
-            ramToVram();
-            bind();
-        }
+	if (getState() != ResourceManager.ResourceState.ACTION) {
+	    if (getState() == ResourceManager.ResourceState.HDD) {
+		hddToRam();
+	    }
+	    ramToVram();
+	    bind();
+	}
 
-        glActivate(textureUnit);
-        glBind();
-        meta.setLastActiveToNow();
+	glActivate(textureUnit);
+	glBind();
+	meta.setLastActiveToNow();
     }
 
     //
@@ -216,7 +216,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      * @return ACTION time limit (in miliseconds)
      */
     public long getVramTimeLimit() {
-        return meta.getActionTimeLimit();
+	return meta.getActionTimeLimit();
     }
 
     /**
@@ -229,7 +229,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      * @param vramTimeLimit ACTION time limit (in miliseconds)
      */
     public void setVramTimeLimit(long vramTimeLimit) {
-        meta.setActionTimeLimit(vramTimeLimit);
+	meta.setActionTimeLimit(vramTimeLimit);
     }
 
     /**
@@ -242,7 +242,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      * @return RAM time limit (in miliseconds)
      */
     public long getRamTimeLimit() {
-        return meta.getRamTimeLimit();
+	return meta.getRamTimeLimit();
     }
 
     /**
@@ -255,7 +255,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      * @param ramTimeLimit RAM time limit (in miliseconds)
      */
     public void setRamTimeLimit(long ramTimeLimit) {
-        meta.setRamTimeLimit(ramTimeLimit);
+	meta.setRamTimeLimit(ramTimeLimit);
     }
 
     /**
@@ -264,7 +264,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      * @return the time when the texture last time used (in miliseconds)
      */
     public long getLastActive() {
-        return meta.getLastActive();
+	return meta.getLastActive();
     }
 
     /**
@@ -275,7 +275,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      */
     @NotNull
     public ResourceManager.ResourceState getState() {
-        return meta.getState();
+	return meta.getState();
     }
 
     /**
@@ -290,7 +290,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      */
     @NotNull
     public ResourceManager.ResourceState getDataStorePolicy() {
-        return meta.getDataStorePolicy();
+	return meta.getDataStorePolicy();
     }
 
     /**
@@ -304,27 +304,27 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      * @param minState data store policy
      */
     public void setDataStorePolicy(@NotNull ResourceManager.ResourceState minState) {
-        meta.setDataStorePolicy(minState);
+	meta.setDataStorePolicy(minState);
 
-        if (minState != ResourceManager.ResourceState.HDD && getState() == ResourceManager.ResourceState.HDD) {
-            hddToRam();
-        }
-        if (minState == ResourceManager.ResourceState.ACTION && getState() != ResourceManager.ResourceState.ACTION) {
-            ramToVram();
-        }
+	if (minState != ResourceManager.ResourceState.HDD && getState() == ResourceManager.ResourceState.HDD) {
+	    hddToRam();
+	}
+	if (minState == ResourceManager.ResourceState.ACTION && getState() != ResourceManager.ResourceState.ACTION) {
+	    ramToVram();
+	}
     }
 
     @Override
     public void update() {
-        long elapsedTime = System.currentTimeMillis() - getLastActive();
-        if (elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceManager.ResourceState.ACTION && getState() != ResourceManager.ResourceState.HDD) {
-            if (getState() == ResourceManager.ResourceState.ACTION) {
-                vramToRam();
-            }
-            if (elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceManager.ResourceState.HDD) {
-                ramToHdd();
-            }
-        }
+	long elapsedTime = System.currentTimeMillis() - getLastActive();
+	if (elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceManager.ResourceState.ACTION && getState() != ResourceManager.ResourceState.HDD) {
+	    if (getState() == ResourceManager.ResourceState.ACTION) {
+		vramToRam();
+	    }
+	    if (elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceManager.ResourceState.HDD) {
+		ramToHdd();
+	    }
+	}
     }
 
     //
@@ -332,7 +332,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
     //
     @Override
     public boolean issRgb() {
-        return sRgb;
+	return sRgb;
     }
 
     /**
@@ -347,7 +347,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      * @see #setsRgb(boolean sRgb)
      */
     public boolean isDefaultsRgb() {
-        return basesRgb;
+	return basesRgb;
     }
 
     /**
@@ -362,56 +362,56 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
      */
     @Override
     public void setsRgb(boolean sRgb) {
-        if (!basesRgb && sRgb) {
-            return;
-        }
-        if (issRgb() != sRgb) {
-            this.sRgb = sRgb;
-            ResourceManager.ResourceState oldState = getState();
-            if (getState() == ResourceManager.ResourceState.ACTION) {
-                vramToRam();
-            }
-            if (getState() == ResourceManager.ResourceState.RAM) {
-                ramToHdd();
-            }
-            if (oldState != ResourceManager.ResourceState.HDD) {
-                hddToRam();
-            }
-            if (oldState == ResourceManager.ResourceState.ACTION) {
-                ramToVram();
-            }
-        }
+	if (!basesRgb && sRgb) {
+	    return;
+	}
+	if (issRgb() != sRgb) {
+	    this.sRgb = sRgb;
+	    ResourceManager.ResourceState oldState = getState();
+	    if (getState() == ResourceManager.ResourceState.ACTION) {
+		vramToRam();
+	    }
+	    if (getState() == ResourceManager.ResourceState.RAM) {
+		ramToHdd();
+	    }
+	    if (oldState != ResourceManager.ResourceState.HDD) {
+		hddToRam();
+	    }
+	    if (oldState == ResourceManager.ResourceState.ACTION) {
+		ramToVram();
+	    }
+	}
     }
 
     @Override
     public int getDataSizeInRam() {
-        return getState() == ResourceManager.ResourceState.HDD ? 0 : meta.getDataSize();
+	return getState() == ResourceManager.ResourceState.HDD ? 0 : meta.getDataSize();
     }
 
     @Override
     public int getDataSizeInAction() {
-        return getState() == ResourceManager.ResourceState.ACTION ? meta.getDataSize() : 0;
+	return getState() == ResourceManager.ResourceState.ACTION ? meta.getDataSize() : 0;
     }
 
     @Override
     public void release() {
-        if (getState() == ResourceManager.ResourceState.ACTION) {
-            vramToRam();
-        }
-        if (getState() == ResourceManager.ResourceState.RAM) {
-            ramToHdd();
-        }
+	if (getState() == ResourceManager.ResourceState.ACTION) {
+	    vramToRam();
+	}
+	if (getState() == ResourceManager.ResourceState.RAM) {
+	    ramToHdd();
+	}
     }
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "\nStaticTexture{" + "filtering=" + filtering
-                + ", meta=" + meta + ", basesRgb=" + basesRgb + '}';
+	return super.toString() + "\nStaticTexture{" + "filtering=" + filtering
+		+ ", meta=" + meta + ", basesRgb=" + basesRgb + '}';
     }
 
 }

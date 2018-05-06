@@ -1,14 +1,15 @@
 package wobani.toolbox.parameters;
 
+import wobani.toolbox.ComponentAttachmentException;
 import wobani.components.*;
 import wobani.toolbox.annotations.*;
 
 /**
  * Stores a Component as a Parameter.
  *
- * @param <T> stored data's type must extends the IComponent interface
+ * @param <T> stored data's type must extends the ComponentBase interface
  */
-public class ComponentParameter<T extends IComponent> extends Parameter<T> {
+public class ComponentParameter<T extends ComponentBase> extends Parameter<T> {
 
     /**
      * Initializes a new ComponentParameter to the given value.
@@ -19,11 +20,19 @@ public class ComponentParameter<T extends IComponent> extends Parameter<T> {
         super(value);
     }
 
+    /**
+     * Returns the stored data.
+     *
+     * @return the stored data
+     *
+     * @throws ComponentAttachmentException component not attached to any
+     *                                      GameObject
+     */
     @Override
     public T getValue() {
         T ret = super.getValue();
         if (ret.getGameObject() == null) {
-            throw new RuntimeException("Component not attached to any GameObject");
+            throw new ComponentAttachmentException(ret);
         }
         return ret;
     }

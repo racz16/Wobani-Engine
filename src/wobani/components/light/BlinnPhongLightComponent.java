@@ -2,7 +2,6 @@ package wobani.components.light;
 
 import java.util.*;
 import org.joml.*;
-import wobani.components.light.lightTypes.*;
 import wobani.core.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotations.*;
@@ -12,11 +11,8 @@ import wobani.toolbox.annotations.*;
  * components.
  *
  * @see GameObject
- * @see BlinnPhongDirectionalLight
- * @see BlinnPhongPointLight
- * @see BlinnPhongSpotLight
  */
-public abstract class BlinnPhongLightComponent extends Component implements BlinnPhongLight {
+public abstract class BlinnPhongLightComponent extends Component {
 
     /**
      * Diffuse color.
@@ -35,8 +31,12 @@ public abstract class BlinnPhongLightComponent extends Component implements Blin
      */
     private int uboIndex = -1;
 
+    /**
+     * Returns the diffuse color.
+     *
+     * @return diffuse color
+     */
     @NotNull @ReadOnly
-    @Override
     public Vector3f getDiffuseColor() {
         return new Vector3f(diffuseColor);
     }
@@ -57,8 +57,12 @@ public abstract class BlinnPhongLightComponent extends Component implements Blin
         refreshUbo();
     }
 
+    /**
+     * Returns the specular color.
+     *
+     * @return specular color
+     */
     @NotNull @ReadOnly
-    @Override
     public Vector3f getSpecularColor() {
         return new Vector3f(specularColor);
     }
@@ -79,8 +83,12 @@ public abstract class BlinnPhongLightComponent extends Component implements Blin
         refreshUbo();
     }
 
+    /**
+     * Returns the ambient color.
+     *
+     * @return ambient color
+     */
     @NotNull @ReadOnly
-    @Override
     public Vector3f getAmbientColor() {
         return new Vector3f(ambientColor);
     }
@@ -105,15 +113,15 @@ public abstract class BlinnPhongLightComponent extends Component implements Blin
     protected void detachFromGameObject() {
         getGameObject().getTransform().removeInvalidatable(this);
         super.detachFromGameObject();
-        invalidate();
         removeLight();
+        invalidate();
     }
 
     @Override
     protected void attachToGameObject(@NotNull GameObject g) {
         super.attachToGameObject(g);
-        invalidate();
         getGameObject().getTransform().addInvalidatable(this);
+        invalidate();
         addLight();
     }
 
@@ -125,6 +133,7 @@ public abstract class BlinnPhongLightComponent extends Component implements Blin
 
     @Override
     public void invalidate() {
+        super.invalidate();
         refreshUbo();
     }
 

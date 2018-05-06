@@ -1,12 +1,14 @@
 package wobani.window;
 
+import wobani.window.eventhandlers.MouseEventHandler;
+import wobani.window.eventhandlers.KeyboardEventHandler;
+import wobani.window.eventhandlers.JoystickEventHandler;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotations.*;
-import wobani.window.eventHandlers.*;
 
 /**
  * For handling mouse, keyboard or joystick input.
@@ -760,6 +762,15 @@ public class Input {
         if (eh == null) {
             throw new NullPointerException();
         }
+        addMouseEventHandlerWithoutInspection(eh);
+    }
+
+    /**
+     * Adds the given mouse event handler to the list of mouse event handlers.
+     *
+     * @param eh mouse event handler
+     */
+    private static void addMouseEventHandlerWithoutInspection(@NotNull MouseEventHandler eh) {
         if (!Utility.containsReference(mouseEventHandlers, eh)) {
             mouseEventHandlers.add(eh);
         }
@@ -812,7 +823,7 @@ public class Input {
      *
      * @return number of registered mouse event handlers
      */
-    public static int getNumberOfMouseEventHandlers() {
+    public static int getMouseEventHandlerCount() {
         return mouseEventHandlers.size();
     }
 
@@ -820,6 +831,16 @@ public class Input {
      * Creates the mouse callbacks.
      */
     private static void addMouseCallbacks() {
+        addCursorPosCallback();
+        addCursorEnterCallback();
+        addMouseButtonCallback();
+        addScrollCallback();
+    }
+
+    /**
+     * Adds the cursor pos callback.
+     */
+    private static void addCursorPosCallback() {
         if (cursorPosCallback == null) {
             glfwSetCursorPosCallback(Window.getId(), cursorPosCallback = new GLFWCursorPosCallback() {
                 @Override
@@ -830,6 +851,12 @@ public class Input {
                 }
             });
         }
+    }
+
+    /**
+     * Adds the cursor enter callback.
+     */
+    private static void addCursorEnterCallback() {
         if (cursorEnterCallback == null) {
             glfwSetCursorEnterCallback(Window.getId(), cursorEnterCallback = new GLFWCursorEnterCallback() {
                 @Override
@@ -840,6 +867,12 @@ public class Input {
                 }
             });
         }
+    }
+
+    /**
+     * Adds the mouse button callback.
+     */
+    private static void addMouseButtonCallback() {
         if (mouseButtonCallback == null) {
             glfwSetMouseButtonCallback(Window.getId(), mouseButtonCallback = new GLFWMouseButtonCallback() {
                 @Override
@@ -850,6 +883,12 @@ public class Input {
                 }
             });
         }
+    }
+
+    /**
+     * Adds the scroll callback.
+     */
+    private static void addScrollCallback() {
         if (scrollCallback == null) {
             glfwSetScrollCallback(Window.getId(), scrollCallback = new GLFWScrollCallback() {
                 @Override
@@ -866,18 +905,46 @@ public class Input {
      * Releases all the mouse callbacks.
      */
     private static void removeMouseCallbacks() {
+        releaseCursorPosCallback();
+        releaseCursorEnterCallback();
+        releaseMouseButtonCallback();
+        releaseScrollCallback();
+    }
+
+    /**
+     * Releases the cursor pos callback.
+     */
+    private static void releaseCursorPosCallback() {
         if (cursorPosCallback != null) {
             cursorPosCallback.free();
             cursorPosCallback = null;
         }
+    }
+
+    /**
+     * Releases the cursor enter callback.
+     */
+    private static void releaseCursorEnterCallback() {
         if (cursorEnterCallback != null) {
             cursorEnterCallback.free();
             cursorEnterCallback = null;
         }
+    }
+
+    /**
+     * Releases the mouse button callback.
+     */
+    private static void releaseMouseButtonCallback() {
         if (mouseButtonCallback != null) {
             mouseButtonCallback.free();
             mouseButtonCallback = null;
         }
+    }
+
+    /**
+     * Releases the scroll callback.
+     */
+    private static void releaseScrollCallback() {
         if (scrollCallback != null) {
             scrollCallback.free();
             scrollCallback = null;
@@ -965,6 +1032,16 @@ public class Input {
         if (eh == null) {
             throw new NullPointerException();
         }
+        addKeyboardEventHandlerWithoutInspection(eh);
+    }
+
+    /**
+     * Adds the given keyboard event handler to the list of keyboard event
+     * handlers.
+     *
+     * @param eh keyboard event handler
+     */
+    private static void addKeyboardEventHandlerWithoutInspection(@NotNull KeyboardEventHandler eh) {
         if (!Utility.containsReference(keyboardEventHandlers, eh)) {
             keyboardEventHandlers.add(eh);
         }
@@ -989,7 +1066,6 @@ public class Input {
         if (keyboardEventHandlers.isEmpty()) {
             removeKeyboardCallbacks();
         }
-
     }
 
     /**
@@ -1018,7 +1094,7 @@ public class Input {
      *
      * @return number of registered keyboard event handlers
      */
-    public static int getNumberOfKeyboardEventHandlers() {
+    public static int getKeyboardEventHandlerCount() {
         return keyboardEventHandlers.size();
     }
 
@@ -1026,6 +1102,15 @@ public class Input {
      * Creates the keyboard callbacks.
      */
     private static void addKeyboardCallbacks() {
+        addKeyCallback();
+        addCharCallback();
+        addCharModsCallback();
+    }
+
+    /**
+     * Adds the key callback.
+     */
+    private static void addKeyCallback() {
         if (keyCallback == null) {
             glfwSetKeyCallback(Window.getId(), keyCallback = new GLFWKeyCallback() {
                 @Override
@@ -1043,6 +1128,12 @@ public class Input {
                 }
             });
         }
+    }
+
+    /**
+     * Adds the char callback.
+     */
+    private static void addCharCallback() {
         if (charCallback == null) {
             glfwSetCharCallback(Window.getId(), charCallback = new GLFWCharCallback() {
                 @Override
@@ -1053,6 +1144,12 @@ public class Input {
                 }
             });
         }
+    }
+
+    /**
+     * Adds the char mods callback.
+     */
+    private static void addCharModsCallback() {
         if (charModsCallback == null) {
             glfwSetCharModsCallback(Window.getId(), charModsCallback = new GLFWCharModsCallback() {
                 @Override
@@ -1069,14 +1166,35 @@ public class Input {
      * Releases all the keyboard callbacks.
      */
     private static void removeKeyboardCallbacks() {
+        releaseKeyCallback();
+        releaseCharCallback();
+        releaseCharModsCallback();
+    }
+
+    /**
+     * Releases the key callback.
+     */
+    private static void releaseKeyCallback() {
         if (keyCallback != null) {
             keyCallback.free();
             keyCallback = null;
         }
+    }
+
+    /**
+     * Releases the char callback.
+     */
+    private static void releaseCharCallback() {
         if (charCallback != null) {
             charCallback.free();
             charCallback = null;
         }
+    }
+
+    /**
+     * Releases the char mods callback.
+     */
+    private static void releaseCharModsCallback() {
         if (charModsCallback != null) {
             charModsCallback.free();
             charModsCallback = null;
@@ -1209,7 +1327,7 @@ public class Input {
      *
      * @return number of registered joystick event handlers
      */
-    public static int getNumberOfJoystickEventHandlers() {
+    public static int getJoystickEventHandlerCount() {
         return joystickEventHandlers.size();
     }
 
@@ -1221,18 +1339,38 @@ public class Input {
             glfwSetJoystickCallback(joystickCallback = new GLFWJoystickCallback() {
                 @Override
                 public void invoke(int jid, int event) {
-                    if (event == GLFW_CONNECTED) {
-                        joysticks[jid] = new Joystick(glfwGetJoystickName(jid), jid);
-                        joystickCount++;
-                    } else if (event == GLFW_DISCONNECTED) {
-                        joysticks[jid] = null;
-                        joystickCount--;
-                    }
-                    for (JoystickEventHandler eventHandler : joystickEventHandlers) {
-                        eventHandler.joystickCallback(jid, event == GLFW_CONNECTED);
-                    }
+                    joystickCallbackInvoke(jid, event);
                 }
             });
+        }
+    }
+
+    /**
+     * Manages the joystick events.
+     *
+     * @param jid   the joystick that was connected or disconnected
+     * @param event connection or disconnection event
+     */
+    private static void joystickCallbackInvoke(int jid, int event) {
+        manageJoystickConnections(jid, event);
+        for (JoystickEventHandler eventHandler : joystickEventHandlers) {
+            eventHandler.joystickCallback(jid, event == GLFW_CONNECTED);
+        }
+    }
+
+    /**
+     * Manages a joystick's connection or disconnection.
+     *
+     * @param jid   the joystick that was connected or disconnected
+     * @param event connection or disconnection event
+     */
+    private static void manageJoystickConnections(int jid, int event) {
+        if (event == GLFW_CONNECTED) {
+            joysticks[jid] = new Joystick(glfwGetJoystickName(jid), jid);
+            joystickCount++;
+        } else if (event == GLFW_DISCONNECTED) {
+            joysticks[jid] = null;
+            joystickCount--;
         }
     }
 
@@ -1264,7 +1402,7 @@ public class Input {
      *
      * @return the number of the connected joysticks
      */
-    public static int getNumberOfJoysticks() {
+    public static int getJoystickCount() {
         return joystickCount;
     }
 
@@ -1279,4 +1417,5 @@ public class Input {
         removeJoystickCallbacks();
         removeKeyboardCallbacks();
     }
+
 }

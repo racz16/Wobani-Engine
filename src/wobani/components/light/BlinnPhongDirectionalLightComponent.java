@@ -1,8 +1,8 @@
 package wobani.components.light;
 
 import org.joml.*;
-import wobani.components.light.lightTypes.*;
 import wobani.core.*;
+import wobani.rendering.geometry.*;
 import wobani.toolbox.annotations.*;
 
 /**
@@ -10,7 +10,7 @@ import wobani.toolbox.annotations.*;
  *
  * @see GameObject
  */
-public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponent implements BlinnPhongDirectionalLight {
+public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponent {
 
     /**
      * Initializes a new DirectionalLightComponent.
@@ -27,37 +27,37 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
      * @param ambient  ambient color
      */
     public BlinnPhongDirectionalLightComponent(@NotNull Vector3f diffuse, @NotNull Vector3f specular, @NotNull Vector3f ambient) {
-        setDiffuseColor(diffuse);
-        setSpecularColor(specular);
-        setAmbientColor(ambient);
+	setDiffuseColor(diffuse);
+	setSpecularColor(specular);
+	setAmbientColor(ambient);
     }
 
     @Internal
     @Override
     protected void addLight() {
-        if (isTheMainDirectionalLight() && getUboIndex() == -1) {
-            BlinnPhongLightSources.addLight(this);
-        }
+	if (isTheMainDirectionalLight() && getUboIndex() == -1) {
+	    BlinnPhongLightSources.addLight(this);
+	}
     }
 
     @Internal
     @Override
     protected void removeLight() {
-        if (!isTheMainDirectionalLight() && getUboIndex() != -1) {
-            BlinnPhongLightSources.removeLight(this);
-        }
+	if (!isTheMainDirectionalLight() && getUboIndex() != -1) {
+	    BlinnPhongLightSources.removeLight(this);
+	}
     }
 
     @Internal
     @Override
     protected void refreshUbo() {
-        if (isTheMainDirectionalLight()) {
-            if (getUboIndex() == -1) {
-                addLight();
-            } else {
-                BlinnPhongLightSources.refreshLight(this);
-            }
-        }
+	if (isTheMainDirectionalLight()) {
+	    if (getUboIndex() == -1) {
+		addLight();
+	    } else {
+		BlinnPhongLightSources.refreshLight(this);
+	    }
+	}
     }
 
     /**
@@ -66,17 +66,17 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
      * @return true if it's the Scene's main directional light, false otherwise
      */
     private boolean isTheMainDirectionalLight() {
-        BlinnPhongDirectionalLight light = Scene.getParameters().getValue(Scene.MAIN_DIRECTIONAL_LIGHT);
-        return light == this;
+	BlinnPhongDirectionalLightComponent light = Scene.getParameters().getValue(BlinnPhongRenderer.MAIN_DIRECTIONAL_LIGHT);
+	return light == this;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append(super.toString()).append("\n")
-                .append("BlinnPhongDirectionalLightComponent(")
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(super.toString()).append("\n")
+		.append("BlinnPhongDirectionalLightComponent(")
+		.append(")");
+	return res.toString();
     }
 
 }

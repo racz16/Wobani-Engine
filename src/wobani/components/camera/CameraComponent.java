@@ -462,21 +462,17 @@ public class CameraComponent extends Component implements Camera {
     }
 
     /**
-     * Returns the frustum's corner points in the following order: far-top-left,
-     * far-top-right, far-bottom-left, far-bottom-right, near-top-left,
-     * near-top-right, near-bottom-left, near-bottom-right. If this Component
-     * isn't connected to a GameObject, this method returns an empty list.
+     * Returns the frustum's corner points. If this Component isn't connected to
+     * a GameObject, this method returns an empty Map.
      *
      * @return frustum's corner points
      */
     @NotNull @ReadOnly
     @Override
-    public List<Vector3f> getFrustumCornerPoints() {
-        List<Vector3f> ret = new ArrayList<>(8);
+    public Map<CornerPoint, Vector3f> getFrustumCornerPoints() {
+        Map<CornerPoint, Vector3f> ret = new HashMap<>(8);
         if (getGameObject() != null) {
-            for (CornerPoint cp : CornerPoint.values()) {
-                ret.add(getFrustumCornerPoint(cp));
-            }
+            ret.putAll(cornerPoints);
         }
         return ret;
     }
@@ -569,8 +565,7 @@ public class CameraComponent extends Component implements Camera {
      */
     @Internal
     protected void refreshUbo() {
-        Camera camera = Scene.getParameters().getValue(Scene.MAIN_CAMERA);
-        if (camera == this && ubo != null && ubo.isUsable()) {
+        if (isTheMainCamera() && Utility.isUsable(ubo)) {
             refreshUboWithoutInspection();
             LOG.fine("Camera UBO refreshed");
         }
@@ -619,9 +614,21 @@ public class CameraComponent extends Component implements Camera {
      * @see #createUbo()
      */
     public static void releaseUbo() {
-        ubo.release();
-        ubo = null;
-        LOG.fine("Camera UBO released");
+        if (Utility.isUsable(ubo)) {
+            ubo.release();
+            ubo = null;
+            LOG.fine("Camera UBO released");
+        }
+    }
+
+    /**
+     * Returns true if it's the Scene's main Camera.
+     *
+     * @return true if it's the Scene's main Canera, false otherwise
+     */
+    private boolean isTheMainCamera() {
+        Camera camera = Scene.getParameters().getValue(Scene.MAIN_CAMERA);
+        return camera == this;
     }
 
     @Internal
@@ -636,8 +643,8 @@ public class CameraComponent extends Component implements Camera {
     @Override
     protected void attachToGameObject(@NotNull GameObject g) {
         super.attachToGameObject(g);
-        invalidate();
         getGameObject().getTransform().addInvalidatable(this);
+        invalidate();
     }
 
     @Override

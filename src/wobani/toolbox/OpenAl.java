@@ -121,12 +121,40 @@ public class OpenAl {
     }
 
     /**
+     * Returns the sounds' attenuation model.
+     *
+     * @return the sounds' attenuation model
+     */
+    @NotNull
+    public static AudioDistanceModel getDistanceModel() {
+        int code = AL10.alGetInteger(AL10.AL_DISTANCE_MODEL);
+        for (AudioDistanceModel adm : AudioDistanceModel.values()) {
+            if (code == adm.getCode()) {
+                return adm;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Sets the sounds' attenuation model to the given value.
      *
      * @param distanceModel sounds' attenuation model
      */
     public static void setDistanceModel(@NotNull AudioDistanceModel distanceModel) {
         AL10.alDistanceModel(distanceModel.getCode());
+    }
+
+    /**
+     * Returns the audio listener's position.
+     *
+     * @return the audio listener's position
+     */
+    @NotNull @ReadOnly
+    public static Vector3f getAudioListenerPosition() {
+        float result[] = new float[3];
+        AL10.alGetFloatv(AL10.AL_POSITION, result);
+        return new Vector3f(result[0], result[1], result[2]);
     }
 
     /**
@@ -139,12 +167,48 @@ public class OpenAl {
     }
 
     /**
+     * Returns the audio listener's velocity.
+     *
+     * @return the audio listener's velocity
+     */
+    @NotNull @ReadOnly
+    public static Vector3f getAudioListenerVelocity() {
+        float result[] = new float[3];
+        AL10.alGetFloatv(AL10.AL_VELOCITY, result);
+        return new Vector3f(result[0], result[1], result[2]);
+    }
+
+    /**
      * Sets the audio listener's velocity to the given value.
      *
      * @param velocity audio listener's velocity
      */
     public static void setAudioListenerVelocity(@NotNull Vector3f velocity) {
         AL10.alListener3f(AL10.AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+    }
+
+    /**
+     * Returns the audio listener's forward direction.
+     *
+     * @return the audio listener's forward direction
+     */
+    @NotNull @ReadOnly
+    public static Vector3f getAudioListenerForward() {
+        float result[] = new float[6];
+        AL10.alGetFloatv(AL10.AL_ORIENTATION, result);
+        return new Vector3f(result[0], result[1], result[2]);
+    }
+
+    /**
+     * Returns the audio listener's up direction.
+     *
+     * @return the audio listener's up direction
+     */
+    @NotNull @ReadOnly
+    public static Vector3f getAudioListenerUp() {
+        float result[] = new float[6];
+        AL10.alGetFloatv(AL10.AL_ORIENTATION, result);
+        return new Vector3f(result[3], result[4], result[5]);
     }
 
     /**
@@ -159,6 +223,26 @@ public class OpenAl {
     }
 
     /**
+     * Returns the vendor.
+     *
+     * @return the vendor
+     */
+    @NotNull
+    public static String getVendor() {
+        return AL10.alGetString(AL10.AL_VENDOR);
+    }
+
+    /**
+     * Returns the version.
+     *
+     * @return the version
+     */
+    @NotNull
+    public static String getVersion() {
+        return AL10.alGetString(AL10.AL_VERSION);
+    }
+
+    /**
      * Releases the OpenAL context and the used audio device. After calling this
      * method, you can't use any audio related actions.
      */
@@ -166,5 +250,6 @@ public class OpenAl {
         ALC10.alcMakeContextCurrent(NULL);
         ALC10.alcDestroyContext(openAlContext);
         ALC10.alcCloseDevice(defaultAudioDevice);
+        LOG.info("OpenAL released");
     }
 }
