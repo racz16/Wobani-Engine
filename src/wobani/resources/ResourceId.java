@@ -1,9 +1,11 @@
 package wobani.resources;
 
+import wobani.toolbox.annotation.Nullable;
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.ReadOnly;
 import java.io.*;
 import java.util.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * Id for resources. It has three components: id, paths and index. If you create

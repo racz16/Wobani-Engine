@@ -1,11 +1,11 @@
 package wobani.window;
 
+import wobani.toolbox.annotation.NotNull;
 import java.nio.*;
 import java.util.*;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
-import wobani.toolbox.annotations.*;
 
 /**
  * Represents a joystick.

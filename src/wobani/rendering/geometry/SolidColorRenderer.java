@@ -1,15 +1,16 @@
 package wobani.rendering.geometry;
 
+import wobani.resources.shader.SolidColorShader;
+import wobani.toolbox.annotation.NotNull;
+import wobani.material.MaterialSlot;
+import wobani.material.Material;
+import wobani.component.renderable.RenderableComponent;
 import org.joml.*;
 import org.lwjgl.opengl.*;
-import wobani.components.renderables.*;
 import wobani.core.*;
-import wobani.materials.*;
 import wobani.rendering.*;
 import wobani.resources.*;
-import wobani.resources.shaders.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * It can render RenderableContainer by drawing them with one color. Shadows and

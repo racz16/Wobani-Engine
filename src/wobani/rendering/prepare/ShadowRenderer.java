@@ -1,19 +1,19 @@
 package wobani.rendering.prepare;
 
+import wobani.resources.texture.texture2d.Texture2D;
+import wobani.resources.shader.ShadowShader;
+import wobani.toolbox.parameter.Parameter;
+import wobani.toolbox.annotation.NotNull;
+import wobani.rendering.stage.GeometryRenderingStage;
+import wobani.component.renderable.RenderableComponent;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
-import wobani.components.renderables.*;
 import wobani.core.*;
 import wobani.rendering.*;
 import wobani.rendering.geometry.*;
-import wobani.rendering.stages.*;
 import wobani.resources.*;
-import wobani.resources.shaders.*;
-import wobani.resources.textures.texture2d.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
-import wobani.toolbox.parameters.*;
 
 /**
  * Performs shadow map rendering.

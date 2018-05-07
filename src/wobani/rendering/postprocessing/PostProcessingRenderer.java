@@ -1,11 +1,11 @@
 package wobani.rendering.postprocessing;
 
-import wobani.resources.textures.texture2d.Texture2D;
+import wobani.resources.shader.Shader;
+import wobani.resources.mesh.QuadMesh;
+import wobani.resources.texture.texture2d.Texture2D;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.rendering.*;
-import wobani.resources.meshes.*;
-import wobani.resources.shaders.*;
 import wobani.toolbox.*;
 
 /**

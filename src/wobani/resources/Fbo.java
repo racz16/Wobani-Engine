@@ -1,7 +1,11 @@
 package wobani.resources;
 
-import wobani.resources.textures.texture2d.DynamicTexture2D;
-import wobani.resources.textures.texture2d.Texture2D;
+import wobani.toolbox.annotation.Nullable;
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.Bind;
+import wobani.toolbox.annotation.ReadOnly;
+import wobani.resources.texture.texture2d.DynamicTexture2D;
+import wobani.resources.texture.texture2d.Texture2D;
 import java.nio.*;
 import java.util.*;
 import org.joml.*;
@@ -9,7 +13,6 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import wobani.rendering.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * Object oriented wrapper class above the native FBO. Supports 8 color

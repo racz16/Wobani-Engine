@@ -1,11 +1,12 @@
 package wobani.toolbox;
 
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.ReadOnly;
 import java.nio.*;
 import java.util.logging.*;
 import org.joml.*;
 import org.lwjgl.openal.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
-import wobani.toolbox.annotations.*;
 
 /**
  * Set of commonly used OpenAL functions.

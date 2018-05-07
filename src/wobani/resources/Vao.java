@@ -1,5 +1,8 @@
 package wobani.resources;
 
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.Bind;
+import wobani.toolbox.annotation.ReadOnly;
 import java.nio.*;
 import java.util.*;
 import org.lwjgl.assimp.*;
@@ -7,7 +10,6 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * Object oriented wrapper class above the native Vertex Array Object. It can

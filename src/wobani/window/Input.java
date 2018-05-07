@@ -1,14 +1,15 @@
 package wobani.window;
 
-import wobani.window.eventhandlers.MouseEventHandler;
-import wobani.window.eventhandlers.KeyboardEventHandler;
-import wobani.window.eventhandlers.JoystickEventHandler;
+import wobani.toolbox.annotation.Nullable;
+import wobani.toolbox.annotation.NotNull;
+import wobani.window.eventhandler.MouseEventHandler;
+import wobani.window.eventhandler.KeyboardEventHandler;
+import wobani.window.eventhandler.JoystickEventHandler;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * For handling mouse, keyboard or joystick input.

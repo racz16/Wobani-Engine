@@ -1,7 +1,7 @@
 package wobani.window;
 
+import wobani.toolbox.annotation.NotNull;
 import java.util.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * Parameters for initializing the window.

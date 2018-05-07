@@ -1,15 +1,19 @@
 package wobani.resources;
 
+import wobani.resources.texture.Texture;
+import wobani.resources.texture.ChangableColorSpace;
+import wobani.resources.texture.EasyFiltering;
+import wobani.resources.shader.Shader;
+import wobani.resources.mesh.Mesh;
+import wobani.toolbox.annotation.Nullable;
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.ReadOnly;
+import wobani.component.camera.CameraComponent;
+import wobani.component.light.BlinnPhongLightSources;
 import java.util.*;
 import org.joml.*;
-import wobani.components.camera.*;
-import wobani.components.light.*;
 import wobani.rendering.*;
 import wobani.resources.audio.*;
-import wobani.resources.meshes.*;
-import wobani.resources.shaders.*;
-import wobani.resources.textures.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * Manages the loaded models, textures and splines.

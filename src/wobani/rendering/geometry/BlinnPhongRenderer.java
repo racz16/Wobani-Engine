@@ -1,18 +1,19 @@
 package wobani.rendering.geometry;
 
+import wobani.resources.texture.texture2d.Texture2D;
+import wobani.resources.shader.BlinnPhongShader;
+import wobani.toolbox.parameter.ParameterKey;
+import wobani.toolbox.parameter.Parameter;
+import wobani.toolbox.annotation.NotNull;
+import wobani.material.Material;
+import wobani.component.light.BlinnPhongDirectionalLightComponent;
+import wobani.component.renderable.RenderableComponent;
 import org.joml.*;
 import org.lwjgl.opengl.*;
-import wobani.components.light.*;
-import wobani.components.renderables.*;
 import wobani.core.*;
-import wobani.materials.*;
 import wobani.rendering.*;
 import wobani.resources.*;
-import wobani.resources.shaders.*;
-import wobani.resources.textures.texture2d.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
-import wobani.toolbox.parameters.*;
 
 /**
  * This GeometryRenderer can draw meshes and splines by using the Blinn-Phong

@@ -1,20 +1,20 @@
 package wobani.rendering.prepare;
 
+import wobani.resources.shader.EnvironmentShader;
+import wobani.resources.environmentprobe.DynamicEnvironmentProbe;
+import wobani.toolbox.annotation.NotNull;
+import wobani.rendering.stage.GeometryRenderingStage;
+import wobani.material.Material;
+import wobani.component.environmentprobe.DynamicEnvironmentProbeComponent;
+import wobani.component.renderable.RenderableComponent;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
-import wobani.components.environmentprobe.*;
-import wobani.components.renderables.*;
 import wobani.core.*;
-import wobani.materials.*;
 import wobani.rendering.*;
 import wobani.rendering.geometry.*;
-import wobani.rendering.stages.*;
 import wobani.resources.*;
-import wobani.resources.environmentprobes.*;
-import wobani.resources.shaders.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
 
 public class EnvironmentMapRenderer extends PrepareRenderer {
 

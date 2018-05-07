@@ -1,7 +1,7 @@
 package wobani.rendering.postprocessing;
 
-import wobani.resources.shaders.postprocessing.FxaaShader;
-import wobani.toolbox.annotations.*;
+import wobani.resources.shader.postprocessing.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Performs FXAA.
@@ -17,14 +17,14 @@ public class FxaaRenderer extends PostProcessingRenderer {
      * Initializes a new FxaaRenderer.
      */
     private FxaaRenderer() {
-        refreshShader();
+	refreshShader();
     }
 
     @Override
     protected void refreshShader() {
-        if (shader == null || !shader.isUsable()) {
-            shader = FxaaShader.getInstance();
-        }
+	if (shader == null || !shader.isUsable()) {
+	    shader = FxaaShader.getInstance();
+	}
     }
 
     /**
@@ -34,15 +34,15 @@ public class FxaaRenderer extends PostProcessingRenderer {
      */
     @NotNull
     public static FxaaRenderer getInstance() {
-        if (instance == null) {
-            instance = new FxaaRenderer();
-        }
-        return instance;
+	if (instance == null) {
+	    instance = new FxaaRenderer();
+	}
+	return instance;
     }
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 
 }

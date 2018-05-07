@@ -1,5 +1,8 @@
 package wobani.window;
 
+import wobani.toolbox.annotation.Nullable;
+import wobani.toolbox.annotation.NotNull;
+import wobani.window.eventhandler.WindowEventHandler;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
@@ -10,8 +13,6 @@ import org.lwjgl.opengl.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import wobani.core.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
-import wobani.window.eventhandlers.*;
 
 /**
  * Object oriented wrapper class above the native GLFW window.

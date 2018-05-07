@@ -1,10 +1,11 @@
 package wobani.toolbox;
 
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.ReadOnly;
 import java.nio.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * Set of commonly used OpenGL functions.

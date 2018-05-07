@@ -1,9 +1,10 @@
 package wobani.resources;
 
+import wobani.toolbox.annotation.Nullable;
+import wobani.toolbox.annotation.NotNull;
 import java.io.*;
 import java.util.*;
 import wobani.resources.ResourceManager.ResourceState;
-import wobani.toolbox.annotations.*;
 
 /**
  * Stores meta data for loadable resources like it's paths or it's size.

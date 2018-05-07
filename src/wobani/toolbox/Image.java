@@ -1,5 +1,7 @@
 package wobani.toolbox;
 
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.ReadOnly;
 import java.io.*;
 import java.nio.*;
 import java.util.logging.*;
@@ -10,7 +12,6 @@ import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
-import wobani.toolbox.annotations.*;
 
 /**
  * Simple class for loading images from file using the STBI library.

@@ -1,14 +1,15 @@
 package wobani.rendering.prepare;
 
+import wobani.resources.shader.SkyBoxShader;
+import wobani.resources.mesh.Mesh;
+import wobani.resources.mesh.CubeMesh;
+import wobani.toolbox.annotation.NotNull;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.core.*;
 import wobani.rendering.*;
 import wobani.resources.*;
-import wobani.resources.meshes.*;
-import wobani.resources.shaders.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * This renderer can draw a skybox. In theory it can render any number of meshes

@@ -1,12 +1,12 @@
 package wobani.rendering;
 
-import wobani.resources.textures.texture2d.Texture2D;
 import org.joml.*;
 import org.lwjgl.opengl.*;
-import wobani.resources.meshes.*;
-import wobani.resources.shaders.*;
+import wobani.resources.mesh.*;
+import wobani.resources.shader.*;
+import wobani.resources.texture.texture2d.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
+import wobani.toolbox.annotation.*;
 import wobani.window.*;
 
 /**
@@ -31,8 +31,8 @@ public class ScreenRenderer extends Renderer {
      * Initializes a new ScreenRenderer.
      */
     private ScreenRenderer() {
-        shader = TexturedQuadShader.getInstance();
-        quad = QuadMesh.getInstance();
+	shader = TexturedQuadShader.getInstance();
+	quad = QuadMesh.getInstance();
     }
 
     /**
@@ -42,60 +42,60 @@ public class ScreenRenderer extends Renderer {
      */
     @NotNull
     public static ScreenRenderer getInstance() {
-        if (instance == null) {
-            instance = new ScreenRenderer();
-        }
-        return instance;
+	if (instance == null) {
+	    instance = new ScreenRenderer();
+	}
+	return instance;
     }
 
     @Override
     public void render() {
-        beforeShader();
-        shader.start();
-        beforeDrawQuad();
-        quad.draw();
-        afterDrawQuad();
-        shader.stop();
+	beforeShader();
+	shader.start();
+	beforeDrawQuad();
+	quad.draw();
+	afterDrawQuad();
+	shader.stop();
     }
 
     /**
      * Prepares the shader to the rendering.
      */
     private void beforeShader() {
-        if (shader == null || !shader.isUsable()) {
-            shader = TexturedQuadShader.getInstance();
-        }
-        if (quad == null || !quad.isUsable()) {
-            quad = QuadMesh.getInstance();
-        }
-        OpenGl.setWireframe(false);
-        OpenGl.bindDefaultFrameBuffer();
-        OpenGl.setViewport(Window.getClientAreaSize(), new Vector2i());
+	if (shader == null || !shader.isUsable()) {
+	    shader = TexturedQuadShader.getInstance();
+	}
+	if (quad == null || !quad.isUsable()) {
+	    quad = QuadMesh.getInstance();
+	}
+	OpenGl.setWireframe(false);
+	OpenGl.bindDefaultFrameBuffer();
+	OpenGl.setViewport(Window.getClientAreaSize(), new Vector2i());
     }
 
     /**
      * Prepares the quad to the rendering.
      */
     private void beforeDrawQuad() {
-        quad.beforeDraw();
-        GL20.glEnableVertexAttribArray(0);
-        GL20.glEnableVertexAttribArray(1);
-        Texture2D image = RenderingPipeline.getParameters().getValue(RenderingPipeline.WORK);
-        image.bindToTextureUnit(0);
+	quad.beforeDraw();
+	GL20.glEnableVertexAttribArray(0);
+	GL20.glEnableVertexAttribArray(1);
+	Texture2D image = RenderingPipeline.getParameters().getValue(RenderingPipeline.WORK);
+	image.bindToTextureUnit(0);
     }
 
     /**
      * Unbinds the quad's VAO after rendering.
      */
     private void afterDrawQuad() {
-        GL20.glDisableVertexAttribArray(0);
-        GL20.glDisableVertexAttribArray(1);
-        quad.afterDraw();
+	GL20.glDisableVertexAttribArray(0);
+	GL20.glDisableVertexAttribArray(1);
+	quad.afterDraw();
     }
 
     @Override
     public void release() {
-        shader.release();
+	shader.release();
     }
 
     @Override
@@ -105,13 +105,13 @@ public class ScreenRenderer extends Renderer {
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "\nScreenRenderer{" + "shader=" + shader
-                + ", quad=" + quad + '}';
+	return super.toString() + "\nScreenRenderer{" + "shader=" + shader
+		+ ", quad=" + quad + '}';
     }
 
 }

@@ -1,7 +1,7 @@
 package wobani.rendering.postprocessing;
 
-import wobani.resources.shaders.postprocessing.InvertShader;
-import wobani.toolbox.annotations.*;
+import wobani.resources.shader.postprocessing.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Inverts the frame's colors.
@@ -17,14 +17,14 @@ public class InvertRenderer extends PostProcessingRenderer {
      * Initializes a new InvertRenderer.
      */
     private InvertRenderer() {
-        refreshShader();
+	refreshShader();
     }
 
     @Override
     protected void refreshShader() {
-        if (shader == null || !shader.isUsable()) {
-            shader = InvertShader.getInstance();
-        }
+	if (shader == null || !shader.isUsable()) {
+	    shader = InvertShader.getInstance();
+	}
     }
 
     /**
@@ -34,15 +34,15 @@ public class InvertRenderer extends PostProcessingRenderer {
      */
     @NotNull
     public static InvertRenderer getInstance() {
-        if (instance == null) {
-            instance = new InvertRenderer();
-        }
-        return instance;
+	if (instance == null) {
+	    instance = new InvertRenderer();
+	}
+	return instance;
     }
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 
 }

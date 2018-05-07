@@ -1,18 +1,19 @@
 package wobani.toolbox;
 
+import wobani.toolbox.annotation.Nullable;
+import wobani.toolbox.annotation.NotNull;
+import wobani.component.camera.Camera;
+import wobani.component.renderable.RenderableComponent;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
 import java.util.logging.*;
 import org.joml.*;
 import org.lwjgl.*;
-import wobani.components.camera.*;
-import wobani.components.camera.Camera.CornerPoint;
-import wobani.components.renderables.*;
+import wobani.component.camera.Camera.CornerPoint;
 import wobani.core.*;
 import wobani.rendering.geometry.*;
 import wobani.resources.*;
-import wobani.toolbox.annotations.*;
 import wobani.window.*;
 
 /**

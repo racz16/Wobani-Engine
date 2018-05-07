@@ -1,8 +1,9 @@
 package wobani.core;
 
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.Internal;
 import java.util.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * Stores all the GameObjects.

@@ -1,9 +1,11 @@
 package wobani.core;
 
+import wobani.toolbox.annotation.Nullable;
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.Internal;
 import java.util.*;
 import java.util.logging.*;
 import org.joml.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * Represents an entity which has it's own position, Mesh or any other

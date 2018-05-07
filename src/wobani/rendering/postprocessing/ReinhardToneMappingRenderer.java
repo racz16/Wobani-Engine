@@ -1,7 +1,7 @@
 package wobani.rendering.postprocessing;
 
-import wobani.resources.shaders.postprocessing.ReinhardToneMappingShader;
-import wobani.toolbox.annotations.*;
+import wobani.resources.shader.postprocessing.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Performs Reinhard tone mapping on the frame.
@@ -17,14 +17,14 @@ public class ReinhardToneMappingRenderer extends PostProcessingRenderer {
      * Initializes a new ReinhardToneMappingRenderer.
      */
     private ReinhardToneMappingRenderer() {
-        refreshShader();
+	refreshShader();
     }
 
     @Override
     protected void refreshShader() {
-        if (shader == null || !shader.isUsable()) {
-            shader = ReinhardToneMappingShader.getInstance();
-        }
+	if (shader == null || !shader.isUsable()) {
+	    shader = ReinhardToneMappingShader.getInstance();
+	}
     }
 
     /**
@@ -34,14 +34,14 @@ public class ReinhardToneMappingRenderer extends PostProcessingRenderer {
      */
     @NotNull
     public static ReinhardToneMappingRenderer getInstance() {
-        if (instance == null) {
-            instance = new ReinhardToneMappingRenderer();
-        }
-        return instance;
+	if (instance == null) {
+	    instance = new ReinhardToneMappingRenderer();
+	}
+	return instance;
     }
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 }

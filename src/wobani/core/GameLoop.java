@@ -1,10 +1,11 @@
 package wobani.core;
 
+import wobani.toolbox.annotation.Nullable;
+import wobani.toolbox.annotation.NotNull;
 import java.util.logging.*;
 import wobani.rendering.*;
 import wobani.resources.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
 import wobani.window.*;
 
 /**

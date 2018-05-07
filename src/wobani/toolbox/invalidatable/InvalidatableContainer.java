@@ -1,8 +1,9 @@
 package wobani.toolbox.invalidatable;
 
+import wobani.toolbox.annotation.Nullable;
+import wobani.toolbox.annotation.NotNull;
 import java.util.*;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * Contains a list of Invalidatables, what you can invalidate.

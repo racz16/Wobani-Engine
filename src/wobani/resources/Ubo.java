@@ -1,10 +1,11 @@
 package wobani.resources;
 
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.Bind;
 import java.nio.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
-import wobani.toolbox.annotations.*;
 
 /**
  * Object oriented wrapper class above the native Uniform Buffer Objec.t

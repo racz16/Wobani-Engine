@@ -1,6 +1,6 @@
 package wobani.toolbox;
 
-import wobani.toolbox.annotations.*;
+import wobani.toolbox.annotation.NotNull;
 
 /**
  * Gives information about the engine.

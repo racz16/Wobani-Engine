@@ -1,6 +1,6 @@
 package wobani.core;
 
-import wobani.toolbox.annotations.*;
+import wobani.toolbox.annotation.Internal;
 
 /**
  * It computes the delta time factor and the frame per sec value and other

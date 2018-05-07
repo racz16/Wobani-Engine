@@ -1,7 +1,7 @@
 package wobani.toolbox;
 
-import wobani.components.*;
-import wobani.toolbox.annotations.*;
+import wobani.toolbox.annotation.Nullable;
+import wobani.component.ComponentBase;
 
 /**
  * This exception signs that a Component is attached to a GameObject or not

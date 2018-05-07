@@ -1,7 +1,7 @@
 package wobani.rendering.postprocessing;
 
-import wobani.resources.shaders.postprocessing.GammaCorrectionShader;
-import wobani.toolbox.annotations.*;
+import wobani.resources.shader.postprocessing.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Performs gamma correction.
@@ -19,14 +19,14 @@ public class GammaCorrectionRenderer extends PostProcessingRenderer {
      * Initializes a new GammaCorrectionRenderer.
      */
     private GammaCorrectionRenderer() {
-        refreshShader();
+	refreshShader();
     }
 
     @Override
     protected void refreshShader() {
-        if (shader == null || !shader.isUsable()) {
-            shader = GammaCorrectionShader.getInstance();
-        }
+	if (shader == null || !shader.isUsable()) {
+	    shader = GammaCorrectionShader.getInstance();
+	}
     }
 
     /**
@@ -36,21 +36,21 @@ public class GammaCorrectionRenderer extends PostProcessingRenderer {
      */
     @NotNull
     public static GammaCorrectionRenderer getInstance() {
-        if (instance == null) {
-            instance = new GammaCorrectionRenderer();
-        }
-        return instance;
+	if (instance == null) {
+	    instance = new GammaCorrectionRenderer();
+	}
+	return instance;
     }
 
     @Override
     protected void beforeDrawQuad() {
-        super.beforeDrawQuad();
-        ((GammaCorrectionShader) shader).loadGammaUniform();
+	super.beforeDrawQuad();
+	((GammaCorrectionShader) shader).loadGammaUniform();
     }
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 
 }

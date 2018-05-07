@@ -1,7 +1,7 @@
 package wobani.rendering.postprocessing;
 
-import wobani.resources.shaders.postprocessing.GrayscaleShader;
-import wobani.toolbox.annotations.*;
+import wobani.resources.shader.postprocessing.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Makes the frame grayscaled.
@@ -17,14 +17,14 @@ public class GrayscaleRenderer extends PostProcessingRenderer {
      * Initializes a new GrayscaleRenderer.
      */
     private GrayscaleRenderer() {
-        refreshShader();
+	refreshShader();
     }
 
     @Override
     protected void refreshShader() {
-        if (shader == null || !shader.isUsable()) {
-            shader = GrayscaleShader.getInstance();
-        }
+	if (shader == null || !shader.isUsable()) {
+	    shader = GrayscaleShader.getInstance();
+	}
     }
 
     /**
@@ -34,15 +34,15 @@ public class GrayscaleRenderer extends PostProcessingRenderer {
      */
     @NotNull
     public static GrayscaleRenderer getInstance() {
-        if (instance == null) {
-            instance = new GrayscaleRenderer();
-        }
-        return instance;
+	if (instance == null) {
+	    instance = new GrayscaleRenderer();
+	}
+	return instance;
     }
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 
 }

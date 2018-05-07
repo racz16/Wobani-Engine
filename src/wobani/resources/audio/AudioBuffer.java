@@ -1,5 +1,6 @@
 package wobani.resources.audio;
 
+import wobani.toolbox.annotation.NotNull;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
@@ -15,7 +16,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import wobani.resources.*;
 import wobani.resources.ResourceManager.ResourceState;
 import wobani.toolbox.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * Stores a sound effect and can play through an AudioSource.

@@ -1,9 +1,10 @@
 package wobani.resources.audio;
 
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.ReadOnly;
 import org.joml.*;
 import org.lwjgl.openal.*;
 import wobani.resources.*;
-import wobani.toolbox.annotations.*;
 
 /**
  * Audio sources can emit sound effect through the connected audio buffers.

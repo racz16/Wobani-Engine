@@ -1,8 +1,10 @@
 package wobani.core;
 
+import wobani.toolbox.annotation.Nullable;
+import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.Internal;
+import wobani.component.ComponentBase;
 import java.util.logging.*;
-import wobani.components.*;
-import wobani.toolbox.annotations.*;
 import wobani.toolbox.invalidatable.*;
 
 /**
