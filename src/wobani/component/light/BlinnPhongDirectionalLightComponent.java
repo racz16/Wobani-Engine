@@ -1,10 +1,9 @@
 package wobani.component.light;
 
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Internal;
 import org.joml.*;
 import wobani.core.*;
 import wobani.rendering.geometry.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Basic implementation of a directional light source.
@@ -75,7 +74,7 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
     public String toString() {
 	StringBuilder res = new StringBuilder()
 		.append(super.toString()).append("\n")
-		.append("BlinnPhongDirectionalLightComponent(")
+		.append(BlinnPhongDirectionalLightComponent.class.getSimpleName()).append("(")
 		.append(")");
 	return res.toString();
     }

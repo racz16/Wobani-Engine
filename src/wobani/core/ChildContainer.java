@@ -1,10 +1,8 @@
 package wobani.core;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Internal;
 import java.util.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Contains a GameObject's children.
@@ -28,10 +26,10 @@ public class ChildContainer {
      * @throws NullPointerException parameter can't be null
      */
     public ChildContainer(@NotNull GameObject gameObject) {
-        if (gameObject == null) {
-            throw new NullPointerException();
-        }
-        this.gameObject = gameObject;
+	if (gameObject == null) {
+	    throw new NullPointerException();
+	}
+	this.gameObject = gameObject;
     }
 
     /**
@@ -45,7 +43,7 @@ public class ChildContainer {
      */
     @NotNull
     public GameObject get(int index) {
-        return children.get(index);
+	return children.get(index);
     }
 
     /**
@@ -59,7 +57,7 @@ public class ChildContainer {
      * @see #containsDeep(GameObject)
      */
     public boolean contains(@Nullable GameObject child) {
-        return Utility.containsReference(children, child);
+	return Utility.containsReference(children, child);
     }
 
     /**
@@ -74,10 +72,10 @@ public class ChildContainer {
      * @see #contains(GameObject)
      */
     public boolean containsDeep(@Nullable GameObject child) {
-        if (contains(child)) {
-            return true;
-        }
-        return containsNonChildDescendant(child);
+	if (contains(child)) {
+	    return true;
+	}
+	return containsNonChildDescendant(child);
     }
 
     /**
@@ -90,12 +88,12 @@ public class ChildContainer {
      *         but not the child of it, false otherwise
      */
     private boolean containsNonChildDescendant(@Nullable GameObject child) {
-        for (int i = 0; i < children.size(); i++) {
-            if (children.get(i).getChildren().containsDeep(child)) {
-                return true;
-            }
-        }
-        return false;
+	for (int i = 0; i < children.size(); i++) {
+	    if (children.get(i).getChildren().containsDeep(child)) {
+		return true;
+	    }
+	}
+	return false;
     }
 
     /**
@@ -104,9 +102,9 @@ public class ChildContainer {
      * @param child child to remove
      */
     public void remove(@Nullable GameObject child) {
-        if (contains(child)) {
-            child.setParent(null);
-        }
+	if (contains(child)) {
+	    child.setParent(null);
+	}
     }
 
     /**
@@ -120,9 +118,9 @@ public class ChildContainer {
      */
     @NotNull
     public GameObject remove(int index) {
-        GameObject child = children.get(index);
-        child.setParent(null);
-        return child;
+	GameObject child = children.get(index);
+	child.setParent(null);
+	return child;
     }
 
     /**
@@ -133,7 +131,7 @@ public class ChildContainer {
      */
     @Internal
     void removeChild(@Nullable GameObject child) {
-        Utility.removeReference(children, child);
+	Utility.removeReference(children, child);
     }
 
     /**
@@ -142,7 +140,7 @@ public class ChildContainer {
      * @return number of the GameObject's children
      */
     public int size() {
-        return children.size();
+	return children.size();
     }
 
     /**
@@ -153,7 +151,7 @@ public class ChildContainer {
      */
     @Internal
     void addChild(@NotNull GameObject child) {
-        children.add(child);
+	children.add(child);
     }
 
     /**
@@ -162,43 +160,43 @@ public class ChildContainer {
      * @param child GameObject you want to add
      */
     public void add(@NotNull GameObject child) {
-        child.setParent(gameObject);
+	child.setParent(gameObject);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + Objects.hashCode(this.children);
-        return hash;
+	int hash = 7;
+	hash = 97 * hash + Objects.hashCode(this.children);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ChildContainer other = (ChildContainer) obj;
-        if (!Objects.equals(this.children, other.children)) {
-            return false;
-        }
-        return true;
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	final ChildContainer other = (ChildContainer) obj;
+	if (!Objects.equals(this.children, other.children)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append("GameObjects(");
-        for (GameObject go : children) {
-            res.append(" ").append(go.getName()).append(",");
-        }
-        res.append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(ChildContainer.class.getSimpleName()).append("(");
+	for (GameObject go : children) {
+	    res.append(" ").append(go.getName()).append(",");
+	}
+	res.append(")");
+	return res.toString();
     }
 
 }

@@ -1,8 +1,5 @@
 package wobani.window;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.window.eventhandler.WindowEventHandler;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
@@ -13,6 +10,9 @@ import org.lwjgl.opengl.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import wobani.core.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.exceptions.*;
+import wobani.window.eventhandler.*;
 
 /**
  * Object oriented wrapper class above the native GLFW window.
@@ -75,7 +75,7 @@ public class Window {
     /**
      * The id of the window.
      */
-    private static long id;
+    private static long id = -1;
     /**
      * Cursor object for unique cursor shape.
      */
@@ -96,10 +96,7 @@ public class Window {
      * The vSync level.
      */
     private static int vSync;
-    /**
-     * The nem of the window's configuration file.
-     */
-    private static final String WINDOW_CONFIGURATION_FILE = "windowSettings.ini";
+
     /**
      * The class's logger.
      */
@@ -165,38 +162,44 @@ public class Window {
     }
 
     /**
-     * Initializes the Window based on the data of Settings and the given
-     * parameters.
+     * Initializes the Window.
+     */
+    public static void initialize() {
+	initialize(null);
+    }
+
+    /**
+     * Initializes the Window based on the given parameter.
      *
      * @param parameters for initialization
-     *
-     * @throws IllegalStateException unable to initialize GLFW
-     * @throws RuntimeException      failed to create the GLFW window
      */
     public static void initialize(@Nullable WindowParameters parameters) {
-	initializeGlfw();
-	initializeDefaultHints();
-	initializeUserHints(parameters);
-	createWindow();
-	createContextAndCapabilities();
-	addCallbacks();
-	LOG.info("Window initialized");
+	if (!isUsable()) {
+	    initializeGlfw();
+	    initializeDefaultHints();
+	    initializeUserHints(parameters);
+	    createWindow(640, 360, false);
+	    createContextAndCapabilities();
+	}
     }
 
     /**
      * Initializes the Glfw and sets the error callback.
+     *
+     * @throws NativeException unable to initialize GLFW
      */
-    public static void initializeGlfw() {
+    private static void initializeGlfw() {
 	glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 	if (!glfwInit()) {
-	    throw new IllegalStateException("Unable to initialize GLFW");
+	    throw new NativeException(EngineInfo.Library.GLFW, "Unable to initialize GLFW");
 	}
+	LOG.info("GLFW initialized");
     }
 
     /**
      * Intializes the Glfw' hints with OpenGL settings.
      */
-    public static void initializeDefaultHints() {
+    private static void initializeDefaultHints() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -208,7 +211,7 @@ public class Window {
      *
      * @param parameters user defined Glfw hints
      */
-    public static void initializeUserHints(@Nullable WindowParameters parameters) {
+    private static void initializeUserHints(@Nullable WindowParameters parameters) {
 	title = "Wobani Engine";
 	if (parameters != null) {
 	    glfwWindowHint(GLFW_RESIZABLE, parameters.isResizable() ? GLFW_TRUE : GLFW_FALSE);
@@ -222,15 +225,22 @@ public class Window {
     }
 
     /**
-     * Creates the window based on the user defined settings loaded from file.
+     * Creates the window based on the given parameters.
+     *
+     * @param width      the width of the Window's client area
+     * @param height     the height of the Window's client area
+     * @param fullscreen fullscreen
+     *
+     * @throws NativeException failed to create the GLFW window
      */
-    public static void createWindow() {
-	Map<String, Integer> params = loadSettings();
-	fullscreen = params.get("FULLSCREEN") == 1;
-	createWindowId(params.get("WIDTH"), params.get("HEIGHT"));
+    private static void createWindow(int width, int height, boolean fullscreen) {
+	Window.fullscreen = fullscreen;
+	createWindowId(width, height);
 	if (id == NULL) {
-	    throw new RuntimeException("Failed to create the GLFW window");
+	    throw new NativeException(EngineInfo.Library.GLFW, "Failed to create the GLFW window");
 	}
+	addCallbacks();
+	LOG.info("Window created");
     }
 
     /**
@@ -239,7 +249,7 @@ public class Window {
      * @param width  window's width
      * @param height window's height
      */
-    public static void createWindowId(int width, int height) {
+    private static void createWindowId(int width, int height) {
 	if (isFullscreen()) {
 	    GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	    id = glfwCreateWindow(videoMode.width(), videoMode.height(), title, glfwGetPrimaryMonitor(), NULL);
@@ -251,41 +261,9 @@ public class Window {
     /**
      * Creates the context and sets the capabilities.
      */
-    public static void createContextAndCapabilities() {
+    private static void createContextAndCapabilities() {
 	glfwMakeContextCurrent(id);
 	GL.createCapabilities();
-    }
-
-    /**
-     * Loads the window settings from file.
-     *
-     * @return map of the settings
-     */
-    private static Map<String, Integer> loadSettings() {
-	Map<String, Integer> params = new HashMap<>();
-
-	try (BufferedReader br = new BufferedReader(new FileReader(new File(WINDOW_CONFIGURATION_FILE)))) {
-	    String[] line;
-	    while (br.ready()) {
-		line = br.readLine().split(" ");
-		switch (line[0]) {
-		    case "[width]":
-			params.put("WIDTH", Integer.valueOf(line[1]));
-			break;
-		    case "[height]":
-			params.put("HEIGHT", Integer.valueOf(line[1]));
-			break;
-		    case "[fullscreen]":
-			params.put("FULLSCREEN", Boolean.valueOf(line[1]) ? 1 : 0);
-			break;
-		}
-	    }
-	} catch (FileNotFoundException ex) {
-	    Utility.logException(ex);
-	} catch (IOException | IllegalArgumentException ex) {
-	    Utility.logException(ex);
-	}
-	return params;
     }
 
     //
@@ -637,17 +615,18 @@ public class Window {
     }
 
     /**
-     * Sets the size of the window's client area to the given value.
+     * Sets the size of the window's client area to the given values.
      *
-     * @param size client area's size
+     * @param width  client area's width
+     * @param height client area's height
      *
      * @throws IllegalArgumentException width and height must be positive
      */
-    public static void setClientAreaSize(@NotNull Vector2i size) {
-	if (size.x <= 0 || size.y <= 0) {
+    public static void setClientAreaSize(int width, int height) {
+	if (width <= 0 || height <= 0) {
 	    throw new IllegalArgumentException("Width and height must be positive");
 	}
-	glfwSetWindowSize(id, size.x, size.y);
+	glfwSetWindowSize(id, width, height);
     }
 
     /**
@@ -1008,6 +987,16 @@ public class Window {
     }
 
     /**
+     * Determines wheter the Window is usable. If it returns false, you can't
+     * use if for anything.
+     *
+     * @return true if usable, false otherwise
+     */
+    public static boolean isUsable() {
+	return id != -1;
+    }
+
+    /**
      * Releases the resources owned by the window. After calling this method,
      * you can't use the window for anything. You should only call this method
      * when the program terminates.
@@ -1018,7 +1007,8 @@ public class Window {
 	glfwDestroyWindow(id);
 	glfwTerminate();
 	errorCallback.free();
-	LOG.info("Window released");
+	id = -1;
+	LOG.info("Window and GLFW released");
     }
 
 }

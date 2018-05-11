@@ -6,8 +6,10 @@ import wobani.rendering.postprocessing.*;
 import wobani.resources.*;
 import wobani.resources.texture.*;
 import wobani.resources.texture.texture2d.*;
+import static wobani.toolbox.EngineInfo.Library.OPENGL;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
+import wobani.toolbox.exceptions.*;
 import wobani.toolbox.parameter.*;
 
 public class PostProcessingRenderingStage {
@@ -55,7 +57,7 @@ public class PostProcessingRenderingStage {
 	    texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
 	    if (!postProcessingFbo.isComplete()) {
 		Utility.logError(postProcessingFbo.getStatus().name());
-		throw new RuntimeException("Incomplete FBO");
+		throw new NativeException(OPENGL, "Incomplete FBO");
 	    }
 	}
     }

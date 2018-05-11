@@ -1,25 +1,21 @@
 package wobani.rendering;
 
-import wobani.resources.texture.texture2d.Texture2D;
-import wobani.toolbox.parameter.ParameterKey;
-import wobani.toolbox.parameter.Parameter;
-import wobani.toolbox.parameter.ParameterContainer;
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.ReadOnly;
-import wobani.rendering.stage.GeometryRenderingStage;
-import wobani.rendering.stage.PostProcessingRenderingStage;
-import wobani.rendering.stage.PrepareRenderingStage;
-import wobani.component.camera.Camera;
-import wobani.component.light.BlinnPhongDirectionalLightComponent;
 import java.util.*;
 import org.joml.*;
+import wobani.component.camera.*;
+import wobani.component.light.*;
 import wobani.core.*;
 import wobani.rendering.geometry.*;
 import wobani.rendering.postprocessing.*;
 import wobani.rendering.prepare.*;
+import wobani.rendering.stage.*;
 import wobani.resources.*;
+import wobani.resources.texture.texture2d.*;
+import static wobani.toolbox.EngineInfo.Library.OPENGL;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.exceptions.*;
+import wobani.toolbox.parameter.*;
 import wobani.window.*;
 
 /**
@@ -155,7 +151,7 @@ public class RenderingPipeline {
 	    fbo.addAttachment(Fbo.FboAttachmentSlot.DEPTH, Fbo.FboAttachmentType.RBO, 0);
 	    if (!fbo.isComplete()) {
 		Utility.logError(fbo.getStatus().name());
-		throw new RuntimeException("Incomplete FBO");
+		throw new NativeException(OPENGL, "Incomplete FBO");
 	    }
 	    fbo.unbind();
 	}

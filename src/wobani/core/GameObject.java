@@ -1,11 +1,9 @@
 package wobani.core;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Internal;
 import java.util.*;
 import java.util.logging.*;
 import org.joml.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Represents an entity which has it's own position, Mesh or any other
@@ -308,7 +306,7 @@ public class GameObject {
     public String toString() {
 	String parentName = parent == null ? "null" : parent.getName();
 	StringBuilder res = new StringBuilder()
-		.append("GameObject(")
+		.append(GameObject.class.getSimpleName()).append("(")
 		.append(" name: ").append(getName())
 		.append(", parent: ").append(parentName)
 		.append(",\ntransform: ").append(transform)
@@ -420,7 +418,7 @@ public class GameObject {
 	@Override
 	public String toString() {
 	    StringBuilder res = new StringBuilder()
-		    .append("TransformHolder(")
+		    .append(TransformHolder.class.getSimpleName()).append("(")
 		    .append(" position: ").append(position)
 		    .append(", rotation: ").append(rotation)
 		    .append(", scale: ").append(scale)

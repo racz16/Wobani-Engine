@@ -1,9 +1,8 @@
 package wobani.core;
 
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Internal;
 import java.util.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Stores all the GameObjects.
@@ -20,9 +19,9 @@ public class GameObjectContainer {
      */
     @Internal
     void updateComponents() {
-        for (GameObject gameObject : OBJECTS) {
-            gameObject.update();
-        }
+	for (GameObject gameObject : OBJECTS) {
+	    gameObject.update();
+	}
     }
 
     /**
@@ -31,7 +30,7 @@ public class GameObjectContainer {
      * @return the number of the GameObjectContainer
      */
     public int size() {
-        return OBJECTS.size();
+	return OBJECTS.size();
     }
 
     /**
@@ -43,12 +42,12 @@ public class GameObjectContainer {
      */
     @Internal
     void addGameObject(@NotNull GameObject gameObject) {
-        if (gameObject == null) {
-            throw new NullPointerException();
-        }
-        if (!Utility.containsReference(OBJECTS, gameObject)) {
-            OBJECTS.add(gameObject);
-        }
+	if (gameObject == null) {
+	    throw new NullPointerException();
+	}
+	if (!Utility.containsReference(OBJECTS, gameObject)) {
+	    OBJECTS.add(gameObject);
+	}
     }
 
     /**
@@ -60,41 +59,41 @@ public class GameObjectContainer {
      */
     @NotNull
     public GameObject getGameObject(int index) {
-        return OBJECTS.get(index);
+	return OBJECTS.get(index);
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 37 * hash + Objects.hashCode(this.OBJECTS);
-        return hash;
+	int hash = 5;
+	hash = 37 * hash + Objects.hashCode(this.OBJECTS);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final GameObjectContainer other = (GameObjectContainer) obj;
-        if (!Objects.equals(this.OBJECTS, other.OBJECTS)) {
-            return false;
-        }
-        return true;
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	final GameObjectContainer other = (GameObjectContainer) obj;
+	if (!Objects.equals(this.OBJECTS, other.OBJECTS)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append("GameObjectContainer(")
-                .append(" size: ").append(OBJECTS.size())
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(GameObjectContainer.class.getSimpleName()).append("(")
+		.append(" size: ").append(OBJECTS.size())
+		.append(")");
+	return res.toString();
     }
 
 }

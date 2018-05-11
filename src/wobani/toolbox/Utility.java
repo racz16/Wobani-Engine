@@ -1,19 +1,17 @@
 package wobani.toolbox;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.component.camera.Camera;
-import wobani.component.renderable.RenderableComponent;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
 import java.util.logging.*;
 import org.joml.*;
 import org.lwjgl.*;
+import wobani.component.camera.*;
 import wobani.component.camera.Camera.CornerPoint;
+import wobani.component.renderable.*;
 import wobani.core.*;
-import wobani.rendering.geometry.*;
 import wobani.resources.*;
+import wobani.toolbox.annotation.*;
 import wobani.window.*;
 
 /**
@@ -240,22 +238,27 @@ public class Utility {
      * Computes the main directional light's projection view matrix for shadow
      * mapping.
      *
+     * @param dirLight     the directional light's GameObject
      * @param distance     distance from the camera frustum center
      * @param nearDistance near plane distance
      * @param farDistance  far plane distance
      *
      * @return the main directional light's projection view matrix
      *
+     * @throws NullPointerException     dirLight can't be null
      * @throws IllegalArgumentException all parameters must be positive and
      *                                  nearDistance must be lower than
      *                                  farDistance
      */
     @NotNull
-    public static Matrix4f computeShadowMapProjectionViewMatrix(float distance, float nearDistance, float farDistance) {
+    public static Matrix4f computeShadowMapProjectionViewMatrix(@NotNull GameObject dirLight, float distance, float nearDistance, float farDistance) {
+	if (dirLight == null) {
+	    throw new NullPointerException();
+	}
 	if (distance <= 0 || nearDistance <= 0 || nearDistance >= farDistance) {
 	    throw new IllegalArgumentException("All parameters must be positive and nearDistance must be lower than farDistance");
 	}
-	return ShadowMapMatrixSolver.computeMatrix(distance, nearDistance, farDistance);
+	return ShadowMapMatrixSolver.computeMatrix(dirLight, distance, nearDistance, farDistance);
     }
 
     //
@@ -537,9 +540,9 @@ public class Utility {
 	 *
 	 * @return the main directional light's projection view matrix
 	 */
-	public static Matrix4f computeMatrix(float distance, float nearDistance, float farDistance) {
+	public static Matrix4f computeMatrix(@NotNull GameObject dirLight, float distance, float nearDistance, float farDistance) {
 	    initializeCamera();
-	    initializeLight(distance);
+	    initializeLight(dirLight, distance);
 	    initializeMinMax();
 	    refreshMinMaxValues();
 	    refreshLightPosition();
@@ -558,9 +561,7 @@ public class Utility {
 	 *
 	 * @param distance distance from the camera frustum center
 	 */
-	private static void initializeLight(float distance) {
-	    //FIXME what about PBR dir light?
-	    GameObject lightGameObject = Scene.getParameters().getValue(BlinnPhongRenderer.MAIN_DIRECTIONAL_LIGHT).getGameObject();
+	private static void initializeLight(@NotNull GameObject lightGameObject, float distance) {
 	    lightRight = lightGameObject.getTransform().getRightVector();
 	    lightUp = lightGameObject.getTransform().getUpVector();
 	    lightRotation = lightGameObject.getTransform().getAbsoluteRotation();

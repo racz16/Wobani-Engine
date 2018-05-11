@@ -1,7 +1,7 @@
 package wobani.component.environmentprobe;
 
-import wobani.toolbox.annotation.NotNull;
-import wobani.resources.environmentprobe.StaticEnvironmentProbe;
+import wobani.resources.environmentprobe.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Stores a StaticEnvironmentProbe.
@@ -14,16 +14,16 @@ public class StaticEnvironmentProbeComponent extends EnvironmentProbeComponent<S
      * @param probe StaticEnvironmentProbe
      */
     public StaticEnvironmentProbeComponent(@NotNull StaticEnvironmentProbe probe) {
-        super(probe);
+	super(probe);
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append(super.toString()).append("\n")
-                .append("StaticEnvironmentProbeComponent(")
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(super.toString()).append("\n")
+		.append(StaticEnvironmentProbeComponent.class.getSimpleName()).append("(")
+		.append(")");
+	return res.toString();
     }
 
 }

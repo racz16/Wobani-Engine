@@ -1,11 +1,41 @@
 package wobani.toolbox;
 
-import wobani.toolbox.annotation.NotNull;
+import wobani.toolbox.annotation.*;
 
 /**
  * Gives information about the engine.
  */
 public class EngineInfo {
+
+    /**
+     * Contains all the used libraries.
+     */
+    public enum Library {
+	/**
+	 * The OpenGL library.
+	 */
+	OPENGL,
+	/**
+	 * The OpenAL library.
+	 */
+	OPENAL,
+	/**
+	 * The GLFW library.
+	 */
+	GLFW,
+	/**
+	 * The STB library.
+	 */
+	STB,
+	/**
+	 * The Assimp library.
+	 */
+	ASSIMP,
+	/**
+	 * The JOML library.
+	 */
+	JOML;
+    }
 
     /**
      * The engine's name.
@@ -33,7 +63,7 @@ public class EngineInfo {
      */
     @NotNull
     public static String getName() {
-        return NAME;
+	return NAME;
     }
 
     /**
@@ -42,7 +72,7 @@ public class EngineInfo {
      * @return the engine's major version number
      */
     public static int getMajorVersion() {
-        return MAJOR_VERSION;
+	return MAJOR_VERSION;
     }
 
     /**
@@ -51,7 +81,7 @@ public class EngineInfo {
      * @return the engine's minor version number
      */
     public static int getMinorVersion() {
-        return MINOR_VERSION;
+	return MINOR_VERSION;
     }
 
     /**
@@ -61,7 +91,7 @@ public class EngineInfo {
      */
     @NotNull
     public static String getFullEngineName() {
-        return getName() + " v" + getMajorVersion() + "." + getMinorVersion();
+	return getName() + " v" + getMajorVersion() + "." + getMinorVersion();
     }
 
 }

@@ -1,12 +1,10 @@
 package wobani.component.light;
 
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Internal;
-import wobani.toolbox.annotation.ReadOnly;
 import java.util.*;
 import org.joml.*;
 import wobani.core.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * This abstract class stores the light's diffuse, specular and ambient
@@ -40,7 +38,7 @@ public abstract class BlinnPhongLightComponent extends Component {
      */
     @NotNull @ReadOnly
     public Vector3f getDiffuseColor() {
-        return new Vector3f(diffuseColor);
+	return new Vector3f(diffuseColor);
     }
 
     /**
@@ -52,11 +50,11 @@ public abstract class BlinnPhongLightComponent extends Component {
      * @throws IllegalArgumentException color can't be lower than 0
      */
     public void setDiffuseColor(@NotNull Vector3f diffuse) {
-        if (!Utility.isHdrColor(diffuse)) {
-            throw new IllegalArgumentException("Diffuse color can't be lower than 0");
-        }
-        this.diffuseColor.set(diffuse);
-        refreshUbo();
+	if (!Utility.isHdrColor(diffuse)) {
+	    throw new IllegalArgumentException("Diffuse color can't be lower than 0");
+	}
+	this.diffuseColor.set(diffuse);
+	refreshUbo();
     }
 
     /**
@@ -66,7 +64,7 @@ public abstract class BlinnPhongLightComponent extends Component {
      */
     @NotNull @ReadOnly
     public Vector3f getSpecularColor() {
-        return new Vector3f(specularColor);
+	return new Vector3f(specularColor);
     }
 
     /**
@@ -78,11 +76,11 @@ public abstract class BlinnPhongLightComponent extends Component {
      * @throws IllegalArgumentException color can't be lower than 0
      */
     public void setSpecularColor(@NotNull Vector3f specular) {
-        if (!Utility.isHdrColor(specular)) {
-            throw new IllegalArgumentException("Specular color can't be lower than 0");
-        }
-        this.specularColor.set(specular);
-        refreshUbo();
+	if (!Utility.isHdrColor(specular)) {
+	    throw new IllegalArgumentException("Specular color can't be lower than 0");
+	}
+	this.specularColor.set(specular);
+	refreshUbo();
     }
 
     /**
@@ -92,7 +90,7 @@ public abstract class BlinnPhongLightComponent extends Component {
      */
     @NotNull @ReadOnly
     public Vector3f getAmbientColor() {
-        return new Vector3f(ambientColor);
+	return new Vector3f(ambientColor);
     }
 
     /**
@@ -104,39 +102,39 @@ public abstract class BlinnPhongLightComponent extends Component {
      * @throws IllegalArgumentException color can't be lower than 0
      */
     public void setAmbientColor(@NotNull Vector3f ambient) {
-        if (!Utility.isHdrColor(ambient)) {
-            throw new IllegalArgumentException("Ambient color can't be lower than 0");
-        }
-        this.ambientColor.set(ambient);
-        refreshUbo();
+	if (!Utility.isHdrColor(ambient)) {
+	    throw new IllegalArgumentException("Ambient color can't be lower than 0");
+	}
+	this.ambientColor.set(ambient);
+	refreshUbo();
     }
 
     @Override
     protected void detachFromGameObject() {
-        getGameObject().getTransform().removeInvalidatable(this);
-        super.detachFromGameObject();
-        removeLight();
-        invalidate();
+	getGameObject().getTransform().removeInvalidatable(this);
+	super.detachFromGameObject();
+	removeLight();
+	invalidate();
     }
 
     @Override
     protected void attachToGameObject(@NotNull GameObject g) {
-        super.attachToGameObject(g);
-        getGameObject().getTransform().addInvalidatable(this);
-        invalidate();
-        addLight();
+	super.attachToGameObject(g);
+	getGameObject().getTransform().addInvalidatable(this);
+	invalidate();
+	addLight();
     }
 
     @Override
     public void setActive(boolean active) {
-        super.setActive(active);
-        refreshUbo();
+	super.setActive(active);
+	refreshUbo();
     }
 
     @Override
     public void invalidate() {
-        super.invalidate();
-        refreshUbo();
+	super.invalidate();
+	refreshUbo();
     }
 
     /**
@@ -146,7 +144,7 @@ public abstract class BlinnPhongLightComponent extends Component {
      */
     @Internal
     int getUboIndex() {
-        return uboIndex;
+	return uboIndex;
     }
 
     /**
@@ -156,7 +154,7 @@ public abstract class BlinnPhongLightComponent extends Component {
      */
     @Internal
     void setUboIndex(int index) {
-        uboIndex = index;
+	uboIndex = index;
 
     }
 
@@ -180,41 +178,41 @@ public abstract class BlinnPhongLightComponent extends Component {
 
     @Override
     public int hashCode() {
-        int hash = 7 + super.hashCode();
-        hash = 11 * hash + Objects.hashCode(this.diffuseColor);
-        hash = 11 * hash + Objects.hashCode(this.specularColor);
-        hash = 11 * hash + Objects.hashCode(this.ambientColor);
-        return hash;
+	int hash = 7 + super.hashCode();
+	hash = 11 * hash + Objects.hashCode(this.diffuseColor);
+	hash = 11 * hash + Objects.hashCode(this.specularColor);
+	hash = 11 * hash + Objects.hashCode(this.ambientColor);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        final BlinnPhongLightComponent other = (BlinnPhongLightComponent) obj;
-        if (!Objects.equals(this.diffuseColor, other.diffuseColor)) {
-            return false;
-        }
-        if (!Objects.equals(this.specularColor, other.specularColor)) {
-            return false;
-        }
-        if (!Objects.equals(this.ambientColor, other.ambientColor)) {
-            return false;
-        }
-        return true;
+	if (!super.equals(obj)) {
+	    return false;
+	}
+	final BlinnPhongLightComponent other = (BlinnPhongLightComponent) obj;
+	if (!Objects.equals(this.diffuseColor, other.diffuseColor)) {
+	    return false;
+	}
+	if (!Objects.equals(this.specularColor, other.specularColor)) {
+	    return false;
+	}
+	if (!Objects.equals(this.ambientColor, other.ambientColor)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append(super.toString()).append("\n")
-                .append("SplineComponent(")
-                .append(" diffuse color: ").append(diffuseColor)
-                .append(", specular color: ").append(specularColor)
-                .append(", ambient color: ").append(ambientColor)
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(super.toString()).append("\n")
+		.append(BlinnPhongLightComponent.class.getSimpleName()).append("(")
+		.append(" diffuse color: ").append(diffuseColor)
+		.append(", specular color: ").append(specularColor)
+		.append(", ambient color: ").append(ambientColor)
+		.append(")");
+	return res.toString();
     }
 
 }

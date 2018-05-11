@@ -1,12 +1,10 @@
 package wobani.core;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Internal;
-import wobani.toolbox.annotation.ReadOnly;
 import java.util.*;
 import java.util.logging.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.exceptions.*;
 
 /**
  * Contains all of a GameObject's Components.
@@ -226,7 +224,7 @@ public class ComponentContainer {
     @Override
     public String toString() {
 	StringBuilder res = new StringBuilder()
-		.append("GameObjectComponents(")
+		.append(ComponentContainer.class.getSimpleName()).append("(")
 		.append(" size: ").append(size());
 	for (Component comp : components) {
 	    res.append("\n").append(comp);

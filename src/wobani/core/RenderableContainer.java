@@ -7,6 +7,7 @@ import wobani.rendering.geometry.*;
 import wobani.resources.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
+import wobani.toolbox.exceptions.*;
 
 /**
  * Stores all the RenderableContainer.
@@ -567,7 +568,8 @@ public class RenderableContainer {
 
     @Override
     public String toString() {
-	StringBuilder res = new StringBuilder("RenderableComponents(");
+	StringBuilder res = new StringBuilder()
+		.append(RenderableContainer.class.getSimpleName()).append("(");
 	for (Class<?> renderer : RENDERABLES.keySet()) {
 	    res.append(" ").append(renderer.getSimpleName()).append("(");
 	    RenderableMap rm = RENDERABLES.get(renderer);

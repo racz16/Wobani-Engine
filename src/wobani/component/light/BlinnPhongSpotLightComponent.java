@@ -1,7 +1,7 @@
 package wobani.component.light;
 
-import wobani.toolbox.annotation.Internal;
 import wobani.core.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Basic implementation of a spot light source.
@@ -37,7 +37,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      * @return attenuation's constant component
      */
     public float getConstant() {
-        return constant;
+	return constant;
     }
 
     /**
@@ -47,8 +47,8 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      * @param constant attenuation's constant component
      */
     public void setConstant(float constant) {
-        this.constant = constant;
-        refreshUbo();
+	this.constant = constant;
+	refreshUbo();
     }
 
     /**
@@ -57,7 +57,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      * @return attenuation's linear component
      */
     public float getLinear() {
-        return linear;
+	return linear;
     }
 
     /**
@@ -66,8 +66,8 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      * @param linear attenuation's linear component
      */
     public void setLinear(float linear) {
-        this.linear = linear;
-        refreshUbo();
+	this.linear = linear;
+	refreshUbo();
     }
 
     /**
@@ -76,7 +76,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      * @return attenuation's quadratic component
      */
     public float getQuadratic() {
-        return quadratic;
+	return quadratic;
     }
 
     /**
@@ -85,8 +85,8 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      * @param quadratic attenuation's quadratic component
      */
     public void setQuadratic(float quadratic) {
-        this.quadratic = quadratic;
-        refreshUbo();
+	this.quadratic = quadratic;
+	refreshUbo();
     }
 
     /**
@@ -95,7 +95,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      * @return cutoff component (in degrees)
      */
     public float getCutoff() {
-        return cutoff;
+	return cutoff;
     }
 
     /**
@@ -110,11 +110,11 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      *                                  component
      */
     public void setCutoff(float cutoff) {
-        if (cutoff <= 0 || cutoff >= outerCutoff) {
-            throw new IllegalArgumentException("Cutoff component must be higher than 0 and lower than the outer cutoff component");
-        }
-        this.cutoff = cutoff;
-        refreshUbo();
+	if (cutoff <= 0 || cutoff >= outerCutoff) {
+	    throw new IllegalArgumentException("Cutoff component must be higher than 0 and lower than the outer cutoff component");
+	}
+	this.cutoff = cutoff;
+	refreshUbo();
     }
 
     /**
@@ -123,7 +123,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      * @return outer cutoff component (in degrees)
      */
     public float getOuterCutoff() {
-        return outerCutoff;
+	return outerCutoff;
     }
 
     /**
@@ -136,79 +136,79 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      *                                  than the cutoff component
      */
     public void setOuterCutoff(float outerCutoff) {
-        if (cutoff >= outerCutoff) {
-            throw new IllegalArgumentException("Cutoff component must be lower than the outer cutoff component");
-        }
-        this.outerCutoff = outerCutoff;
-        refreshUbo();
+	if (cutoff >= outerCutoff) {
+	    throw new IllegalArgumentException("Cutoff component must be lower than the outer cutoff component");
+	}
+	this.outerCutoff = outerCutoff;
+	refreshUbo();
     }
 
     @Internal
     @Override
     protected void refreshUbo() {
-        if (getGameObject() != null && getUboIndex() != -1) {
-            BlinnPhongLightSources.refreshLight(this);
-        }
+	if (getGameObject() != null && getUboIndex() != -1) {
+	    BlinnPhongLightSources.refreshLight(this);
+	}
     }
 
     @Internal
     @Override
     protected void removeLight() {
-        if (getGameObject() == null && getUboIndex() != -1) {
-            BlinnPhongLightSources.removeLight(this);
-        }
+	if (getGameObject() == null && getUboIndex() != -1) {
+	    BlinnPhongLightSources.removeLight(this);
+	}
     }
 
     @Internal
     @Override
     protected void addLight() {
-        if (getGameObject() != null && getUboIndex() == -1) {
-            BlinnPhongLightSources.addLight(this);
-        }
+	if (getGameObject() != null && getUboIndex() == -1) {
+	    BlinnPhongLightSources.addLight(this);
+	}
     }
 
     @Override
     public int hashCode() {
-        int hash = 5 + super.hashCode();
-        hash = 61 * hash + Float.floatToIntBits(this.constant);
-        hash = 61 * hash + Float.floatToIntBits(this.linear);
-        hash = 61 * hash + Float.floatToIntBits(this.quadratic);
-        hash = 61 * hash + Float.floatToIntBits(this.cutoff);
-        hash = 61 * hash + Float.floatToIntBits(this.outerCutoff);
-        return hash;
+	int hash = 5 + super.hashCode();
+	hash = 61 * hash + Float.floatToIntBits(this.constant);
+	hash = 61 * hash + Float.floatToIntBits(this.linear);
+	hash = 61 * hash + Float.floatToIntBits(this.quadratic);
+	hash = 61 * hash + Float.floatToIntBits(this.cutoff);
+	hash = 61 * hash + Float.floatToIntBits(this.outerCutoff);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        final BlinnPhongSpotLightComponent other = (BlinnPhongSpotLightComponent) obj;
-        if (Float.floatToIntBits(this.constant) != Float.floatToIntBits(other.constant)) {
-            return false;
-        }
-        if (Float.floatToIntBits(this.linear) != Float.floatToIntBits(other.linear)) {
-            return false;
-        }
-        if (Float.floatToIntBits(this.quadratic) != Float.floatToIntBits(other.quadratic)) {
-            return false;
-        }
-        if (Float.floatToIntBits(this.cutoff) != Float.floatToIntBits(other.cutoff)) {
-            return false;
-        }
-        if (Float.floatToIntBits(this.outerCutoff) != Float.floatToIntBits(other.outerCutoff)) {
-            return false;
-        }
-        return true;
+	if (!super.equals(obj)) {
+	    return false;
+	}
+	final BlinnPhongSpotLightComponent other = (BlinnPhongSpotLightComponent) obj;
+	if (Float.floatToIntBits(this.constant) != Float.floatToIntBits(other.constant)) {
+	    return false;
+	}
+	if (Float.floatToIntBits(this.linear) != Float.floatToIntBits(other.linear)) {
+	    return false;
+	}
+	if (Float.floatToIntBits(this.quadratic) != Float.floatToIntBits(other.quadratic)) {
+	    return false;
+	}
+	if (Float.floatToIntBits(this.cutoff) != Float.floatToIntBits(other.cutoff)) {
+	    return false;
+	}
+	if (Float.floatToIntBits(this.outerCutoff) != Float.floatToIntBits(other.outerCutoff)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append(super.toString()).append("\n")
-                .append("BlinnPhongSpotLightComponent(")
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(super.toString()).append("\n")
+		.append(BlinnPhongSpotLightComponent.class.getSimpleName()).append("(")
+		.append(")");
+	return res.toString();
     }
 
 }

@@ -1,10 +1,8 @@
 package wobani.core;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Internal;
-import wobani.component.ComponentBase;
 import java.util.logging.*;
+import wobani.component.*;
+import wobani.toolbox.annotation.*;
 import wobani.toolbox.invalidatable.*;
 
 /**
@@ -141,7 +139,7 @@ public abstract class Component implements ComponentBase {
     public String toString() {
 	String go = gameObject == null ? "null" : gameObject.getName();
 	StringBuilder res = new StringBuilder()
-		.append("Component(")
+		.append(Component.class.getSimpleName()).append("(")
 		.append(" active: ").append(active)
 		.append(", gameObject: ").append(go)
 		.append(", invalidatables: ").append(invalidatables.size())

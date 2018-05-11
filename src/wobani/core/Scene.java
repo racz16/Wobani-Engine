@@ -1,11 +1,10 @@
 package wobani.core;
 
-import wobani.resources.environmentprobe.EnvironmentProbe;
-import wobani.toolbox.parameter.ParameterKey;
-import wobani.toolbox.parameter.ParameterContainer;
-import wobani.toolbox.annotation.NotNull;
-import wobani.component.audio.AudioListenerComponent;
-import wobani.component.camera.Camera;
+import wobani.component.audio.*;
+import wobani.component.camera.*;
+import wobani.resources.environmentprobe.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.parameter.*;
 
 /**
  * Scene contains all the GameObjectContainer, the RenderableContainer, unique

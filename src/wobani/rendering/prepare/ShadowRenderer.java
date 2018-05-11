@@ -1,19 +1,21 @@
 package wobani.rendering.prepare;
 
-import wobani.resources.texture.texture2d.Texture2D;
-import wobani.resources.shader.ShadowShader;
-import wobani.toolbox.parameter.Parameter;
-import wobani.toolbox.annotation.NotNull;
-import wobani.rendering.stage.GeometryRenderingStage;
-import wobani.component.renderable.RenderableComponent;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
+import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.rendering.*;
 import wobani.rendering.geometry.*;
+import wobani.rendering.stage.*;
 import wobani.resources.*;
+import wobani.resources.shader.*;
+import wobani.resources.texture.texture2d.*;
+import static wobani.toolbox.EngineInfo.Library.OPENGL;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.exceptions.*;
+import wobani.toolbox.parameter.*;
 
 /**
  * Performs shadow map rendering.
@@ -115,7 +117,6 @@ public class ShadowRenderer extends PrepareRenderer {
      *
      * @throws NullPointerException     position can't be null
      * @throws IllegalArgumentException radius can't be negative
-     * @see Settings#isFrustumCulling()
      */
     public boolean isInsideFrustum(@NotNull Vector3f position, float radius) {
 	if (position == null) {
@@ -146,7 +147,6 @@ public class ShadowRenderer extends PrepareRenderer {
      *         otherwise
      *
      * @throws NullPointerException the parameters can't be null
-     * @see Settings#isFrustumCulling()
      */
     public boolean isInsideFrustum(@NotNull Vector3f aabbMin, @NotNull Vector3f aabbMax) {
 	if (aabbMin == null || aabbMax == null) {
@@ -251,12 +251,11 @@ public class ShadowRenderer extends PrepareRenderer {
 
     /**
      * Refreshes the FBO.
-     *
-     * @see Settings#getShadowMapResolution()
      */
     private void refresh() {
 	if (isActive()) {
-	    projectionViewMatrix.set(Utility.computeShadowMapProjectionViewMatrix(getShadowCameraDistance(), getShadowCameraNearDistance(), getShadowCameraFarDistance()));
+	    //FIXME what if PBR dir light?
+	    projectionViewMatrix.set(Utility.computeShadowMapProjectionViewMatrix(Scene.getParameters().getValue(BlinnPhongRenderer.MAIN_DIRECTIONAL_LIGHT).getGameObject(), getShadowCameraDistance(), getShadowCameraNearDistance(), getShadowCameraFarDistance()));
 	    frustum.set(projectionViewMatrix);
 	    RenderingPipeline.getParameters().set(RenderingPipeline.SHADOW_PROJECTION_VIEW_MATRIX, new Parameter<>(new Matrix4f(projectionViewMatrix)));
 	    if (fbo == null || !fbo.isUsable() || getResolution() != fbo.getSize().x) {
@@ -382,7 +381,7 @@ public class ShadowRenderer extends PrepareRenderer {
 	    fbo.setActiveDraw(false, 0);
 	    fbo.setActiveRead(false, 0);
 	    if (!fbo.isComplete()) {
-		throw new RuntimeException("Incomplete FBO");
+		throw new NativeException(OPENGL, "Incomplete FBO");
 	    }
 	    fbo.unbind();
 	}

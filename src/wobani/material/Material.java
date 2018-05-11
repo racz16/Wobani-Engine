@@ -1,12 +1,9 @@
 package wobani.material;
 
-import wobani.toolbox.parameter.ParameterKey;
-import wobani.toolbox.parameter.Parameter;
-import wobani.toolbox.parameter.ParameterContainer;
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
 import java.util.*;
 import wobani.rendering.geometry.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.parameter.*;
 
 /**
  * Material for Splines and Meshes. It can work together with any kind of
@@ -68,10 +65,10 @@ public class Material {
      * @throws NullPointerException GeometryRenderer class can't be null
      */
     public Material(@NotNull Class<? extends GeometryRenderer> renderer) {
-        if (renderer == null) {
-            throw new NullPointerException();
-        }
-        this.renderer = renderer;
+	if (renderer == null) {
+	    throw new NullPointerException();
+	}
+	this.renderer = renderer;
     }
 
     /**
@@ -81,7 +78,7 @@ public class Material {
      */
     @NotNull
     public Class<? extends GeometryRenderer> getRenderer() {
-        return renderer;
+	return renderer;
     }
 
     /**
@@ -97,10 +94,10 @@ public class Material {
      */
     @Nullable
     public MaterialSlot getSlot(@NotNull ParameterKey<MaterialSlot> key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        return slots.getValue(key);
+	if (key == null) {
+	    throw new NullPointerException();
+	}
+	return slots.getValue(key);
     }
 
     /**
@@ -114,10 +111,10 @@ public class Material {
      * @throws NullPointerException the key can't be null
      */
     public void setSlot(@NotNull ParameterKey<MaterialSlot> key, @Nullable MaterialSlot slot) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        slots.set(key, new Parameter<>(slot));
+	if (key == null) {
+	    throw new NullPointerException();
+	}
+	slots.set(key, new Parameter<>(slot));
     }
 
     /**
@@ -126,50 +123,50 @@ public class Material {
      * @return the Material's parameters
      */
     public ParameterContainer getParameters() {
-        return parameters;
+	return parameters;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 29 * hash + Objects.hashCode(this.renderer);
-        hash = 29 * hash + Objects.hashCode(this.slots);
-        hash = 29 * hash + Objects.hashCode(this.parameters);
-        return hash;
+	int hash = 7;
+	hash = 29 * hash + Objects.hashCode(this.renderer);
+	hash = 29 * hash + Objects.hashCode(this.slots);
+	hash = 29 * hash + Objects.hashCode(this.parameters);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Material other = (Material) obj;
-        if (!Objects.equals(this.renderer, other.renderer)) {
-            return false;
-        }
-        if (!Objects.equals(this.slots, other.slots)) {
-            return false;
-        }
-        if (!Objects.equals(this.parameters, other.parameters)) {
-            return false;
-        }
-        return true;
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	final Material other = (Material) obj;
+	if (!Objects.equals(this.renderer, other.renderer)) {
+	    return false;
+	}
+	if (!Objects.equals(this.slots, other.slots)) {
+	    return false;
+	}
+	if (!Objects.equals(this.parameters, other.parameters)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append("Material(")
-                .append(" renderer: ").append(renderer)
-                .append(", slots: ").append(slots)
-                .append(", parameters: ").append(parameters)
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(Material.class.getSimpleName()).append("(")
+		.append(" renderer: ").append(renderer)
+		.append(", slots: ").append(slots)
+		.append(", parameters: ").append(parameters)
+		.append(")");
+	return res.toString();
     }
 }

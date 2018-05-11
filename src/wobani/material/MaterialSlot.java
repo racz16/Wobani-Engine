@@ -1,14 +1,12 @@
 package wobani.material;
 
-import wobani.toolbox.parameter.ParameterKey;
-import wobani.toolbox.parameter.ParameterContainer;
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.resources.texture.texture2d.Texture2D;
-import wobani.resources.environmentprobe.EnvironmentProbe;
 import java.util.*;
 import org.joml.*;
+import wobani.resources.environmentprobe.*;
+import wobani.resources.texture.texture2d.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.parameter.*;
 
 /**
  * The Material's slot. It can store a color, parameters, a 2D and a
@@ -83,7 +81,7 @@ public class MaterialSlot {
      * @param texture 2D texture
      */
     public MaterialSlot(@Nullable Texture2D texture) {
-        setTexture(texture);
+	setTexture(texture);
     }
 
     /**
@@ -92,7 +90,7 @@ public class MaterialSlot {
      * @param environmentProbe environment probe
      */
     public MaterialSlot(@Nullable EnvironmentProbe environmentProbe) {
-        setEnvironmentProbe(environmentProbe);
+	setEnvironmentProbe(environmentProbe);
     }
 
     /**
@@ -101,7 +99,7 @@ public class MaterialSlot {
      * @param color color
      */
     public MaterialSlot(@Nullable Vector4f color) {
-        setColor(color);
+	setColor(color);
     }
 
     /**
@@ -110,7 +108,7 @@ public class MaterialSlot {
      * @return true if the MaterialSlot is active, false otherwise
      */
     public boolean isActive() {
-        return active;
+	return active;
     }
 
     /**
@@ -119,7 +117,7 @@ public class MaterialSlot {
      * @param active true if this MaterialSlot should be active, false otherwise
      */
     public void setActive(boolean active) {
-        this.active = active;
+	this.active = active;
     }
 
     /**
@@ -129,7 +127,7 @@ public class MaterialSlot {
      */
     @Nullable
     public Vector4f getColor() {
-        return color;
+	return color;
     }
 
     /**
@@ -140,10 +138,10 @@ public class MaterialSlot {
      * @throws IllegalArgumentException color can't be lower than 0
      */
     public void setColor(@Nullable Vector4f color) {
-        if (color != null && !Utility.isHdrColor(new Vector3f(color.x, color.y, color.z))) {
-            throw new IllegalArgumentException("Color can't be lower than 0");
-        }
-        this.color = color;
+	if (color != null && !Utility.isHdrColor(new Vector3f(color.x, color.y, color.z))) {
+	    throw new IllegalArgumentException("Color can't be lower than 0");
+	}
+	this.color = color;
     }
 
     /**
@@ -153,7 +151,7 @@ public class MaterialSlot {
      */
     @Nullable
     public Texture2D getTexture() {
-        return texture;
+	return texture;
     }
 
     /**
@@ -162,7 +160,7 @@ public class MaterialSlot {
      * @param texture texture
      */
     public void setTexture(@Nullable Texture2D texture) {
-        this.texture = texture;
+	this.texture = texture;
     }
 
     /**
@@ -172,7 +170,7 @@ public class MaterialSlot {
      */
     @Nullable
     public EnvironmentProbe getEnvironmentProbe() {
-        return environmentProbe;
+	return environmentProbe;
     }
 
     /**
@@ -181,7 +179,7 @@ public class MaterialSlot {
      * @param environmentProbe environment probe
      */
     public void setEnvironmentProbe(@Nullable EnvironmentProbe environmentProbe) {
-        this.environmentProbe = environmentProbe;
+	this.environmentProbe = environmentProbe;
     }
 
     /**
@@ -192,7 +190,7 @@ public class MaterialSlot {
      */
     @NotNull
     public Vector2f getTextureTile() {
-        return textureTile;
+	return textureTile;
     }
 
     /**
@@ -203,7 +201,7 @@ public class MaterialSlot {
      * @param textureTile the texture's tile factor
      */
     public void setTextureTile(@NotNull Vector2f textureTile) {
-        this.textureTile.set(textureTile);
+	this.textureTile.set(textureTile);
     }
 
     /**
@@ -213,7 +211,7 @@ public class MaterialSlot {
      */
     @NotNull
     public Vector2f getTextureOffset() {
-        return textureOffset;
+	return textureOffset;
     }
 
     /**
@@ -222,7 +220,7 @@ public class MaterialSlot {
      * @param textureOffset the texture coordinates' offset
      */
     public void setTextureOffset(@NotNull Vector2f textureOffset) {
-        this.textureOffset.set(textureOffset);
+	this.textureOffset.set(textureOffset);
     }
 
     /**
@@ -231,7 +229,7 @@ public class MaterialSlot {
      * @return the MaterialSlot's parameters
      */
     public ParameterContainer getParameters() {
-        return parameters;
+	return parameters;
     }
 
     //
@@ -239,66 +237,66 @@ public class MaterialSlot {
     //
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 29 * hash + (this.active ? 1 : 0);
-        hash = 29 * hash + Objects.hashCode(this.color);
-        hash = 29 * hash + Objects.hashCode(this.texture);
-        hash = 29 * hash + Objects.hashCode(this.environmentProbe);
-        hash = 29 * hash + Objects.hashCode(this.textureTile);
-        hash = 29 * hash + Objects.hashCode(this.textureOffset);
-        hash = 29 * hash + Objects.hashCode(this.parameters);
-        return hash;
+	int hash = 7;
+	hash = 29 * hash + (this.active ? 1 : 0);
+	hash = 29 * hash + Objects.hashCode(this.color);
+	hash = 29 * hash + Objects.hashCode(this.texture);
+	hash = 29 * hash + Objects.hashCode(this.environmentProbe);
+	hash = 29 * hash + Objects.hashCode(this.textureTile);
+	hash = 29 * hash + Objects.hashCode(this.textureOffset);
+	hash = 29 * hash + Objects.hashCode(this.parameters);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final MaterialSlot other = (MaterialSlot) obj;
-        if (this.active != other.active) {
-            return false;
-        }
-        if (!Objects.equals(this.color, other.color)) {
-            return false;
-        }
-        if (!Objects.equals(this.texture, other.texture)) {
-            return false;
-        }
-        if (!Objects.equals(this.environmentProbe, other.environmentProbe)) {
-            return false;
-        }
-        if (!Objects.equals(this.textureTile, other.textureTile)) {
-            return false;
-        }
-        if (!Objects.equals(this.textureOffset, other.textureOffset)) {
-            return false;
-        }
-        if (!Objects.equals(this.parameters, other.parameters)) {
-            return false;
-        }
-        return true;
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	final MaterialSlot other = (MaterialSlot) obj;
+	if (this.active != other.active) {
+	    return false;
+	}
+	if (!Objects.equals(this.color, other.color)) {
+	    return false;
+	}
+	if (!Objects.equals(this.texture, other.texture)) {
+	    return false;
+	}
+	if (!Objects.equals(this.environmentProbe, other.environmentProbe)) {
+	    return false;
+	}
+	if (!Objects.equals(this.textureTile, other.textureTile)) {
+	    return false;
+	}
+	if (!Objects.equals(this.textureOffset, other.textureOffset)) {
+	    return false;
+	}
+	if (!Objects.equals(this.parameters, other.parameters)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append("MaterialSlot(")
-                .append(" active: ").append(active)
-                .append(", color: ").append(color)
-                .append(", texture: ").append(texture)
-                .append(", environment probe: ").append(environmentProbe)
-                .append(", texture tile: ").append(textureTile)
-                .append(", texture offset: ").append(textureOffset)
-                .append(", parameters: ").append(parameters)
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(MaterialSlot.class.getSimpleName()).append("(")
+		.append(" active: ").append(active)
+		.append(", color: ").append(color)
+		.append(", texture: ").append(texture)
+		.append(", environment probe: ").append(environmentProbe)
+		.append(", texture tile: ").append(textureTile)
+		.append(", texture offset: ").append(textureOffset)
+		.append(", parameters: ").append(parameters)
+		.append(")");
+	return res.toString();
     }
 
 }

@@ -1,12 +1,12 @@
 package wobani.component.renderable;
 
-import wobani.toolbox.annotation.NotNull;
-import wobani.material.Material;
 import java.util.*;
 import wobani.core.*;
+import wobani.material.*;
 import wobani.rendering.*;
 import wobani.rendering.geometry.*;
 import wobani.resources.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Contains a Renderable what you can render.
@@ -305,7 +305,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
     public String toString() {
 	StringBuilder res = new StringBuilder()
 		.append(super.toString()).append("\n")
-		.append("RenderableComponent(")
+		.append(RenderableComponent.class.getSimpleName()).append("(")
 		.append(" faces: ").append(getFaceCount())
 		.append(")");
 	return res.toString();

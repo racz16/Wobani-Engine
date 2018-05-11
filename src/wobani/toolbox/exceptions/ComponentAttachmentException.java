@@ -1,7 +1,7 @@
-package wobani.toolbox;
+package wobani.toolbox.exceptions;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.component.ComponentBase;
+import wobani.component.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * This exception signs that a Component is attached to a GameObject or not
@@ -22,7 +22,7 @@ public class ComponentAttachmentException extends RuntimeException {
      *
      */
     public ComponentAttachmentException(@Nullable ComponentBase component) {
-        this.component = component;
+	this.component = component;
     }
 
     /**
@@ -32,7 +32,15 @@ public class ComponentAttachmentException extends RuntimeException {
      */
     @Nullable
     public ComponentBase getComponent() {
-        return component;
+	return component;
     }
 
+    @Override
+    public String toString() {
+	StringBuilder res = new StringBuilder()
+		.append(ComponentAttachmentException.class.getSimpleName()).append("(")
+		.append(" component: ").append(component)
+		.append(")");
+	return res.toString();
+    }
 }

@@ -1,9 +1,8 @@
 package wobani.toolbox.parameter;
 
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Internal;
-import wobani.component.ComponentBase;
-import wobani.toolbox.ComponentAttachmentException;
+import wobani.component.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.exceptions.*;
 
 /**
  * Stores a Component as a Parameter.
@@ -18,7 +17,7 @@ public class ComponentParameter<T extends ComponentBase> extends Parameter<T> {
      * @param value data you want to store
      */
     public ComponentParameter(T value) {
-        super(value);
+	super(value);
     }
 
     /**
@@ -31,34 +30,34 @@ public class ComponentParameter<T extends ComponentBase> extends Parameter<T> {
      */
     @Override
     public T getValue() {
-        T ret = super.getValue();
-        if (ret.getGameObject() == null) {
-            throw new ComponentAttachmentException(ret);
-        }
-        return ret;
+	T ret = super.getValue();
+	if (ret.getGameObject() == null) {
+	    throw new ComponentAttachmentException(ret);
+	}
+	return ret;
     }
 
     @Internal
     @Override
     protected void addedToParameters(Parameter<T> removed) {
-        if (getValue().getGameObject() == null) {
-            throw new NullPointerException();
-        }
-        getValue().invalidate();
+	if (getValue().getGameObject() == null) {
+	    throw new NullPointerException();
+	}
+	getValue().invalidate();
     }
 
     @Internal
     @Override
     protected void refresh(@NotNull T old) {
-        getValue().invalidate();
+	getValue().invalidate();
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append(super.toString()).append("\n")
-                .append("ComponentParameter(")
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(super.toString()).append("\n")
+		.append(ComponentParameter.class.getSimpleName()).append("(")
+		.append(")");
+	return res.toString();
     }
 }

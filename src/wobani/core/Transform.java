@@ -1,13 +1,10 @@
 package wobani.core;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Internal;
-import wobani.toolbox.annotation.ReadOnly;
 import java.util.*;
 import java.util.logging.*;
 import org.joml.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 import wobani.toolbox.invalidatable.*;
 
 /**
@@ -97,9 +94,9 @@ public class Transform implements Invalidatable {
      * @param scale    scale
      */
     public Transform(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Vector3f scale) {
-        setRelativePosition(position);
-        setRelativeRotation(rotation);
-        setRelativeScale(scale);
+	setRelativePosition(position);
+	setRelativeRotation(rotation);
+	setRelativeScale(scale);
     }
 
     /**
@@ -109,7 +106,7 @@ public class Transform implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getRelativePosition() {
-        return new Vector3f(relativePosition);
+	return new Vector3f(relativePosition);
     }
 
     /**
@@ -118,8 +115,8 @@ public class Transform implements Invalidatable {
      * @param position relative position
      */
     public void setRelativePosition(@NotNull Vector3f position) {
-        relativePosition.set(position);
-        invalidate();
+	relativePosition.set(position);
+	invalidate();
     }
 
     /**
@@ -129,8 +126,8 @@ public class Transform implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getAbsolutePosition() {
-        refresh();
-        return new Vector3f(absolutePosition);
+	refresh();
+	return new Vector3f(absolutePosition);
     }
 
     /**
@@ -139,12 +136,12 @@ public class Transform implements Invalidatable {
      * @param position absolute position
      */
     public void setAbsolutePosition(@NotNull Vector3f position) {
-        if (haveParent()) {
-            Vector3f relPos = computeRelativePositionFromAbsolutePosition(position);
-            setRelativePosition(relPos);
-        } else {
-            setRelativePosition(position);
-        }
+	if (haveParent()) {
+	    Vector3f relPos = computeRelativePositionFromAbsolutePosition(position);
+	    setRelativePosition(relPos);
+	} else {
+	    setRelativePosition(position);
+	}
     }
 
     /**
@@ -156,13 +153,13 @@ public class Transform implements Invalidatable {
      */
     @NotNull
     private Vector3f computeRelativePositionFromAbsolutePosition(@NotNull Vector3f absolutePosition) {
-        Vector3f parentPosition = new Vector3f(gameObject.getParent().getTransform().getAbsolutePosition());
-        Vector3f parentRotation = new Vector3f(gameObject.getParent().getTransform().getAbsoluteRotation());
-        Quaternionf rotation = new Quaternionf().rotation(
-                Utility.toRadians(-parentRotation.x), Utility.toRadians(-parentRotation.y), Utility.toRadians(-parentRotation.z));
-        Vector3f relPos = new Vector3f();
-        absolutePosition.sub(parentPosition, relPos);
-        return relPos.rotate(rotation);
+	Vector3f parentPosition = new Vector3f(gameObject.getParent().getTransform().getAbsolutePosition());
+	Vector3f parentRotation = new Vector3f(gameObject.getParent().getTransform().getAbsoluteRotation());
+	Quaternionf rotation = new Quaternionf().rotation(
+		Utility.toRadians(-parentRotation.x), Utility.toRadians(-parentRotation.y), Utility.toRadians(-parentRotation.z));
+	Vector3f relPos = new Vector3f();
+	absolutePosition.sub(parentPosition, relPos);
+	return relPos.rotate(rotation);
     }
 
     /**
@@ -171,8 +168,8 @@ public class Transform implements Invalidatable {
      * @param movement movement
      */
     public void move(@NotNull Vector3f movement) {
-        relativePosition.add(movement);
-        invalidate();
+	relativePosition.add(movement);
+	invalidate();
     }
 
     /**
@@ -182,7 +179,7 @@ public class Transform implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getRelativeRotation() {
-        return new Vector3f(relativeRotation);
+	return new Vector3f(relativeRotation);
     }
 
     /**
@@ -191,8 +188,8 @@ public class Transform implements Invalidatable {
      * @param rotation relative rotation (in degrees)
      */
     public void setRelativeRotation(@NotNull Vector3f rotation) {
-        relativeRotation.set(rotation);
-        invalidate();
+	relativeRotation.set(rotation);
+	invalidate();
     }
 
     /**
@@ -202,8 +199,8 @@ public class Transform implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getAbsoluteRotation() {
-        refresh();
-        return new Vector3f(absoluteRotation);
+	refresh();
+	return new Vector3f(absoluteRotation);
     }
 
     /**
@@ -212,12 +209,12 @@ public class Transform implements Invalidatable {
      * @param rotation absolute rotation (in degrees)
      */
     public void setAbsoluteRotation(@NotNull Vector3f rotation) {
-        if (haveParent()) {
-            Vector3f relRot = computeRelativeRotationFromAbsoluteRotation(rotation);
-            setRelativeRotation(relRot);
-        } else {
-            setRelativeRotation(rotation);
-        }
+	if (haveParent()) {
+	    Vector3f relRot = computeRelativeRotationFromAbsoluteRotation(rotation);
+	    setRelativeRotation(relRot);
+	} else {
+	    setRelativeRotation(rotation);
+	}
     }
 
     /**
@@ -229,7 +226,7 @@ public class Transform implements Invalidatable {
      */
     @NotNull
     private Vector3f computeRelativeRotationFromAbsoluteRotation(@NotNull Vector3f absoluteRotation) {
-        return absoluteRotation.sub(gameObject.getParent().getTransform().getAbsoluteRotation());
+	return absoluteRotation.sub(gameObject.getParent().getTransform().getAbsoluteRotation());
     }
 
     /**
@@ -238,8 +235,8 @@ public class Transform implements Invalidatable {
      * @param rotation rotation (in degrees)
      */
     public void rotate(@NotNull Vector3f rotation) {
-        relativeRotation.add(rotation);
-        invalidate();
+	relativeRotation.add(rotation);
+	invalidate();
     }
 
     /**
@@ -249,7 +246,7 @@ public class Transform implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getRelativeScale() {
-        return new Vector3f(relativeScale);
+	return new Vector3f(relativeScale);
     }
 
     /**
@@ -258,8 +255,8 @@ public class Transform implements Invalidatable {
      * @param scale relative scale
      */
     public void setRelativeScale(@NotNull Vector3f scale) {
-        relativeScale.set(scale);
-        invalidate();
+	relativeScale.set(scale);
+	invalidate();
     }
 
     /**
@@ -269,8 +266,8 @@ public class Transform implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getAbsoluteScale() {
-        refresh();
-        return new Vector3f(absoluteScale);
+	refresh();
+	return new Vector3f(absoluteScale);
     }
 
     /**
@@ -279,12 +276,12 @@ public class Transform implements Invalidatable {
      * @param scale absolute scale
      */
     public void setAbsoluteScale(@NotNull Vector3f scale) {
-        if (haveParent()) {
-            Vector3f relScale = computeRelativeScaleFromAbsoluteScale(scale);
-            setRelativeScale(relScale);
-        } else {
-            setRelativeScale(scale);
-        }
+	if (haveParent()) {
+	    Vector3f relScale = computeRelativeScaleFromAbsoluteScale(scale);
+	    setRelativeScale(relScale);
+	} else {
+	    setRelativeScale(scale);
+	}
     }
 
     /**
@@ -296,8 +293,8 @@ public class Transform implements Invalidatable {
      */
     @NotNull
     private Vector3f computeRelativeScaleFromAbsoluteScale(@NotNull Vector3f absoluteScale) {
-        Vector3f parentAbsoluteScale = gameObject.getParent().getTransform().getAbsoluteScale();
-        return absoluteScale.div(parentAbsoluteScale);
+	Vector3f parentAbsoluteScale = gameObject.getParent().getTransform().getAbsoluteScale();
+	return absoluteScale.div(parentAbsoluteScale);
     }
 
     /**
@@ -309,8 +306,8 @@ public class Transform implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Matrix4f getModelMatrix() {
-        refresh();
-        return new Matrix4f(modelMatrix);
+	refresh();
+	return new Matrix4f(modelMatrix);
     }
 
     /**
@@ -322,8 +319,8 @@ public class Transform implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Matrix4f getInverseModelMatrix() {
-        refresh();
-        return new Matrix4f(inverseModelMatrix);
+	refresh();
+	return new Matrix4f(inverseModelMatrix);
     }
 
     //
@@ -334,21 +331,21 @@ public class Transform implements Invalidatable {
      */
     @Internal
     protected void refresh() {
-        if (!valid) {
-            refreshAbsoluteTransform();
-            refreshMatrices();
-            refreshDirectionVectors();
-            valid = true;
-            LOG.finer("Transform refreshed");
-        }
+	if (!valid) {
+	    refreshAbsoluteTransform();
+	    refreshMatrices();
+	    refreshDirectionVectors();
+	    valid = true;
+	    LOG.finer("Transform refreshed");
+	}
     }
 
     /**
      * Refreshes the model and the inverse model matrices.
      */
     private void refreshMatrices() {
-        modelMatrix.set(Utility.computeModelMatrix(absolutePosition, absoluteRotation, absoluteScale));
-        inverseModelMatrix.set(Utility.computetInverseModelMatrix(absolutePosition, absoluteRotation, absoluteScale));
+	modelMatrix.set(Utility.computeModelMatrix(absolutePosition, absoluteRotation, absoluteScale));
+	inverseModelMatrix.set(Utility.computetInverseModelMatrix(absolutePosition, absoluteRotation, absoluteScale));
     }
 
     /**
@@ -356,40 +353,40 @@ public class Transform implements Invalidatable {
      * scale.
      */
     private void refreshAbsoluteTransform() {
-        if (!haveParent()) {
-            refreshAbsoluteTransformWhenNoParent();
-        } else {
-            refreshAbsolutePosition();
-            refreshAbsoluteRotation();
-            refreshAbsoluteScale();
-        }
+	if (!haveParent()) {
+	    refreshAbsoluteTransformWhenNoParent();
+	} else {
+	    refreshAbsolutePosition();
+	    refreshAbsoluteRotation();
+	    refreshAbsoluteScale();
+	}
     }
 
     /**
      * Refreshes the absolute position.
      */
     private void refreshAbsolutePosition() {
-        Vector3f position = getRelativePosition();
-        Vector3f parentRotation = gameObject.getParent().getTransform().getAbsoluteRotation();
-        absolutePosition.set(position.rotate(new Quaternionf()
-                .rotation(Utility.toRadians(parentRotation.x), Utility.toRadians(parentRotation.y), Utility.toRadians(parentRotation.z))));
-        absolutePosition.add(gameObject.getParent().getTransform().getAbsolutePosition());
+	Vector3f position = getRelativePosition();
+	Vector3f parentRotation = gameObject.getParent().getTransform().getAbsoluteRotation();
+	absolutePosition.set(position.rotate(new Quaternionf()
+		.rotation(Utility.toRadians(parentRotation.x), Utility.toRadians(parentRotation.y), Utility.toRadians(parentRotation.z))));
+	absolutePosition.add(gameObject.getParent().getTransform().getAbsolutePosition());
     }
 
     /**
      * Refreshes the absolute rotation.
      */
     private void refreshAbsoluteRotation() {
-        Vector3f parentAbsoluteRotation = gameObject.getParent().getTransform().getAbsoluteRotation();
-        absoluteRotation.set(parentAbsoluteRotation.add(relativeRotation));
+	Vector3f parentAbsoluteRotation = gameObject.getParent().getTransform().getAbsoluteRotation();
+	absoluteRotation.set(parentAbsoluteRotation.add(relativeRotation));
     }
 
     /**
      * Refreshes the absolute scale.
      */
     private void refreshAbsoluteScale() {
-        Vector3f parentAbsoluteScale = gameObject.getParent().getTransform().getAbsoluteScale();
-        absoluteScale.set(parentAbsoluteScale.mul(relativeScale));
+	Vector3f parentAbsoluteScale = gameObject.getParent().getTransform().getAbsoluteScale();
+	absoluteScale.set(parentAbsoluteScale.mul(relativeScale));
     }
 
     /**
@@ -398,9 +395,9 @@ public class Transform implements Invalidatable {
      * the same.
      */
     private void refreshAbsoluteTransformWhenNoParent() {
-        absolutePosition.set(relativePosition);
-        absoluteRotation.set(relativeRotation);
-        absoluteScale.set(relativeScale);
+	absolutePosition.set(relativePosition);
+	absoluteRotation.set(relativeRotation);
+	absoluteScale.set(relativeScale);
     }
 
     //
@@ -413,8 +410,8 @@ public class Transform implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getForwardVector() {
-        refresh();
-        return new Vector3f(forward);
+	refresh();
+	return new Vector3f(forward);
     }
 
     /**
@@ -424,8 +421,8 @@ public class Transform implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getRightVector() {
-        refresh();
-        return new Vector3f(right);
+	refresh();
+	return new Vector3f(right);
     }
 
     /**
@@ -435,21 +432,21 @@ public class Transform implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getUpVector() {
-        refresh();
-        return new Vector3f(up);
+	refresh();
+	return new Vector3f(up);
     }
 
     /**
      * Refreshes the forward, right and up direction vectors.
      */
     private void refreshDirectionVectors() {
-        Quaternionf rotation = new Quaternionf()
-                .rotation(Utility.toRadians(absoluteRotation.x),
-                        Utility.toRadians(absoluteRotation.y),
-                        Utility.toRadians(absoluteRotation.z));
-        forward.set(new Vector3f(0, 0, -1).rotate(rotation).normalize());
-        right.set(new Vector3f(1, 0, 0).rotate(rotation).normalize());
-        right.cross(forward, up);
+	Quaternionf rotation = new Quaternionf()
+		.rotation(Utility.toRadians(absoluteRotation.x),
+			Utility.toRadians(absoluteRotation.y),
+			Utility.toRadians(absoluteRotation.z));
+	forward.set(new Vector3f(0, 0, -1).rotate(rotation).normalize());
+	right.set(new Vector3f(1, 0, 0).rotate(rotation).normalize());
+	right.cross(forward, up);
     }
 
     //
@@ -467,8 +464,8 @@ public class Transform implements Invalidatable {
      */
     @Internal
     protected void detacheFromGameObject() {
-        this.gameObject = null;
-        invalidate();
+	this.gameObject = null;
+	invalidate();
     }
 
     /**
@@ -480,11 +477,11 @@ public class Transform implements Invalidatable {
      */
     @Internal
     protected void attachToGameObject(@NotNull GameObject object) {
-        if (object == null) {
-            throw new NullPointerException();
-        }
-        this.gameObject = object;
-        invalidate();
+	if (object == null) {
+	    throw new NullPointerException();
+	}
+	this.gameObject = object;
+	invalidate();
     }
 
     /**
@@ -494,7 +491,7 @@ public class Transform implements Invalidatable {
      */
     @Nullable
     public GameObject getGameObject() {
-        return gameObject;
+	return gameObject;
     }
 
     /**
@@ -503,7 +500,7 @@ public class Transform implements Invalidatable {
      * @param object GameObject
      */
     public void setGameObject(@NotNull GameObject object) {
-        object.setTransform(this);
+	object.setTransform(this);
     }
 
     /**
@@ -513,7 +510,7 @@ public class Transform implements Invalidatable {
      *         GameObject have a parent, false otherwise
      */
     private boolean haveParent() {
-        return gameObject != null && gameObject.getParent() != null;
+	return gameObject != null && gameObject.getParent() != null;
     }
 
     //
@@ -524,9 +521,9 @@ public class Transform implements Invalidatable {
      */
     @Override
     public void invalidate() {
-        invalidatables.invalidate();
-        valid = false;
-        LOG.finer("Transform invalidated");
+	invalidatables.invalidate();
+	valid = false;
+	LOG.finer("Transform invalidated");
     }
 
     /**
@@ -535,7 +532,7 @@ public class Transform implements Invalidatable {
      * @param invalidatable Invalidatable
      */
     public void addInvalidatable(@NotNull Invalidatable invalidatable) {
-        invalidatables.addInvalidatable(invalidatable);
+	invalidatables.addInvalidatable(invalidatable);
     }
 
     /**
@@ -548,7 +545,7 @@ public class Transform implements Invalidatable {
      *         element, false otherwise
      */
     public boolean containsInvalidatable(@Nullable Invalidatable invalidatable) {
-        return invalidatables.containsInvalidatable(invalidatable);
+	return invalidatables.containsInvalidatable(invalidatable);
     }
 
     /**
@@ -557,52 +554,52 @@ public class Transform implements Invalidatable {
      * @param invalidatable Invalidatable
      */
     public void removeInvalidatable(@Nullable Invalidatable invalidatable) {
-        invalidatables.removeInvalidatable(invalidatable);
+	invalidatables.removeInvalidatable(invalidatable);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.relativePosition);
-        hash = 67 * hash + Objects.hashCode(this.relativeRotation);
-        hash = 67 * hash + Objects.hashCode(this.relativeScale);
-        return hash;
+	int hash = 7;
+	hash = 67 * hash + Objects.hashCode(this.relativePosition);
+	hash = 67 * hash + Objects.hashCode(this.relativeRotation);
+	hash = 67 * hash + Objects.hashCode(this.relativeScale);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Transform other = (Transform) obj;
-        if (!Objects.equals(this.relativePosition, other.relativePosition)) {
-            return false;
-        }
-        if (!Objects.equals(this.relativeRotation, other.relativeRotation)) {
-            return false;
-        }
-        if (!Objects.equals(this.relativeScale, other.relativeScale)) {
-            return false;
-        }
-        return true;
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	final Transform other = (Transform) obj;
+	if (!Objects.equals(this.relativePosition, other.relativePosition)) {
+	    return false;
+	}
+	if (!Objects.equals(this.relativeRotation, other.relativeRotation)) {
+	    return false;
+	}
+	if (!Objects.equals(this.relativeScale, other.relativeScale)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append("Transform(")
-                .append(" position: ").append(getAbsolutePosition())
-                .append(", rotation: ").append(getAbsoluteRotation())
-                .append(", scale: ").append(getAbsoluteScale())
-                .append(", forward: ").append(getForwardVector())
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(Transform.class.getSimpleName()).append("(")
+		.append(" position: ").append(getAbsolutePosition())
+		.append(", rotation: ").append(getAbsoluteRotation())
+		.append(", scale: ").append(getAbsoluteScale())
+		.append(", forward: ").append(getForwardVector())
+		.append(")");
+	return res.toString();
     }
 
 }

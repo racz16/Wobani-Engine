@@ -1,6 +1,5 @@
 package wobani.resources.audio;
 
-import wobani.toolbox.annotation.NotNull;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
@@ -15,7 +14,10 @@ import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import wobani.resources.*;
 import wobani.resources.ResourceManager.ResourceState;
+import static wobani.toolbox.EngineInfo.Library.OPENAL;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.exceptions.*;
 
 /**
  * Stores a sound effect and can play through an AudioSource.
@@ -54,16 +56,16 @@ public class AudioBuffer implements Resource {
      *             "res/sounds/mySound.ogg")
      */
     private AudioBuffer(@NotNull File path) {
-        meta.setPaths(Utility.wrapObjectByList(path));
-        meta.setLastActiveToNow();
-        meta.setDataStorePolicy(ResourceManager.ResourceState.ACTION);
+	meta.setPaths(Utility.wrapObjectByList(path));
+	meta.setLastActiveToNow();
+	meta.setDataStorePolicy(ResourceManager.ResourceState.ACTION);
 
-        hddToRam();
-        ramToAction();
+	hddToRam();
+	ramToAction();
 
-        meta.setDataSize(data.capacity());
-        resourceId = new ResourceId(path);
-        ResourceManager.addAudioBuffer(this);
+	meta.setDataSize(data.capacity());
+	resourceId = new ResourceId(path);
+	ResourceManager.addAudioBuffer(this);
     }
 
     /**
@@ -73,63 +75,64 @@ public class AudioBuffer implements Resource {
      * @return the audio buffer's native OpenAL id
      */
     public int getId() {
-        return id;
+	return id;
     }
 
     /**
      * Sets the audio buffer's last activation time to now.
      */
     public void setLastActiveToNow() {
-        meta.setLastActiveToNow();
+	meta.setLastActiveToNow();
     }
 
     /**
      * Loads the sound effect to the sound system.
      */
     public void refreshStore() {
-        if (getState() == ResourceState.HDD) {
-            hddToRam();
-        }
-        if (getState() == ResourceState.RAM) {
-            ramToAction();
-        }
+	if (getState() == ResourceState.HDD) {
+	    hddToRam();
+	}
+	if (getState() == ResourceState.RAM) {
+	    ramToAction();
+	}
     }
 
     /**
      * Loads the audio buffer's data from file to the RAM.
      *
-     * @throws RuntimeException failed to load the sound effect
+     * @throws NativeException failed to load the sound effect
      */
     private void hddToRam() {
-        try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-            ByteBuffer vorbis = null;
-            try {
-                FileInputStream fis = new FileInputStream(getPath());
-                FileChannel fc = fis.getChannel();
-                vorbis = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-                fc.close();
-                fis.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+	try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
+	    ByteBuffer vorbis = null;
+	    try {
+		FileInputStream fis = new FileInputStream(getPath());
+		FileChannel fc = fis.getChannel();
+		vorbis = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+		fc.close();
+		fis.close();
+	    } catch (IOException e) {
+		//WTF?
+		throw new RuntimeException(e);
+	    }
 
-            IntBuffer error = MemoryUtil.memAllocInt(1);
-            long decoder = stb_vorbis_open_memory(vorbis, error, null);
-            if (decoder == NULL) {
-                throw new RuntimeException("Failed to open Ogg Vorbis file. Error: " + error.get(0));
-            }
-            stb_vorbis_get_info(decoder, info);
-            channels = info.channels();
-            frequency = info.sample_rate();
-            int lengthSamples = stb_vorbis_stream_length_in_samples(decoder);
-            ShortBuffer pcm = MemoryUtil.memAllocShort(lengthSamples);
-            pcm.limit(stb_vorbis_get_samples_short_interleaved(decoder, channels, pcm) * channels);
-            stb_vorbis_close(decoder);
-            data = pcm;
-            MemoryUtil.memFree(error);
-        }
+	    IntBuffer error = MemoryUtil.memAllocInt(1);
+	    long decoder = stb_vorbis_open_memory(vorbis, error, null);
+	    if (decoder == NULL) {
+		throw new NativeException(OPENAL, "Failed to open Ogg Vorbis file.\n Error: " + error.get(0));
+	    }
+	    stb_vorbis_get_info(decoder, info);
+	    channels = info.channels();
+	    frequency = info.sample_rate();
+	    int lengthSamples = stb_vorbis_stream_length_in_samples(decoder);
+	    ShortBuffer pcm = MemoryUtil.memAllocShort(lengthSamples);
+	    pcm.limit(stb_vorbis_get_samples_short_interleaved(decoder, channels, pcm) * channels);
+	    stb_vorbis_close(decoder);
+	    data = pcm;
+	    MemoryUtil.memFree(error);
+	}
 
-        meta.setState(ResourceState.RAM);
+	meta.setState(ResourceState.RAM);
     }
 
     /**
@@ -137,10 +140,10 @@ public class AudioBuffer implements Resource {
      * cause errors if the data isn't in the RAM.
      */
     private void ramToAction() {
-        id = AL10.alGenBuffers();
-        AL10.alBufferData(id, channels == 1 ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16, data, frequency);
+	id = AL10.alGenBuffers();
+	AL10.alBufferData(id, channels == 1 ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16, data, frequency);
 
-        meta.setState(ResourceState.ACTION);
+	meta.setState(ResourceState.ACTION);
     }
 
     /**
@@ -148,10 +151,10 @@ public class AudioBuffer implements Resource {
      * errors if the data isn't in the sound system.
      */
     private void actionToRam() {
-        AL10.alDeleteBuffers(id);
-        id = -1;
+	AL10.alDeleteBuffers(id);
+	id = -1;
 
-        meta.setState(ResourceState.RAM);
+	meta.setState(ResourceState.RAM);
     }
 
     /**
@@ -159,10 +162,10 @@ public class AudioBuffer implements Resource {
      * data isn't in the RAM.
      */
     private void ramToHdd() {
-        MemoryUtil.memFree(data);
-        data = null;
+	MemoryUtil.memFree(data);
+	data = null;
 
-        meta.setState(ResourceState.HDD);
+	meta.setState(ResourceState.HDD);
     }
 
     /**
@@ -176,11 +179,11 @@ public class AudioBuffer implements Resource {
      * @return audio buffer
      */
     public static AudioBuffer loadSound(@NotNull File path) {
-        AudioBuffer sound = ResourceManager.getAudioBuffer(new ResourceId(path));
-        if (sound != null) {
-            return sound;
-        }
-        return new AudioBuffer(path);
+	AudioBuffer sound = ResourceManager.getAudioBuffer(new ResourceId(path));
+	if (sound != null) {
+	    return sound;
+	}
+	return new AudioBuffer(path);
     }
 
     /**
@@ -189,7 +192,7 @@ public class AudioBuffer implements Resource {
      * @return the number of the audio buffer's channels
      */
     public int getChannels() {
-        return channels;
+	return channels;
     }
 
     /**
@@ -198,7 +201,7 @@ public class AudioBuffer implements Resource {
      * @return the audio buffer's frequency
      */
     public int getFrequency() {
-        return frequency;
+	return frequency;
     }
 
     //
@@ -216,7 +219,7 @@ public class AudioBuffer implements Resource {
      * @see #refreshStore()
      */
     public long getActionTimeLimit() {
-        return meta.getActionTimeLimit();
+	return meta.getActionTimeLimit();
     }
 
     /**
@@ -232,7 +235,7 @@ public class AudioBuffer implements Resource {
      * @see #refreshStore()
      */
     public void setActionTimeLimit(long actionTimeLimit) {
-        meta.setActionTimeLimit(actionTimeLimit);
+	meta.setActionTimeLimit(actionTimeLimit);
     }
 
     /**
@@ -247,7 +250,7 @@ public class AudioBuffer implements Resource {
      * @see #refreshStore()
      */
     public long getRamTimeLimit() {
-        return meta.getRamTimeLimit();
+	return meta.getRamTimeLimit();
     }
 
     /**
@@ -263,7 +266,7 @@ public class AudioBuffer implements Resource {
      * @see #refreshStore()
      */
     public void setRamTimeLimit(long ramTimeLimit) {
-        meta.setRamTimeLimit(ramTimeLimit);
+	meta.setRamTimeLimit(ramTimeLimit);
     }
 
     /**
@@ -272,7 +275,7 @@ public class AudioBuffer implements Resource {
      * @return the time when the audio buffer last time used (in miliseconds)
      */
     public long getLastActive() {
-        return meta.getLastActive();
+	return meta.getLastActive();
     }
 
     /**
@@ -283,7 +286,7 @@ public class AudioBuffer implements Resource {
      */
     @NotNull
     public ResourceState getState() {
-        return meta.getState();
+	return meta.getState();
     }
 
     /**
@@ -301,7 +304,7 @@ public class AudioBuffer implements Resource {
      */
     @NotNull
     public ResourceState getDataStorePolicy() {
-        return meta.getDataStorePolicy();
+	return meta.getDataStorePolicy();
     }
 
     /**
@@ -318,27 +321,27 @@ public class AudioBuffer implements Resource {
      * @see #refreshStore()
      */
     public void setDataStorePolicy(@NotNull ResourceState minState) {
-        meta.setDataStorePolicy(minState);
+	meta.setDataStorePolicy(minState);
 
-        if (minState != ResourceState.HDD && getState() == ResourceState.HDD) {
-            hddToRam();
-        }
-        if (minState == ResourceState.ACTION && getState() != ResourceState.ACTION) {
-            ramToAction();
-        }
+	if (minState != ResourceState.HDD && getState() == ResourceState.HDD) {
+	    hddToRam();
+	}
+	if (minState == ResourceState.ACTION && getState() != ResourceState.ACTION) {
+	    ramToAction();
+	}
     }
 
     @Override
     public void update() {
-        long elapsedTime = System.currentTimeMillis() - getLastActive();
-        if (elapsedTime > getActionTimeLimit() && getDataStorePolicy() != ResourceState.ACTION && getState() != ResourceState.HDD) {
-            if (getState() == ResourceState.ACTION) {
-                actionToRam();
-            }
-            if (elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceState.HDD) {
-                ramToHdd();
-            }
-        }
+	long elapsedTime = System.currentTimeMillis() - getLastActive();
+	if (elapsedTime > getActionTimeLimit() && getDataStorePolicy() != ResourceState.ACTION && getState() != ResourceState.HDD) {
+	    if (getState() == ResourceState.ACTION) {
+		actionToRam();
+	    }
+	    if (elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceState.HDD) {
+		ramToHdd();
+	    }
+	}
     }
 
     //
@@ -351,45 +354,45 @@ public class AudioBuffer implements Resource {
      */
     @NotNull
     public File getPath() {
-        return meta.getPaths().get(0);
+	return meta.getPaths().get(0);
     }
 
     @Override
     public int getDataSizeInRam() {
-        return getState() == ResourceState.HDD ? 0 : meta.getDataSize();
+	return getState() == ResourceState.HDD ? 0 : meta.getDataSize();
     }
 
     @Override
     public int getDataSizeInAction() {
-        return getState() == ResourceState.ACTION ? meta.getDataSize() : 0;
+	return getState() == ResourceState.ACTION ? meta.getDataSize() : 0;
     }
 
     @Override
     public void release() {
-        if (getState() == ResourceState.ACTION) {
-            actionToRam();
-        }
-        if (getState() == ResourceState.RAM) {
-            ramToHdd();
-        }
+	if (getState() == ResourceState.ACTION) {
+	    actionToRam();
+	}
+	if (getState() == ResourceState.RAM) {
+	    ramToHdd();
+	}
     }
 
     @NotNull
     @Override
     public ResourceId getResourceId() {
-        return resourceId;
+	return resourceId;
     }
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 
     @Override
     public String toString() {
-        return "AudioBuffer{" + "id=" + id + ", meta=" + meta + ", data=" + data
-                + ", channels=" + channels + ", frequency=" + frequency
-                + ", resourceId=" + resourceId + '}';
+	return "AudioBuffer{" + "id=" + id + ", meta=" + meta + ", data=" + data
+		+ ", channels=" + channels + ", frequency=" + frequency
+		+ ", resourceId=" + resourceId + '}';
     }
 
 }

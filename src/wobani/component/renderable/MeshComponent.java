@@ -1,9 +1,9 @@
 package wobani.component.renderable;
 
-import wobani.resources.mesh.Mesh;
-import wobani.toolbox.annotation.NotNull;
-import wobani.material.Material;
+import wobani.material.*;
+import wobani.resources.mesh.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Contains a Mesh what you can render.
@@ -21,7 +21,7 @@ public class MeshComponent extends RenderableComponent<Mesh> {
      * @param mesh Mesh
      */
     public MeshComponent(@NotNull Mesh mesh) {
-        super(mesh);
+	super(mesh);
     }
 
     /**
@@ -31,7 +31,7 @@ public class MeshComponent extends RenderableComponent<Mesh> {
      * @param material Material
      */
     public MeshComponent(@NotNull Mesh mesh, @NotNull Material material) {
-        super(mesh, material);
+	super(mesh, material);
     }
 
     /**
@@ -40,7 +40,7 @@ public class MeshComponent extends RenderableComponent<Mesh> {
      * @return true if the Mesh rendered two sided, false otherwise
      */
     public boolean isTwoSided() {
-        return twoSided;
+	return twoSided;
     }
 
     /**
@@ -50,50 +50,50 @@ public class MeshComponent extends RenderableComponent<Mesh> {
      *                 otherwise
      */
     public void setTwoSided(boolean twoSided) {
-        this.twoSided = twoSided;
+	this.twoSided = twoSided;
     }
 
     @Override
     public int getFaceCount() {
-        return getRenderable().getFaceCount();
+	return getRenderable().getFaceCount();
     }
 
     @Override
     public void draw() {
-        if (!isTwoSided()) {
-            OpenGl.setFaceCulling(true);
-        } else {
-            OpenGl.setFaceCulling(false);
-        }
-        super.draw();
+	if (!isTwoSided()) {
+	    OpenGl.setFaceCulling(true);
+	} else {
+	    OpenGl.setFaceCulling(false);
+	}
+	super.draw();
     }
 
     @Override
     public int hashCode() {
-        int hash = 5 + super.hashCode();
-        hash = 97 * hash + (this.twoSided ? 1 : 0);
-        return hash;
+	int hash = 5 + super.hashCode();
+	hash = 97 * hash + (this.twoSided ? 1 : 0);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        final MeshComponent other = (MeshComponent) obj;
-        if (this.twoSided != other.twoSided) {
-            return false;
-        }
-        return true;
+	if (!super.equals(obj)) {
+	    return false;
+	}
+	final MeshComponent other = (MeshComponent) obj;
+	if (this.twoSided != other.twoSided) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append(super.toString()).append("\n")
-                .append("MeshComponent(")
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(super.toString()).append("\n")
+		.append(MeshComponent.class.getSimpleName()).append("(")
+		.append(")");
+	return res.toString();
     }
 
 }

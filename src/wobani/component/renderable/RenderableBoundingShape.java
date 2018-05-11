@@ -1,12 +1,11 @@
 package wobani.component.renderable;
 
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.ReadOnly;
 import java.util.*;
 import java.util.logging.*;
 import org.joml.*;
 import wobani.core.*;
 import wobani.resources.*;
+import wobani.toolbox.annotation.*;
 import wobani.toolbox.invalidatable.*;
 
 /**
@@ -45,34 +44,34 @@ public class RenderableBoundingShape implements Invalidatable {
      * @param renderableComponent RenderableComponent
      */
     public RenderableBoundingShape(@NotNull RenderableComponent<? extends Renderable> renderableComponent) {
-        if (renderableComponent == null) {
-            throw new NullPointerException();
-        }
-        this.renderableComponent = renderableComponent;
+	if (renderableComponent == null) {
+	    throw new NullPointerException();
+	}
+	this.renderableComponent = renderableComponent;
     }
 
     /**
      * Refreshes the bounding shape's data.
      */
     private void refresh() {
-        if (!valid) {
-            refreshAabb();
-            refreshRadius();
-            valid = true;
-            LOG.finer("Bounding shape refreshed");
-        }
+	if (!valid) {
+	    refreshAabb();
+	    refreshRadius();
+	    valid = true;
+	    LOG.finer("Bounding shape refreshed");
+	}
     }
 
     /**
      * Refreshes the AABB.
      */
     private void refreshAabb() {
-        Vector4f[] bb = computeBoundingBox();
-        aabbMin.set(Float.POSITIVE_INFINITY);
-        aabbMax.set(Float.NEGATIVE_INFINITY);
-        for (Vector4f bbCornerPoint : bb) {
-            refreshAabb(bbCornerPoint);
-        }
+	Vector4f[] bb = computeBoundingBox();
+	aabbMin.set(Float.POSITIVE_INFINITY);
+	aabbMax.set(Float.NEGATIVE_INFINITY);
+	for (Vector4f bbCornerPoint : bb) {
+	    refreshAabb(bbCornerPoint);
+	}
     }
 
     /**
@@ -81,12 +80,12 @@ public class RenderableBoundingShape implements Invalidatable {
      * @return the AABB in world space
      */
     private Vector4f[] computeBoundingBox() {
-        Vector4f[] aabb = computeOriginalAabb();
-        Matrix4f modelMatrix = renderableComponent.getGameObject().getTransform().getModelMatrix();
-        for (int i = 0; i < aabb.length; i++) {
-            aabb[i].mul(modelMatrix);
-        }
-        return aabb;
+	Vector4f[] aabb = computeOriginalAabb();
+	Matrix4f modelMatrix = renderableComponent.getGameObject().getTransform().getModelMatrix();
+	for (int i = 0; i < aabb.length; i++) {
+	    aabb[i].mul(modelMatrix);
+	}
+	return aabb;
     }
 
     /**
@@ -95,18 +94,18 @@ public class RenderableBoundingShape implements Invalidatable {
      * @return the AABB in object space
      */
     private Vector4f[] computeOriginalAabb() {
-        Vector3f originalAabbMin = getOriginalAabbMin();
-        Vector3f originalAabbMax = getOriginalAabbMax();
-        Vector4f[] cornerPoints = new Vector4f[8];
-        cornerPoints[0] = new Vector4f(originalAabbMax.x, originalAabbMax.y, originalAabbMax.z, 1);//right-top-front
-        cornerPoints[1] = new Vector4f(originalAabbMax.x, originalAabbMin.y, originalAabbMax.z, 1);//right-bottom-front
-        cornerPoints[2] = new Vector4f(originalAabbMax.x, originalAabbMax.y, originalAabbMin.z, 1);//right-top-back
-        cornerPoints[3] = new Vector4f(originalAabbMax.x, originalAabbMin.y, originalAabbMin.z, 1);//right-bottom-back
-        cornerPoints[4] = new Vector4f(originalAabbMin.x, originalAabbMax.y, originalAabbMax.z, 1);//left-top-front
-        cornerPoints[5] = new Vector4f(originalAabbMin.x, originalAabbMin.y, originalAabbMax.z, 1);//left-bottom-front
-        cornerPoints[6] = new Vector4f(originalAabbMin.x, originalAabbMax.y, originalAabbMin.z, 1);//left-top-back
-        cornerPoints[7] = new Vector4f(originalAabbMin.x, originalAabbMin.y, originalAabbMin.z, 1);//left-bottom-back
-        return cornerPoints;
+	Vector3f originalAabbMin = getOriginalAabbMin();
+	Vector3f originalAabbMax = getOriginalAabbMax();
+	Vector4f[] cornerPoints = new Vector4f[8];
+	cornerPoints[0] = new Vector4f(originalAabbMax.x, originalAabbMax.y, originalAabbMax.z, 1);//right-top-front
+	cornerPoints[1] = new Vector4f(originalAabbMax.x, originalAabbMin.y, originalAabbMax.z, 1);//right-bottom-front
+	cornerPoints[2] = new Vector4f(originalAabbMax.x, originalAabbMax.y, originalAabbMin.z, 1);//right-top-back
+	cornerPoints[3] = new Vector4f(originalAabbMax.x, originalAabbMin.y, originalAabbMin.z, 1);//right-bottom-back
+	cornerPoints[4] = new Vector4f(originalAabbMin.x, originalAabbMax.y, originalAabbMax.z, 1);//left-top-front
+	cornerPoints[5] = new Vector4f(originalAabbMin.x, originalAabbMin.y, originalAabbMax.z, 1);//left-bottom-front
+	cornerPoints[6] = new Vector4f(originalAabbMin.x, originalAabbMax.y, originalAabbMin.z, 1);//left-top-back
+	cornerPoints[7] = new Vector4f(originalAabbMin.x, originalAabbMin.y, originalAabbMin.z, 1);//left-bottom-back
+	return cornerPoints;
     }
 
     /**
@@ -116,9 +115,9 @@ public class RenderableBoundingShape implements Invalidatable {
      * @param bbCornerPoint one of the Renderable's bounding box's corner points
      */
     private void refreshAabb(@NotNull Vector4f bbCornerPoint) {
-        for (int j = 0; j < 3; j++) {
-            refreshAabbMinAndMax(bbCornerPoint, j);
-        }
+	for (int j = 0; j < 3; j++) {
+	    refreshAabbMinAndMax(bbCornerPoint, j);
+	}
     }
 
     /**
@@ -129,21 +128,21 @@ public class RenderableBoundingShape implements Invalidatable {
      * @param index         index of the corner point's coordinate
      */
     private void refreshAabbMinAndMax(@NotNull Vector4f bbCornerPoint, int index) {
-        if (bbCornerPoint.get(index) < aabbMin.get(index)) {
-            aabbMin.setComponent(index, bbCornerPoint.get(index));
-        }
-        if (bbCornerPoint.get(index) > aabbMax.get(index)) {
-            aabbMax.setComponent(index, bbCornerPoint.get(index));
-        }
+	if (bbCornerPoint.get(index) < aabbMin.get(index)) {
+	    aabbMin.setComponent(index, bbCornerPoint.get(index));
+	}
+	if (bbCornerPoint.get(index) > aabbMax.get(index)) {
+	    aabbMax.setComponent(index, bbCornerPoint.get(index));
+	}
     }
 
     /**
      * Refreshes the radius.
      */
     private void refreshRadius() {
-        float originalRadius = renderableComponent.getRenderable().getRadius();
-        Vector3f absoluteScale = renderableComponent.getGameObject().getTransform().getAbsoluteScale();
-        radius = originalRadius * absoluteScale.get(absoluteScale.maxComponent());
+	float originalRadius = renderableComponent.getRenderable().getRadius();
+	Vector3f absoluteScale = renderableComponent.getGameObject().getTransform().getAbsoluteScale();
+	radius = originalRadius * absoluteScale.get(absoluteScale.maxComponent());
     }
 
     /**
@@ -160,7 +159,7 @@ public class RenderableBoundingShape implements Invalidatable {
      * @see Transform#getAbsoluteScale()
      */
     public float getOriginalRadius() {
-        return renderableComponent.getRenderable().getRadius();
+	return renderableComponent.getRenderable().getRadius();
     }
 
     /**
@@ -180,12 +179,12 @@ public class RenderableBoundingShape implements Invalidatable {
      * @see Transform#getAbsoluteScale()
      */
     public float getRealRadius() {
-        if (renderableComponent.getGameObject() == null) {
-            return getOriginalRadius();
-        } else {
-            refresh();
-            return radius;
-        }
+	if (renderableComponent.getGameObject() == null) {
+	    return getOriginalRadius();
+	} else {
+	    refresh();
+	    return radius;
+	}
     }
 
     /**
@@ -203,7 +202,7 @@ public class RenderableBoundingShape implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getOriginalAabbMin() {
-        return renderableComponent.getRenderable().getAabbMin();
+	return renderableComponent.getRenderable().getAabbMin();
     }
 
     /**
@@ -225,12 +224,12 @@ public class RenderableBoundingShape implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getRealAabbMin() {
-        if (renderableComponent.getGameObject() == null) {
-            return getOriginalAabbMin();
-        } else {
-            refresh();
-            return new Vector3f(aabbMin);
-        }
+	if (renderableComponent.getGameObject() == null) {
+	    return getOriginalAabbMin();
+	} else {
+	    refresh();
+	    return new Vector3f(aabbMin);
+	}
     }
 
     /**
@@ -248,7 +247,7 @@ public class RenderableBoundingShape implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getOriginalAabbMax() {
-        return renderableComponent.getRenderable().getAabbMax();
+	return renderableComponent.getRenderable().getAabbMax();
     }
 
     /**
@@ -270,52 +269,52 @@ public class RenderableBoundingShape implements Invalidatable {
      */
     @NotNull @ReadOnly
     public Vector3f getRealAabbMax() {
-        if (renderableComponent.getGameObject() == null) {
-            return getOriginalAabbMax();
-        } else {
-            refresh();
-            return new Vector3f(aabbMax);
-        }
+	if (renderableComponent.getGameObject() == null) {
+	    return getOriginalAabbMax();
+	} else {
+	    refresh();
+	    return new Vector3f(aabbMax);
+	}
     }
 
     @Override
     public void invalidate() {
-        valid = false;
+	valid = false;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5 + super.hashCode();
-        hash = 53 * hash + (this.valid ? 1 : 0);
-        hash = 53 * hash + Objects.hashCode(this.renderableComponent);
-        return hash;
+	int hash = 5 + super.hashCode();
+	hash = 53 * hash + (this.valid ? 1 : 0);
+	hash = 53 * hash + Objects.hashCode(this.renderableComponent);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        final RenderableBoundingShape other = (RenderableBoundingShape) obj;
-        if (this.valid != other.valid) {
-            return false;
-        }
-        if (!Objects.equals(this.renderableComponent, other.renderableComponent)) {
-            return false;
-        }
-        return true;
+	if (!super.equals(obj)) {
+	    return false;
+	}
+	final RenderableBoundingShape other = (RenderableBoundingShape) obj;
+	if (this.valid != other.valid) {
+	    return false;
+	}
+	if (!Objects.equals(this.renderableComponent, other.renderableComponent)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append(super.toString()).append("\n")
-                .append("RenderableBoundingShape(")
-                .append(" radius: ").append(getRealRadius())
-                .append(", AABB min: ").append(getRealAabbMin())
-                .append(", AABB max: ").append(getRealAabbMax())
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(super.toString()).append("\n")
+		.append(RenderableBoundingShape.class.getSimpleName()).append("(")
+		.append(" radius: ").append(getRealRadius())
+		.append(", AABB min: ").append(getRealAabbMin())
+		.append(", AABB max: ").append(getRealAabbMax())
+		.append(")");
+	return res.toString();
     }
 
 }

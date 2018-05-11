@@ -1,7 +1,5 @@
 package wobani.toolbox;
 
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.ReadOnly;
 import java.io.*;
 import java.nio.*;
 import java.util.logging.*;
@@ -12,6 +10,9 @@ import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
+import static wobani.toolbox.EngineInfo.Library.STB;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.exceptions.*;
 
 /**
  * Simple class for loading images from file using the STBI library.
@@ -41,7 +42,7 @@ public class Image {
      *             otherwise
      */
     public Image(@NotNull File path, boolean flip) {
-        loadImage(path, flip);
+	loadImage(path, flip);
     }
 
     /**
@@ -51,15 +52,15 @@ public class Image {
      * @param flip true if you want to flip the image upside down, false
      *             otherwise
      *
-     * @throws RuntimeException stbi can't load the image
+     * @throws NativeException stbi can't load the image
      */
     private void loadImage(@NotNull File path, boolean flip) {
-        stbi_set_flip_vertically_on_load(flip);
-        loadImageWithoutInspection(path);
-        if (image == null) {
-            throw new RuntimeException("Failed to load an image file!\n" + stbi_failure_reason());
-        }
-        LOG.log(Level.FINE, "Image loaded");
+	stbi_set_flip_vertically_on_load(flip);
+	loadImageWithoutInspection(path);
+	if (image == null) {
+	    throw new NativeException(STB, "Failed to load an image file!\n" + stbi_failure_reason());
+	}
+	LOG.log(Level.FINE, "Image loaded");
     }
 
     /**
@@ -68,13 +69,13 @@ public class Image {
      * @param path the image's path
      */
     private void loadImageWithoutInspection(@NotNull File path) {
-        try (MemoryStack stack = stackPush()) {
-            IntBuffer width = stack.mallocInt(1);
-            IntBuffer height = stack.mallocInt(1);
-            IntBuffer comp = stack.mallocInt(1);
-            image = stbi_load(path.getPath(), width, height, comp, 4);
-            size.set(width.get(), height.get());
-        }
+	try (MemoryStack stack = stackPush()) {
+	    IntBuffer width = stack.mallocInt(1);
+	    IntBuffer height = stack.mallocInt(1);
+	    IntBuffer comp = stack.mallocInt(1);
+	    image = stbi_load(path.getPath(), width, height, comp, 4);
+	    size.set(width.get(), height.get());
+	}
     }
 
     /**
@@ -84,7 +85,7 @@ public class Image {
      */
     @NotNull @ReadOnly
     public Vector2i getSize() {
-        return new Vector2i(size);
+	return new Vector2i(size);
     }
 
     /**
@@ -94,25 +95,25 @@ public class Image {
      */
     @NotNull
     public ByteBuffer getData() {
-        return image;
+	return image;
     }
 
     /**
      * Releases the image's data.
      */
     public void release() {
-        stbi_image_free(image);
-        image = null;
-        LOG.log(Level.FINE, "Image released");
+	stbi_image_free(image);
+	image = null;
+	LOG.log(Level.FINE, "Image released");
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append("Image(")
-                .append(" dimensions: ").append(size)
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(Image.class.getSimpleName()).append("(")
+		.append(" dimensions: ").append(size)
+		.append(")");
+	return res.toString();
     }
 
 }

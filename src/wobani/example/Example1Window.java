@@ -1,22 +1,19 @@
 package wobani.example;
 
-import wobani.toolbox.parameter.Parameter;
-import wobani.toolbox.annotation.NotNull;
-import wobani.rendering.stage.GeometryRenderingStage;
-import wobani.component.camera.Camera;
-import wobani.rendering.postprocessing.GrayscaleRenderer;
-import wobani.rendering.postprocessing.InvertRenderer;
-import wobani.rendering.postprocessing.FxaaRenderer;
-import wobani.rendering.postprocessing.ReinhardToneMappingRenderer;
 import javax.swing.*;
 import org.joml.*;
+import wobani.component.camera.*;
 import wobani.core.*;
 import wobani.rendering.Renderer;
 import wobani.rendering.*;
 import wobani.rendering.geometry.*;
+import wobani.rendering.postprocessing.*;
+import wobani.rendering.stage.*;
 import wobani.resources.*;
 import wobani.resources.texture.EasyFiltering.TextureFiltering;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.parameter.*;
 import wobani.window.*;
 
 /**
@@ -53,22 +50,22 @@ public class Example1Window extends javax.swing.JFrame {
      * Initializes a new ExampleWindow.
      */
     public Example1Window() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            Utility.logException(ex);
-        }
+	try {
+	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+	    Utility.logException(ex);
+	}
 
-        initComponents();
-        spGammaValue.setModel(new SpinnerNumberModel(new Float(2.2f), new Float(1.99f), new Float(2.5f), new Float(0.1f)));
+	initComponents();
+	spGammaValue.setModel(new SpinnerNumberModel(new Float(2.2f), new Float(1.99f), new Float(2.5f), new Float(0.1f)));
 
-        spWidth.setValue(Window.getClientAreaSize().x);
-        spHeight.setValue(Window.getClientAreaSize().y);
-        cbFullscreen.setSelected(Window.isFullscreen());
-        int msaa = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.MSAA_LEVEL, 2);
-        setSelectedItem(msaa, cbMsaa);
-        cbTextureFiltering.setSelectedIndex(ResourceManager.getTextureFiltering().getIndex());
-        cbVSync.setSelectedIndex(Window.getVSync());
+	spWidth.setValue(Window.getClientAreaSize().x);
+	spHeight.setValue(Window.getClientAreaSize().y);
+	cbFullscreen.setSelected(Window.isFullscreen());
+	int msaa = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.MSAA_LEVEL, 2);
+	setSelectedItem(msaa, cbMsaa);
+	cbTextureFiltering.setSelectedIndex(ResourceManager.getTextureFiltering().getIndex());
+	cbVSync.setSelectedIndex(Window.getVSync());
     }
 
     /**
@@ -78,151 +75,151 @@ public class Example1Window extends javax.swing.JFrame {
      * @param cb    ComboBox
      */
     private void setSelectedItem(int value, @NotNull JComboBox<String> cb) {
-        for (int i = 0; i < cb.getItemCount(); i++) {
-            if (Integer.valueOf(cb.getItemAt(i)) == value) {
-                cb.setSelectedIndex(i);
-                break;
-            }
-        }
+	for (int i = 0; i < cb.getItemCount(); i++) {
+	    if (Integer.valueOf(cb.getItemAt(i)) == value) {
+		cb.setSelectedIndex(i);
+		break;
+	    }
+	}
     }
 
     /**
      * Updates the settings.
      */
     public void update() {
-        if (openGLRelatedSettingsChanged) {
-            changeOpenGLRelatedSettings();
-            openGLRelatedSettingsChanged = false;
-        }
+	if (openGLRelatedSettingsChanged) {
+	    changeOpenGLRelatedSettings();
+	    openGLRelatedSettingsChanged = false;
+	}
     }
 
     /**
      * Updates the statistics on the UI.
      */
     public void updateStats() {
-        updateTextureData();
-        updateMeshData();
-        updateSplineData();
-        updateFboData();
-        updateVaoData();
-        updateUboData();
-        updateShaderData();
-        updateAudioBufferData();
-        updateAudioSourceData();
-        updateRboData();
-        updateImportant();
+	updateTextureData();
+	updateMeshData();
+	updateSplineData();
+	updateFboData();
+	updateVaoData();
+	updateUboData();
+	updateShaderData();
+	updateAudioBufferData();
+	updateAudioSourceData();
+	updateRboData();
+	updateImportant();
     }
 
     /**
      * Updates the texture statistics on the UI.
      */
     private void updateTextureData() {
-        Vector3i data = ResourceManager.getTextureData();
-        lblTextureNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblTextureSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblTextureSizeMega.setText(size + " B  (" + sizeM + " MB)");
+	Vector3i data = ResourceManager.getTextureData();
+	lblTextureNumber.setText(data.x + "");
+	float size = data.z;
+	float sizeM = size / (1024 * 1024);
+	lblTextureSize.setText(size + " B  (" + sizeM + " MB)");
+	size = data.y;
+	sizeM = size / (1024 * 1024);
+	lblTextureSizeMega.setText(size + " B  (" + sizeM + " MB)");
     }
 
     /**
      * Updates the mesh statistics on the UI.
      */
     private void updateMeshData() {
-        Vector3i data = ResourceManager.getMeshData();
-        lblMeshNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblMeshSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblMeshSizeMega.setText(size + " B  (" + sizeM + " MB)");
+	Vector3i data = ResourceManager.getMeshData();
+	lblMeshNumber.setText(data.x + "");
+	float size = data.z;
+	float sizeM = size / (1024 * 1024);
+	lblMeshSize.setText(size + " B  (" + sizeM + " MB)");
+	size = data.y;
+	sizeM = size / (1024 * 1024);
+	lblMeshSizeMega.setText(size + " B  (" + sizeM + " MB)");
     }
 
     /**
      * Updates the spline statistics on the UI.
      */
     private void updateSplineData() {
-        Vector3i data = ResourceManager.getSplineData();
-        lblSplineNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblSplineSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblSplineSizeMega.setText(size + " B  (" + sizeM + " MB)");
+	Vector3i data = ResourceManager.getSplineData();
+	lblSplineNumber.setText(data.x + "");
+	float size = data.z;
+	float sizeM = size / (1024 * 1024);
+	lblSplineSize.setText(size + " B  (" + sizeM + " MB)");
+	size = data.y;
+	sizeM = size / (1024 * 1024);
+	lblSplineSizeMega.setText(size + " B  (" + sizeM + " MB)");
     }
 
     /**
      * Updates the FBO statistics on the UI.
      */
     private void updateFboData() {
-        lblFboNumber.setText(ResourceManager.getFboData().x + "");
+	lblFboNumber.setText(ResourceManager.getFboData().x + "");
     }
 
     /**
      * Updates the VAO statistics on the UI.
      */
     private void updateVaoData() {
-        lblVaoNumber.setText(ResourceManager.getVaoData().x + "");
+	lblVaoNumber.setText(ResourceManager.getVaoData().x + "");
     }
 
     /**
      * Updates the UBO statistics on the UI.
      */
     private void updateUboData() {
-        Vector3i data = ResourceManager.getUboData();
-        lblUboNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblUboSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblUboSizeMega.setText(size + " B  (" + sizeM + " MB)");
+	Vector3i data = ResourceManager.getUboData();
+	lblUboNumber.setText(data.x + "");
+	float size = data.z;
+	float sizeM = size / (1024 * 1024);
+	lblUboSize.setText(size + " B  (" + sizeM + " MB)");
+	size = data.y;
+	sizeM = size / (1024 * 1024);
+	lblUboSizeMega.setText(size + " B  (" + sizeM + " MB)");
     }
 
     /**
      * Updates the shader statistics on the UI.
      */
     private void updateShaderData() {
-        lblShaderNumber.setText(ResourceManager.getShaderData().x + "");
+	lblShaderNumber.setText(ResourceManager.getShaderData().x + "");
     }
 
     /**
      * Updates the Audio Buffer statistics on the UI.
      */
     private void updateAudioBufferData() {
-        Vector3i data = ResourceManager.getAudioBufferData();
-        lblAudioBufferNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblAudioBufferSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblAudioBufferSizeMega.setText(size + " B  (" + sizeM + " MB)");
+	Vector3i data = ResourceManager.getAudioBufferData();
+	lblAudioBufferNumber.setText(data.x + "");
+	float size = data.z;
+	float sizeM = size / (1024 * 1024);
+	lblAudioBufferSize.setText(size + " B  (" + sizeM + " MB)");
+	size = data.y;
+	sizeM = size / (1024 * 1024);
+	lblAudioBufferSizeMega.setText(size + " B  (" + sizeM + " MB)");
     }
 
     /**
      * Updates the Audio Source statistics on the UI.
      */
     private void updateAudioSourceData() {
-        lblAudioSourceNumber.setText(ResourceManager.getAudioSourceData().x + "");
+	lblAudioSourceNumber.setText(ResourceManager.getAudioSourceData().x + "");
     }
 
     /**
      * Updates the RBO statistics on the UI.
      */
     private void updateRboData() {
-        Vector3i data = ResourceManager.getRboData();
-        lblRboNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblRboSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblRboSizeMega.setText(size + " B  (" + sizeM + " MB)");
+	Vector3i data = ResourceManager.getRboData();
+	lblRboNumber.setText(data.x + "");
+	float size = data.z;
+	float sizeM = size / (1024 * 1024);
+	lblRboSize.setText(size + " B  (" + sizeM + " MB)");
+	size = data.y;
+	sizeM = size / (1024 * 1024);
+	lblRboSizeMega.setText(size + " B  (" + sizeM + " MB)");
     }
 
     /**
@@ -230,88 +227,88 @@ public class Example1Window extends javax.swing.JFrame {
      * elements on the UI.
      */
     private void updateImportant() {
-        lblFps.setText(Time.getFps() + " FPS");
-        float milisecs = 1.0f / Time.getFps();
-        lblMsec.setText(milisecs + " sec");
+	lblFps.setText(Time.getFps() + " FPS");
+	float milisecs = 1.0f / Time.getFps();
+	lblMsec.setText(milisecs + " sec");
 
-        int triangles = 0;
-        int meshes = 0;
-        for (int j = 0; j < RenderingPipeline.getRenderingStageCount(); j++) {
-            GeometryRenderingStage stage = RenderingPipeline.getRenderingStage(j);
-            for (int i = 0; i < stage.getRendererCount(); i++) {
-                GeometryRenderer renderer = stage.getRenderer(i);
-                if (renderer.isActive()) {
-                    triangles += renderer.getNumberOfRenderedFaces();
-                    meshes += renderer.getNumberOfRenderedElements();
-                }
-            }
-        }
-        lblRenderedElements.setText(meshes + " meshes/splines");
-        lblRenderedTriangles.setText(triangles + " triangles");
+	int triangles = 0;
+	int meshes = 0;
+	for (int j = 0; j < RenderingPipeline.getRenderingStageCount(); j++) {
+	    GeometryRenderingStage stage = RenderingPipeline.getRenderingStage(j);
+	    for (int i = 0; i < stage.getRendererCount(); i++) {
+		GeometryRenderer renderer = stage.getRenderer(i);
+		if (renderer.isActive()) {
+		    triangles += renderer.getNumberOfRenderedFaces();
+		    meshes += renderer.getNumberOfRenderedElements();
+		}
+	    }
+	}
+	lblRenderedElements.setText(meshes + " meshes/splines");
+	lblRenderedTriangles.setText(triangles + " triangles");
     }
 
     /**
      * Sets the OpenGL related settings changes.
      */
     private void changeOpenGLRelatedSettings() {
-        if (textureFilteringChanged) {
-            switch (cbTextureFiltering.getSelectedIndex()) {
-                case 0:
-                    ResourceManager.setTextureFiltering(TextureFiltering.NONE);
-                    break;
-                case 1:
-                    ResourceManager.setTextureFiltering(TextureFiltering.BILINEAR);
-                    break;
-                case 2:
-                    ResourceManager.setTextureFiltering(TextureFiltering.TRILINEAR);
-                    break;
-                case 3:
-                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_2X);
-                    break;
-                case 4:
-                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_4X);
-                    break;
-                case 5:
-                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_8X);
-                    break;
-                case 6:
-                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_16X);
-                    break;
-                default:
-                    System.out.println("Undefined texture filtering");
-            }
-            textureFilteringChanged = false;
-        }
-        if (vSyncChanged) {
-            Window.setVSync(cbVSync.getSelectedIndex());
-            vSyncChanged = false;
-        }
-        if (gammaChanged) {
-            Parameter<Float> gamma = RenderingPipeline.getParameters().get(RenderingPipeline.GAMMA);
-            if (!cbGammaCorrection.isSelected()) {
-                gamma.setValue(1f);
-            } else {
-                gamma.setValue((float) spGammaValue.getValue());
-            }
-            gammaChanged = false;
-        }
-        if (fullscreen) {
-            Window.setFullscreen(cbFullscreen.isSelected());
-            fullscreen = false;
-        }
-        if (scaleChanged) {
-            RenderingPipeline.setRenderingScale((float) spRenderingScale.getValue());
-            scaleChanged = false;
-        }
+	if (textureFilteringChanged) {
+	    switch (cbTextureFiltering.getSelectedIndex()) {
+		case 0:
+		    ResourceManager.setTextureFiltering(TextureFiltering.NONE);
+		    break;
+		case 1:
+		    ResourceManager.setTextureFiltering(TextureFiltering.BILINEAR);
+		    break;
+		case 2:
+		    ResourceManager.setTextureFiltering(TextureFiltering.TRILINEAR);
+		    break;
+		case 3:
+		    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_2X);
+		    break;
+		case 4:
+		    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_4X);
+		    break;
+		case 5:
+		    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_8X);
+		    break;
+		case 6:
+		    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_16X);
+		    break;
+		default:
+		    System.out.println("Undefined texture filtering");
+	    }
+	    textureFilteringChanged = false;
+	}
+	if (vSyncChanged) {
+	    Window.setVSync(cbVSync.getSelectedIndex());
+	    vSyncChanged = false;
+	}
+	if (gammaChanged) {
+	    Parameter<Float> gamma = RenderingPipeline.getParameters().get(RenderingPipeline.GAMMA);
+	    if (!cbGammaCorrection.isSelected()) {
+		gamma.setValue(1f);
+	    } else {
+		gamma.setValue((float) spGammaValue.getValue());
+	    }
+	    gammaChanged = false;
+	}
+	if (fullscreen) {
+	    Window.setFullscreen(cbFullscreen.isSelected());
+	    fullscreen = false;
+	}
+	if (scaleChanged) {
+	    RenderingPipeline.setRenderingScale((float) spRenderingScale.getValue());
+	    scaleChanged = false;
+	}
     }
 
     /**
      * Updates the GLFW window's dimensions on the settings UI.
      */
     public void updateSettingsWindowDimensions() {
-        Vector2i size = Window.getClientAreaSize();
-        spWidth.setValue(size.x);
-        spHeight.setValue(size.y);
+	Vector2i size = Window.getClientAreaSize();
+	spWidth.setValue(size.x);
+	spHeight.setValue(size.y);
     }
 
     @SuppressWarnings("unchecked")
@@ -984,9 +981,9 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void moved(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_moved
-        if (!Window.isFullscreen()) {
-            Example1.setWindowPositions(false);
-        }
+	if (!Window.isFullscreen()) {
+	    Example1.setWindowPositions(false);
+	}
     }//GEN-LAST:event_moved
 
     /**
@@ -995,7 +992,7 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setWidth(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_setWidth
-        Window.setClientAreaSize(new Vector2i((int) spWidth.getValue(), Window.getClientAreaSize().y));
+	Window.setClientAreaSize((int) spWidth.getValue(), Window.getClientAreaSize().y);
     }//GEN-LAST:event_setWidth
 
     /**
@@ -1004,7 +1001,7 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setHeight(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_setHeight
-        Window.setClientAreaSize(new Vector2i(Window.getClientAreaSize().x, (int) spHeight.getValue()));
+	Window.setClientAreaSize(Window.getClientAreaSize().x, (int) spHeight.getValue());
     }//GEN-LAST:event_setHeight
 
     /**
@@ -1013,7 +1010,7 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setShadowMapSize(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setShadowMapSize
-        //FIXME shadowmap resolution change
+	//FIXME shadowmap resolution change
 //        Settings.setShadowMapResolution(Integer.valueOf(cbShadowMapSize.getItemAt(cbShadowMapSize.getSelectedIndex())));
     }//GEN-LAST:event_setShadowMapSize
 
@@ -1023,8 +1020,8 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setVSync(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setVSync
-        vSyncChanged = true;
-        openGLRelatedSettingsChanged = true;
+	vSyncChanged = true;
+	openGLRelatedSettingsChanged = true;
     }//GEN-LAST:event_setVSync
 
     /**
@@ -1033,7 +1030,7 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void exit(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exit
-        Window.setWindowShouldClose(true);
+	Window.setWindowShouldClose(true);
     }//GEN-LAST:event_exit
 
     /**
@@ -1042,7 +1039,7 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setWireframeMode(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setWireframeMode
-        RenderingPipeline.getParameters().set(RenderingPipeline.WIREFRAME_MODE, new Parameter<>(cbWireframe.isSelected()));
+	RenderingPipeline.getParameters().set(RenderingPipeline.WIREFRAME_MODE, new Parameter<>(cbWireframe.isSelected()));
     }//GEN-LAST:event_setWireframeMode
 
     /**
@@ -1051,10 +1048,10 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setFrustumCulling(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setFrustumCulling
-        Parameter<Camera> mainCamera = Scene.getParameters().get(Scene.MAIN_CAMERA);
-        if (mainCamera != null) {//????
-            mainCamera.getValue().setFrustumCulling(cbFrustumCulling.isSelected());
-        }
+	Parameter<Camera> mainCamera = Scene.getParameters().get(Scene.MAIN_CAMERA);
+	if (mainCamera != null) {//????
+	    mainCamera.getValue().setFrustumCulling(cbFrustumCulling.isSelected());
+	}
     }//GEN-LAST:event_setFrustumCulling
 
     /**
@@ -1063,7 +1060,7 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setShadows(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setShadows
-        //FIXME: shadow rendering on/off
+	//FIXME: shadow rendering on/off
 //        Renderer renderer;
 //        for (int i = 0; i < RenderingPipeline.getRenderingStage(0).getRendererCount(); i++) {
 //            renderer = RenderingPipeline.getRenderingStage(0).getRenderer(i);
@@ -1080,8 +1077,8 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setTextureFiltering(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setTextureFiltering
-        textureFilteringChanged = true;
-        openGLRelatedSettingsChanged = true;
+	textureFilteringChanged = true;
+	openGLRelatedSettingsChanged = true;
     }//GEN-LAST:event_setTextureFiltering
 
     /**
@@ -1090,8 +1087,8 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setGammaValue(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_setGammaValue
-        gammaChanged = true;
-        openGLRelatedSettingsChanged = true;
+	gammaChanged = true;
+	openGLRelatedSettingsChanged = true;
     }//GEN-LAST:event_setGammaValue
 
     /**
@@ -1100,14 +1097,14 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setToneMapping(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setToneMapping
-        Renderer renderer;
-        for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
-            renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
-            if (renderer.getClass() == ReinhardToneMappingRenderer.class) {
-                renderer.setActive(cbToneMapping.isSelected());
-                return;
-            }
-        }
+	Renderer renderer;
+	for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
+	    renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
+	    if (renderer.getClass() == ReinhardToneMappingRenderer.class) {
+		renderer.setActive(cbToneMapping.isSelected());
+		return;
+	    }
+	}
     }//GEN-LAST:event_setToneMapping
 
     /**
@@ -1116,17 +1113,17 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setMsaa(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setMsaa
-        Parameter<Integer> msaa = RenderingPipeline.getParameters().get(RenderingPipeline.MSAA_LEVEL);
-        if (msaa == null) {
-            msaa = new Parameter<>(2);
-            RenderingPipeline.getParameters().set(RenderingPipeline.MSAA_LEVEL, msaa);
-        }
+	Parameter<Integer> msaa = RenderingPipeline.getParameters().get(RenderingPipeline.MSAA_LEVEL);
+	if (msaa == null) {
+	    msaa = new Parameter<>(2);
+	    RenderingPipeline.getParameters().set(RenderingPipeline.MSAA_LEVEL, msaa);
+	}
 
-        if (cbMsaa.getSelectedIndex() == 0) {
-            msaa.setValue(1);
-            return;
-        }
-        msaa.setValue(2 << cbMsaa.getSelectedIndex() - 1);
+	if (cbMsaa.getSelectedIndex() == 0) {
+	    msaa.setValue(1);
+	    return;
+	}
+	msaa.setValue(2 << cbMsaa.getSelectedIndex() - 1);
     }//GEN-LAST:event_setMsaa
 
     /**
@@ -1135,14 +1132,14 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setInvert(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setInvert
-        Renderer renderer;
-        for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
-            renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
-            if (renderer.getClass() == InvertRenderer.class) {
-                renderer.setActive(cbInvert.isSelected());
-                return;
-            }
-        }
+	Renderer renderer;
+	for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
+	    renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
+	    if (renderer.getClass() == InvertRenderer.class) {
+		renderer.setActive(cbInvert.isSelected());
+		return;
+	    }
+	}
     }//GEN-LAST:event_setInvert
 
     /**
@@ -1151,14 +1148,14 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setGrayscale(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setGrayscale
-        Renderer renderer;
-        for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
-            renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
-            if (renderer.getClass() == GrayscaleRenderer.class) {
-                renderer.setActive(cbGrayscale.isSelected());
-                return;
-            }
-        }
+	Renderer renderer;
+	for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
+	    renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
+	    if (renderer.getClass() == GrayscaleRenderer.class) {
+		renderer.setActive(cbGrayscale.isSelected());
+		return;
+	    }
+	}
     }//GEN-LAST:event_setGrayscale
 
     /**
@@ -1167,14 +1164,14 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setFxaa(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setFxaa
-        Renderer renderer;
-        for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
-            renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
-            if (renderer.getClass() == FxaaRenderer.class) {
-                renderer.setActive(cbFxaa.isSelected());
-                return;
-            }
-        }
+	Renderer renderer;
+	for (int i = 0; i < RenderingPipeline.getPostProcessingRenderingStage().getNumberOfRenderers(); i++) {
+	    renderer = RenderingPipeline.getPostProcessingRenderingStage().getRenderer(i);
+	    if (renderer.getClass() == FxaaRenderer.class) {
+		renderer.setActive(cbFxaa.isSelected());
+		return;
+	    }
+	}
     }//GEN-LAST:event_setFxaa
 
     /**
@@ -1183,19 +1180,19 @@ public class Example1Window extends javax.swing.JFrame {
      * @param evt event
      */
     private void setFullscreen(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setFullscreen
-        fullscreen = true;
-        openGLRelatedSettingsChanged = true;
+	fullscreen = true;
+	openGLRelatedSettingsChanged = true;
     }//GEN-LAST:event_setFullscreen
 
     private void setRenderingScale(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_setRenderingScale
-        scaleChanged = true;
-        openGLRelatedSettingsChanged = true;
+	scaleChanged = true;
+	openGLRelatedSettingsChanged = true;
     }//GEN-LAST:event_setRenderingScale
 
     private void setGammaCorrection(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_setGammaCorrection
-        gammaChanged = true;
-        openGLRelatedSettingsChanged = true;
-        spGammaValue.setEnabled(cbGammaCorrection.isSelected());
+	gammaChanged = true;
+	openGLRelatedSettingsChanged = true;
+	spGammaValue.setEnabled(cbGammaCorrection.isSelected());
     }//GEN-LAST:event_setGammaCorrection
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -1,13 +1,12 @@
 package wobani.component.audio;
 
-import wobani.toolbox.parameter.Parameter;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Internal;
 import java.util.*;
 import org.joml.*;
 import wobani.core.*;
 import wobani.resources.audio.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.parameter.*;
 
 /**
  * Audio sources can emit sounds. The audio sources' position, orientation and
@@ -38,7 +37,7 @@ public class AudioSourceComponent extends Component {
      * @param source audio source
      */
     public AudioSourceComponent(@NotNull AudioSource source) {
-        setSource(source);
+	setSource(source);
     }
 
     /**
@@ -51,7 +50,7 @@ public class AudioSourceComponent extends Component {
      */
     @NotNull
     public AudioSource getSource() {
-        return source;
+	return source;
     }
 
     /**
@@ -62,10 +61,10 @@ public class AudioSourceComponent extends Component {
      * @throws NullPointerException source can't be null
      */
     private void setSource(@NotNull AudioSource source) {
-        if (source == null) {
-            throw new NullPointerException();
-        }
-        this.source = source;
+	if (source == null) {
+	    throw new NullPointerException();
+	}
+	this.source = source;
     }
 
     /**
@@ -76,7 +75,7 @@ public class AudioSourceComponent extends Component {
      * @return true if it's a directional audio source, false otherwise
      */
     public boolean isDirectionalSource() {
-        return directionalSource;
+	return directionalSource;
     }
 
     /**
@@ -89,59 +88,59 @@ public class AudioSourceComponent extends Component {
      *                    otherwise
      */
     public void setDirectionalSource(boolean directional) {
-        directionalSource = directional;
+	directionalSource = directional;
     }
 
     @Override
     public void invalidate() {
-        super.invalidate();
-        if (getGameObject() != null && Utility.isUsable(source)) {
-            refreshSource();
-        }
+	super.invalidate();
+	if (getGameObject() != null && Utility.isUsable(source)) {
+	    refreshSource();
+	}
     }
 
     /**
      * Refreshes the audio source.
      */
     private void refreshSource() {
-        refreshPositionAndVelocity();
-        if (isDirectionalSource()) {
-            refreshDirectionalSource();
-        } else {
-            refreshNonDirectionalSource();
-        }
-        refreshLastPosition();
+	refreshPositionAndVelocity();
+	if (isDirectionalSource()) {
+	    refreshDirectionalSource();
+	} else {
+	    refreshNonDirectionalSource();
+	}
+	refreshLastPosition();
     }
 
     /**
      * Refreshes the audio source's position and velocity.
      */
     private void refreshPositionAndVelocity() {
-        Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
-        Vector3f velocity = new Vector3f();
-        currentPosition.sub(lastPosition, velocity);
-        source.setPosition(currentPosition);
-        source.setVelocity(velocity);
+	Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
+	Vector3f velocity = new Vector3f();
+	currentPosition.sub(lastPosition, velocity);
+	source.setPosition(currentPosition);
+	source.setVelocity(velocity);
     }
 
     /**
      * Refreshes the audio source if it's a directional source.
      */
     private void refreshDirectionalSource() {
-        Vector3f forward = getGameObject().getTransform().getForwardVector();
-        source.setDirection(forward);
+	Vector3f forward = getGameObject().getTransform().getForwardVector();
+	source.setDirection(forward);
     }
 
     /**
      * Refreshes the audio source if it's not a directional source.
      */
     private void refreshNonDirectionalSource() {
-        Parameter<AudioListenerComponent> mainAudio = Scene.getParameters().get(Scene.MAIN_AUDIO_LISTENER);
-        if (mainAudio == null) {
-            refreshSourceIfThereisNoListener();
-        } else {
-            refreshSourceIfThereisAListener();
-        }
+	Parameter<AudioListenerComponent> mainAudio = Scene.getParameters().get(Scene.MAIN_AUDIO_LISTENER);
+	if (mainAudio == null) {
+	    refreshSourceIfThereisNoListener();
+	} else {
+	    refreshSourceIfThereisAListener();
+	}
     }
 
     /**
@@ -149,11 +148,11 @@ public class AudioSourceComponent extends Component {
      * an audio listener in the world.
      */
     private void refreshSourceIfThereisAListener() {
-        Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
-        Parameter<AudioListenerComponent> mainAudio = Scene.getParameters().get(Scene.MAIN_AUDIO_LISTENER);
-        Vector3f direction = new Vector3f();
-        mainAudio.getValue().getGameObject().getTransform().getAbsolutePosition().sub(currentPosition, direction);
-        source.setDirection(direction.normalize());
+	Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
+	Parameter<AudioListenerComponent> mainAudio = Scene.getParameters().get(Scene.MAIN_AUDIO_LISTENER);
+	Vector3f direction = new Vector3f();
+	mainAudio.getValue().getGameObject().getTransform().getAbsolutePosition().sub(currentPosition, direction);
+	source.setDirection(direction.normalize());
     }
 
     /**
@@ -161,69 +160,69 @@ public class AudioSourceComponent extends Component {
      * isn't an audio listener in the world.
      */
     private void refreshSourceIfThereisNoListener() {
-        Vector3f forward = getGameObject().getTransform().getForwardVector();
-        source.setDirection(forward);
+	Vector3f forward = getGameObject().getTransform().getForwardVector();
+	source.setDirection(forward);
     }
 
     /**
      * Refreshes the audio source's last position.
      */
     private void refreshLastPosition() {
-        Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
-        lastPosition.set(currentPosition);
+	Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
+	lastPosition.set(currentPosition);
     }
 
     @Internal
     @Override
     protected void detachFromGameObject() {
-        getGameObject().getTransform().removeInvalidatable(this);
-        super.detachFromGameObject();
-        invalidate();
+	getGameObject().getTransform().removeInvalidatable(this);
+	super.detachFromGameObject();
+	invalidate();
     }
 
     @Internal
     @Override
     protected void attachToGameObject(@NotNull GameObject g) {
-        super.attachToGameObject(g);
-        getGameObject().getTransform().addInvalidatable(this);
-        invalidate();
+	super.attachToGameObject(g);
+	getGameObject().getTransform().addInvalidatable(this);
+	invalidate();
     }
 
     @Override
     public int hashCode() {
-        int hash = 7 + super.hashCode();
-        hash = 17 * hash + Objects.hashCode(this.source);
-        hash = 17 * hash + Objects.hashCode(this.lastPosition);
-        hash = 17 * hash + (this.directionalSource ? 1 : 0);
-        return hash;
+	int hash = 7 + super.hashCode();
+	hash = 17 * hash + Objects.hashCode(this.source);
+	hash = 17 * hash + Objects.hashCode(this.lastPosition);
+	hash = 17 * hash + (this.directionalSource ? 1 : 0);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        final AudioSourceComponent other = (AudioSourceComponent) obj;
-        if (this.directionalSource != other.directionalSource) {
-            return false;
-        }
-        if (!Objects.equals(this.source, other.source)) {
-            return false;
-        }
-        if (!Objects.equals(this.lastPosition, other.lastPosition)) {
-            return false;
-        }
-        return true;
+	if (!super.equals(obj)) {
+	    return false;
+	}
+	final AudioSourceComponent other = (AudioSourceComponent) obj;
+	if (this.directionalSource != other.directionalSource) {
+	    return false;
+	}
+	if (!Objects.equals(this.source, other.source)) {
+	    return false;
+	}
+	if (!Objects.equals(this.lastPosition, other.lastPosition)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append(super.toString()).append("\n")
-                .append("AudioSourceComponent(")
-                .append(" source: ").append(source)
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(super.toString()).append("\n")
+		.append(AudioSourceComponent.class.getSimpleName()).append("(")
+		.append(" source: ").append(source)
+		.append(")");
+	return res.toString();
     }
 
 }

@@ -1,7 +1,7 @@
 package wobani.toolbox.parameter;
 
-import wobani.toolbox.annotation.NotNull;
 import java.util.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * The key of a Parameter. It consists of two parts: the key and the return
@@ -30,11 +30,11 @@ public class ParameterKey<T> {
      * @throws NullPointerException parameters can't be null
      */
     public ParameterKey(@NotNull Class<T> returnType, @NotNull String key) {
-        if (returnType == null || key == null) {
-            throw new NullPointerException();
-        }
-        this.returnType = returnType;
-        this.key = key;
+	if (returnType == null || key == null) {
+	    throw new NullPointerException();
+	}
+	this.returnType = returnType;
+	this.key = key;
     }
 
     /**
@@ -44,7 +44,7 @@ public class ParameterKey<T> {
      */
     @NotNull
     public Class<T> getReturnType() {
-        return returnType;
+	return returnType;
     }
 
     /**
@@ -54,46 +54,46 @@ public class ParameterKey<T> {
      */
     @NotNull
     public String getKey() {
-        return key;
+	return key;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 61 * hash + Objects.hashCode(this.returnType);
-        hash = 61 * hash + Objects.hashCode(this.key);
-        return hash;
+	int hash = 5;
+	hash = 61 * hash + Objects.hashCode(this.returnType);
+	hash = 61 * hash + Objects.hashCode(this.key);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ParameterKey<?> other = (ParameterKey<?>) obj;
-        if (!Objects.equals(this.key, other.key)) {
-            return false;
-        }
-        if (!Objects.equals(this.returnType, other.returnType)) {
-            return false;
-        }
-        return true;
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	final ParameterKey<?> other = (ParameterKey<?>) obj;
+	if (!Objects.equals(this.key, other.key)) {
+	    return false;
+	}
+	if (!Objects.equals(this.returnType, other.returnType)) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder()
-                .append("ParameterKey(")
-                .append(" return type: ").append(returnType)
-                .append(", key: ").append(key)
-                .append(")");
-        return res.toString();
+	StringBuilder res = new StringBuilder()
+		.append(ParameterKey.class.getSimpleName()).append("(")
+		.append(" return type: ").append(returnType)
+		.append(", key: ").append(key)
+		.append(")");
+	return res.toString();
     }
 
 }

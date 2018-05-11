@@ -1,7 +1,5 @@
 package wobani.resources.shader;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
@@ -9,7 +7,10 @@ import org.joml.*;
 import org.lwjgl.*;
 import org.lwjgl.opengl.*;
 import wobani.resources.*;
+import static wobani.toolbox.EngineInfo.Library.OPENGL;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.exceptions.*;
 
 /**
  * This abstract class is the base all of the shaders. It loads the shaders'
@@ -35,49 +36,49 @@ public abstract class Shader implements Resource {
      * Shader stage.
      */
     public enum ShaderStage {
-        /**
-         * Vertex shader.
-         */
-        VERTEX_SHADER(GL20.GL_VERTEX_SHADER),
-        /**
-         * Fragment shader.
-         */
-        FRAGMENT_SHADER(GL20.GL_FRAGMENT_SHADER),
-        /**
-         * Geometry shader.
-         */
-        GEOMETRY_SHADER(GL32.GL_GEOMETRY_SHADER),
-        /**
-         * Tessellation control shader.
-         */
-        TESS_CONTROL_SHADER(GL40.GL_TESS_CONTROL_SHADER),
-        /**
-         * Tessellation evaluation shader.
-         */
-        TESS_EVALUATION_SHADER(GL40.GL_TESS_EVALUATION_SHADER);
+	/**
+	 * Vertex shader.
+	 */
+	VERTEX_SHADER(GL20.GL_VERTEX_SHADER),
+	/**
+	 * Fragment shader.
+	 */
+	FRAGMENT_SHADER(GL20.GL_FRAGMENT_SHADER),
+	/**
+	 * Geometry shader.
+	 */
+	GEOMETRY_SHADER(GL32.GL_GEOMETRY_SHADER),
+	/**
+	 * Tessellation control shader.
+	 */
+	TESS_CONTROL_SHADER(GL40.GL_TESS_CONTROL_SHADER),
+	/**
+	 * Tessellation evaluation shader.
+	 */
+	TESS_EVALUATION_SHADER(GL40.GL_TESS_EVALUATION_SHADER);
 
-        /**
-         * Stage's OpenGL code.
-         */
-        private final int code;
+	/**
+	 * Stage's OpenGL code.
+	 */
+	private final int code;
 
-        /**
-         * Initializes a new ShaderStage to the given value.
-         *
-         * @param code stage's OpenGL code
-         */
-        private ShaderStage(int code) {
-            this.code = code;
-        }
+	/**
+	 * Initializes a new ShaderStage to the given value.
+	 *
+	 * @param code stage's OpenGL code
+	 */
+	private ShaderStage(int code) {
+	    this.code = code;
+	}
 
-        /**
-         * Returns the stage's OpenGL code.
-         *
-         * @return the stage's OpenGL code
-         */
-        public int getCode() {
-            return code;
-        }
+	/**
+	 * Returns the stage's OpenGL code.
+	 *
+	 * @return the stage's OpenGL code
+	 */
+	public int getCode() {
+	    return code;
+	}
     }
 
     /**
@@ -101,32 +102,32 @@ public abstract class Shader implements Resource {
      *                           "res/shaders/myShader.glsl")
      */
     public Shader(@NotNull String vertexFile, @NotNull String fragmentFile, @Nullable String geometryFile, @Nullable String tessControlFil, @Nullable String tessEvaluationFile) {
-        //load, compile, check shaders
-        int[] shaders = {-1, -1, -1, -1, -1};
-        shaders[0] = loadShader(vertexFile, ShaderStage.VERTEX_SHADER);
-        shaders[1] = loadShader(fragmentFile, ShaderStage.FRAGMENT_SHADER);
-        shaders[2] = loadShader(geometryFile, ShaderStage.GEOMETRY_SHADER);
-        shaders[3] = loadShader(tessControlFil, ShaderStage.TESS_CONTROL_SHADER);
-        shaders[4] = loadShader(tessEvaluationFile, ShaderStage.TESS_EVALUATION_SHADER);
-        //attach
-        programId = GL20.glCreateProgram();
-        for (int shaderId : shaders) {
-            if (shaderId != -1) {
-                GL20.glAttachShader(programId, shaderId);
-            }
-        }
-        //link, validate
-        GL20.glLinkProgram(programId);
-        GL20.glValidateProgram(programId);
-        //detach, delete
-        for (int shaderId : shaders) {
-            if (shaderId != -1) {
-                GL20.glDetachShader(programId, shaderId);
-                GL20.glDeleteShader(shaderId);
-            }
-        }
-        //uniforms
-        connectUniforms();
+	//load, compile, check shaders
+	int[] shaders = {-1, -1, -1, -1, -1};
+	shaders[0] = loadShader(vertexFile, ShaderStage.VERTEX_SHADER);
+	shaders[1] = loadShader(fragmentFile, ShaderStage.FRAGMENT_SHADER);
+	shaders[2] = loadShader(geometryFile, ShaderStage.GEOMETRY_SHADER);
+	shaders[3] = loadShader(tessControlFil, ShaderStage.TESS_CONTROL_SHADER);
+	shaders[4] = loadShader(tessEvaluationFile, ShaderStage.TESS_EVALUATION_SHADER);
+	//attach
+	programId = GL20.glCreateProgram();
+	for (int shaderId : shaders) {
+	    if (shaderId != -1) {
+		GL20.glAttachShader(programId, shaderId);
+	    }
+	}
+	//link, validate
+	GL20.glLinkProgram(programId);
+	GL20.glValidateProgram(programId);
+	//detach, delete
+	for (int shaderId : shaders) {
+	    if (shaderId != -1) {
+		GL20.glDetachShader(programId, shaderId);
+		GL20.glDeleteShader(shaderId);
+	    }
+	}
+	//uniforms
+	connectUniforms();
     }
 
     /**
@@ -147,7 +148,7 @@ public abstract class Shader implements Resource {
      * @param value   value
      */
     protected void loadFloat(@NotNull String uniform, float value) {
-        GL20.glUniform1f(getUniformId(uniform), value);
+	GL20.glUniform1f(getUniformId(uniform), value);
     }
 
     /**
@@ -157,7 +158,7 @@ public abstract class Shader implements Resource {
      * @param value   value
      */
     protected void loadInt(@NotNull String uniform, int value) {
-        GL20.glUniform1i(getUniformId(uniform), value);
+	GL20.glUniform1i(getUniformId(uniform), value);
     }
 
     /**
@@ -167,7 +168,7 @@ public abstract class Shader implements Resource {
      * @param vector  vector
      */
     protected void loadVector2(@NotNull String uniform, @NotNull Vector2f vector) {
-        GL20.glUniform2f(getUniformId(uniform), vector.x, vector.y);
+	GL20.glUniform2f(getUniformId(uniform), vector.x, vector.y);
     }
 
     /**
@@ -177,7 +178,7 @@ public abstract class Shader implements Resource {
      * @param vector  vector
      */
     protected void loadVector3(@NotNull String uniform, @NotNull Vector3f vector) {
-        GL20.glUniform3f(getUniformId(uniform), vector.x, vector.y, vector.z);
+	GL20.glUniform3f(getUniformId(uniform), vector.x, vector.y, vector.z);
     }
 
     /**
@@ -187,7 +188,7 @@ public abstract class Shader implements Resource {
      * @param vector  vector
      */
     protected void loadVector4(@NotNull String uniform, @NotNull Vector4f vector) {
-        GL20.glUniform4f(getUniformId(uniform), vector.x, vector.y, vector.z, vector.w);
+	GL20.glUniform4f(getUniformId(uniform), vector.x, vector.y, vector.z, vector.w);
     }
 
     /**
@@ -197,7 +198,7 @@ public abstract class Shader implements Resource {
      * @param value   value
      */
     protected void loadBoolean(@NotNull String uniform, boolean value) {
-        GL20.glUniform1f(getUniformId(uniform), value ? 1 : 0);
+	GL20.glUniform1f(getUniformId(uniform), value ? 1 : 0);
     }
 
     /**
@@ -207,9 +208,9 @@ public abstract class Shader implements Resource {
      * @param matrix  matrix
      */
     protected void loadMatrix4(@NotNull String uniform, @NotNull Matrix4f matrix) {
-        temp.position(0);
-        matrix.get(temp);
-        GL20.glUniformMatrix4fv(getUniformId(uniform), false, temp);
+	temp.position(0);
+	matrix.get(temp);
+	GL20.glUniformMatrix4fv(getUniformId(uniform), false, temp);
     }
 
     /**
@@ -219,9 +220,9 @@ public abstract class Shader implements Resource {
      * @param matrix  matrix
      */
     protected void loadMatrix3(@NotNull String uniform, @NotNull Matrix3f matrix) {
-        temp.position(0);
-        matrix.get(temp);
-        GL20.glUniformMatrix3fv(getUniformId(uniform), false, temp);
+	temp.position(0);
+	matrix.get(temp);
+	GL20.glUniformMatrix3fv(getUniformId(uniform), false, temp);
     }
 
     /**
@@ -233,10 +234,10 @@ public abstract class Shader implements Resource {
      * @throws IllegalArgumentException invalid texture unit
      */
     protected void connectTextureUnit(@NotNull String uniform, int textureUnit) {
-        if (textureUnit < 0 || textureUnit > 31) {
-            throw new IllegalArgumentException("Invalid texture unit");
-        }
-        GL20.glUniform1i(getUniformId(uniform), textureUnit);
+	if (textureUnit < 0 || textureUnit > 31) {
+	    throw new IllegalArgumentException("Invalid texture unit");
+	}
+	GL20.glUniform1i(getUniformId(uniform), textureUnit);
     }
 
     /**
@@ -249,14 +250,14 @@ public abstract class Shader implements Resource {
      *                                  exist
      */
     protected void connectUniform(@NotNull String uniformName) {
-        if (uniformName == null) {
-            throw new NullPointerException();
-        }
-        int uniformId = GL20.glGetUniformLocation(programId, uniformName);
-        if (uniformId == -1) {
-            throw new IllegalArgumentException("There is no " + uniformName + " uniform vairable in this shader program");
-        }
-        uniforms.put(uniformName, uniformId);
+	if (uniformName == null) {
+	    throw new NullPointerException();
+	}
+	int uniformId = GL20.glGetUniformLocation(programId, uniformName);
+	if (uniformId == -1) {
+	    throw new IllegalArgumentException("There is no " + uniformName + " uniform vairable in this shader program");
+	}
+	uniforms.put(uniformName, uniformId);
     }
 
     /**
@@ -270,11 +271,11 @@ public abstract class Shader implements Resource {
      *                                  exist
      */
     protected int getUniformId(@NotNull String uniformName) {
-        Integer id = uniforms.get(uniformName);
-        if (id == null) {
-            throw new IllegalArgumentException("There is no " + uniformName + " uniform vairable in this shader program");
-        }
-        return id;
+	Integer id = uniforms.get(uniformName);
+	if (id == null) {
+	    throw new IllegalArgumentException("There is no " + uniformName + " uniform vairable in this shader program");
+	}
+	return id;
     }
 
     /**
@@ -282,8 +283,8 @@ public abstract class Shader implements Resource {
      * variables or render objects.
      */
     public void start() {
-        GL20.glUseProgram(programId);
-        connectTextureUnits();
+	GL20.glUseProgram(programId);
+	connectTextureUnits();
     }
 
     /**
@@ -291,7 +292,7 @@ public abstract class Shader implements Resource {
      * variables or render objects.
      */
     public void stop() {
-        GL20.glUseProgram(0);
+	GL20.glUseProgram(0);
     }
 
     /**
@@ -300,8 +301,8 @@ public abstract class Shader implements Resource {
      */
     @Override
     public void release() {
-        GL20.glDeleteProgram(programId);
-        programId = -1;
+	GL20.glDeleteProgram(programId);
+	programId = -1;
     }
 
     /**
@@ -312,7 +313,7 @@ public abstract class Shader implements Resource {
      */
     @Override
     public boolean isUsable() {
-        return programId != -1;
+	return programId != -1;
     }
 
     /**
@@ -325,44 +326,44 @@ public abstract class Shader implements Resource {
      *
      * @return shader's id
      *
-     * @throws RuntimeException if the shader's compilation failed
+     * @throws NativeException if the shader's compilation failed
      */
     private static int loadShader(@Nullable String shaderFilePath, @NotNull ShaderStage stage) {
-        if ((stage == ShaderStage.VERTEX_SHADER && shaderFilePath == null) || (stage == ShaderStage.FRAGMENT_SHADER && shaderFilePath == null)) {
-            throw new NullPointerException();
-        }
-        if (shaderFilePath == null) {
-            return -1;
-        }
-        //getting the source code
-        StringBuilder shaderSource = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new FileReader(shaderFilePath))) {
-            while (reader.ready()) {
-                shaderSource.append(reader.readLine()).append("\n");
-            }
-        } catch (FileNotFoundException ex) {
-            Utility.logException(ex);
-        } catch (IOException ex) {
-            Utility.logException(ex);
-        }
-        //creating the shader, compiling
-        int shaderId = GL20.glCreateShader(stage.getCode());
-        GL20.glShaderSource(shaderId, shaderSource);
-        GL20.glCompileShader(shaderId);
-        if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            throw new RuntimeException(shaderFilePath + "\n" + GL20.glGetShaderInfoLog(shaderId, 512));
-        }
-        return shaderId;
+	if ((stage == ShaderStage.VERTEX_SHADER && shaderFilePath == null) || (stage == ShaderStage.FRAGMENT_SHADER && shaderFilePath == null)) {
+	    throw new NullPointerException();
+	}
+	if (shaderFilePath == null) {
+	    return -1;
+	}
+	//getting the source code
+	StringBuilder shaderSource = new StringBuilder();
+	try (BufferedReader reader = new BufferedReader(new FileReader(shaderFilePath))) {
+	    while (reader.ready()) {
+		shaderSource.append(reader.readLine()).append("\n");
+	    }
+	} catch (FileNotFoundException ex) {
+	    Utility.logException(ex);
+	} catch (IOException ex) {
+	    Utility.logException(ex);
+	}
+	//creating the shader, compiling
+	int shaderId = GL20.glCreateShader(stage.getCode());
+	GL20.glShaderSource(shaderId, shaderSource);
+	GL20.glCompileShader(shaderId);
+	if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
+	    throw new NativeException(OPENGL, shaderFilePath + "\n" + GL20.glGetShaderInfoLog(shaderId, 512));
+	}
+	return shaderId;
     }
 
     @Override
     public int getDataSizeInRam() {
-        return 0;
+	return 0;
     }
 
     @Override
     public int getDataSizeInAction() {
-        return 0;
+	return 0;
     }
 
     @Override
@@ -371,7 +372,7 @@ public abstract class Shader implements Resource {
 
     @Override
     public String toString() {
-        return "Shader{" + "programId=" + programId + ", uniforms=" + uniforms + '}';
+	return "Shader{" + "programId=" + programId + ", uniforms=" + uniforms + '}';
     }
 
 }
