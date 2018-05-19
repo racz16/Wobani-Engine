@@ -52,7 +52,7 @@ struct Light {              //base alignment        alignment offset
 const int DIRECTIONAL_LIGHT = 0;
 const int POINT_LIGHT = 1;
 const int SPOT_LIGHT = 2;
-const int lightNumber = 16;
+const int lightNumber = WOBANI_LIGHT_NUMBER;
 
 layout (std140, binding = 1) uniform LightSources {
     Light lights[lightNumber];                      //i * 112

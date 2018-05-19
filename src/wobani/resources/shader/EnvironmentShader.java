@@ -1,15 +1,13 @@
 package wobani.resources.shader;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.material.MaterialSlot;
-import wobani.material.Material;
-import wobani.resources.texture.texture2d.Texture2D;
 import java.io.*;
 import java.util.*;
 import org.joml.*;
+import wobani.material.*;
 import wobani.rendering.*;
 import wobani.resources.*;
+import wobani.resources.texture.texture2d.*;
+import wobani.toolbox.annotation.*;
 
 public class EnvironmentShader extends Shader {
 
@@ -34,7 +32,7 @@ public class EnvironmentShader extends Shader {
      * Inizializes a new Blinn-Phong shader.
      */
     private EnvironmentShader() {
-        super(vertexPath, fragmentPath, null, null, null);
+        super(vertexPath, fragmentPath, null, null, null, null);
         List<File> paths = new ArrayList<>(2);
         paths.add(new File(vertexPath));
         paths.add(new File(fragmentPath));

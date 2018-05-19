@@ -1,19 +1,19 @@
 package wobani.rendering.geometry;
 
-import wobani.resources.texture.texture2d.Texture2D;
-import wobani.resources.shader.BlinnPhongShader;
-import wobani.toolbox.parameter.ParameterKey;
-import wobani.toolbox.parameter.Parameter;
-import wobani.toolbox.annotation.NotNull;
-import wobani.material.Material;
-import wobani.component.light.BlinnPhongDirectionalLightComponent;
-import wobani.component.renderable.RenderableComponent;
+import java.util.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
+import wobani.component.light.*;
+import wobani.component.renderable.*;
 import wobani.core.*;
+import wobani.material.*;
 import wobani.rendering.*;
 import wobani.resources.*;
+import wobani.resources.shader.*;
+import wobani.resources.texture.texture2d.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.parameter.*;
 
 /**
  * This GeometryRenderer can draw meshes and splines by using the Blinn-Phong
@@ -51,7 +51,21 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      * Initializes a new BlinnPhongRenderer.
      */
     private BlinnPhongRenderer() {
-	shader = BlinnPhongShader.getInstance();
+	createNewShader(16);
+    }
+
+    public void setLightNumber(int lightNumber) {
+	if (lightNumber < 0) {
+	    throw new IllegalArgumentException();
+	}
+	shader.release();
+	createNewShader(lightNumber);
+    }
+
+    private void createNewShader(int lightNumber) {
+	Map<String, String> params = new HashMap<>();
+	params.put("WOBANI_LIGHT_NUMBER", String.valueOf(lightNumber));
+	shader = new BlinnPhongShader(params);
     }
 
     /**
@@ -96,7 +110,7 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      */
     private void beforeDrawShader() {
 	if (shader == null || !shader.isUsable()) {
-	    shader = BlinnPhongShader.getInstance();
+	    createNewShader(16);
 	}
 	shader.start();
 	shader.loadGlobalUniforms();

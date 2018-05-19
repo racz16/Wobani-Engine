@@ -1,12 +1,12 @@
 package wobani.resources.shader;
 
-import wobani.toolbox.parameter.Parameter;
-import wobani.toolbox.annotation.NotNull;
-import wobani.resources.environmentprobe.EnvironmentProbe;
 import java.io.*;
 import java.util.*;
 import wobani.core.*;
 import wobani.resources.*;
+import wobani.resources.environmentprobe.*;
+import wobani.toolbox.annotation.*;
+import wobani.toolbox.parameter.*;
 
 /**
  * This shader can draw a skybox. In theory it can render any number of meshes
@@ -38,7 +38,7 @@ public class SkyBoxShader extends Shader {
      * Inizializes a new SkyBoxShader shader.
      */
     private SkyBoxShader() {
-        super(vertexPath, fragmentPath, null, null, null);
+        super(vertexPath, fragmentPath, null, null, null, null);
         List<File> paths = new ArrayList<>(2);
         paths.add(new File(vertexPath));
         paths.add(new File(fragmentPath));

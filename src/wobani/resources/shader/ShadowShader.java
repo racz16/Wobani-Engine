@@ -1,10 +1,10 @@
 package wobani.resources.shader;
 
-import wobani.toolbox.annotation.NotNull;
 import java.io.*;
 import java.util.*;
 import org.joml.*;
 import wobani.resources.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * This shader can render the shadow map.
@@ -32,7 +32,7 @@ public class ShadowShader extends Shader {
      * Initializes a new ShadowShader.
      */
     private ShadowShader() {
-        super(vertexPath, fragmentPath, null, null, null);
+        super(vertexPath, fragmentPath, null, null, null, null);
         List<File> paths = new ArrayList<>(2);
         paths.add(new File(vertexPath));
         paths.add(new File(fragmentPath));

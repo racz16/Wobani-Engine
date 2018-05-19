@@ -81,6 +81,8 @@ public abstract class Shader implements Resource {
 	}
     }
 
+    private Map<String, String> params;
+
     /**
      * It creates the shader program and stores the ids of the uniform
      * variables.
@@ -101,7 +103,8 @@ public abstract class Shader implements Resource {
      *                           shader's source (with extension like
      *                           "res/shaders/myShader.glsl")
      */
-    public Shader(@NotNull String vertexFile, @NotNull String fragmentFile, @Nullable String geometryFile, @Nullable String tessControlFil, @Nullable String tessEvaluationFile) {
+    public Shader(@NotNull String vertexFile, @NotNull String fragmentFile, @Nullable String geometryFile, @Nullable String tessControlFil, @Nullable String tessEvaluationFile, Map<String, String> parameters) {
+	params = parameters;
 	//load, compile, check shaders
 	int[] shaders = {-1, -1, -1, -1, -1};
 	shaders[0] = loadShader(vertexFile, ShaderStage.VERTEX_SHADER);
@@ -328,7 +331,7 @@ public abstract class Shader implements Resource {
      *
      * @throws NativeException if the shader's compilation failed
      */
-    private static int loadShader(@Nullable String shaderFilePath, @NotNull ShaderStage stage) {
+    private int loadShader(@Nullable String shaderFilePath, @NotNull ShaderStage stage) {
 	if ((stage == ShaderStage.VERTEX_SHADER && shaderFilePath == null) || (stage == ShaderStage.FRAGMENT_SHADER && shaderFilePath == null)) {
 	    throw new NullPointerException();
 	}
@@ -346,6 +349,14 @@ public abstract class Shader implements Resource {
 	} catch (IOException ex) {
 	    Utility.logException(ex);
 	}
+	if (params != null) {
+	    Set<String> keys = params.keySet();
+	    for (String key : keys) {
+		String value = params.get(key);
+		replaceAllOccurrances(shaderSource, key, value);
+	    }
+	}
+
 	//creating the shader, compiling
 	int shaderId = GL20.glCreateShader(stage.getCode());
 	GL20.glShaderSource(shaderId, shaderSource);
@@ -354,6 +365,14 @@ public abstract class Shader implements Resource {
 	    throw new NativeException(OPENGL, shaderFilePath + "\n" + GL20.glGetShaderInfoLog(shaderId, 512));
 	}
 	return shaderId;
+    }
+
+    private void replaceAllOccurrances(StringBuilder source, String key, String value) {
+	int index = source.indexOf(key);
+	while (index != -1) {
+	    source.replace(index, index + key.length(), value);
+	    index = source.indexOf(key);
+	}
     }
 
     @Override

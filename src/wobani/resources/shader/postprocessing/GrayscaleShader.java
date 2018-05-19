@@ -32,7 +32,7 @@ public class GrayscaleShader extends Shader {
      * Initializes a new GrayscaleShader.
      */
     private GrayscaleShader() {
-	super(vertexPath, fragmentPath, null, null, null);
+	super(vertexPath, fragmentPath, null, null, null, null);
 	List<File> paths = new ArrayList<>(2);
 	paths.add(new File(vertexPath));
 	paths.add(new File(fragmentPath));
