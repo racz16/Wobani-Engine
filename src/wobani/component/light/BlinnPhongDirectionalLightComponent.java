@@ -36,7 +36,8 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
     @Override
     protected void addLight() {
 	if (isTheMainDirectionalLight() && getUboIndex() == -1) {
-	    BlinnPhongLightSources.addLight(this);
+	    //BlinnPhongLightSources.addLight(this);
+	    SsboLights.addLight(this);
 	}
     }
 
@@ -45,6 +46,7 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
     protected void removeLight() {
 	if (!isTheMainDirectionalLight() && getUboIndex() != -1) {
 	    BlinnPhongLightSources.removeLight(this);
+	    SsboLights.removeLight(this);
 	}
     }
 
@@ -56,6 +58,7 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
 		addLight();
 	    } else {
 		BlinnPhongLightSources.refreshLight(this);
+		SsboLights.refreshLight(this);
 	    }
 	}
     }

@@ -1,5 +1,6 @@
 package wobani.component.light;
 
+import wobani.resources.buffers.Ubo;
 import wobani.toolbox.annotation.NotNull;
 import wobani.toolbox.annotation.Internal;
 import java.nio.*;

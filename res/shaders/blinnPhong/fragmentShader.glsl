@@ -1,4 +1,4 @@
-#version 420 core 
+#version 430 core
 
 struct Material {
     bool isThereDiffuseMap;
@@ -60,6 +60,11 @@ layout (std140, binding = 1) uniform LightSources {
     int maxLightSources;                            //1904
 };                                                  //1908
 
+
+layout (std140, binding = 3) buffer Lights {
+    Light dl;
+};
+
 in vec3 fragmentPositionF;
 in vec3 normalF;
 in vec2 textureCoordinatesF;
@@ -107,7 +112,7 @@ void main(){
     vec3 diffuseColor = getDiffuseColor(textureCoordinates, viewDirection, normalVector);
     vec4 specularColor = getSpecularColor(textureCoordinates);
     //directional light
-    vec3 result = calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, directionalLight);
+    vec3 result = calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, dl);
     //shadows
     result *= calculateShadow(receiveShadow, fragmentPositionLightSpace, normalVector);
     //point and spotlights

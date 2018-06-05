@@ -1,15 +1,13 @@
 package wobani.rendering.prepare;
 
-import wobani.resources.shader.SkyBoxShader;
-import wobani.resources.mesh.Mesh;
-import wobani.resources.mesh.CubeMesh;
-import wobani.toolbox.annotation.NotNull;
 import org.joml.*;
-import org.lwjgl.opengl.*;
 import wobani.core.*;
 import wobani.rendering.*;
 import wobani.resources.*;
+import wobani.resources.mesh.*;
+import wobani.resources.shader.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * This renderer can draw a skybox. In theory it can render any number of meshes
@@ -93,7 +91,7 @@ public class SkyBoxRenderer extends Renderer {
      */
     private void beforeDrawRenderable(@NotNull Renderable renderable) {
         renderable.beforeDraw();
-        GL20.glEnableVertexAttribArray(0);
+//        GL20.glEnableVertexAttribArray(0);
     }
 
     /**
@@ -103,7 +101,7 @@ public class SkyBoxRenderer extends Renderer {
      * @param renderable Renderable
      */
     private void afterDrawRenderable(@NotNull Renderable renderable) {
-        GL20.glDisableVertexAttribArray(0);
+//        GL20.glDisableVertexAttribArray(0);
         renderable.afterDraw();
     }
 

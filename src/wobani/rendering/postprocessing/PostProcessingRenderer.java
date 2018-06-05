@@ -1,11 +1,10 @@
 package wobani.rendering.postprocessing;
 
-import wobani.resources.shader.Shader;
-import wobani.resources.mesh.QuadMesh;
-import wobani.resources.texture.texture2d.Texture2D;
 import org.joml.*;
-import org.lwjgl.opengl.*;
 import wobani.rendering.*;
+import wobani.resources.mesh.*;
+import wobani.resources.shader.*;
+import wobani.resources.texture.texture2d.*;
 import wobani.toolbox.*;
 
 /**
@@ -52,8 +51,8 @@ public abstract class PostProcessingRenderer extends Renderer {
      */
     protected void beforeDrawQuad() {
         quad.beforeDraw();
-        GL20.glEnableVertexAttribArray(0);
-        GL20.glEnableVertexAttribArray(1);
+//        GL20.glEnableVertexAttribArray(0);
+//        GL20.glEnableVertexAttribArray(1);
         Texture2D image = RenderingPipeline.getParameters().get(RenderingPipeline.WORK).getValue();
         image.bindToTextureUnit(0);
     }
@@ -62,8 +61,8 @@ public abstract class PostProcessingRenderer extends Renderer {
      * Unbinds the quad's VAO after rendering.
      */
     protected void afterDrawQuad() {
-        GL20.glDisableVertexAttribArray(0);
-        GL20.glDisableVertexAttribArray(1);
+//        GL20.glDisableVertexAttribArray(0);
+//        GL20.glDisableVertexAttribArray(1);
         quad.afterDraw();
     }
 

@@ -125,7 +125,7 @@ public abstract class Shader implements Resource {
 	//detach, delete
 	for (int shaderId : shaders) {
 	    if (shaderId != -1) {
-		GL20.glDetachShader(programId, shaderId);
+		//GL20.glDetachShader(programId, shaderId);//???
 		GL20.glDeleteShader(shaderId);
 	    }
 	}
@@ -362,7 +362,10 @@ public abstract class Shader implements Resource {
 	GL20.glShaderSource(shaderId, shaderSource);
 	GL20.glCompileShader(shaderId);
 	if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-	    throw new NativeException(OPENGL, shaderFilePath + "\n" + GL20.glGetShaderInfoLog(shaderId, 512));
+	    int length = GL20.glGetShaderi(shaderId, GL20.GL_INFO_LOG_LENGTH);
+	    String errorMessage = GL20.glGetShaderInfoLog(shaderId, length);
+	    GL20.glDeleteShader(shaderId);
+	    throw new NativeException(OPENGL, shaderFilePath + "\n" + errorMessage);
 	}
 	return shaderId;
     }

@@ -1,5 +1,6 @@
 package wobani.resources.environmentprobe;
 
+import wobani.resources.buffers.Fbo;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.core.*;

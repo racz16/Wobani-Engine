@@ -1,16 +1,14 @@
 package wobani.rendering.geometry;
 
-import wobani.resources.shader.SolidColorShader;
-import wobani.toolbox.annotation.NotNull;
-import wobani.material.MaterialSlot;
-import wobani.material.Material;
-import wobani.component.renderable.RenderableComponent;
 import org.joml.*;
-import org.lwjgl.opengl.*;
+import wobani.component.renderable.*;
 import wobani.core.*;
+import wobani.material.*;
 import wobani.rendering.*;
 import wobani.resources.*;
+import wobani.resources.shader.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * It can render RenderableContainer by drawing them with one color. Shadows and
@@ -109,7 +107,7 @@ public class SolidColorRenderer extends GeometryRenderer {
      */
     private void beforeDrawRenderable(@NotNull Renderable renderable) {
 	renderable.beforeDraw();
-	GL20.glEnableVertexAttribArray(0);
+//	GL20.glEnableVertexAttribArray(0);
     }
 
     /**
@@ -118,7 +116,7 @@ public class SolidColorRenderer extends GeometryRenderer {
      * @param renderable Renderable
      */
     private void afterDrawRenderable(@NotNull Renderable renderable) {
-	GL20.glDisableVertexAttribArray(0);
+//	GL20.glDisableVertexAttribArray(0);
 	renderable.afterDraw();
     }
 

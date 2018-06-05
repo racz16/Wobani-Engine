@@ -3,7 +3,7 @@ package wobani.resources.texture.texture2d;
 import java.nio.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
-import wobani.resources.Fbo.FboAttachmentSlot;
+import wobani.resources.buffers.Fbo.FboAttachmentSlot;
 import wobani.resources.*;
 import wobani.resources.texture.*;
 import wobani.resources.texture.Texture.TextureWrapDirection;

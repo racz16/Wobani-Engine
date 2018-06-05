@@ -1,5 +1,6 @@
 package wobani.component.camera;
 
+import wobani.resources.buffers.Ubo;
 import java.nio.*;
 import java.util.*;
 import java.util.logging.*;

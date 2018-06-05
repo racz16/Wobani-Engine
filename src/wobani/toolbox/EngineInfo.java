@@ -49,6 +49,10 @@ public class EngineInfo {
      * The engine's minor version.
      */
     private static final int MINOR_VERSION = 1;
+    /**
+     * Determines whether the engine is in debug mode.
+     */
+    private static final boolean DEBUG = true;
 
     /**
      * To can't initialize a new EngineInfo.
@@ -92,6 +96,15 @@ public class EngineInfo {
     @NotNull
     public static String getFullEngineName() {
 	return getName() + " v" + getMajorVersion() + "." + getMinorVersion();
+    }
+
+    /**
+     * Determines whether the engine is in debug mode.
+     *
+     * @return true if the engine is in debug mode, false otherwise
+     */
+    public static boolean isDebugMode() {
+	return DEBUG;
     }
 
 }

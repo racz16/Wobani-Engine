@@ -1,5 +1,6 @@
 package wobani.rendering;
 
+import wobani.resources.buffers.Fbo;
 import java.util.*;
 import org.joml.*;
 import wobani.component.camera.*;
@@ -241,7 +242,6 @@ public class RenderingPipeline {
      * Renders the scene.
      */
     public static void render() {
-
 	beforeRender();
 	OpenGl.setDepthTest(true);
 	prepare.render();
@@ -315,11 +315,11 @@ public class RenderingPipeline {
 	PostProcessingRenderer renderer = InvertRenderer.getInstance();
 	renderer.setActive(false);
 	post.addRendererToTheEnd(renderer);
-//
+
 	renderer = GrayscaleRenderer.getInstance();
 	renderer.setActive(false);
 	post.addRendererToTheEnd(renderer);
-//
+
 	renderer = FxaaRenderer.getInstance();
 	renderer.setActive(false);
 	post.addRendererToTheEnd(renderer);

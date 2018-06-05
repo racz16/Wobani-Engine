@@ -1,8 +1,8 @@
 package wobani.rendering.prepare;
 
+import wobani.resources.buffers.Fbo;
 import java.util.*;
 import org.joml.*;
-import org.lwjgl.opengl.*;
 import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.rendering.*;
@@ -344,7 +344,7 @@ public class ShadowRenderer extends PrepareRenderer {
      */
     private void beforeDrawRenderable(@NotNull Renderable renderable) {
 	renderable.beforeDraw();
-	GL20.glEnableVertexAttribArray(0);
+//	GL20.glEnableVertexAttribArray(0);
     }
 
     /**
@@ -353,7 +353,7 @@ public class ShadowRenderer extends PrepareRenderer {
      * @param renderable Renderable
      */
     private void afterDrawRenderable(@NotNull Renderable renderable) {
-	GL20.glDisableVertexAttribArray(0);
+//	GL20.glDisableVertexAttribArray(0);
 	renderable.afterDraw();
     }
 

@@ -1,38 +1,28 @@
 package wobani.example;
 
-import wobani.resources.texture.cubemaptexture.StaticCubeMapTexture;
-import wobani.resources.spline.BezierSpline;
-import wobani.resources.mesh.StaticMesh;
-import wobani.resources.environmentprobe.StaticEnvironmentProbe;
-import wobani.resources.environmentprobe.EnvironmentProbe;
-import wobani.resources.environmentprobe.DynamicEnvironmentProbe;
-import wobani.toolbox.parameter.Parameter;
-import wobani.toolbox.parameter.ComponentParameter;
-import wobani.window.eventhandler.KeyboardEventHandler;
-import wobani.window.eventhandler.WindowEventHandler;
-import wobani.material.MaterialSlot;
-import wobani.material.Material;
-import wobani.component.light.BlinnPhongSpotLightComponent;
-import wobani.component.audio.AudioListenerComponent;
-import wobani.component.camera.Camera;
-import wobani.component.audio.AudioSourceComponent;
-import wobani.component.camera.CameraComponent;
-import wobani.component.environmentprobe.DynamicEnvironmentProbeComponent;
-import wobani.component.light.BlinnPhongDirectionalLightComponent;
-import wobani.component.renderable.MeshComponent;
-import wobani.component.light.BlinnPhongPointLightComponent;
-import wobani.component.renderable.SplineComponent;
 import java.io.*;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.glfw.*;
+import wobani.component.audio.*;
+import wobani.component.camera.*;
+import wobani.component.environmentprobe.*;
+import wobani.component.light.*;
+import wobani.component.renderable.*;
 import wobani.core.*;
+import wobani.material.*;
 import wobani.rendering.geometry.*;
 import wobani.resources.*;
 import wobani.resources.audio.*;
+import wobani.resources.environmentprobe.*;
+import wobani.resources.mesh.*;
+import wobani.resources.spline.*;
+import wobani.resources.texture.cubemaptexture.*;
 import wobani.toolbox.*;
+import wobani.toolbox.parameter.*;
 import wobani.window.Input.Key;
 import wobani.window.*;
+import wobani.window.eventhandler.*;
 
 public class Example1 {
 

@@ -1,12 +1,11 @@
 package wobani.resources.spline;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.ReadOnly;
+import wobani.resources.buffers.Vao;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.resources.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Represents a simple spline. It stores the control points and data you need to
@@ -90,6 +89,8 @@ public class SimpleSpline implements Spline {
 		    vao = new Vao();
 		    vao.bindVao();
 		    vao.createVbo("position");
+
+		    GL20.glEnableVertexAttribArray(0);
 		    vao.unbindVao();
 		}
 	    } else {
@@ -453,9 +454,8 @@ public class SimpleSpline implements Spline {
     //
     @Override
     public void beforeDraw() {
-	if (vao != null && vao.isUsable()) {
-	    vao.bindVao();
-	}
+	refresh();
+	vao.bindVao();
     }
 
     @Override

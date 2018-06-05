@@ -125,6 +125,7 @@ public class Utility {
      */
     public static void logException(@NotNull Throwable ex) {
 	ERROR_LOG.log(Level.SEVERE, ex.toString(), ex);
+	System.err.println(ex.getMessage());
     }
 
     /**
@@ -534,6 +535,7 @@ public class Utility {
 	 * Computes the main directional light's projection view matrix based on
 	 * the given data.
 	 *
+	 * @param dirLight     directional light source's GameObject
 	 * @param distance     distance from the camera frustum center
 	 * @param nearDistance near plane distance
 	 * @param farDistance  far plane distance
@@ -559,7 +561,8 @@ public class Utility {
 	/**
 	 * Initializes the main directional light related fields.
 	 *
-	 * @param distance distance from the camera frustum center
+	 * @param lightGameObject directional light source's GameObject
+	 * @param distance        distance from the camera frustum center
 	 */
 	private static void initializeLight(@NotNull GameObject lightGameObject, float distance) {
 	    lightRight = lightGameObject.getTransform().getRightVector();
