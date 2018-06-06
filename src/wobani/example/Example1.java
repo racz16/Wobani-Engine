@@ -2,6 +2,7 @@ package wobani.example;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 import org.joml.*;
 import org.lwjgl.glfw.*;
 import wobani.component.audio.*;
@@ -34,6 +35,7 @@ public class Example1 {
     public static void main(String[] args) {
 	WindowParameters parameters = new WindowParameters();
 	GameLoop.initialize(parameters);
+	Utility.setLoggingLevel(Level.FINE);
 	testWindow = new Example1Window();
 	if (!Window.isFullscreen()) {
 	    testWindow.setVisible(true);

@@ -29,7 +29,11 @@ public abstract class BlinnPhongLightComponent extends Component {
     /**
      * The light's index in the UBO.
      */
-    private int uboIndex = -1;
+    private int shaderIndex = -1;
+    
+    static{
+	BlinnPhongLightSources.initialize();
+    }
 
     /**
      * Returns the diffuse color.
@@ -54,7 +58,7 @@ public abstract class BlinnPhongLightComponent extends Component {
 	    throw new IllegalArgumentException("Diffuse color can't be lower than 0");
 	}
 	this.diffuseColor.set(diffuse);
-	refreshUbo();
+	refreshShader();
     }
 
     /**
@@ -80,7 +84,7 @@ public abstract class BlinnPhongLightComponent extends Component {
 	    throw new IllegalArgumentException("Specular color can't be lower than 0");
 	}
 	this.specularColor.set(specular);
-	refreshUbo();
+	refreshShader();
     }
 
     /**
@@ -106,14 +110,13 @@ public abstract class BlinnPhongLightComponent extends Component {
 	    throw new IllegalArgumentException("Ambient color can't be lower than 0");
 	}
 	this.ambientColor.set(ambient);
-	refreshUbo();
+	refreshShader();
     }
 
     @Override
     protected void detachFromGameObject() {
 	getGameObject().getTransform().removeInvalidatable(this);
 	super.detachFromGameObject();
-	removeLight();
 	invalidate();
     }
 
@@ -122,19 +125,18 @@ public abstract class BlinnPhongLightComponent extends Component {
 	super.attachToGameObject(g);
 	getGameObject().getTransform().addInvalidatable(this);
 	invalidate();
-	addLight();
     }
 
     @Override
     public void setActive(boolean active) {
 	super.setActive(active);
-	refreshUbo();
+	refreshShader();
     }
 
     @Override
     public void invalidate() {
 	super.invalidate();
-	refreshUbo();
+	refreshShader();
     }
 
     /**
@@ -143,8 +145,8 @@ public abstract class BlinnPhongLightComponent extends Component {
      * @return the light's UBO index.
      */
     @Internal
-    int getUboIndex() {
-	return uboIndex;
+    int getShaderIndex() {
+	return shaderIndex;
     }
 
     /**
@@ -153,8 +155,8 @@ public abstract class BlinnPhongLightComponent extends Component {
      * @param index new UBO index
      */
     @Internal
-    void setUboIndex(int index) {
-	uboIndex = index;
+    void setShaderIndex(int index) {
+	shaderIndex = index;
 
     }
 
@@ -162,19 +164,7 @@ public abstract class BlinnPhongLightComponent extends Component {
      * Refreshes the light in the UBO.
      */
     @Internal
-    protected abstract void refreshUbo();
-
-    /**
-     * Removes the light from the UBO.
-     */
-    @Internal
-    protected abstract void removeLight();
-
-    /**
-     * Adds the light to the UBO.
-     */
-    @Internal
-    protected abstract void addLight();
+    protected abstract void refreshShader();
 
     @Override
     public int hashCode() {

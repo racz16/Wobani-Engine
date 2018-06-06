@@ -52,17 +52,12 @@ struct Light {              //base alignment        alignment offset
 const int DIRECTIONAL_LIGHT = 0;
 const int POINT_LIGHT = 1;
 const int SPOT_LIGHT = 2;
-const int lightNumber = 16;
 
-/*layout (std140, binding = 1) uniform LightSources {
-    Light lights[lightNumber];                      //i * 112
-    Light directionalLight;                         //1792
-    int maxLightSources;                            //1904
-};                                                  //1908*/
-
-
-layout (std140, binding = 1) buffer Lights {
+layout(std140, binding = 1) uniform DirectionalLight{
     Light directionalLight;
+};
+
+layout(std140, binding = 2) buffer NondirectionalLights {
     Light lights[];
 };
 
@@ -117,11 +112,6 @@ void main(){
     //shadows
     result *= calculateShadow(receiveShadow, fragmentPositionLightSpace, normalVector);
     //point and spotlights
-    /*for(int i=0; i<maxLightSources; i++){
-        if(lights[i].lightActive){
-            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights[i]);
-        }
-    }*/
     for(int i=0; i<lights.length(); i++){
         if(lights[i].lightActive){
             result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights[i]);

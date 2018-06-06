@@ -34,30 +34,8 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
 
     @Internal
     @Override
-    protected void addLight() {
-	if (isTheMainDirectionalLight() && getUboIndex() == -1) {
-	    SsboLights.addLight(this);
-	}
-    }
-
-    @Internal
-    @Override
-    protected void removeLight() {
-	if (!isTheMainDirectionalLight() && getUboIndex() != -1) {
-	    SsboLights.removeLight(this);
-	}
-    }
-
-    @Internal
-    @Override
-    protected void refreshUbo() {
-	if (isTheMainDirectionalLight()) {
-	    if (getUboIndex() == -1) {
-		addLight();
-	    } else {
-		SsboLights.refreshLight(this);
-	    }
-	}
+    protected void refreshShader() {
+	BlinnPhongLightSources.refreshDirectional(this);
     }
 
     /**
@@ -65,7 +43,8 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
      *
      * @return true if it's the Scene's main directional light, false otherwise
      */
-    private boolean isTheMainDirectionalLight() {
+    public boolean isTheMainDirectionalLight() {
+	//FIXME: parameters to blinn phong renderer
 	BlinnPhongDirectionalLightComponent light = Scene.getParameters().getValue(BlinnPhongRenderer.MAIN_DIRECTIONAL_LIGHT);
 	return light == this;
     }

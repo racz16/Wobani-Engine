@@ -93,8 +93,11 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      * Prepares the shader to the rendering.
      */
     private void beforeDrawShader() {
-	if (shader == null || !shader.isUsable()) {
+	if (!Utility.isUsable(shader)) {
 	    shader = new BlinnPhongShader();
+	}
+	if (!BlinnPhongLightSources.isUsable()) {
+	    BlinnPhongLightSources.recreate();
 	}
 	shader.start();
 	shader.loadGlobalUniforms();

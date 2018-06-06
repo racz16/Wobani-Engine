@@ -40,7 +40,7 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent {
      */
     public void setConstant(float constant) {
 	this.constant = constant;
-	refreshUbo();
+	refreshShader();
     }
 
     /**
@@ -59,7 +59,7 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent {
      */
     public void setLinear(float linear) {
 	this.linear = linear;
-	refreshUbo();
+	refreshShader();
     }
 
     /**
@@ -78,31 +78,13 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent {
      */
     public void setQuadratic(float quadratic) {
 	this.quadratic = quadratic;
-	refreshUbo();
+	refreshShader();
     }
 
     @Internal
     @Override
-    protected void refreshUbo() {
-	if (getGameObject() != null && getUboIndex() != -1) {
-	    SsboLights.refreshLight(this);
-	}
-    }
-
-    @Internal
-    @Override
-    protected void removeLight() {
-	if (getGameObject() == null && getUboIndex() != -1) {
-	    SsboLights.removeLight(this);
-	}
-    }
-
-    @Internal
-    @Override
-    protected void addLight() {
-	if (getGameObject() != null && getUboIndex() == -1) {
-	    SsboLights.addLight(this);
-	}
+    protected void refreshShader() {
+	BlinnPhongLightSources.refreshPoint(this);
     }
 
     @Override

@@ -48,7 +48,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      */
     public void setConstant(float constant) {
 	this.constant = constant;
-	refreshUbo();
+	refreshShader();
     }
 
     /**
@@ -67,7 +67,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      */
     public void setLinear(float linear) {
 	this.linear = linear;
-	refreshUbo();
+	refreshShader();
     }
 
     /**
@@ -86,7 +86,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      */
     public void setQuadratic(float quadratic) {
 	this.quadratic = quadratic;
-	refreshUbo();
+	refreshShader();
     }
 
     /**
@@ -114,7 +114,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
 	    throw new IllegalArgumentException("Cutoff component must be higher than 0 and lower than the outer cutoff component");
 	}
 	this.cutoff = cutoff;
-	refreshUbo();
+	refreshShader();
     }
 
     /**
@@ -140,31 +140,13 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
 	    throw new IllegalArgumentException("Cutoff component must be lower than the outer cutoff component");
 	}
 	this.outerCutoff = outerCutoff;
-	refreshUbo();
+	refreshShader();
     }
 
     @Internal
     @Override
-    protected void refreshUbo() {
-	if (getGameObject() != null && getUboIndex() != -1) {
-	    SsboLights.refreshLight(this);
-	}
-    }
-
-    @Internal
-    @Override
-    protected void removeLight() {
-	if (getGameObject() == null && getUboIndex() != -1) {
-	    SsboLights.removeLight(this);
-	}
-    }
-
-    @Internal
-    @Override
-    protected void addLight() {
-	if (getGameObject() != null && getUboIndex() == -1) {
-	    SsboLights.addLight(this);
-	}
+    protected void refreshShader() {
+	BlinnPhongLightSources.refreshSpot(this);
     }
 
     @Override
