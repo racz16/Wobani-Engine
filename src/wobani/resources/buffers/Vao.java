@@ -1,18 +1,14 @@
 package wobani.resources.buffers;
 
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Bind;
-import wobani.toolbox.annotation.ReadOnly;
 import java.nio.*;
 import java.util.*;
 import org.lwjgl.assimp.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-import wobani.resources.Resource;
-import wobani.resources.ResourceId;
-import wobani.resources.ResourceManager;
 import static org.lwjgl.system.MemoryStack.stackPush;
+import wobani.resources.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Object oriented wrapper class above the native Vertex Array Object. It can
@@ -35,7 +31,7 @@ public class Vao implements Resource {
     /**
      * The Vertex Buffer Objects' ids.
      */
-    private final HashMap<String, Integer> vbos = new HashMap<>();
+    private final HashMap<String, Integer> vbos = new HashMap<>();//TODO: create VBO and EBO private classes
     /**
      * VBOs' size.
      */
@@ -122,7 +118,8 @@ public class Vao implements Resource {
      *                        otherwise
      */
     public void bindAndAddData(@NotNull String vboName, int attributeNumber, int coordinateSize, @NotNull float[] data, boolean dynamic) {
-        try (MemoryStack stack = stackPush()) {
+        //FIXME: add data without binding
+	try (MemoryStack stack = stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(data.length);
             buffer.put(data);
             buffer.flip();
@@ -146,7 +143,8 @@ public class Vao implements Resource {
      * @throws NullPointerException     arguments can't be null
      */
     public void bindAndAddData(@NotNull String vboName, int attributeNumber, int coordinateSize, @NotNull FloatBuffer data, boolean dynamic) {
-        if (data == null) {
+        //TODO: layout specifier class with attribute number, coordinate size, normalization etc.
+	if (data == null) {
             throw new NullPointerException();
         }
         if (attributeNumber < 0 || coordinateSize < 1 || coordinateSize > 4) {

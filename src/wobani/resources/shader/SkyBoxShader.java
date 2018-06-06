@@ -38,7 +38,7 @@ public class SkyBoxShader extends Shader {
      * Inizializes a new SkyBoxShader shader.
      */
     private SkyBoxShader() {
-        super(vertexPath, fragmentPath, null, null, null, null);
+        super(vertexPath, fragmentPath, null, null, null);
         List<File> paths = new ArrayList<>(2);
         paths.add(new File(vertexPath));
         paths.add(new File(fragmentPath));

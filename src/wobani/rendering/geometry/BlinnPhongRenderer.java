@@ -1,6 +1,5 @@
 package wobani.rendering.geometry;
 
-import java.util.*;
 import org.joml.*;
 import wobani.component.light.*;
 import wobani.component.renderable.*;
@@ -50,21 +49,7 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      * Initializes a new BlinnPhongRenderer.
      */
     private BlinnPhongRenderer() {
-	createNewShader(16);
-    }
-
-    public void setLightNumber(int lightNumber) {
-	if (lightNumber < 0) {
-	    throw new IllegalArgumentException();
-	}
-	shader.release();
-	createNewShader(lightNumber);
-    }
-
-    private void createNewShader(int lightNumber) {
-	Map<String, String> params = new HashMap<>();
-	params.put("WOBANI_LIGHT_NUMBER", String.valueOf(lightNumber));
-	shader = new BlinnPhongShader(params);
+	shader = new BlinnPhongShader();
     }
 
     /**
@@ -109,7 +94,7 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      */
     private void beforeDrawShader() {
 	if (shader == null || !shader.isUsable()) {
-	    createNewShader(16);
+	    shader = new BlinnPhongShader();
 	}
 	shader.start();
 	shader.loadGlobalUniforms();

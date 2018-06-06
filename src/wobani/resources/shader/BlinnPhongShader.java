@@ -49,8 +49,8 @@ public class BlinnPhongShader extends Shader {
     /**
      * Inizializes a new Blinn-Phong shader.
      */
-    public BlinnPhongShader(Map<String, String> param) {
-	super(vertexPath, fragmentPath, null, null, null, param);
+    public BlinnPhongShader() {
+	super(vertexPath, fragmentPath, null, null, null);
 	List<File> paths = new ArrayList<>(2);
 	paths.add(new File(vertexPath));
 	paths.add(new File(fragmentPath));

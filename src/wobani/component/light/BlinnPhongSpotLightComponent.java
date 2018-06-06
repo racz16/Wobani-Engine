@@ -147,7 +147,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
     @Override
     protected void refreshUbo() {
 	if (getGameObject() != null && getUboIndex() != -1) {
-	    BlinnPhongLightSources.refreshLight(this);
+	    SsboLights.refreshLight(this);
 	}
     }
 
@@ -155,7 +155,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
     @Override
     protected void removeLight() {
 	if (getGameObject() == null && getUboIndex() != -1) {
-	    BlinnPhongLightSources.removeLight(this);
+	    SsboLights.removeLight(this);
 	}
     }
 
@@ -163,7 +163,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
     @Override
     protected void addLight() {
 	if (getGameObject() != null && getUboIndex() == -1) {
-	    BlinnPhongLightSources.addLight(this);
+	    SsboLights.addLight(this);
 	}
     }
 

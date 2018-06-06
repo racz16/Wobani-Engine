@@ -1,11 +1,10 @@
 package wobani.component.light;
 
-import wobani.resources.buffers.Ssbo;
 import java.nio.*;
 import java.util.*;
 import java.util.logging.*;
 import org.lwjgl.*;
-import wobani.resources.*;
+import wobani.resources.buffers.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
@@ -15,8 +14,7 @@ import wobani.toolbox.annotation.*;
 public class SsboLights {
 
     //TODO: delete
-    private static final int MAX_LIGHTS = 16;
-
+    //private static final int MAX_LIGHTS = 16;
     /**
      * The LightSources UBO's lights.
      */
@@ -24,7 +22,7 @@ public class SsboLights {
     /**
      * The highest active light source's index in the UBO.
      */
-    private static int maxLightIndex = -1;
+    //private static int maxLightIndex = -1;
     /**
      * The LightSources UBO.
      */
@@ -48,11 +46,11 @@ public class SsboLights {
     /**
      * The all UBO's size.
      */
-    private static final int SIZE_UBO = (MAX_LIGHTS + 1) * LIGHT_SIZE_UBO + FLOAT_SIZE_UBO;
+    //private static final int SIZE_UBO = (MAX_LIGHTS + 1) * LIGHT_SIZE_UBO + FLOAT_SIZE_UBO;
     /**
      * The max light index variable's address in the UBO.
      */
-    private static final int MAX_LIGHT_INDEX_ADDRESS = (MAX_LIGHTS + 1) * LIGHT_SIZE_UBO;
+    //private static final int MAX_LIGHT_INDEX_ADDRESS = (MAX_LIGHTS + 1) * LIGHT_SIZE_UBO;
     /**
      * The type variable's address in the UBO.
      */
@@ -130,6 +128,8 @@ public class SsboLights {
 	}
     }
 
+    private static int size = 1;
+
     /**
      * Adds the given nondirectional light source to the UBO.
      *
@@ -137,6 +137,12 @@ public class SsboLights {
      */
     private static void addNonDirectionalLight(@NotNull BlinnPhongLightComponent light) {
 	int lightIndex = computeNewLightUboIndex();
+	if (lightIndex - 1 == lights.size()) {
+	    size++;
+	    ssbo.bind();
+	    ssbo.allocateMemory(size * LIGHT_SIZE_UBO, false);
+	    ssbo.unbind();
+	}
 	addNonDirectionalLight(light, lightIndex);
     }
 
@@ -149,10 +155,10 @@ public class SsboLights {
     private static int computeNewLightUboIndex() {
 	for (int i = 0; i < lights.size(); i++) {
 	    if (lights.get(i) == null) {
-		return i;
+		return i + 1;
 	    }
 	}
-	return -1;
+	return lights.size() + 1;
     }
 
     /**
@@ -164,7 +170,11 @@ public class SsboLights {
     private static void addNonDirectionalLight(@NotNull BlinnPhongLightComponent light, int index) {
 	if (index != -1) {
 	    light.setUboIndex(index);
-	    lights.set(index, light);
+	    if (index >= lights.size()) {
+		lights.add(light);
+	    } else {
+		lights.set(index, light);
+	    }
 	    light.refreshUbo();
 	    refreshMaxLightIndexAfterAdd(index);
 	}
@@ -177,10 +187,10 @@ public class SsboLights {
      * @param index added light source's index
      */
     private static void refreshMaxLightIndexAfterAdd(int index) {
-	if (index > maxLightIndex) {
-	    maxLightIndex = index;
-	}
-	refreshMaxLightIndexInUbo();
+//	if (index > maxLightIndex) {
+//	    maxLightIndex = index;
+//	}
+//	refreshMaxLightIndexInUbo();
     }
 
     //
@@ -232,7 +242,7 @@ public class SsboLights {
      */
     private static void removeNonDirectionalLight(@NotNull BlinnPhongLightComponent light) {
 	int index = light.getUboIndex();
-	lights.set(index, null);
+	lights.set(index-1, null);
 	removeLight(light);
 	refreshMaxLightIndexAfterRemove(index);
     }
@@ -244,10 +254,10 @@ public class SsboLights {
      * @param index removed light source's index
      */
     private static void refreshMaxLightIndexAfterRemove(int index) {
-	if (index == getMaxLightIndex()) {
-	    maxLightIndex = computeMaxLightIndex();
-	    refreshMaxLightIndexInUbo();
-	}
+//	if (index == getMaxLightIndex()) {
+//	    maxLightIndex = computeMaxLightIndex();
+//	    refreshMaxLightIndexInUbo();
+//	}
     }
 
     /**
@@ -257,11 +267,11 @@ public class SsboLights {
      * @return the max light index
      */
     private static int computeMaxLightIndex() {
-	for (int i = getMaxLightIndex() - 1; i >= 0; i--) {
-	    if (lights.get(i) != null) {
-		return i;
-	    }
-	}
+//	for (int i = getMaxLightIndex() - 1; i >= 0; i--) {
+//	    if (lights.get(i) != null) {
+//		return i;
+//	    }
+//	}
 	return -1;
     }
 
@@ -269,13 +279,13 @@ public class SsboLights {
      * Refreshes the max light index in the UBO.
      */
     private static void refreshMaxLightIndexInUbo() {
-	INT_BUFFER.limit(1);
-	INT_BUFFER.position(0);
-	INT_BUFFER.put(getMaxLightIndex() + 1);
-	INT_BUFFER.position(0);
-	ssbo.bind();
-	ssbo.storeData(INT_BUFFER, MAX_LIGHT_INDEX_ADDRESS);
-	ssbo.unbind();
+//	INT_BUFFER.limit(1);
+//	INT_BUFFER.position(0);
+//	INT_BUFFER.put(getMaxLightIndex() + 1);
+//	INT_BUFFER.position(0);
+//	ssbo.bind();
+//	ssbo.storeData(INT_BUFFER, MAX_LIGHT_INDEX_ADDRESS);
+//	ssbo.unbind();
     }
 
     //
@@ -289,9 +299,9 @@ public class SsboLights {
     @Internal
     static void refreshLight(@NotNull BlinnPhongDirectionalLightComponent light) {
 	if (Utility.isUsable(ssbo)) {
-	    refreshghtParameters(light);
+	    refreshLightParameters(light);
 	    refreshLightMeta(DIRECTIONAL_LIGHT_TYPE, light.isActive());
-	    refreshLightInUbo(light);
+	    refreshLightInSsbo(light);
 	    LOG.fine("Directional light refreshed in the SSBO");
 	}
     }
@@ -301,7 +311,7 @@ public class SsboLights {
      *
      * @param light BlinnPhongDirectionalLightComponent
      */
-    private static void refreshghtParameters(@NotNull BlinnPhongDirectionalLightComponent light) {
+    private static void refreshLightParameters(@NotNull BlinnPhongDirectionalLightComponent light) {
 	FLOAT_BUFFER.position(0);
 	setFloatNone(); //position
 	setDirection(light);
@@ -320,7 +330,7 @@ public class SsboLights {
 	if (Utility.isUsable(ssbo)) {
 	    refreshLightParameters(light);
 	    refreshLightMeta(POINT_LIGHT_TYPE, light.isActive());
-	    refreshLightInUbo(light);
+	    refreshLightInSsbo(light);
 	    LOG.fine("Point light refreshed in the UBO");
 	}
     }
@@ -349,7 +359,7 @@ public class SsboLights {
 	if (Utility.isUsable(ssbo)) {
 	    refreshLightParameters(light);
 	    refreshLightMeta(SPOT_LIGHT_TYPE, light.isActive());
-	    refreshLightInUbo(light);
+	    refreshLightInSsbo(light);
 	    LOG.fine("Spot light refreshed in the UBO");
 	}
     }
@@ -497,10 +507,10 @@ public class SsboLights {
      *
      * @param light BlinnPhongLightComponent
      */
-    private static void refreshLightInUbo(@NotNull BlinnPhongLightComponent light) {
+    private static void refreshLightInSsbo(@NotNull BlinnPhongLightComponent light) {
 	ssbo.bind();
-	ssbo.storeData(FLOAT_BUFFER, 0 * LIGHT_SIZE_UBO);
-	ssbo.storeData(INT_BUFFER, 0 * LIGHT_SIZE_UBO + TYPE_ADDRESS);
+	ssbo.storeData(FLOAT_BUFFER, light.getUboIndex() * LIGHT_SIZE_UBO);
+	ssbo.storeData(INT_BUFFER, light.getUboIndex() * LIGHT_SIZE_UBO + TYPE_ADDRESS);
 	ssbo.unbind();
     }
 
@@ -532,24 +542,23 @@ public class SsboLights {
     //
     //misc----------------------------------------------------------------------
     //
-    /**
-     * Returns the maximum number of lights that the UBO can store.
-     *
-     * @return the maximum number of lights that the UBO can store
-     */
-    public static int getMaxNumberOfLights() {
-	return MAX_LIGHTS;
-    }
-
-    /**
-     * The highest active light source's index in the UBO.
-     *
-     * @return the highest active light source's index in the UBO
-     */
-    public static int getMaxLightIndex() {
-	return maxLightIndex;
-    }
-
+//    /**
+//     * Returns the maximum number of lights that the UBO can store.
+//     *
+//     * @return the maximum number of lights that the UBO can store
+//     */
+//    public static int getMaxNumberOfLights() {
+//	return MAX_LIGHTS;
+//    }
+//
+//    /**
+//     * The highest active light source's index in the UBO.
+//     *
+//     * @return the highest active light source's index in the UBO
+//     */
+//    public static int getMaxLightIndex() {
+//	return maxLightIndex;
+//    }
     /**
      * Creates the UBO.
      */
@@ -568,7 +577,7 @@ public class SsboLights {
 	ssbo.bind();
 	ssbo.allocateMemory(112, false);
 	ssbo.unbind();
-	ssbo.bindToBindingPoint(3);
+	ssbo.bindToBindingPoint(1);
     }
 
     /**
@@ -580,7 +589,7 @@ public class SsboLights {
     public static void releaseSsbo() {
 	ssbo.release();
 	ssbo = null;
-	maxLightIndex = -1;
+	//maxLightIndex = -1;
 	removeAllLights();
 	lights = null;
 	LOG.fine("Light SSBO released");

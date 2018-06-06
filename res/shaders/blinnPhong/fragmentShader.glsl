@@ -52,17 +52,18 @@ struct Light {              //base alignment        alignment offset
 const int DIRECTIONAL_LIGHT = 0;
 const int POINT_LIGHT = 1;
 const int SPOT_LIGHT = 2;
-const int lightNumber = WOBANI_LIGHT_NUMBER;
+const int lightNumber = 16;
 
-layout (std140, binding = 1) uniform LightSources {
+/*layout (std140, binding = 1) uniform LightSources {
     Light lights[lightNumber];                      //i * 112
     Light directionalLight;                         //1792
     int maxLightSources;                            //1904
-};                                                  //1908
+};                                                  //1908*/
 
 
-layout (std140, binding = 3) buffer Lights {
-    Light dl;
+layout (std140, binding = 1) buffer Lights {
+    Light directionalLight;
+    Light lights[];
 };
 
 in vec3 fragmentPositionF;
@@ -112,11 +113,16 @@ void main(){
     vec3 diffuseColor = getDiffuseColor(textureCoordinates, viewDirection, normalVector);
     vec4 specularColor = getSpecularColor(textureCoordinates);
     //directional light
-    vec3 result = calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, dl);
+    vec3 result = calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, directionalLight);
     //shadows
     result *= calculateShadow(receiveShadow, fragmentPositionLightSpace, normalVector);
     //point and spotlights
-    for(int i=0; i<maxLightSources; i++){
+    /*for(int i=0; i<maxLightSources; i++){
+        if(lights[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights[i]);
+        }
+    }*/
+    for(int i=0; i<lights.length(); i++){
         if(lights[i].lightActive){
             result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights[i]);
         }

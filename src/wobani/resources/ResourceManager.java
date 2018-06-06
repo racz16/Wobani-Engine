@@ -1,15 +1,10 @@
 package wobani.resources;
 
-import wobani.resources.buffers.Fbo;
-import wobani.resources.buffers.Ubo;
-import wobani.resources.buffers.Ssbo;
-import wobani.resources.buffers.Vao;
 import java.util.*;
 import org.joml.*;
-import wobani.component.camera.*;
-import wobani.component.light.*;
 import wobani.rendering.*;
 import wobani.resources.audio.*;
+import wobani.resources.buffers.*;
 import wobani.resources.mesh.*;
 import wobani.resources.shader.*;
 import wobani.resources.texture.*;
@@ -748,12 +743,12 @@ public class ResourceManager {
 	releaseResourceMap(splines);
 	releaseResourceMap(fbos);
 	releaseResourceMap(ubos);
+	releaseResourceMap(ssbos);
 	releaseResourceMap(vaos);
 	releaseResourceMap(shaders);
 	releaseResourceMap(audioBuffers);
 	releaseResourceMap(audioSources);
-	BlinnPhongLightSources.releaseUbo();
-	CameraComponent.releaseUbo();
+
 	RenderingPipeline.release();
     }
 
