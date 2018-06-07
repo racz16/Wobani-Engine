@@ -35,4 +35,20 @@ public class StaticEnvironmentProbe implements EnvironmentProbe {
 	return cubeMap.getSize();
     }
 
+    @Override
+    public boolean isParallaxCorrection() {
+	return false;
+    }
+
+    @Override
+    public float getParallaxCorrectionValue() {
+	return 0;
+    }
+
+    @Nullable
+    @Override
+    public Vector3f getPosition() {
+	return null;
+    }
+
 }

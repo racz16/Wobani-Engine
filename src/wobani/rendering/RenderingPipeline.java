@@ -1,6 +1,5 @@
 package wobani.rendering;
 
-import wobani.resources.buffers.Fbo;
 import java.util.*;
 import org.joml.*;
 import wobani.component.camera.*;
@@ -11,6 +10,7 @@ import wobani.rendering.postprocessing.*;
 import wobani.rendering.prepare.*;
 import wobani.rendering.stage.*;
 import wobani.resources.*;
+import wobani.resources.buffers.*;
 import wobani.resources.texture.texture2d.*;
 import static wobani.toolbox.EngineInfo.Library.OPENGL;
 import wobani.toolbox.*;

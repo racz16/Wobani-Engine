@@ -2,6 +2,7 @@ package wobani.resources.buffers;
 
 import org.lwjgl.opengl.*;
 import wobani.resources.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Object oriented wrapper class above the native Uniform Buffer Object.
@@ -18,6 +19,12 @@ public class Ubo extends BufferObjectBase {
     @Override
     protected void addToResourceManager() {
 	ResourceManager.addUbo(this);
+    }
+
+    @NotNull
+    @Override
+    protected String getBufferTypeName() {
+	return "UBO";
     }
 
 }

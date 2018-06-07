@@ -1,10 +1,9 @@
 package wobani.resources.environmentprobe;
 
-import wobani.resources.buffers.Fbo;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.core.*;
-import wobani.resources.*;
+import wobani.resources.buffers.*;
 import wobani.resources.texture.cubemaptexture.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
@@ -20,6 +19,9 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe {
     private static final Matrix4f projectionMatrix;
     private final Matrix4f[] viewMatrices;
     private Fbo fbo;
+
+    private boolean parallaxCorrection;
+    private float parallaxCorrectionValue;
 
     static {
 	projectionMatrix = new Matrix4f().setPerspective(Utility.toRadians(90), 1, 0.001f, 1000);
@@ -169,11 +171,13 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe {
     }
 
     @NotNull
+    @Override
     public Vector3f getPosition() {
 	return position;
     }
 
     public void setPosition(@NotNull Vector3f position) {
+	//FIXME: ezt nem valami invalidálással kéne inkább?
 	this.position.set(position);
 	refresshViewMatrices();
     }
@@ -201,6 +205,24 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe {
 
     public void fboTexture(int index) {
 	GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + index, cubeMap.getId(), 0);
+    }
+
+    @Override
+    public boolean isParallaxCorrection() {
+	return parallaxCorrection;
+    }
+
+    public void setParallaxCorrection(boolean parallaxCorrection) {
+	this.parallaxCorrection = parallaxCorrection;
+    }
+
+    @Override
+    public float getParallaxCorrectionValue() {
+	return parallaxCorrectionValue;
+    }
+
+    public void setParallaxCorrectionValue(float value) {
+	parallaxCorrectionValue = value;
     }
 
 }

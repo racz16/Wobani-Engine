@@ -23,6 +23,7 @@ public class BlinnPhongLightSources {
     //egy framen belüli változások egyszeri frissítése a shaderben
     //nondirectional lista hossza ne mindig egyel nőljön, hanem pl. duplázódjon
     //	kell manuális length
+    //	egy idő után csökkenjen ha túl sok az üres hely?
     //nondirectional light component?
     //	tárolhatná a last positiont
     //	meg amúgy itt kicsit kevesebb metódus kéne
@@ -246,6 +247,7 @@ public class BlinnPhongLightSources {
     private static void createUboWithoutInspection() {
 	ubo = new Ubo();
 	ubo.bind();
+	ubo.setName("BP Directional Light");
 	ubo.allocateMemory(112, false);
 	ubo.unbind();
 	ubo.bindToBindingPoint(1);
@@ -668,6 +670,7 @@ public class BlinnPhongLightSources {
 	private void createSsboWithoutInspection() {
 	    ssbo = new Ssbo();
 	    ssbo.bind();
+	    ssbo.setName("BP Nondirectional Lights");
 	    ssbo.allocateMemory(112, false);
 	    ssbo.unbind();
 	    ssbo.bindToBindingPoint(2);

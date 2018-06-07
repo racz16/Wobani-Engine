@@ -2,7 +2,6 @@ package wobani.example;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.*;
 import org.joml.*;
 import org.lwjgl.glfw.*;
 import wobani.component.audio.*;
@@ -35,7 +34,7 @@ public class Example1 {
     public static void main(String[] args) {
 	WindowParameters parameters = new WindowParameters();
 	GameLoop.initialize(parameters);
-	Utility.setLoggingLevel(Level.FINE);
+//	Utility.setLoggingLevel(Level.FINE);
 	testWindow = new Example1Window();
 	if (!Window.isFullscreen()) {
 	    testWindow.setVisible(true);
@@ -92,7 +91,7 @@ public class Example1 {
 	DynamicEnvironmentProbe probe = new DynamicEnvironmentProbe();
 	DynamicEnvironmentProbeComponent probeComponent = new DynamicEnvironmentProbeComponent(probe);
 	GameObject g = new GameObject();
-	g.getTransform().setRelativePosition(new Vector3f(0, -40, 0));
+	g.getTransform().setRelativePosition(new Vector3f(0, -40, -20));
 	g.getComponents().add(probeComponent);
 	return probe;
     }
@@ -129,7 +128,7 @@ public class Example1 {
 	dragon.getComponents().getOne(MeshComponent.class).setMaterial(material);
 	dragon.getComponents().getOne(MeshComponent.class).setReflectable(true);
 	dragon.setName("dragon");
-	dragon.getTransform().setRelativePosition(new Vector3f(0, -5, -15));
+	dragon.getTransform().setRelativePosition(new Vector3f(0, -5, -20));
 	dragon.getTransform().setRelativeScale(new Vector3f(2.5f));
 	dragon.getComponents().add(new Component() {
 	    private final Vector3f rot = new Vector3f();
@@ -147,7 +146,7 @@ public class Example1 {
 	dragon2.getComponents().getOne(MeshComponent.class).setMaterial(material);
 	dragon2.getComponents().getOne(MeshComponent.class).setReflectable(true);
 	dragon2.setName("dragon2");
-	dragon2.getTransform().setRelativePosition(new Vector3f(50, -40, 0));
+	dragon2.getTransform().setRelativePosition(new Vector3f(35, -40, 0));
 	dragon2.getTransform().rotate(new Vector3f(45, 0, 0));
 	dragon2.getComponents().add(new Component() {
 	    @Override

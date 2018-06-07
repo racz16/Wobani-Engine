@@ -29,16 +29,30 @@ public abstract class BufferObjectBase implements Resource {
 
     /**
      * Initializes a new Buffer.
-     * 
-     * @param bufferType 
+     *
+     * @param bufferType
      */
     public BufferObjectBase(int bufferType) {
 	id = GL15.glGenBuffers();
 	resourceId = new ResourceId();
 	this.bufferType = bufferType;
+	bind();
+	GL43.glObjectLabel(GL43.GL_BUFFER, id, "Jozsef");
+	unbind();
     }
 
     protected abstract void addToResourceManager();
+
+    @Bind
+    public void setName(@NotNull String name) {
+	if (name == null) {
+	    throw new NullPointerException();
+	}
+	//TODO: name all other opengl objects like this
+	GL43.glObjectLabel(GL43.GL_BUFFER, id, getBufferTypeName() + " " + name);
+    }
+
+    protected abstract String getBufferTypeName();
 
     /**
      * Allocates memory for the Buffer.
