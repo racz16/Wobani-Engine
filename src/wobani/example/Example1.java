@@ -34,7 +34,7 @@ public class Example1 {
     public static void main(String[] args) {
 	WindowParameters parameters = new WindowParameters();
 	GameLoop.initialize(parameters);
-//	Utility.setLoggingLevel(Level.FINE);
+	//Utility.setLoggingLevel(Level.FINE);
 	testWindow = new Example1Window();
 	if (!Window.isFullscreen()) {
 	    testWindow.setVisible(true);

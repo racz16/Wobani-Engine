@@ -2,9 +2,13 @@ package wobani.toolbox;
 
 import java.nio.*;
 import java.util.*;
+import java.util.logging.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
+import wobani.toolbox.OpenGlEvent.OpenGlEventSeverity;
+import wobani.toolbox.OpenGlEvent.OpenGlEventSource;
+import wobani.toolbox.OpenGlEvent.OpenGlEventType;
 import wobani.toolbox.annotation.*;
 
 /**
@@ -157,7 +161,7 @@ public class OpenGl {
     /**
      * List of the registered OpenGL error event handlers.
      */
-    private static final List<OpenGlErrorEventHandler> eventHandlers = new ArrayList<>();
+    private static final List<OpenGlDebugEventHandler> eventHandlers = new ArrayList<>();
 
     /**
      * To can't create OpenGl instance.
@@ -175,21 +179,21 @@ public class OpenGl {
 	setFaceCullingMode(OpenGl.FaceCullingMode.BACK);
 	setAlphaBlending(true);
 	setDepthTest(true);
-	initialzeErrorEventHandling();
+	initialzeDebugEventHandling();
     }
 
     //
-    //Error event handling
+    //Debug event handling
     //
     /**
      * Initializes the OpenGL's error handling.
      */
-    private static void initialzeErrorEventHandling() {
+    private static void initialzeDebugEventHandling() {
 	if (EngineInfo.isDebugMode()) {
 	    GL11.glEnable(GL43.GL_DEBUG_OUTPUT);
 	    GL43.glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
-		OpenGlError error = new OpenGlError(source, type, id, severity, length, message);
-		handleErrorEvent(error);
+		OpenGlEvent event = new OpenGlEvent(source, type, id, severity, length, message);
+		handleDebugEvent(event);
 	    }, 0);
 	}
     }
@@ -197,13 +201,65 @@ public class OpenGl {
     /**
      * Handles the given OpenGL error.
      *
-     * @param error OpenGL error
+     * @param event OpenGL error
      */
-    private static void handleErrorEvent(@NotNull OpenGlError error) {
-	Utility.logError(error.toString());
-	for (OpenGlErrorEventHandler oeeh : eventHandlers) {
-	    oeeh.openGlErrorCallback(error);
+    private static void handleDebugEvent(@NotNull OpenGlEvent event) {
+	logDebugEvent(event);
+	for (OpenGlDebugEventHandler odeh : eventHandlers) {
+	    odeh.openGlDebugCallback(event);
 	}
+    }
+
+    /**
+     * Logs the given OpenGL event.
+     *
+     * @param event OpenGL debug event
+     */
+    private static void logDebugEvent(@NotNull OpenGlEvent event) {
+	switch (event.getSeverity()) {
+	    case HIGH:
+		Utility.logError(event.toString());
+		break;
+	    case MEDIUM:
+		Utility.log(event.toString(), Level.WARNING);
+		break;
+	    case LOW:
+		Utility.log(event.toString(), Level.INFO);
+		break;
+	    case NOTIFICATION:
+		Utility.log(event.toString(), Level.CONFIG);
+		break;
+	}
+    }
+
+    /**
+     * Enables the logging of the OpenGL debug events with the given parameters.
+     * The null parameter means don't care.
+     *
+     * @param source   event's source
+     * @param type     event's type
+     * @param severity event's severity
+     */
+    public static void enableDebugEvents(@Nullable OpenGlEventSource source, @Nullable OpenGlEventType type, @Nullable OpenGlEventSeverity severity) {
+	int sou = source == null ? GL11.GL_DONT_CARE : source.getCode();
+	int typ = type == null ? GL11.GL_DONT_CARE : type.getCode();
+	int sev = severity == null ? GL11.GL_DONT_CARE : severity.getCode();
+	GL43.glDebugMessageControl(sou, typ, sev, (int[]) null, true);
+    }
+
+    /**
+     * Disables the logging of the OpenGL debug events with the given
+     * parameters. The null parameter means don't care.
+     *
+     * @param source   event's source
+     * @param type     event's type
+     * @param severity event's severity
+     */
+    public static void disableDebugEvents(@Nullable OpenGlEventSource source, @Nullable OpenGlEventType type, @Nullable OpenGlEventSeverity severity) {
+	int sou = source == null ? GL11.GL_DONT_CARE : source.getCode();
+	int typ = type == null ? GL11.GL_DONT_CARE : type.getCode();
+	int sev = severity == null ? GL11.GL_DONT_CARE : severity.getCode();
+	GL43.glDebugMessageControl(sou, typ, sev, (int[]) null, false);
     }
 
     /**
@@ -213,7 +269,7 @@ public class OpenGl {
      *
      * @throws NullPointerException parameter can't be null
      */
-    public static void addErrorEventHandler(@NotNull OpenGlErrorEventHandler eh) {
+    public static void addErrorEventHandler(@NotNull OpenGlDebugEventHandler eh) {
 	if (eh == null) {
 	    throw new NullPointerException();
 	}
@@ -230,7 +286,7 @@ public class OpenGl {
      *
      * @throws NullPointerException parameter can't be null
      */
-    public static void removeErrorEventHandler(@NotNull OpenGlErrorEventHandler eh) {
+    public static void removeErrorEventHandler(@NotNull OpenGlDebugEventHandler eh) {
 	if (eh == null) {
 	    throw new NullPointerException();
 	}

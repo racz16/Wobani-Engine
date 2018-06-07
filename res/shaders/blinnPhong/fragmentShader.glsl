@@ -92,7 +92,6 @@ float calculateCutOff(vec3 lightToFragmentDirection, vec3 lightDirection, vec2 l
 //data collection
 vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVector);
 vec3 parallaxCorrectReflectionVector(vec3 reflectionVector);
-vec3 parallaxCorrectReflectionVector2(vec3 reflectionVector);
 vec4 getSpecularColor(vec2 textureCoordinates);
 vec3 getNormalVector(vec2 textureCoordinates);
 vec2 getTextureCoordinates();
@@ -256,25 +255,6 @@ vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVec
 
 vec3 parallaxCorrectReflectionVector(vec3 reflectionVector){
     return material.geometryProxyRadius * (fragmentPositionF - material.environmentProbePosition) + reflectionVector;;
-}
-
-vec3 parallaxCorrectReflectionVector2(vec3 reflectionVector){
-    vec3 environmentProbePosition = vec3(0, -40, -20);
-    vec3 boxMax = environmentProbePosition + vec3(45);
-    vec3 boxMin = environmentProbePosition - vec3(45);
-
-    vec3 firstPlaneIntersect = (boxMax - fragmentPositionF) / reflectionVector;
-    vec3 secondPlaneIntersect = (boxMin - fragmentPositionF) / reflectionVector;
-    // Get the furthest of these intersections along the ray
-    // (Ok because x/0 give +inf and -x/0 give –inf )
-    vec3 furthestPlane = max(firstPlaneIntersect, secondPlaneIntersect);
-    // Find the closest far intersection
-    float distance = min(min(furthestPlane.x, furthestPlane.y), furthestPlane.z);
-
-    // Get the intersection position
-    vec3 intersectPositionWS = fragmentPositionF + reflectionVector * distance;
-    // Get corrected reflection
-    return intersectPositionWS - environmentProbePosition;
 }
 
 vec3 getIntensity(vec2 textureCoordinates){

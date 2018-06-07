@@ -17,7 +17,6 @@ public class BlinnPhongLightSources {
     //	honann veszem az előző pozíciót?
     //	shaderben 4 lightsources ssbo-t csinálni, mind a 4-en végigmenni
     //	rendererben kiválasztani a 4 legközelebbi ssbo-t
-    //	    így gyakori ssbo váltások, lehet, hogy a modelleket is gridbe kéne rendezni?
     //	    lehet, hogy ez a binding point-os történet se lesz ilyen egyszerű, kelleni fog OpenGL függvény
     //fényforrás tulajdonságait csak akkor frissíteni shaderben, ha a fényforrás aktív
     //egy framen belüli változások egyszeri frissítése a shaderben
@@ -129,8 +128,6 @@ public class BlinnPhongLightSources {
 
     /**
      * Removes the given light source from the UBO.
-     *
-     * @param light BlinnPhongDirectionalLightComponent
      */
     private static void removeDirectionalFromUbo() {
 	ubo.bind();
@@ -164,8 +161,6 @@ public class BlinnPhongLightSources {
 
     /**
      * Refreshes the given light source's parameters in the UBO.
-     *
-     * @param light BlinnPhongDirectionalLightComponent
      */
     private static void refreshDirectionalParameters() {
 	DATA.setFloatBufferPosition(0);

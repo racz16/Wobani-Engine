@@ -56,10 +56,18 @@ public class Utility {
      * Sets the logging level for the engine's root logger and all of it's
      * handlers to the given value.
      * <p>
-     * Info level used when big systems like OpenGL start or end, Fine used when
-     * Resources created or released, Finer used when computation intensive
-     * tasks like matrix calculation ran, Finer used for other fairly important
-     * events.
+     * Severe: exceptions, OpenGL high severity messages
+     * <p>
+     * Warning: OpenGL medium severity messages
+     * <p>
+     * Info: OpenGL low severity messages and system wide events like new frame
+     * computation started etc.
+     * <p>
+     * Fine: Events inconnection with resources
+     * <p>
+     * Finer: Computation intensive tasks
+     * <p>
+     * Finest: Not too important events
      *
      * @param level logging level
      *
@@ -135,6 +143,16 @@ public class Utility {
      */
     public static void logError(@NotNull String ex) {
 	ERROR_LOG.severe(ex);
+    }
+
+    /**
+     * Logs the given message in the given level.
+     *
+     * @param message message
+     * @param level   logging level
+     */
+    public static void log(@NotNull String message, @NotNull Level level) {
+	WOBANI_LOG.log(level, message);
     }
 
     //

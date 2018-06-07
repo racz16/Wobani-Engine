@@ -4,12 +4,16 @@ import java.util.*;
 import org.lwjgl.system.*;
 import wobani.toolbox.annotation.*;
 
-public class OpenGlError {
+/**
+ * Represents an OpenGL debug event. It van be an error, warning, performance
+ * tip or anything like that.
+ */
+public class OpenGlEvent {
 
     /**
-     * OpenGL error source.
+     * OpenGL event source.
      */
-    public enum OpenGlErrorSource {
+    public enum OpenGlEventSource {
 	/**
 	 * API.
 	 */
@@ -41,11 +45,11 @@ public class OpenGlError {
 	private final int code;
 
 	/**
-	 * Initializes a new OpenGlErrorSource to the given value.
+	 * Initializes a new OpenGlEventSource to the given value.
 	 *
 	 * @param code source's OpenGL code
 	 */
-	private OpenGlErrorSource(int code) {
+	private OpenGlEventSource(int code) {
 	    this.code = code;
 	}
 
@@ -59,30 +63,30 @@ public class OpenGlError {
 	}
 
 	/**
-	 * Returns the OpenGlErrorSource of the given OpenGL code.
+	 * Returns the OpenGlEventSource of the given OpenGL code.
 	 *
-	 * @param code OpenGL error source
+	 * @param code OpenGL event source
 	 *
-	 * @return the OpenGlErrorSource of the given OpenGL code
+	 * @return the OpenGlEventSource of the given OpenGL code
 	 *
-	 * @throws IllegalArgumentException the given parameter is not an error
+	 * @throws IllegalArgumentException the given parameter is not an event
 	 *                                  source
 	 */
 	@NotNull
-	public static OpenGlErrorSource valueOf(int code) {
-	    for (OpenGlErrorSource oes : OpenGlErrorSource.values()) {
+	public static OpenGlEventSource valueOf(int code) {
+	    for (OpenGlEventSource oes : OpenGlEventSource.values()) {
 		if (oes.getCode() == code) {
 		    return oes;
 		}
 	    }
-	    throw new IllegalArgumentException("The given parameter is not an error source");
+	    throw new IllegalArgumentException("The given parameter is not an event source");
 	}
     }
 
     /**
-     * OpenGL error type.
+     * OpenGL event type.
      */
-    public enum OpenGlErrorType {
+    public enum OpenGlEventType {
 	/**
 	 * Error.
 	 */
@@ -118,11 +122,11 @@ public class OpenGlError {
 	private final int code;
 
 	/**
-	 * Initializes a new OpenGlErrorType to the given value.
+	 * Initializes a new OpenGlEventType to the given value.
 	 *
 	 * @param code type's OpenGL code
 	 */
-	private OpenGlErrorType(int code) {
+	private OpenGlEventType(int code) {
 	    this.code = code;
 	}
 
@@ -136,30 +140,30 @@ public class OpenGlError {
 	}
 
 	/**
-	 * Returns the OpenGlErrorType of the given OpenGL code.
+	 * Returns the OpenGlEventType of the given OpenGL code.
 	 *
-	 * @param code OpenGL error type
+	 * @param code OpenGL event type
 	 *
-	 * @return the OpenGlErrorType of the given OpenGL code
+	 * @return the OpenGlEventType of the given OpenGL code
 	 *
-	 * @throws IllegalArgumentException the given parameter is not an error
+	 * @throws IllegalArgumentException the given parameter is not an event
 	 *                                  type
 	 */
 	@NotNull
-	public static OpenGlErrorType valueOf(int code) {
-	    for (OpenGlErrorType oes : OpenGlErrorType.values()) {
+	public static OpenGlEventType valueOf(int code) {
+	    for (OpenGlEventType oes : OpenGlEventType.values()) {
 		if (oes.getCode() == code) {
 		    return oes;
 		}
 	    }
-	    throw new IllegalArgumentException("The given parameter is not an error type");
+	    throw new IllegalArgumentException("The given parameter is not an event type");
 	}
     }
 
     /**
-     * OpenGL error severity.
+     * OpenGL event severity.
      */
-    public enum OpenGlErrorSeverity {
+    public enum OpenGlEventSeverity {
 	/**
 	 * High severity.
 	 */
@@ -183,11 +187,11 @@ public class OpenGlError {
 	private final int code;
 
 	/**
-	 * Initializes a new OpenGlErrorSeverity to the given value.
+	 * Initializes a new OpenGlEventSeverity to the given value.
 	 *
 	 * @param code severity's OpenGL code
 	 */
-	private OpenGlErrorSeverity(int code) {
+	private OpenGlEventSeverity(int code) {
 	    this.code = code;
 	}
 
@@ -201,67 +205,67 @@ public class OpenGlError {
 	}
 
 	/**
-	 * Returns the OpenGlErrorSeverity of the given OpenGL code.
+	 * Returns the OpenGlEventSeverity of the given OpenGL code.
 	 *
-	 * @param code OpenGL error severity
+	 * @param code OpenGL event severity
 	 *
-	 * @return the OpenGlErrorSeverity of the given OpenGL code
+	 * @return the OpenGlEventSeverity of the given OpenGL code
 	 *
-	 * @throws IllegalArgumentException the given parameter is not an error
+	 * @throws IllegalArgumentException the given parameter is not an event
 	 *                                  severity
 	 */
 	@NotNull
-	public static OpenGlErrorSeverity valueOf(int code) {
-	    for (OpenGlErrorSeverity oes : OpenGlErrorSeverity.values()) {
+	public static OpenGlEventSeverity valueOf(int code) {
+	    for (OpenGlEventSeverity oes : OpenGlEventSeverity.values()) {
 		if (oes.getCode() == code) {
 		    return oes;
 		}
 	    }
-	    throw new IllegalArgumentException("The given parameter is not an error severity");
+	    throw new IllegalArgumentException("The given parameter is not an event severity");
 	}
     }
 
     /**
-     * The source of the error.
+     * The source of the event.
      */
-    private final OpenGlErrorSource source;
+    private final OpenGlEventSource source;
     /**
-     * The type of the error.
+     * The type of the event.
      */
-    private final OpenGlErrorType type;
+    private final OpenGlEventType type;
     /**
-     * The id of the error.
+     * The id of the event.
      */
     private final int id;
     /**
-     * The severity of the error.
+     * The severity of the event.
      */
-    private final OpenGlErrorSeverity severity;
+    private final OpenGlEventSeverity severity;
     /**
-     * The error message.
+     * The event message.
      */
     private String message;
 
     /**
-     * Initializes a new OpenGlError to the given values.
+     * Initializes a new OpenGlEvent to the given values.
      *
-     * @param source   the source of the error
-     * @param type     the type of the error
-     * @param id       the id of the error
-     * @param severity the severity of the error
-     * @param length   the length of the error message
-     * @param message  the error message's address
+     * @param source   the source of the event
+     * @param type     the type of the event
+     * @param id       the id of the event
+     * @param severity the severity of the event
+     * @param length   the length of the event message
+     * @param message  the event message's address
      */
-    public OpenGlError(int source, int type, int id, int severity, int length, long message) {
-	this.source = OpenGlErrorSource.valueOf(source);
-	this.type = OpenGlErrorType.valueOf(type);
+    public OpenGlEvent(int source, int type, int id, int severity, int length, long message) {
+	this.source = OpenGlEventSource.valueOf(source);
+	this.type = OpenGlEventType.valueOf(type);
 	this.id = id;
-	this.severity = OpenGlErrorSeverity.valueOf(severity);
+	this.severity = OpenGlEventSeverity.valueOf(severity);
 	setMessage(length, message);
     }
 
     /**
-     * Sets the error message based on the given parameters.
+     * Sets the event message based on the given parameters.
      *
      * @param length  message's length
      * @param message message's address
@@ -271,48 +275,48 @@ public class OpenGlError {
     }
 
     /**
-     * Returns the source of the error.
+     * Returns the source of the event.
      *
-     * @return the source of the error
+     * @return the source of the event
      */
     @NotNull
-    public OpenGlErrorSource getSource() {
+    public OpenGlEventSource getSource() {
 	return source;
     }
 
     /**
-     * Returns the type of the error.
+     * Returns the type of the event.
      *
-     * @return the type of the error
+     * @return the type of the event
      */
     @NotNull
-    public OpenGlErrorType getType() {
+    public OpenGlEventType getType() {
 	return type;
     }
 
     /**
-     * Returns the id of the error.
+     * Returns the id of the event.
      *
-     * @return the id of the error
+     * @return the id of the event
      */
     public int getId() {
 	return id;
     }
 
     /**
-     * Returns the severity of the error.
+     * Returns the severity of the event.
      *
-     * @return the severity of the error
+     * @return the severity of the event
      */
     @NotNull
-    public OpenGlErrorSeverity getSeverity() {
+    public OpenGlEventSeverity getSeverity() {
 	return severity;
     }
 
     /**
-     * Returns the error message.
+     * Returns the event message.
      *
-     * @return the error message
+     * @return the event message
      */
     public String getMessage() {
 	return message;
@@ -339,7 +343,7 @@ public class OpenGlError {
 	if (getClass() != obj.getClass()) {
 	    return false;
 	}
-	final OpenGlError other = (OpenGlError) obj;
+	final OpenGlEvent other = (OpenGlEvent) obj;
 	if (this.id != other.id) {
 	    return false;
 	}
@@ -358,7 +362,7 @@ public class OpenGlError {
     @Override
     public String toString() {
 	StringBuilder res = new StringBuilder()
-		.append(OpenGlError.class.getSimpleName()).append("(")
+		.append(OpenGlEvent.class.getSimpleName()).append("(")
 		.append(" source: ").append(source)
 		.append(", type: ").append(type)
 		.append(", id: ").append(id)
