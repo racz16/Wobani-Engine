@@ -57,11 +57,11 @@ const int DIRECTIONAL_LIGHT = 0;
 const int POINT_LIGHT = 1;
 const int SPOT_LIGHT = 2;
 
-layout(std140, binding = 1) uniform DirectionalLight{
+layout(std140, binding = 2) uniform DirectionalLight{
     Light directionalLight;
 };
 
-layout(std140, binding = 2) buffer NondirectionalLights {
+layout(std140, binding = 3) buffer NondirectionalLights {
     int count;
     Light lights[];
 };

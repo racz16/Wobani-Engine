@@ -18,8 +18,6 @@ public class BlinnPhongLightSources {
     //	shaderben 4 lightsources ssbo-t csinálni, mind a 4-en végigmenni
     //	rendererben kiválasztani a 4 legközelebbi ssbo-t
     //	    lehet, hogy ez a binding point-os történet se lesz ilyen egyszerű, kelleni fog OpenGL függvény
-    //fényforrás tulajdonságait csak akkor frissíteni shaderben, ha a fényforrás aktív
-    //egy framen belüli változások egyszeri frissítése a shaderben (camera ubo-nál is)
     //egy idő után csökkenjen ha túl sok az üres hely?
     //nondirectional light component?
     //	tárolhatná a last positiont
@@ -49,6 +47,8 @@ public class BlinnPhongLightSources {
     private static final List<BlinnPhongDirectionalLightComponent> DIRECTIONAL = new ArrayList<>();
     private static final List<BlinnPhongLightComponent> NONDIRECTIONAL = new ArrayList<>();
 
+    private static final List<BlinnPhongLightComponent> DIRTY = new ArrayList<>();
+
     private static BlinnPhongDirectionalLightComponent directionalLight;
     private static Ubo ubo;
     private static LightSourceTile nondirectionalLights = new LightSourceTile();
@@ -64,6 +64,23 @@ public class BlinnPhongLightSources {
      * To can't create BlinnPhongLightSources instance.
      */
     private BlinnPhongLightSources() {
+    }
+
+    @Internal
+    static void makeDirty(@NotNull BlinnPhongLightComponent light) {
+	if (light == null) {
+	    throw new NullPointerException();
+	}
+	if (!Utility.containsReference(DIRTY, light)) {
+	    DIRTY.add(light);
+	}
+    }
+
+    public static void refresh() {
+	for (BlinnPhongLightComponent light : DIRTY) {
+	    light.refreshShader();
+	}
+	DIRTY.clear();
     }
 
     //
@@ -252,7 +269,7 @@ public class BlinnPhongLightSources {
 	ubo.setName("BP Directional Light");
 	ubo.allocateMemory(DataStructure.LIGHT_SOURCE_SIZE, false);
 	ubo.unbind();
-	ubo.bindToBindingPoint(1);
+	ubo.bindToBindingPoint(2);
     }
 
     public static void release() {
@@ -281,6 +298,13 @@ public class BlinnPhongLightSources {
 	    nondirectionalLights.release();
 	    nondirectionalLights = null;
 	}
+    }
+
+    public static void makeUpToDate() {
+	if (!isUsable()) {
+	    recreate();
+	}
+	refresh();
     }
 
     public static boolean isUsable() {
@@ -732,7 +756,7 @@ public class BlinnPhongLightSources {
 	    ssbo.setName("BP Nondirectional Lights");
 	    ssbo.allocateMemory(DataStructure.LIGHT_SOURCE_SIZE + LIGHT_SOURCES_OFFSET, false);
 	    ssbo.unbind();
-	    ssbo.bindToBindingPoint(2);
+	    ssbo.bindToBindingPoint(3);
 	}
 
 	/**

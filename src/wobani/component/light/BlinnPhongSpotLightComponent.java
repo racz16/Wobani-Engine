@@ -48,7 +48,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      */
     public void setConstant(float constant) {
 	this.constant = constant;
-	refreshShader();
+	makeDirty();
     }
 
     /**
@@ -67,7 +67,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      */
     public void setLinear(float linear) {
 	this.linear = linear;
-	refreshShader();
+	makeDirty();
     }
 
     /**
@@ -86,7 +86,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      */
     public void setQuadratic(float quadratic) {
 	this.quadratic = quadratic;
-	refreshShader();
+	makeDirty();
     }
 
     /**
@@ -114,7 +114,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
 	    throw new IllegalArgumentException("Cutoff component must be higher than 0 and lower than the outer cutoff component");
 	}
 	this.cutoff = cutoff;
-	refreshShader();
+	makeDirty();
     }
 
     /**
@@ -140,7 +140,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
 	    throw new IllegalArgumentException("Cutoff component must be lower than the outer cutoff component");
 	}
 	this.outerCutoff = outerCutoff;
-	refreshShader();
+	makeDirty();
     }
 
     @Internal

@@ -1,6 +1,7 @@
 package wobani.rendering.geometry;
 
 import org.joml.*;
+import wobani.component.camera.*;
 import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.material.*;
@@ -80,6 +81,7 @@ public class SolidColorRenderer extends GeometryRenderer {
 	if (shader == null || !shader.isUsable()) {
 	    shader = SolidColorShader.getInstance();
 	}
+	CameraComponent.makeMatricesUboUpToDate();
 	RenderingPipeline.bindFbo();
 	boolean wirefreame = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.WIREFRAME_MODE, false);
 	OpenGl.setWireframe(wirefreame);

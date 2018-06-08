@@ -40,7 +40,7 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent {
      */
     public void setConstant(float constant) {
 	this.constant = constant;
-	refreshShader();
+	makeDirty();
     }
 
     /**
@@ -59,7 +59,7 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent {
      */
     public void setLinear(float linear) {
 	this.linear = linear;
-	refreshShader();
+	makeDirty();
     }
 
     /**
@@ -78,7 +78,7 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent {
      */
     public void setQuadratic(float quadratic) {
 	this.quadratic = quadratic;
-	refreshShader();
+	makeDirty();
     }
 
     @Internal

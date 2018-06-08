@@ -1,6 +1,7 @@
 package wobani.rendering.geometry;
 
 import org.joml.*;
+import wobani.component.camera.*;
 import wobani.component.light.*;
 import wobani.component.renderable.*;
 import wobani.core.*;
@@ -96,9 +97,8 @@ public class BlinnPhongRenderer extends GeometryRenderer {
 	if (!Utility.isUsable(shader)) {
 	    shader = new BlinnPhongShader();
 	}
-	if (!BlinnPhongLightSources.isUsable()) {
-	    BlinnPhongLightSources.recreate();
-	}
+	CameraComponent.makeMatricesUboUpToDate();
+	BlinnPhongLightSources.makeUpToDate();
 	shader.start();
 	shader.loadGlobalUniforms();
 	RenderingPipeline.bindFbo();

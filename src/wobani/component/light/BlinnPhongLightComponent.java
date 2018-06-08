@@ -30,8 +30,8 @@ public abstract class BlinnPhongLightComponent extends Component {
      * The light's index in the UBO.
      */
     private int shaderIndex = -1;
-    
-    static{
+
+    static {
 	BlinnPhongLightSources.initialize();
     }
 
@@ -58,7 +58,7 @@ public abstract class BlinnPhongLightComponent extends Component {
 	    throw new IllegalArgumentException("Diffuse color can't be lower than 0");
 	}
 	this.diffuseColor.set(diffuse);
-	refreshShader();
+	makeDirty();
     }
 
     /**
@@ -84,7 +84,7 @@ public abstract class BlinnPhongLightComponent extends Component {
 	    throw new IllegalArgumentException("Specular color can't be lower than 0");
 	}
 	this.specularColor.set(specular);
-	refreshShader();
+	makeDirty();
     }
 
     /**
@@ -110,7 +110,7 @@ public abstract class BlinnPhongLightComponent extends Component {
 	    throw new IllegalArgumentException("Ambient color can't be lower than 0");
 	}
 	this.ambientColor.set(ambient);
-	refreshShader();
+	makeDirty();
     }
 
     @Override
@@ -130,13 +130,13 @@ public abstract class BlinnPhongLightComponent extends Component {
     @Override
     public void setActive(boolean active) {
 	super.setActive(active);
-	refreshShader();
+	makeDirty();
     }
 
     @Override
     public void invalidate() {
 	super.invalidate();
-	refreshShader();
+	makeDirty();
     }
 
     /**
@@ -157,7 +157,11 @@ public abstract class BlinnPhongLightComponent extends Component {
     @Internal
     void setShaderIndex(int index) {
 	shaderIndex = index;
+    }
 
+    @Internal
+    protected void makeDirty() {
+	BlinnPhongLightSources.makeDirty(this);
     }
 
     /**
