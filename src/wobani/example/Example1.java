@@ -93,6 +93,9 @@ public class Example1 {
 	GameObject g = new GameObject();
 	g.getTransform().setRelativePosition(new Vector3f(0, -40, -20));
 	g.getComponents().add(probeComponent);
+	probe.setParallaxCorrection(true);
+	probe.setParallaxCorrectionValue(35);
+	probe.setResolution(1024);
 	return probe;
     }
 

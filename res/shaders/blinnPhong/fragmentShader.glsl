@@ -42,12 +42,12 @@ struct Material {
 }; 
 
 struct Light {              //base alignment        alignment offset
-    vec3 position;          //16                    0
-    vec3 direction;         //16                    16
-    vec3 attenuation;       //16                    32
-    vec3 ambient;           //16                    48
-    vec3 diffuse;           //16                    64
-    vec3 specular;          //16                    80
+    vec3 ambient;           //16                    0
+    vec3 diffuse;           //16                    16
+    vec3 specular;          //16                    32
+    vec3 direction;         //16                    48
+    vec3 position;          //16                    64
+    vec3 attenuation;       //16                    80
     vec2 cutOff;            //8                     96
     int type;               //4                     104
     bool lightActive;       //4                     108
@@ -62,6 +62,7 @@ layout(std140, binding = 1) uniform DirectionalLight{
 };
 
 layout(std140, binding = 2) buffer NondirectionalLights {
+    int count;
     Light lights[];
 };
 
@@ -117,7 +118,7 @@ void main(){
     //shadows
     result *= calculateShadow(receiveShadow, fragmentPositionLightSpace, normalVector);
     //point and spotlights
-    for(int i=0; i<lights.length(); i++){
+    for(int i=0; i<count; i++){
         if(lights[i].lightActive){
             result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights[i]);
         }

@@ -19,10 +19,8 @@ public class BlinnPhongLightSources {
     //	rendererben kiválasztani a 4 legközelebbi ssbo-t
     //	    lehet, hogy ez a binding point-os történet se lesz ilyen egyszerű, kelleni fog OpenGL függvény
     //fényforrás tulajdonságait csak akkor frissíteni shaderben, ha a fényforrás aktív
-    //egy framen belüli változások egyszeri frissítése a shaderben
-    //nondirectional lista hossza ne mindig egyel nőljön, hanem pl. duplázódjon
-    //	kell manuális length
-    //	egy idő után csökkenjen ha túl sok az üres hely?
+    //egy framen belüli változások egyszeri frissítése a shaderben (camera ubo-nál is)
+    //egy idő után csökkenjen ha túl sok az üres hely?
     //nondirectional light component?
     //	tárolhatná a last positiont
     //	meg amúgy itt kicsit kevesebb metódus kéne
@@ -123,7 +121,10 @@ public class BlinnPhongLightSources {
     }
 
     private static void removeDirectionalBuffer() {
+	DATA.setIntBufferPosition(0);
+	DATA.setIntBufferLimit(1);
 	DATA.setInactive();
+	DATA.setIntBufferPosition(0);
     }
 
     /**
@@ -156,7 +157,7 @@ public class BlinnPhongLightSources {
 
     private static void refreshDirectionalBuffer() {
 	refreshDirectionalParameters();
-	DATA.setMetaData(LightType.DIRECTIONAL, directionalLight.isActive());
+	refreshDirectionalMetaData();
     }
 
     /**
@@ -164,11 +165,17 @@ public class BlinnPhongLightSources {
      */
     private static void refreshDirectionalParameters() {
 	DATA.setFloatBufferPosition(0);
-	DATA.setFloatNone(); //position
-	DATA.setDirection(directionalLight);
-	DATA.setFloatNone(); //attenutation
+	DATA.setFloatBufferLimit(16);
 	DATA.setColor(directionalLight);
+	DATA.setDirection(directionalLight);
 	DATA.setFloatBufferPosition(0);
+    }
+
+    private static void refreshDirectionalMetaData() {
+	DATA.setIntBufferPosition(0);
+	DATA.setIntBufferLimit(2);
+	DATA.setMetaData(LightType.DIRECTIONAL, directionalLight.isActive());
+	DATA.setIntBufferPosition(0);
     }
 
     private static void refreshDirectionalInUbo() {
@@ -243,7 +250,7 @@ public class BlinnPhongLightSources {
 	ubo = new Ubo();
 	ubo.bind();
 	ubo.setName("BP Directional Light");
-	ubo.allocateMemory(112, false);
+	ubo.allocateMemory(DataStructure.LIGHT_SOURCE_SIZE, false);
 	ubo.unbind();
 	ubo.bindToBindingPoint(1);
     }
@@ -299,10 +306,6 @@ public class BlinnPhongLightSources {
 	 */
 	public static final int LIGHT_SOURCE_SIZE = 112;
 	/**
-	 * One float's size in the UBO.
-	 */
-	private static final int FLOAT_SIZE_UBO = 4;
-	/**
 	 * The type variable's address in the UBO.
 	 */
 	public static final int TYPE_ADDRESS = 104;
@@ -330,6 +333,22 @@ public class BlinnPhongLightSources {
 
 	public void setIntBufferPosition(int pos) {
 	    INT_BUFFER.position(pos);
+	}
+
+	public void setFloatBufferLimit(int limit) {
+	    FLOAT_BUFFER.limit(limit);
+	}
+
+	public void setIntBufferLimit(int limit) {
+	    INT_BUFFER.limit(limit);
+	}
+
+	public int getFloatBufferCapacity() {
+	    return FLOAT_BUFFER.capacity();
+	}
+
+	public int getIntBufferCapacity() {
+	    return INT_BUFFER.capacity();
 	}
 
 	/**
@@ -445,18 +464,16 @@ public class BlinnPhongLightSources {
 	 * @param active determines whether the Component is active
 	 */
 	private void setMetaData(@NotNull LightType type, boolean active) {
-	    INT_BUFFER.limit(2);
-	    INT_BUFFER.position(0);
 	    INT_BUFFER.put(type.getCode());
 	    INT_BUFFER.put(active ? 1 : 0);
-	    INT_BUFFER.position(0);
 	}
 
 	private void setInactive() {
-	    INT_BUFFER.limit(1);
-	    INT_BUFFER.position(0);
 	    INT_BUFFER.put(0);
-	    INT_BUFFER.position(0);
+	}
+
+	private void setCount(int count) {
+	    INT_BUFFER.put(count);
 	}
     }
 
@@ -471,12 +488,15 @@ public class BlinnPhongLightSources {
 	 */
 	private Ssbo ssbo;
 
-	private int size = 1;
+	private int count = 0;
+
+	private static final int LIGHT_SOURCES_OFFSET = 16;
 
 	private static final Logger LOG = Logger.getLogger(LightSourceTile.class.getName());
 
 	public LightSourceTile() {
 	    createSsbo();
+	    extendListTo(1);
 	}
 
 	private void refreshPoint(@NotNull BlinnPhongPointLightComponent light) {
@@ -497,17 +517,10 @@ public class BlinnPhongLightSources {
 	private void addLightIfNeeded(@NotNull BlinnPhongLightComponent light) {
 	    if (light.getGameObject() != null && light.getShaderIndex() == -1) {
 		int shaderIndex = computeNewShaderIndex();
-		extendSsboIfNeeded(shaderIndex);
+		extendStorageIfNeeded(shaderIndex);
 		light.setShaderIndex(shaderIndex);
 		addLight(light, shaderIndex);
-	    }
-	}
-
-	private void addLight(@NotNull BlinnPhongLightComponent light, int shaderIndex) {
-	    if (shaderIndex >= lights.size()) {
-		lights.add(light);
-	    } else {
-		lights.set(shaderIndex, light);
+		setCount();
 	    }
 	}
 
@@ -526,13 +539,60 @@ public class BlinnPhongLightSources {
 	    return lights.size();
 	}
 
-	private void extendSsboIfNeeded(int shaderIndex) {
+	private void extendStorageIfNeeded(int shaderIndex) {
 	    if (shaderIndex == lights.size()) {
-		size++;
-		ssbo.bind();
-		ssbo.allocateMemory(size * DataStructure.LIGHT_SOURCE_SIZE, false);
-		ssbo.unbind();
+		int size = lights.size() * 2;
+		extendSsboTo(size);
+		extendListTo(size);
 	    }
+	}
+
+	private void extendSsboTo(int size) {
+	    ssbo.bind();
+	    ssbo.allocateMemory(size * DataStructure.LIGHT_SOURCE_SIZE + LIGHT_SOURCES_OFFSET, false);
+	    ssbo.unbind();
+	}
+
+	private void extendListTo(int size) {
+	    while (lights.size() < size) {
+		lights.add(null);
+	    }
+	}
+
+	private void addLight(@NotNull BlinnPhongLightComponent light, int shaderIndex) {
+	    if (shaderIndex >= lights.size()) {
+		lights.add(light);
+	    } else {
+		lights.set(shaderIndex, light);
+	    }
+	}
+
+	private void setCount() {
+	    count = computeCount();
+	    refreshCountBuffer();
+	    refreshCountInSsbo();
+	}
+
+	private int computeCount() {
+	    for (int i = lights.size() - 1; i >= 0; i--) {
+		if (lights.get(i) != null) {
+		    return i + 1;
+		}
+	    }
+	    return 0;
+	}
+
+	private void refreshCountBuffer() {
+	    DATA.setIntBufferPosition(0);
+	    DATA.setIntBufferLimit(1);
+	    DATA.setCount(count);
+	    DATA.setIntBufferPosition(0);
+	}
+
+	private void refreshCountInSsbo() {
+	    ssbo.bind();
+	    ssbo.storeData(DATA.getIntBuffer(), 0);
+	    ssbo.unbind();
 	}
 
 	//
@@ -545,11 +605,15 @@ public class BlinnPhongLightSources {
 		removeLightBuffer();
 		removeLightFromSsbo(light);
 		light.setShaderIndex(-1);
+		setCount();
 	    }
 	}
 
 	private void removeLightBuffer() {
+	    DATA.setIntBufferPosition(0);
+	    DATA.setIntBufferLimit(1);
 	    DATA.setInactive();
+	    DATA.setIntBufferPosition(0);
 	}
 
 	/**
@@ -559,7 +623,7 @@ public class BlinnPhongLightSources {
 	 */
 	private void removeLightFromSsbo(@NotNull BlinnPhongLightComponent light) {
 	    ssbo.bind();
-	    ssbo.storeData(DATA.getIntBuffer(), light.getShaderIndex() * DataStructure.LIGHT_SOURCE_SIZE + DataStructure.ACTIVE_ADDRESS);
+	    ssbo.storeData(DATA.getIntBuffer(), light.getShaderIndex() * DataStructure.LIGHT_SOURCE_SIZE + DataStructure.ACTIVE_ADDRESS + LIGHT_SOURCES_OFFSET);
 	    ssbo.unbind();
 	    LOG.fine("Nondirectional light removed from the SSBO");
 	}
@@ -583,21 +647,36 @@ public class BlinnPhongLightSources {
 
 	private void refreshPointBuffer(@NotNull BlinnPhongPointLightComponent light) {
 	    refreshPointParameters(light);
-	    DATA.setMetaData(LightType.POINT, light.isActive());
+	    refreshPointMetaData(light);
 	}
 
 	private void refreshSpotBuffer(@NotNull BlinnPhongSpotLightComponent light) {
 	    refreshSpotParameters(light);
-	    DATA.setMetaData(LightType.SPOT, light.isActive());
+	    refreshSpotMetaData(light);
 	}
 
 	private void refreshPointParameters(@NotNull BlinnPhongPointLightComponent light) {
 	    DATA.setFloatBufferPosition(0);
-	    DATA.setPosition(light);
-	    DATA.setFloatNone();
-	    DATA.setAttenutation(light.getConstant(), light.getLinear(), light.getQuadratic());
+	    DATA.setFloatBufferLimit(24);
 	    DATA.setColor(light);
+	    DATA.setFloatNone();    //direction
+	    DATA.setPosition(light);
+	    DATA.setAttenutation(light.getConstant(), light.getLinear(), light.getQuadratic());
 	    DATA.setFloatBufferPosition(0);
+	}
+
+	private void refreshPointMetaData(@NotNull BlinnPhongPointLightComponent light) {
+	    DATA.setIntBufferPosition(0);
+	    DATA.setIntBufferLimit(2);
+	    DATA.setMetaData(LightType.POINT, light.isActive());
+	    DATA.setIntBufferPosition(0);
+	}
+
+	private void refreshSpotMetaData(@NotNull BlinnPhongSpotLightComponent light) {
+	    DATA.setIntBufferPosition(0);
+	    DATA.setIntBufferLimit(2);
+	    DATA.setMetaData(LightType.SPOT, light.isActive());
+	    DATA.setIntBufferPosition(0);
 	}
 
 	/**
@@ -607,36 +686,21 @@ public class BlinnPhongLightSources {
 	 */
 	private void refreshSpotParameters(@NotNull BlinnPhongSpotLightComponent light) {
 	    DATA.setFloatBufferPosition(0);
-	    DATA.setPosition(light);
-	    DATA.setDirection(light);
-	    DATA.setAttenutation(light.getConstant(), light.getLinear(), light.getQuadratic());
+	    DATA.setFloatBufferLimit(26);
 	    DATA.setColor(light);
+	    DATA.setDirection(light);
+	    DATA.setPosition(light);
+	    DATA.setAttenutation(light.getConstant(), light.getLinear(), light.getQuadratic());
 	    DATA.setCutoff(light);
 	    DATA.setFloatBufferPosition(0);
 	}
 
 	private void refreshLightInSsbo(@NotNull BlinnPhongLightComponent light) {
 	    ssbo.bind();
-	    ssbo.storeData(DATA.getFloatBuffer(), light.getShaderIndex() * DataStructure.LIGHT_SOURCE_SIZE);
-	    ssbo.storeData(DATA.getIntBuffer(), light.getShaderIndex() * DataStructure.LIGHT_SOURCE_SIZE + DataStructure.TYPE_ADDRESS);
+	    ssbo.storeData(DATA.getFloatBuffer(), light.getShaderIndex() * DataStructure.LIGHT_SOURCE_SIZE + LIGHT_SOURCES_OFFSET);
+	    ssbo.storeData(DATA.getIntBuffer(), light.getShaderIndex() * DataStructure.LIGHT_SOURCE_SIZE + DataStructure.TYPE_ADDRESS + LIGHT_SOURCES_OFFSET);
 	    ssbo.unbind();
 	    LOG.fine("Nondirectional light refreshed in the SSBO");
-	}
-
-	//
-	//
-	//
-	/**
-	 * Refreshes the max light index after you removed a light source from
-	 * the given index.
-	 *
-	 * @param index removed light source's index
-	 */
-	private void refreshMaxLightIndexAfterRemove(int index) {
-//	if (index == getMaxLightIndex()) {
-//	    maxLightIndex = computeMaxLightIndex();
-//	    refreshMaxLightIndexInUbo();
-//	}
 	}
 
 	//
@@ -666,7 +730,7 @@ public class BlinnPhongLightSources {
 	    ssbo = new Ssbo();
 	    ssbo.bind();
 	    ssbo.setName("BP Nondirectional Lights");
-	    ssbo.allocateMemory(112, false);
+	    ssbo.allocateMemory(DataStructure.LIGHT_SOURCE_SIZE + LIGHT_SOURCES_OFFSET, false);
 	    ssbo.unbind();
 	    ssbo.bindToBindingPoint(2);
 	}
