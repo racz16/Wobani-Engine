@@ -1,4 +1,4 @@
-package wobani.component.light;
+package wobani.component.light.blinnphong;
 
 import java.nio.*;
 import org.joml.Math;

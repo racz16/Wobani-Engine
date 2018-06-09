@@ -1,8 +1,9 @@
 package wobani.rendering.geometry;
 
+import wobani.component.light.blinnphong.BlinnPhongDirectionalLightComponent;
+import wobani.component.light.blinnphong.BlinnPhongLightSources;
 import org.joml.*;
 import wobani.component.camera.*;
-import wobani.component.light.*;
 import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.material.*;

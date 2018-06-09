@@ -1,4 +1,4 @@
-package wobani.component.light;
+package wobani.component.light.blinnphong;
 
 import java.nio.*;
 import java.util.*;
@@ -18,23 +18,18 @@ public class BlinnPhongLightSources {
     //	rendererben kiválasztani a 4 legközelebbi ssbo-t
     //	    lehet, hogy ez a binding point-os történet se lesz ilyen egyszerű, kelleni fog OpenGL függvény
     //egy idő után csökkenjen ha túl sok az üres hely?
-    //nondirectional light component?
-    //	tárolhatná a last positiont
-    //	meg amúgy itt kicsit kevesebb metódus kéne
-    //	meg amúgy az ottani refreshLight hívást is egységesíteni lehetne
-    //	másik tile-ba átsorolásnál hasznos lenne
     //componentek átnézése
     //osztályokhoz equals, hashcode, tostring
     //javadoc
 
     private static final List<BlinnPhongDirectionalLightComponent> DIRECTIONAL = new ArrayList<>();
-    private static final List<BlinnPhongLightComponent> NONDIRECTIONAL = new ArrayList<>();
+    private static final List<BlinnPhongPositionalLightComponent> POSITIONAL = new ArrayList<>();
 
     private static final List<BlinnPhongLightComponent> DIRTY = new ArrayList<>();
 
     private static BlinnPhongDirectionalLightComponent directionalLight;
     private static Ubo ubo;
-    private static LightSourceTile nondirectionalLights = new LightSourceTile();
+    private static LightSourceTile positionalLights = new LightSourceTile();
 
     /**
      * One light's size in the UBO.
@@ -86,30 +81,30 @@ public class BlinnPhongLightSources {
      * @param light BlinnPhongDirectionalLightComponent
      */
     @Internal
-    static void refreshDirectional(@NotNull BlinnPhongDirectionalLightComponent light) {
+    static void refresh(@NotNull BlinnPhongDirectionalLightComponent light) {
 	if (light == null) {
 	    throw new NullPointerException();
 	}
-	addDirectionalToTheList(light);
-	refreshDirectionalInShader(light);
+	addToTheList(light);
+	refreshInShader(light);
     }
 
-    private static void addDirectionalToTheList(@NotNull BlinnPhongDirectionalLightComponent light) {
+    private static void addToTheList(@NotNull BlinnPhongDirectionalLightComponent light) {
 	if (!Utility.containsReference(DIRECTIONAL, light)) {
 	    DIRECTIONAL.add(light);
 	}
     }
 
-    private static void refreshDirectionalInShader(@NotNull BlinnPhongDirectionalLightComponent light) {
-	addDirectionalIfNeeded(light);
-	removeDirectionalIfNeeded(light);
-	refreshDirectionalIfNeeded(light);
+    private static void refreshInShader(@NotNull BlinnPhongDirectionalLightComponent light) {
+	addIfNeeded(light);
+	removeIfNeeded(light);
+	refreshIfNeeded(light);
     }
 
     //
     //add
     //
-    private static void addDirectionalIfNeeded(@NotNull BlinnPhongDirectionalLightComponent light) {
+    private static void addIfNeeded(@NotNull BlinnPhongDirectionalLightComponent light) {
 	if (light.isTheMainDirectionalLight()) {
 	    light.setShaderIndex(0);
 	    if (light != directionalLight) {
@@ -121,10 +116,10 @@ public class BlinnPhongLightSources {
     //
     //remove
     //
-    private static void removeDirectionalIfNeeded(@NotNull BlinnPhongDirectionalLightComponent light) {
+    private static void removeIfNeeded(@NotNull BlinnPhongDirectionalLightComponent light) {
 	if (!light.isTheMainDirectionalLight()) {
 	    if (light == directionalLight && isUsable()) {
-		removeDirectionalFromUbo();
+		removeFromUbo();
 	    }
 	    light.setShaderIndex(-1);
 	}
@@ -133,7 +128,7 @@ public class BlinnPhongLightSources {
     /**
      * Removes the given light source from the UBO.
      */
-    private static void removeDirectionalFromUbo() {
+    private static void removeFromUbo() {
 	IntBuffer metadata = directionalLight.computeInactiveMetadata();
 	ubo.bind();
 	ubo.storeData(metadata, ACTIVE_ADDRESS);
@@ -144,7 +139,7 @@ public class BlinnPhongLightSources {
     //
     //refresh
     //
-    private static void refreshDirectionalIfNeeded(@NotNull BlinnPhongDirectionalLightComponent light) {
+    private static void refreshIfNeeded(@NotNull BlinnPhongDirectionalLightComponent light) {
 	if (isUsable()) {
 	    if (light == directionalLight) {
 		refreshDirectionalInUbo();
@@ -177,17 +172,17 @@ public class BlinnPhongLightSources {
     //nondirectional------------------------------------------------------------
     //
     @Internal
-    static void refreshNondirectional(@NotNull BlinnPhongLightComponent light) {
+    static void refresh(@NotNull BlinnPhongPositionalLightComponent light) {
 	if (light == null) {
 	    throw new NullPointerException();
 	}
-	addNondirectionalToTheList(light);
-	nondirectionalLights.refreshLight(light);
+	addToTheList(light);
+	positionalLights.refresh(light);
     }
 
-    private static void addNondirectionalToTheList(@NotNull BlinnPhongLightComponent light) {
-	if (!Utility.containsReference(NONDIRECTIONAL, light)) {
-	    NONDIRECTIONAL.add(light);
+    private static void addToTheList(@NotNull BlinnPhongPositionalLightComponent light) {
+	if (!Utility.containsReference(POSITIONAL, light)) {
+	    POSITIONAL.add(light);
 	}
     }
 
@@ -201,8 +196,8 @@ public class BlinnPhongLightSources {
     public static void recreate() {
 	createUbo();
 	recreateDirectional();
-	nondirectionalLights = new LightSourceTile();
-	nondirectionalLights.recreate();
+	positionalLights = new LightSourceTile();
+	positionalLights.recreate();
     }
 
     private static void createUbo() {
@@ -226,8 +221,8 @@ public class BlinnPhongLightSources {
 
     public static void release() {
 	releaseUbo();
-	releaseDirectionalLight();
-	releaseNondirectionalLights();
+	releaseDirectional();
+	releasePositionals();
     }
 
     private static void releaseUbo() {
@@ -238,17 +233,17 @@ public class BlinnPhongLightSources {
 	}
     }
 
-    private static void releaseDirectionalLight() {
+    private static void releaseDirectional() {
 	if (directionalLight != null) {
 	    directionalLight.setShaderIndex(-1);
 	}
 	directionalLight = null;
     }
 
-    private static void releaseNondirectionalLights() {
-	if (nondirectionalLights != null && nondirectionalLights.isUsable()) {
-	    nondirectionalLights.release();
-	    nondirectionalLights = null;
+    private static void releasePositionals() {
+	if (positionalLights != null && positionalLights.isUsable()) {
+	    positionalLights.release();
+	    positionalLights = null;
 	}
     }
 
@@ -256,7 +251,7 @@ public class BlinnPhongLightSources {
 	if (!isUsable()) {
 	    recreate();
 	}
-	refresh();
+	BlinnPhongLightSources.refresh();
     }
 
     public static boolean isUsable() {
@@ -271,7 +266,7 @@ public class BlinnPhongLightSources {
 	/**
 	 * The LightSources UBO's lights.
 	 */
-	private final List<BlinnPhongLightComponent> lights = new ArrayList<>();
+	private final List<BlinnPhongPositionalLightComponent> lights = new ArrayList<>();
 	/**
 	 * The LightSources UBO.
 	 */
@@ -288,21 +283,21 @@ public class BlinnPhongLightSources {
 	    extendListTo(1);
 	}
 
-	private void refreshLight(@NotNull BlinnPhongLightComponent light) {
-	    addLightIfNeeded(light);
-	    removeLightIfNeeded(light);
-	    refreshLightIfNeeded(light);
+	private void refresh(@NotNull BlinnPhongPositionalLightComponent light) {
+	    addIfNeeded(light);
+	    removeIfNeeded(light);
+	    refreshIfNeeded(light);
 	}
 
 	//
 	//add
 	//
-	private void addLightIfNeeded(@NotNull BlinnPhongLightComponent light) {
+	private void addIfNeeded(@NotNull BlinnPhongPositionalLightComponent light) {
 	    if (light.getGameObject() != null && light.getShaderIndex() == -1) {
 		int shaderIndex = computeNewShaderIndex();
 		extendStorageIfNeeded(shaderIndex);
 		light.setShaderIndex(shaderIndex);
-		addLight(light, shaderIndex);
+		add(light, shaderIndex);
 		setCount();
 	    }
 	}
@@ -342,7 +337,7 @@ public class BlinnPhongLightSources {
 	    }
 	}
 
-	private void addLight(@NotNull BlinnPhongLightComponent light, int shaderIndex) {
+	private void add(@NotNull BlinnPhongPositionalLightComponent light, int shaderIndex) {
 	    if (shaderIndex >= lights.size()) {
 		lights.add(light);
 	    } else {
@@ -374,11 +369,11 @@ public class BlinnPhongLightSources {
 	//
 	//remove
 	//
-	private void removeLightIfNeeded(@NotNull BlinnPhongLightComponent light) {
+	private void removeIfNeeded(@NotNull BlinnPhongPositionalLightComponent light) {
 	    if (light.getGameObject() == null && light.getShaderIndex() != -1) {
 		int shaderIndex = light.getShaderIndex();
 		lights.set(shaderIndex, null);
-		removeLightFromSsbo(light);
+		removeLFromSsbo(light);
 		light.setShaderIndex(-1);
 		setCount();
 	    }
@@ -389,31 +384,31 @@ public class BlinnPhongLightSources {
 	 *
 	 * @param light BlinnPhongDirectionalLightComponent
 	 */
-	private void removeLightFromSsbo(@NotNull BlinnPhongLightComponent light) {
+	private void removeLFromSsbo(@NotNull BlinnPhongPositionalLightComponent light) {
 	    IntBuffer metadata = light.computeInactiveMetadata();
 	    ssbo.bind();
 	    ssbo.storeData(metadata, light.getShaderIndex() * LIGHT_SIZE + ACTIVE_ADDRESS + LIGHT_SOURCES_OFFSET);
 	    ssbo.unbind();
-	    LOG.fine("Nondirectional light removed from the SSBO");
+	    LOG.fine("Positional light removed from the SSBO");
 	}
 
 	//
 	//refresh
 	//
-	private void refreshLightIfNeeded(@NotNull BlinnPhongLightComponent light) {
+	private void refreshIfNeeded(@NotNull BlinnPhongPositionalLightComponent light) {
 	    if (light.getGameObject() != null && light.getShaderIndex() != -1) {
-		refreshLightInSsbo(light);
+		refreshInSsbo(light);
 	    }
 	}
 
-	private void refreshLightInSsbo(@NotNull BlinnPhongLightComponent light) {
+	private void refreshInSsbo(@NotNull BlinnPhongPositionalLightComponent light) {
 	    FloatBuffer parameters = light.computeLightParameters();
 	    IntBuffer metadata = light.computeLightMetadata();
 	    ssbo.bind();
 	    ssbo.storeData(parameters, light.getShaderIndex() * LIGHT_SIZE + LIGHT_SOURCES_OFFSET);
 	    ssbo.storeData(metadata, light.getShaderIndex() * LIGHT_SIZE + TYPE_ADDRESS + LIGHT_SOURCES_OFFSET);
 	    ssbo.unbind();
-	    LOG.fine("Nondirectional light refreshed in the SSBO");
+	    LOG.fine("Positional light refreshed in the SSBO");
 	}
 
 	//
@@ -421,7 +416,7 @@ public class BlinnPhongLightSources {
 	//
 	public void recreate() {
 	    createSsbo();
-	    for (BlinnPhongLightComponent bplc : NONDIRECTIONAL) {
+	    for (BlinnPhongPositionalLightComponent bplc : POSITIONAL) {
 		bplc.refreshShader();
 	    }
 	}
@@ -442,7 +437,7 @@ public class BlinnPhongLightSources {
 	private void createSsboWithoutInspection() {
 	    ssbo = new Ssbo();
 	    ssbo.bind();
-	    ssbo.setName("BP Nondirectional Lights");
+	    ssbo.setName("BP Positional Lights");
 	    ssbo.allocateMemory(LIGHT_SIZE + LIGHT_SOURCES_OFFSET, false);
 	    ssbo.unbind();
 	    ssbo.bindToBindingPoint(3);
@@ -456,7 +451,7 @@ public class BlinnPhongLightSources {
 	 */
 	public void release() {
 	    releaseSsbo();
-	    releaseNondirectionalLight();
+	    releasePositionals();
 	}
 
 	private void releaseSsbo() {
@@ -467,8 +462,8 @@ public class BlinnPhongLightSources {
 	    }
 	}
 
-	private void releaseNondirectionalLight() {
-	    for (BlinnPhongLightComponent light : lights) {
+	private void releasePositionals() {
+	    for (BlinnPhongPositionalLightComponent light : lights) {
 		if (light != null) {
 		    light.setShaderIndex(-1);
 		}

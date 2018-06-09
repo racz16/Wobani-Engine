@@ -1,4 +1,4 @@
-package wobani.component.light;
+package wobani.component.light.blinnphong;
 
 import java.nio.*;
 import org.joml.*;
@@ -36,7 +36,7 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
     @Internal
     @Override
     protected void refreshShader() {
-	BlinnPhongLightSources.refreshDirectional(this);
+	BlinnPhongLightSources.refresh(this);
     }
 
     @Internal @NotNull

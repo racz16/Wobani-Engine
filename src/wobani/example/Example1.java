@@ -1,5 +1,8 @@
 package wobani.example;
 
+import wobani.component.light.blinnphong.BlinnPhongDirectionalLightComponent;
+import wobani.component.light.blinnphong.BlinnPhongSpotLightComponent;
+import wobani.component.light.blinnphong.BlinnPhongPointLightComponent;
 import java.io.*;
 import java.util.*;
 import org.joml.*;
@@ -7,7 +10,6 @@ import org.lwjgl.glfw.*;
 import wobani.component.audio.*;
 import wobani.component.camera.*;
 import wobani.component.environmentprobe.*;
-import wobani.component.light.*;
 import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.material.*;

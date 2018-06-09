@@ -1,4 +1,4 @@
-package wobani.component.light;
+package wobani.component.light.blinnphong;
 
 import java.nio.*;
 import wobani.core.*;
@@ -9,20 +9,8 @@ import wobani.toolbox.annotation.*;
  *
  * @see GameObject
  */
-public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
+public class BlinnPhongSpotLightComponent extends BlinnPhongPositionalLightComponent {
 
-    /**
-     * Attenuation's constant component.
-     */
-    private float constant = 1.0f;
-    /**
-     * Attenuation's linear component.
-     */
-    private float linear = 0.022f;
-    /**
-     * Attenuation's quadratic component.
-     */
-    private float quadratic = 0.0019f;
     /**
      * Cutoff component (in degrees).
      */
@@ -31,64 +19,6 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
      * Outer cutoff component (in degrees).
      */
     private float outerCutoff = 15.0f;
-
-    /**
-     * Returns the attenuation's constant component.
-     *
-     * @return attenuation's constant component
-     */
-    public float getConstant() {
-	return constant;
-    }
-
-    /**
-     * Sets the attenuation's constant component to the given value. In the most
-     * cases it's one.
-     *
-     * @param constant attenuation's constant component
-     */
-    public void setConstant(float constant) {
-	this.constant = constant;
-	makeDirty();
-    }
-
-    /**
-     * Returns the attenuation's linear component.
-     *
-     * @return attenuation's linear component
-     */
-    public float getLinear() {
-	return linear;
-    }
-
-    /**
-     * Sets the attenuation's linear component to the given value.
-     *
-     * @param linear attenuation's linear component
-     */
-    public void setLinear(float linear) {
-	this.linear = linear;
-	makeDirty();
-    }
-
-    /**
-     * Returns the attenuation's quadratic component.
-     *
-     * @return attenuation's quadratic component
-     */
-    public float getQuadratic() {
-	return quadratic;
-    }
-
-    /**
-     * Sets the attenuation's quadratic component to the given value.
-     *
-     * @param quadratic attenuation's quadratic component
-     */
-    public void setQuadratic(float quadratic) {
-	this.quadratic = quadratic;
-	makeDirty();
-    }
 
     /**
      * Returns the cutoff component.
@@ -147,7 +77,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
     @Internal
     @Override
     protected void refreshShader() {
-	BlinnPhongLightSources.refreshNondirectional(this);
+	BlinnPhongLightSources.refresh(this);
     }
 
     @Internal @NotNull
@@ -171,12 +101,9 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
 
     @Override
     public int hashCode() {
-	int hash = 5 + super.hashCode();
-	hash = 61 * hash + Float.floatToIntBits(this.constant);
-	hash = 61 * hash + Float.floatToIntBits(this.linear);
-	hash = 61 * hash + Float.floatToIntBits(this.quadratic);
-	hash = 61 * hash + Float.floatToIntBits(this.cutoff);
-	hash = 61 * hash + Float.floatToIntBits(this.outerCutoff);
+	int hash = 3 + super.hashCode();
+	hash = 97 * hash + Float.floatToIntBits(this.cutoff);
+	hash = 97 * hash + Float.floatToIntBits(this.outerCutoff);
 	return hash;
     }
 
@@ -186,15 +113,6 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
 	    return false;
 	}
 	final BlinnPhongSpotLightComponent other = (BlinnPhongSpotLightComponent) obj;
-	if (Float.floatToIntBits(this.constant) != Float.floatToIntBits(other.constant)) {
-	    return false;
-	}
-	if (Float.floatToIntBits(this.linear) != Float.floatToIntBits(other.linear)) {
-	    return false;
-	}
-	if (Float.floatToIntBits(this.quadratic) != Float.floatToIntBits(other.quadratic)) {
-	    return false;
-	}
 	if (Float.floatToIntBits(this.cutoff) != Float.floatToIntBits(other.cutoff)) {
 	    return false;
 	}
@@ -209,6 +127,8 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
 	StringBuilder res = new StringBuilder()
 		.append(super.toString()).append("\n")
 		.append(BlinnPhongSpotLightComponent.class.getSimpleName()).append("(")
+		.append("cutoff: ").append(cutoff)
+		.append(", outer cutoff: ").append(outerCutoff)
 		.append(")");
 	return res.toString();
     }

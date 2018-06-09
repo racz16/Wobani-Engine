@@ -1,15 +1,6 @@
-package wobani.component.light;
+package wobani.component.light.blinnphong;
 
-import java.nio.*;
-import wobani.core.*;
-import wobani.toolbox.annotation.*;
-
-/**
- * Basic implementation of a point light source.
- *
- * @see GameObject
- */
-public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent {
+public abstract class BlinnPhongPositionalLightComponent extends BlinnPhongLightComponent {
 
     /**
      * Attenuation's constant component.
@@ -82,36 +73,12 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent {
 	makeDirty();
     }
 
-    @Internal
-    @Override
-    protected void refreshShader() {
-	BlinnPhongLightSources.refreshNondirectional(this);
-    }
-
-    @Internal @NotNull
-    @Override
-    FloatBuffer computeLightParameters() {
-	getHelper().setFloatBufferPosition(0);
-	getHelper().setFloatBufferLimit(24);
-	getHelper().setColor(getDiffuseColor(), getSpecularColor(), getAmbientColor());
-	getHelper().setFloatNone();    //direction
-	getHelper().setPosition(getGameObject().getTransform().getAbsolutePosition());
-	getHelper().setAttenutation(getConstant(), getLinear(), getQuadratic());
-	getHelper().setFloatBufferPosition(0);
-	return getHelper().getFloatBuffer();
-    }
-
-    @Override
-    protected int getLightType() {
-	return 1;
-    }
-
     @Override
     public int hashCode() {
-	int hash = 5 + super.hashCode();
-	hash = 43 * hash + Float.floatToIntBits(this.constant);
-	hash = 43 * hash + Float.floatToIntBits(this.linear);
-	hash = 43 * hash + Float.floatToIntBits(this.quadratic);
+	int hash = 3 + super.hashCode();
+	hash = 67 * hash + Float.floatToIntBits(this.constant);
+	hash = 67 * hash + Float.floatToIntBits(this.linear);
+	hash = 67 * hash + Float.floatToIntBits(this.quadratic);
 	return hash;
     }
 
@@ -120,7 +87,7 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent {
 	if (!super.equals(obj)) {
 	    return false;
 	}
-	final BlinnPhongPointLightComponent other = (BlinnPhongPointLightComponent) obj;
+	final BlinnPhongPositionalLightComponent other = (BlinnPhongPositionalLightComponent) obj;
 	if (Float.floatToIntBits(this.constant) != Float.floatToIntBits(other.constant)) {
 	    return false;
 	}
@@ -137,7 +104,10 @@ public class BlinnPhongPointLightComponent extends BlinnPhongLightComponent {
     public String toString() {
 	StringBuilder res = new StringBuilder()
 		.append(super.toString()).append("\n")
-		.append(BlinnPhongPointLightComponent.class.getSimpleName()).append("(")
+		.append(BlinnPhongPositionalLightComponent.class.getSimpleName()).append("(")
+		.append("constant: ").append(constant)
+		.append(", linear: ").append(linear)
+		.append(", quadratic: ").append(quadratic)
 		.append(")");
 	return res.toString();
     }
