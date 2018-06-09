@@ -1,8 +1,5 @@
 package wobani.example;
 
-import wobani.component.light.blinnphong.BlinnPhongDirectionalLightComponent;
-import wobani.component.light.blinnphong.BlinnPhongSpotLightComponent;
-import wobani.component.light.blinnphong.BlinnPhongPointLightComponent;
 import java.io.*;
 import java.util.*;
 import org.joml.*;
@@ -10,6 +7,7 @@ import org.lwjgl.glfw.*;
 import wobani.component.audio.*;
 import wobani.component.camera.*;
 import wobani.component.environmentprobe.*;
+import wobani.component.light.blinnphong.*;
 import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.material.*;
@@ -208,8 +206,9 @@ public class Example1 {
 	spline.setStep(0.01f);
 	for (int i = 0; i < 6; i++) {
 	    float x = i % 2 == 0 ? 5 : -5;
+	    //x -= 10;
 	    float y = 3 * i;
-	    spline.addControlPointToTheEnd(new Vector3f(x, y, 0));
+	    spline.addControlPointToTheEnd(new Vector3f(x, y, -5));
 	}
 	spline.normalizeHelperPoints(5);
 	spline.setLoopSpline(true);

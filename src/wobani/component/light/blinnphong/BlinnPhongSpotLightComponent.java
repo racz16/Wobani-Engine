@@ -74,12 +74,6 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongPositionalLightCompo
 	makeDirty();
     }
 
-    @Internal
-    @Override
-    protected void refreshShader() {
-	BlinnPhongLightSources.refresh(this);
-    }
-
     @Internal @NotNull
     @Override
     FloatBuffer computeLightParameters() {

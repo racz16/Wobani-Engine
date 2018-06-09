@@ -1,5 +1,8 @@
 package wobani.component.light.blinnphong;
 
+import org.joml.*;
+import wobani.toolbox.annotation.*;
+
 public abstract class BlinnPhongPositionalLightComponent extends BlinnPhongLightComponent {
 
     /**
@@ -71,6 +74,24 @@ public abstract class BlinnPhongPositionalLightComponent extends BlinnPhongLight
     public void setQuadratic(float quadratic) {
 	this.quadratic = quadratic;
 	makeDirty();
+    }
+
+    @Internal
+    @Override
+    protected void refreshShader() {
+	BlinnPhongLightSources.refresh(this);
+    }
+
+    private Vector2i tilePosition;
+
+    @Internal @Nullable
+    Vector2i getTilePosition() {
+	return tilePosition;
+    }
+
+    @Internal
+    void setTilePosition(@Nullable Vector2i tilePosition) {
+	this.tilePosition = tilePosition;
     }
 
     @Override

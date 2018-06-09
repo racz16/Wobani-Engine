@@ -11,12 +11,6 @@ import wobani.toolbox.annotation.*;
  */
 public class BlinnPhongPointLightComponent extends BlinnPhongPositionalLightComponent {
 
-    @Internal
-    @Override
-    protected void refreshShader() {
-	BlinnPhongLightSources.refresh(this);
-    }
-
     @Internal @NotNull
     @Override
     FloatBuffer computeLightParameters() {

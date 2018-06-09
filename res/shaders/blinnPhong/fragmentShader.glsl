@@ -61,9 +61,24 @@ layout(std140, binding = 2) uniform DirectionalLight{
     Light directionalLight;
 };
 
-layout(std140, binding = 3) buffer NondirectionalLights {
-    int count;
-    Light lights[];
+layout(std140, binding = 3) buffer NondirectionalLights1 {
+    int count1;
+    Light lights1[];
+};
+
+layout(std140, binding = 4) buffer NondirectionalLights2 {
+    int count2;
+    Light lights2[];
+};
+
+layout(std140, binding = 5) buffer NondirectionalLights3 {
+    int count3;
+    Light lights3[];
+};
+
+layout(std140, binding = 6) buffer NondirectionalLights4 {
+    int count4;
+    Light lights4[];
 };
 
 in vec3 fragmentPositionF;
@@ -118,9 +133,24 @@ void main(){
     //shadows
     result *= calculateShadow(receiveShadow, fragmentPositionLightSpace, normalVector);
     //point and spotlights
-    for(int i=0; i<count; i++){
-        if(lights[i].lightActive){
-            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights[i]);
+    for(int i=0; i<count1; i++){
+        if(lights1[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights1[i]);
+        }
+    }
+    for(int i=0; i<count2; i++){
+        if(lights2[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights2[i]);
+        }
+    }
+    for(int i=0; i<count3; i++){
+        if(lights3[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights3[i]);
+        }
+    }
+    for(int i=0; i<count4; i++){
+        if(lights4[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights4[i]);
         }
     }
 

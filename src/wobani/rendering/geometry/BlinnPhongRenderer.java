@@ -1,9 +1,8 @@
 package wobani.rendering.geometry;
 
-import wobani.component.light.blinnphong.BlinnPhongDirectionalLightComponent;
-import wobani.component.light.blinnphong.BlinnPhongLightSources;
 import org.joml.*;
 import wobani.component.camera.*;
+import wobani.component.light.blinnphong.*;
 import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.material.*;
@@ -122,11 +121,6 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      */
     private void beforeDrawRenderable(@NotNull Renderable renderable) {
 	renderable.beforeDraw();
-	//TODO: to Renderable
-//	GL20.glEnableVertexAttribArray(0);
-//	GL20.glEnableVertexAttribArray(1);
-//	GL20.glEnableVertexAttribArray(2);
-//	GL20.glEnableVertexAttribArray(3);
     }
 
     /**
@@ -135,11 +129,6 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      * @param renderable Renderable
      */
     private void afterDrawRenderable(@NotNull Renderable renderable) {
-	//TODO: to Renderable
-//	GL20.glDisableVertexAttribArray(0);
-//	GL20.glDisableVertexAttribArray(1);
-//	GL20.glDisableVertexAttribArray(2);
-//	GL20.glDisableVertexAttribArray(3);
 	renderable.afterDraw();
     }
 
@@ -147,6 +136,7 @@ public class BlinnPhongRenderer extends GeometryRenderer {
 	numberOfRenderedElements++;
 	numberOfRenderedFaces += rc.getFaceCount();
 	Transform transform = rc.getGameObject().getTransform();
+	BlinnPhongLightSources.bindClosestLightSources(transform.getAbsolutePosition());
 	shader.loadObjectUniforms(transform.getModelMatrix(), new Matrix3f(transform.getInverseModelMatrix()), rc.isReceiveShadows());
 	Material material = rc.getMaterial();
 	shader.loadMaterial(material);
