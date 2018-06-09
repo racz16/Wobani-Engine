@@ -1,5 +1,6 @@
 package wobani.component.light;
 
+import java.nio.*;
 import wobani.core.*;
 import wobani.toolbox.annotation.*;
 
@@ -146,7 +147,26 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongLightComponent {
     @Internal
     @Override
     protected void refreshShader() {
-	BlinnPhongLightSources.refreshSpot(this);
+	BlinnPhongLightSources.refreshNondirectional(this);
+    }
+
+    @Internal @NotNull
+    @Override
+    FloatBuffer computeLightParameters() {
+	getHelper().setFloatBufferPosition(0);
+	getHelper().setFloatBufferLimit(26);
+	getHelper().setColor(getDiffuseColor(), getSpecularColor(), getAmbientColor());
+	getHelper().setDirection(getGameObject().getTransform().getForwardVector());
+	getHelper().setPosition(getGameObject().getTransform().getAbsolutePosition());
+	getHelper().setAttenutation(getConstant(), getLinear(), getQuadratic());
+	getHelper().setCutoff(getCutoff(), getOuterCutoff());
+	getHelper().setFloatBufferPosition(0);
+	return getHelper().getFloatBuffer();
+    }
+
+    @Override
+    protected int getLightType() {
+	return 2;
     }
 
     @Override

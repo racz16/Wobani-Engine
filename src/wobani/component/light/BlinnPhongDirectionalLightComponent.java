@@ -1,5 +1,6 @@
 package wobani.component.light;
 
+import java.nio.*;
 import org.joml.*;
 import wobani.core.*;
 import wobani.rendering.geometry.*;
@@ -36,6 +37,22 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
     @Override
     protected void refreshShader() {
 	BlinnPhongLightSources.refreshDirectional(this);
+    }
+
+    @Internal @NotNull
+    @Override
+    protected FloatBuffer computeLightParameters() {
+	getHelper().setFloatBufferPosition(0);
+	getHelper().setFloatBufferLimit(16);
+	getHelper().setColor(getDiffuseColor(), getSpecularColor(), getAmbientColor());
+	getHelper().setDirection(getGameObject().getTransform().getForwardVector());
+	getHelper().setFloatBufferPosition(0);
+	return getHelper().getFloatBuffer();
+    }
+
+    @Override
+    protected int getLightType() {
+	return 0;
     }
 
     /**

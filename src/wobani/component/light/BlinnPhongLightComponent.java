@@ -1,5 +1,6 @@
 package wobani.component.light;
 
+import java.nio.*;
 import java.util.*;
 import org.joml.*;
 import wobani.core.*;
@@ -31,8 +32,15 @@ public abstract class BlinnPhongLightComponent extends Component {
      */
     private int shaderIndex = -1;
 
+    private static final BlinnPhongShaderHelper HELPER = new BlinnPhongShaderHelper();
+
     static {
 	BlinnPhongLightSources.initialize();
+    }
+
+    @NotNull
+    protected BlinnPhongShaderHelper getHelper() {
+	return HELPER;
     }
 
     /**
@@ -168,7 +176,31 @@ public abstract class BlinnPhongLightComponent extends Component {
      * Refreshes the light in the UBO.
      */
     @Internal
-    protected abstract void refreshShader();
+    abstract void refreshShader();
+
+    @Internal
+    abstract FloatBuffer computeLightParameters();
+
+    @Internal @NotNull
+    IntBuffer computeLightMetadata() {
+	getHelper().setIntBufferPosition(0);
+	getHelper().setIntBufferLimit(2);
+	getHelper().setMetaData(getLightType(), isActive());
+	getHelper().setIntBufferPosition(0);
+	return getHelper().getIntBuffer();
+    }
+
+    @Internal @NotNull
+    IntBuffer computeInactiveMetadata() {
+	getHelper().setIntBufferPosition(0);
+	getHelper().setIntBufferLimit(1);
+	getHelper().setInactive();
+	getHelper().setIntBufferPosition(0);
+	return getHelper().getIntBuffer();
+    }
+
+    @Internal
+    protected abstract int getLightType();
 
     @Override
     public int hashCode() {
