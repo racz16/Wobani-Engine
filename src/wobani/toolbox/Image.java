@@ -56,7 +56,7 @@ public class Image {
      */
     private void loadImage(@NotNull File path, boolean flip) {
 	stbi_set_flip_vertically_on_load(flip);
-	loadImageWithoutInspection(path);
+	loadImageUnsafe(path);
 	if (image == null) {
 	    throw new NativeException(STB, "Failed to load an image file!\n" + stbi_failure_reason());
 	}
@@ -68,7 +68,7 @@ public class Image {
      *
      * @param path the image's path
      */
-    private void loadImageWithoutInspection(@NotNull File path) {
+    private void loadImageUnsafe(@NotNull File path) {
 	try (MemoryStack stack = stackPush()) {
 	    IntBuffer width = stack.mallocInt(1);
 	    IntBuffer height = stack.mallocInt(1);

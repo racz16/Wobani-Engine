@@ -136,9 +136,17 @@ public class Example1 {
 	dragon.getComponents().add(new Component() {
 	    private final Vector3f rot = new Vector3f();
 
+	    private boolean b = true;
+
 	    @Override
 	    public void update() {
 		getGameObject().getTransform().rotate(new Vector3f(0, 0.35f * Time.getDeltaTimeFactor(), 0));
+		if (Time.getTime() > 5 && b) {
+		    b = false;
+		    System.out.println("DONE");
+		    BlinnPhongLightSources.release();
+		}
+
 	    }
 	});
 	return dragon;

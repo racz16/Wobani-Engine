@@ -201,7 +201,7 @@ public class Joystick {
 	if (slot < GLFW.GLFW_JOYSTICK_1 || slot > GLFW.GLFW_JOYSTICK_LAST) {
 	    throw new IllegalArgumentException("Slot must be in the (0;15) interval");
 	}
-	initializeWithoutInspection(name, slot);
+	initializeUnsafe(name, slot);
     }
 
     /**
@@ -210,7 +210,7 @@ public class Joystick {
      * @param name joystick's name
      * @param slot joystick's slot
      */
-    private void initializeWithoutInspection(@NotNull String name, int slot) {
+    private void initializeUnsafe(@NotNull String name, int slot) {
 	this.name = name;
 	this.slot = slot;
     }

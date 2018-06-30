@@ -2,7 +2,7 @@ wobani.component
 wobani.component.audio
 wobani.component.camera
 wobani.component.environmentprobe
-wobani.component.light
+wobani.component.light.blinnphong
 wobani.component.renderable
 wobani.core
 wobani.example

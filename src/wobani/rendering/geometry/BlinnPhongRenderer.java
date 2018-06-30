@@ -97,8 +97,8 @@ public class BlinnPhongRenderer extends GeometryRenderer {
 	if (!Utility.isUsable(shader)) {
 	    shader = new BlinnPhongShader();
 	}
-	CameraComponent.makeMatricesUboUpToDate();
-	BlinnPhongLightSources.makeUpToDate();
+	CameraComponent.refreshMatricesUbo();
+	BlinnPhongLightSources.refresh();
 	shader.start();
 	shader.loadGlobalUniforms();
 	RenderingPipeline.bindFbo();

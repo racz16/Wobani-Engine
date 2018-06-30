@@ -151,7 +151,7 @@ public class GameObject {
 	if (parent == this || children.containsDeep(parent)) {
 	    throw new IllegalArgumentException("Parent can't be this and the descendant of this");
 	}
-	setParentWithoutInspection(parent);
+	setParentUnsafe(parent);
     }
 
     /**
@@ -159,7 +159,7 @@ public class GameObject {
      *
      * @param parent parent
      */
-    private void setParentWithoutInspection(@Nullable GameObject parent) {
+    private void setParentUnsafe(@Nullable GameObject parent) {
 	TransformHolder holder = getCurrentTransformData();
 	removeParent();
 	addParent(parent);

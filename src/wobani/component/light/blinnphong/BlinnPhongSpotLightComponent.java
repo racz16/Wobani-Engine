@@ -76,20 +76,27 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongPositionalLightCompo
 
     @Internal @NotNull
     @Override
-    FloatBuffer computeLightParameters() {
+    protected FloatBuffer computeLightParameters() {
 	getHelper().setFloatBufferPosition(0);
 	getHelper().setFloatBufferLimit(26);
 	getHelper().setColor(getDiffuseColor(), getSpecularColor(), getAmbientColor());
-	getHelper().setDirection(getGameObject().getTransform().getForwardVector());
-	getHelper().setPosition(getGameObject().getTransform().getAbsolutePosition());
-	getHelper().setAttenutation(getConstant(), getLinear(), getQuadratic());
+	setTransformParameters();
 	getHelper().setCutoff(getCutoff(), getOuterCutoff());
 	getHelper().setFloatBufferPosition(0);
 	return getHelper().getFloatBuffer();
     }
 
+    /**
+     * Sets the light transform related parameters like direction or position.
+     */
+    private void setTransformParameters() {
+	getHelper().setDirection(getGameObject().getTransform().getForwardVector());
+	getHelper().setPosition(getGameObject().getTransform().getAbsolutePosition());
+	getHelper().setAttenutation(getConstant(), getLinear(), getQuadratic());
+    }
+
     @Override
-    protected int getLightType() {
+    protected int getLightShaderType() {
 	return 2;
     }
 

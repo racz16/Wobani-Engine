@@ -32,7 +32,7 @@ public class GameLoop {
      */
     public static void initialize(@Nullable WindowParameters parameters) {
 	try {
-	    initializeWithoutInspection(parameters);
+	    initializeUnsafe(parameters);
 	} catch (Exception e) {
 	    handleException(e);
 	}
@@ -45,7 +45,7 @@ public class GameLoop {
      *
      * @param parameters parameters for the window
      */
-    public static void initializeWithoutInspection(@Nullable WindowParameters parameters) {
+    private static void initializeUnsafe(@Nullable WindowParameters parameters) {
 	Utility.initializeLogging();
 	initializeWindowAndInput(parameters);
 	RenderingPipeline.initialize();

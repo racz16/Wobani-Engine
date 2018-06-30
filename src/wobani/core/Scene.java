@@ -65,6 +65,7 @@ public class Scene {
 	return COMPONENT_LISTS;
     }
 
+    //FIXME: main directional light parameter to blinn phong renderer
     /**
      * Returns the Scene's parameters.
      *

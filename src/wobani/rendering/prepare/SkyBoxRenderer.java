@@ -77,7 +77,7 @@ public class SkyBoxRenderer extends Renderer {
 	if (!Utility.isUsable(shader)) {
 	    shader = SkyBoxShader.getInstance();
 	}
-	CameraComponent.makeMatricesUboUpToDate();
+	CameraComponent.refreshMatricesUbo();
 	shader.start();
 	RenderingPipeline.bindFbo();
 	OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS_OR_EQUAL);

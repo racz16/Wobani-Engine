@@ -3,6 +3,9 @@ package wobani.component.light.blinnphong;
 import org.joml.*;
 import wobani.toolbox.annotation.*;
 
+/**
+ * A Blinn-Phong light source which uses it's position and has attenuation.
+ */
 public abstract class BlinnPhongPositionalLightComponent extends BlinnPhongLightComponent {
 
     /**
@@ -17,9 +20,16 @@ public abstract class BlinnPhongPositionalLightComponent extends BlinnPhongLight
      * Attenuation's quadratic component.
      */
     private float quadratic = 0.0019f;
+    /**
+     * The center of the light's tile.
+     */
+    private Vector2i tilePosition;
 
     /**
      * Returns the attenuation's constant component.
+     * <p>
+     * Attenuation calculated as follows: 1 / (constant + linear * distance +
+     * quadratic * distance^2)
      *
      * @return attenuation's constant component
      */
@@ -30,6 +40,9 @@ public abstract class BlinnPhongPositionalLightComponent extends BlinnPhongLight
     /**
      * Sets the attenuation's constant component to the given value. In the most
      * cases it's one.
+     * <p>
+     * Attenuation calculated as follows: 1 / (constant + linear * distance +
+     * quadratic * distance^2)
      *
      * @param constant attenuation's constant component
      */
@@ -40,6 +53,9 @@ public abstract class BlinnPhongPositionalLightComponent extends BlinnPhongLight
 
     /**
      * Returns the attenuation's linear component.
+     * <p>
+     * Attenuation calculated as follows: 1 / (constant + linear * distance +
+     * quadratic * distance^2)
      *
      * @return attenuation's linear component
      */
@@ -49,6 +65,9 @@ public abstract class BlinnPhongPositionalLightComponent extends BlinnPhongLight
 
     /**
      * Sets the attenuation's linear component to the given value.
+     * <p>
+     * Attenuation calculated as follows: 1 / (constant + linear * distance +
+     * quadratic * distance^2)
      *
      * @param linear attenuation's linear component
      */
@@ -59,6 +78,9 @@ public abstract class BlinnPhongPositionalLightComponent extends BlinnPhongLight
 
     /**
      * Returns the attenuation's quadratic component.
+     * <p>
+     * Attenuation calculated as follows: 1 / (constant + linear * distance +
+     * quadratic * distance^2)
      *
      * @return attenuation's quadratic component
      */
@@ -68,6 +90,9 @@ public abstract class BlinnPhongPositionalLightComponent extends BlinnPhongLight
 
     /**
      * Sets the attenuation's quadratic component to the given value.
+     * <p>
+     * Attenuation calculated as follows: 1 / (constant + linear * distance +
+     * quadratic * distance^2)
      *
      * @param quadratic attenuation's quadratic component
      */
@@ -78,17 +103,25 @@ public abstract class BlinnPhongPositionalLightComponent extends BlinnPhongLight
 
     @Internal
     @Override
-    protected void refreshShader() {
+    protected void refreshLightInVram() {
 	BlinnPhongLightSources.refresh(this);
     }
 
-    private Vector2i tilePosition;
-
+    /**
+     * Returns the center of the light's tile.
+     *
+     * @return the center of the light's tile
+     */
     @Internal @Nullable
     Vector2i getTilePosition() {
 	return tilePosition;
     }
 
+    /**
+     * Sets the position of the light's tile.
+     *
+     * @param tilePosition the center of the light's tile
+     */
     @Internal
     void setTilePosition(@Nullable Vector2i tilePosition) {
 	this.tilePosition = tilePosition;

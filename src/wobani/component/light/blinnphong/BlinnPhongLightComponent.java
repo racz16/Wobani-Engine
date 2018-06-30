@@ -10,8 +10,6 @@ import wobani.toolbox.annotation.*;
 /**
  * This abstract class stores the light's diffuse, specular and ambient
  * components.
- *
- * @see GameObject
  */
 public abstract class BlinnPhongLightComponent extends Component {
 
@@ -28,16 +26,19 @@ public abstract class BlinnPhongLightComponent extends Component {
      */
     private final Vector3f ambientColor = new Vector3f(0.1f);
     /**
-     * The light's index in the UBO.
+     * The light's index in the shader.
      */
     private int shaderIndex = -1;
-
+    /**
+     * Helps in the communication with the VGA.
+     */
     private static final BlinnPhongShaderHelper HELPER = new BlinnPhongShaderHelper();
 
-    static {
-	BlinnPhongLightSources.initialize();
-    }
-
+    /**
+     * Returns a helper object which can help in the communication with the VGA.
+     *
+     * @return helper obeject
+     */
     @NotNull
     protected BlinnPhongShaderHelper getHelper() {
 	return HELPER;
@@ -148,59 +149,73 @@ public abstract class BlinnPhongLightComponent extends Component {
     }
 
     /**
-     * Returns the light's UBO index.
+     * Returns the light's index in the shader.
      *
-     * @return the light's UBO index.
+     * @return the light's index in the shader
      */
     @Internal
-    int getShaderIndex() {
+    protected int getShaderIndex() {
 	return shaderIndex;
     }
 
     /**
-     * Sets the light's UBO index to the given value.
+     * Sets the light's shader index to the given value.
      *
-     * @param index new UBO index
+     * @param index new shader index
      */
     @Internal
-    void setShaderIndex(int index) {
+    protected void setShaderIndex(int index) {
 	shaderIndex = index;
     }
 
+    /**
+     * Signs that the at least one of the light's properties changed and have to
+     * update it in the shader.
+     */
     @Internal
     protected void makeDirty() {
 	BlinnPhongLightSources.makeDirty(this);
     }
 
     /**
-     * Refreshes the light in the UBO.
+     * Refreshes the light in the VRAM.
      */
     @Internal
-    abstract void refreshShader();
+    protected abstract void refreshLightInVram();
 
+    /**
+     * Creates a FloatBuffer which contains all the light's parameters like
+     * diffuse color, position etc. The FloatBuffer's content must follow the
+     * memory layout of the shader's light struct.
+     *
+     * @return the light's parameters
+     */
     @Internal
-    abstract FloatBuffer computeLightParameters();
+    protected abstract FloatBuffer computeLightParameters();
 
+    /**
+     * Creates an IntBuffer which contains all the light's meta data like the
+     * light's type etc. The IntBuffer's content must follow the memory layout
+     * of the shader's light struct.
+     *
+     * @return the light's meta data
+     */
     @Internal @NotNull
-    IntBuffer computeLightMetadata() {
+    protected IntBuffer computeLightMetadata() {
 	getHelper().setIntBufferPosition(0);
 	getHelper().setIntBufferLimit(2);
-	getHelper().setMetaData(getLightType(), isActive());
+	getHelper().setMetaData(getLightShaderType(), isActive());
 	getHelper().setIntBufferPosition(0);
 	return getHelper().getIntBuffer();
     }
 
-    @Internal @NotNull
-    IntBuffer computeInactiveMetadata() {
-	getHelper().setIntBufferPosition(0);
-	getHelper().setIntBufferLimit(1);
-	getHelper().setInactive();
-	getHelper().setIntBufferPosition(0);
-	return getHelper().getIntBuffer();
-    }
-
+    /**
+     * Returns the light's integer type used in the shader.
+     *
+     * @return the light's integer type
+     */
     @Internal
-    protected abstract int getLightType();
+    protected abstract int getLightShaderType();
 
     @Override
     public int hashCode() {

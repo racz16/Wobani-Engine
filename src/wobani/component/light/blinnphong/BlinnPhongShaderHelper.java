@@ -6,58 +6,124 @@ import org.joml.*;
 import org.lwjgl.*;
 import wobani.toolbox.annotation.*;
 
+/**
+ * A helper class which helps the Blinn-Phong light sources in the communication
+ * with the VGA. It contains a FloatBuffer, an IntBuffer and all the methods
+ * necessary to fill these buffers and then you can pass them to the VGA.
+ */
 public class BlinnPhongShaderHelper {
 
     /**
-     * FloatBuffer for frequent UBO updates.
+     * FloatBuffer for frequent shader updates.
      */
     private final FloatBuffer FLOAT_BUFFER;
     /**
-     * IntBuffer for frequent UBO updates.
+     * IntBuffer for frequent shader updates.
      */
     private final IntBuffer INT_BUFFER;
+    /**
+     * One light's size in the VRAM.
+     */
+    public static final int LIGHT_SIZE = 112;
+    /**
+     * The type variable's address in the light struct.
+     */
+    public static final int TYPE_ADDRESS = 104;
+    /**
+     * The active variable's address in the light struct.
+     */
+    public static final int ACTIVE_ADDRESS = 108;
+    /**
+     * Offset in the VRAM from the 0 to the first light source.
+     */
+    public static final int LIGHT_SOURCES_OFFSET = 16;
 
+    /**
+     * Initializes a new BlinnPhongShaderHelper.
+     */
     public BlinnPhongShaderHelper() {
 	FLOAT_BUFFER = BufferUtils.createFloatBuffer(26);
 	INT_BUFFER = BufferUtils.createIntBuffer(2);
     }
 
+    /**
+     * Returns the FloatBuffer.
+     *
+     * @return the FloatBuffer
+     */
+    @NotNull
     public FloatBuffer getFloatBuffer() {
 	return FLOAT_BUFFER;
     }
 
+    /**
+     * Returns the IntBuffer.
+     *
+     * @return the IntBuffer
+     */
+    @NotNull
     public IntBuffer getIntBuffer() {
 	return INT_BUFFER;
     }
 
-    public void setFloatBufferPosition(int pos) {
-	FLOAT_BUFFER.position(pos);
+    /**
+     * Sets the FloatBuffer's position to the given value.
+     *
+     * @param position position
+     */
+    public void setFloatBufferPosition(int position) {
+	FLOAT_BUFFER.position(position);
     }
 
-    public void setIntBufferPosition(int pos) {
-	INT_BUFFER.position(pos);
+    /**
+     * Sets the IntBuffer's position to the given value.
+     *
+     * @param position position
+     */
+    public void setIntBufferPosition(int position) {
+	INT_BUFFER.position(position);
     }
 
+    /**
+     * Sets the FloatBuffer's limit to the given value.
+     *
+     * @param limit limit
+     */
     public void setFloatBufferLimit(int limit) {
 	FLOAT_BUFFER.limit(limit);
     }
 
+    /**
+     * Sets the IntBuffer's limit to the given value.
+     *
+     * @param limit limit
+     */
     public void setIntBufferLimit(int limit) {
 	INT_BUFFER.limit(limit);
     }
 
+    /**
+     * Returns the FloatBuffer's capacity.
+     *
+     * @return the FloatBuffer's capacity
+     */
     public int getFloatBufferCapacity() {
 	return FLOAT_BUFFER.capacity();
     }
 
+    /**
+     * Returns the IntBuffer's capacity.
+     *
+     * @return the IntBuffer's capacity
+     */
     public int getIntBufferCapacity() {
 	return INT_BUFFER.capacity();
     }
 
     /**
-     * Sets the given light source's position in the UBO.
+     * Sets the light source's position to the given value in the buffer.
      *
-     * @param light BlinnPhongLightComponent
+     * @param position position
      */
     public void setPosition(@NotNull Vector3f position) {
 	for (int i = 0; i < 3; i++) {
@@ -67,9 +133,9 @@ public class BlinnPhongShaderHelper {
     }
 
     /**
-     * Sets the given light source's direction in the UBO.
+     * Sets the light source's direction to the given value in the buffer.
      *
-     * @param light BlinnPhongLightComponent
+     * @param direction direction
      */
     public void setDirection(@NotNull Vector3f direction) {
 	for (int i = 0; i < 3; i++) {
@@ -79,7 +145,7 @@ public class BlinnPhongShaderHelper {
     }
 
     /**
-     * Sets the light source's attenutation in the UBO.
+     * Sets the light source's attenutation to the given values in the buffer.
      *
      * @param constant  attenutation constant component
      * @param linear    attenutation linear component
@@ -93,10 +159,12 @@ public class BlinnPhongShaderHelper {
     }
 
     /**
-     * Sets the given light source's diffuse, specular and ambient color in the
-     * UBO.
+     * Sets the light source's diffuse, specular and ambient color to the given
+     * values in the buffer.
      *
-     * @param light BlinnPhongLightComponent
+     * @param diffuse  diffuse color
+     * @param specular specular color
+     * @param ambient  ambient color
      */
     public void setColor(@NotNull Vector3f diffuse, @NotNull Vector3f specular, @NotNull Vector3f ambient) {
 	setAmbient(ambient);
@@ -105,9 +173,9 @@ public class BlinnPhongShaderHelper {
     }
 
     /**
-     * Sets the given light source's ambient color in the UBO.
+     * Sets the light source's ambient color to the given value in the buffer.
      *
-     * @param light BlinnPhongLightComponent
+     * @param ambient ambient color
      */
     public void setAmbient(@NotNull Vector3f ambient) {
 	for (int i = 0; i < 3; i++) {
@@ -117,9 +185,9 @@ public class BlinnPhongShaderHelper {
     }
 
     /**
-     * Sets the given light source's diffuse color in the UBO.
+     * Sets the light source's diffuse color to the given value in the buffer.
      *
-     * @param light BlinnPhongLightComponent
+     * @param diffuse diffuse color
      */
     public void setDiffuse(@NotNull Vector3f diffuse) {
 	for (int i = 0; i < 3; i++) {
@@ -129,9 +197,9 @@ public class BlinnPhongShaderHelper {
     }
 
     /**
-     * Sets the given light source's specular color in the UBO.
+     * Sets the light source's specular color to the given value in the buffer.
      *
-     * @param light BlinnPhongLightComponent
+     * @param specular specular color
      */
     public void setSpecular(@NotNull Vector3f specular) {
 	for (int i = 0; i < 3; i++) {
@@ -141,9 +209,10 @@ public class BlinnPhongShaderHelper {
     }
 
     /**
-     * Sets the given light source's cutoff and outer cutoff in the UBO.
+     * Sets the light source's cutoff to the given values in the buffer.
      *
-     * @param light BlinnPhongSpotLightComponent
+     * @param cutoff      cutoff (in degrees)
+     * @param outerCutoff outer cutoff (in degrees)
      */
     public void setCutoff(float cutoff, float outerCutoff) {
 	FLOAT_BUFFER.put((float) Math.cos(Math.toRadians(cutoff)));
@@ -151,8 +220,8 @@ public class BlinnPhongShaderHelper {
     }
 
     /**
-     * Sets the next 4 floats to -1 in the UBO (for example directional light's
-     * position etc).
+     * Sets the next 4 floats to -1 in the buffer (if you don't want to use them
+     * to anything but you have to fill the values).
      */
     public void setFloatNone() {
 	for (int i = 0; i < 4; i++) {
@@ -161,17 +230,13 @@ public class BlinnPhongShaderHelper {
     }
 
     /**
-     * Refreshes the light source's type and activeness in the UBO.
+     * Sets the light source's meta data to the given values in the buffer.
      *
-     * @param type   the light source's type
-     * @param active determines whether the Component is active
+     * @param lightType light source's type in the shader
+     * @param active    true if the light source is active, false otherwise
      */
     public void setMetaData(int lightType, boolean active) {
 	INT_BUFFER.put(lightType);
 	INT_BUFFER.put(active ? 1 : 0);
-    }
-
-    public void setInactive() {
-	INT_BUFFER.put(0);
     }
 }

@@ -81,7 +81,7 @@ public class SolidColorRenderer extends GeometryRenderer {
 	if (shader == null || !shader.isUsable()) {
 	    shader = SolidColorShader.getInstance();
 	}
-	CameraComponent.makeMatricesUboUpToDate();
+	CameraComponent.refreshMatricesUbo();
 	RenderingPipeline.bindFbo();
 	boolean wirefreame = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.WIREFRAME_MODE, false);
 	OpenGl.setWireframe(wirefreame);

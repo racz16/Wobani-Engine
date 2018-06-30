@@ -1,31 +1,35 @@
 package wobani.component.light.blinnphong;
 
 import java.nio.*;
-import wobani.core.*;
 import wobani.toolbox.annotation.*;
 
 /**
  * Basic implementation of a point light source.
- *
- * @see GameObject
  */
 public class BlinnPhongPointLightComponent extends BlinnPhongPositionalLightComponent {
 
     @Internal @NotNull
     @Override
-    FloatBuffer computeLightParameters() {
+    protected FloatBuffer computeLightParameters() {
 	getHelper().setFloatBufferPosition(0);
 	getHelper().setFloatBufferLimit(24);
 	getHelper().setColor(getDiffuseColor(), getSpecularColor(), getAmbientColor());
-	getHelper().setFloatNone();    //direction
-	getHelper().setPosition(getGameObject().getTransform().getAbsolutePosition());
-	getHelper().setAttenutation(getConstant(), getLinear(), getQuadratic());
+	setTransformParameters();
 	getHelper().setFloatBufferPosition(0);
 	return getHelper().getFloatBuffer();
     }
 
+    /**
+     * Sets the light transform related parameters like direction or position.
+     */
+    private void setTransformParameters() {
+	getHelper().setFloatNone();    //direction
+	getHelper().setPosition(getGameObject().getTransform().getAbsolutePosition());
+	getHelper().setAttenutation(getConstant(), getLinear(), getQuadratic());
+    }
+
     @Override
-    protected int getLightType() {
+    protected int getLightShaderType() {
 	return 1;
     }
 

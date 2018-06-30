@@ -8,20 +8,18 @@ import wobani.toolbox.annotation.*;
 
 /**
  * Basic implementation of a directional light source.
- *
- * @see GameObject
  */
 public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponent {
 
     /**
-     * Initializes a new DirectionalLightComponent.
+     * Initializes a new BlinnPhongDirectionalLightComponent.
      */
     public BlinnPhongDirectionalLightComponent() {
     }
 
     /**
-     * Initializes a new DirectionalLightComponent to the given values. All of
-     * the parameters's components must be min. 0.
+     * Initializes a new BlinnPhongDirectionalLightComponent to the given
+     * values. All of the parameters's components must be min. 0.
      *
      * @param diffuse  diffuse color
      * @param specular specular color
@@ -35,7 +33,7 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
 
     @Internal
     @Override
-    protected void refreshShader() {
+    protected void refreshLightInVram() {
 	BlinnPhongLightSources.refresh(this);
     }
 
@@ -51,7 +49,7 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
     }
 
     @Override
-    protected int getLightType() {
+    protected int getLightShaderType() {
 	return 0;
     }
 
@@ -61,7 +59,6 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
      * @return true if it's the Scene's main directional light, false otherwise
      */
     public boolean isTheMainDirectionalLight() {
-	//FIXME: parameters to blinn phong renderer
 	BlinnPhongDirectionalLightComponent light = Scene.getParameters().getValue(BlinnPhongRenderer.MAIN_DIRECTIONAL_LIGHT);
 	return light == this;
     }
