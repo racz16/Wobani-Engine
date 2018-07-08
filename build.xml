@@ -71,7 +71,6 @@
 
     -->
 	<target name="-post-jar">
-		<copy file="windowSettings.ini" todir="${dist.dir}"/>
 		<copy todir="${dist.dir}/res">
 			<fileset dir="res"/>
 		</copy>
