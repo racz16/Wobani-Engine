@@ -45,6 +45,16 @@ public class BlinnPhongLightSources {
      * This SSBO used when one of the 4 closest light tiles aren't exist.
      */
     private static Ssbo zeroSsbo;
+    /**
+     * List of unnecessary tiles which needs to remove.
+     */
+    private static final List<Vector2i> UNNECESSARY_TILES = new ArrayList<>();
+    /**
+     * If more than half of a SSBO is empty or even the whole SSBO is empty
+     * since a time more than this time limit, the system will shrink or even
+     * release the SSBO.
+     */
+    private static long vramTimeLimit = 10000;
 
     /**
      * List of all Blinn-Phong light sources need to update in the current
@@ -82,6 +92,31 @@ public class BlinnPhongLightSources {
     }
 
     /**
+     * Returns the action time limit. If more than half of a SSBO is empty or
+     * even the whole SSBO is empty since a time more than this time limit, the
+     * system will shrink or even release the SSBO.
+     *
+     * @return action time limit (in milisecs)
+     */
+    public static long getActionTimeLimit() {
+	return vramTimeLimit;
+    }
+
+    /**
+     * Sets the action time limit to the given value. If more than half of a
+     * SSBO is empty or even the whole SSBO is empty since a time more than this
+     * time limit, the system will shrink or even release the SSBO.
+     *
+     * @param actionTimeLimit action time limit (in milisecs)
+     */
+    public static void setActionTimeLimit(long actionTimeLimit) {
+	if (actionTimeLimit <= 0) {
+	    throw new IllegalArgumentException("VRAM time limit have to be higher than 0");
+	}
+	vramTimeLimit = actionTimeLimit;
+    }
+
+    /**
      * Refreshes in the VRAM all the Blinn-Phong light sources changes since the
      * last frame. If the VGA side objects are released, this method recreates
      * them.
@@ -92,6 +127,33 @@ public class BlinnPhongLightSources {
 	    light.refreshLightInVram();
 	}
 	DIRTY.clear();
+	refreshTileStates();
+	removeUnnecessaryTiles();
+    }
+
+    /**
+     * Removes the unnecessary (empty and released) tiles from the system.
+     */
+    private static void removeUnnecessaryTiles() {
+	if (tiles != null) {
+	    for (Vector2i center : UNNECESSARY_TILES) {
+		tiles.put(center, null);
+	    }
+	}
+	UNNECESSARY_TILES.clear();
+    }
+
+    /**
+     * Tries to optimize the tiles' SSBOs. If more than half of a SSBO is empty
+     * or even the whole SSBO is empty since a time, it'll shrink or even
+     * release the SSBO.
+     */
+    private static void refreshTileStates() {
+	for (BlinnPhongLightSourceTile tile : tiles.values()) {
+	    if (tile != null) {
+		tile.refreshState();
+	    }
+	}
     }
 
     //
@@ -203,7 +265,6 @@ public class BlinnPhongLightSources {
     //
     //positional----------------------------------------------------------------
     //
-    //FIXME: ha releaselek, nem azonnal, de a point light kiesik
     /**
      * Refreshes the given positional light source in the VRAM. It adds, removes
      * or updates the light if necessary.
@@ -360,7 +421,7 @@ public class BlinnPhongLightSources {
      * @param index index (binding point is index + 3)
      */
     private static void bindTile(@Nullable BlinnPhongLightSourceTile tile, int index) {
-	if (tile != null) {
+	if (tile != null && tile.isUsable()) {
 	    tile.bindTo(index + 3);
 	} else {
 	    zeroSsbo.bindToBindingPoint(index + 3);
@@ -477,7 +538,7 @@ public class BlinnPhongLightSources {
      */
     @Internal
     static void removeTile(@NotNull Vector2i tileCenter) {
-	tiles.put(tileCenter, null);
+	UNNECESSARY_TILES.add(tileCenter);
     }
 
     //
@@ -554,10 +615,13 @@ public class BlinnPhongLightSources {
     private static void releasePositionals() {
 	if (tiles != null) {
 	    for (BlinnPhongLightSourceTile lst : tiles.values()) {
-		lst.release();
+		if (lst != null) {
+		    lst.release();
+		}
 	    }
 	}
 	tiles = null;
+	UNNECESSARY_TILES.clear();
     }
 
     /**
@@ -667,6 +731,7 @@ public class BlinnPhongLightSources {
     private static void createZeroSsboUnsafe() {
 	zeroSsbo = new Ssbo();
 	zeroSsbo.bind();
+	zeroSsbo.setName("zero");
 	zeroSsbo.allocateMemory(4, false);
 	zeroSsbo.storeData(new int[]{0}, 0);
 	zeroSsbo.unbind();
