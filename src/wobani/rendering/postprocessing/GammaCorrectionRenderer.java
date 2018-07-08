@@ -4,53 +4,52 @@ import wobani.resources.shader.postprocessing.*;
 import wobani.toolbox.annotation.*;
 
 /**
- * Performs gamma correction.
- *
- * @see Settings#getGamma()
- */
-public class GammaCorrectionRenderer extends PostProcessingRenderer {
+ Performs gamma correction.
+
+ @see Settings#getGamma() */
+public class GammaCorrectionRenderer extends PostProcessingRenderer{
 
     /**
-     * The only GammaCorrectionRenderer instance.
+     The only GammaCorrectionRenderer instance.
      */
     private static GammaCorrectionRenderer instance;
 
     /**
-     * Initializes a new GammaCorrectionRenderer.
+     Initializes a new GammaCorrectionRenderer.
      */
-    private GammaCorrectionRenderer() {
-	refreshShader();
-    }
-
-    @Override
-    protected void refreshShader() {
-	if (shader == null || !shader.isUsable()) {
-	    shader = GammaCorrectionShader.getInstance();
-	}
+    private GammaCorrectionRenderer(){
+        refreshShader();
     }
 
     /**
-     * Returns the GammaCorrectionRenderer instance.
-     *
-     * @return the GammaCorrectionRenderer instance
+     Returns the GammaCorrectionRenderer instance.
+
+     @return the GammaCorrectionRenderer instance
      */
     @NotNull
-    public static GammaCorrectionRenderer getInstance() {
-	if (instance == null) {
-	    instance = new GammaCorrectionRenderer();
-	}
-	return instance;
+    public static GammaCorrectionRenderer getInstance(){
+        if(instance == null){
+            instance = new GammaCorrectionRenderer();
+        }
+        return instance;
     }
 
     @Override
-    protected void beforeDrawQuad() {
-	super.beforeDrawQuad();
-	((GammaCorrectionShader) shader).loadGammaUniform();
+    protected void refreshShader(){
+        if(shader == null || !shader.isUsable()){
+            shader = GammaCorrectionShader.getInstance();
+        }
     }
 
     @Override
-    public boolean isUsable() {
-	return true;
+    protected void beforeDrawQuad(){
+        super.beforeDrawQuad();
+        ((GammaCorrectionShader) shader).loadGammaUniform();
+    }
+
+    @Override
+    public boolean isUsable(){
+        return true;
     }
 
 }

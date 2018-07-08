@@ -11,133 +11,129 @@ import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
 /**
- * This renderer can draw a skybox. In theory it can render any number of meshes
- * and splines, but in practice it's adivsed to only use one cube. To render the
- * cube, it's material must contain a CubeMapTexture in the diffuse slot. If
- * there is no CubeMapTexture in the diffuse slot, the entire cube will be
- * filled with mid-grey color.
+ This renderer can draw a skybox. In theory it can render any number of meshes and splines, but in practice it's adivsed
+ to only use one cube. To render the cube, it's material must contain a CubeMapTexture in the diffuse slot. If there is
+ no CubeMapTexture in the diffuse slot, the entire cube will be filled with mid-grey color.
  */
-public class SkyBoxRenderer extends Renderer {
+public class SkyBoxRenderer extends Renderer{
 
     /**
-     * SkyBox shader.
-     */
-    private SkyBoxShader shader;
-    /**
-     * The only SkyBoxRenderer instance.
+     The only SkyBoxRenderer instance.
      */
     private static SkyBoxRenderer instance;
-
+    /**
+     SkyBox shader.
+     */
+    private SkyBoxShader shader;
     private Mesh box;
 
     /**
-     * Initializes a new SkyBoxRenderer.
+     Initializes a new SkyBoxRenderer.
      */
-    private SkyBoxRenderer() {
-	shader = SkyBoxShader.getInstance();
-	box = CubeMesh.getInstance();
+    private SkyBoxRenderer(){
+        shader = SkyBoxShader.getInstance();
+        box = CubeMesh.getInstance();
     }
 
     /**
-     * Returns the SkyBoxRenderer instance.
-     *
-     * @return the SkyBoxRenderer instance
+     Returns the SkyBoxRenderer instance.
+
+     @return the SkyBoxRenderer instance
      */
     @NotNull
-    public static SkyBoxRenderer getInstance() {
-	if (instance == null) {
-	    instance = new SkyBoxRenderer();
-	}
-	return instance;
+    public static SkyBoxRenderer getInstance(){
+        if(instance == null){
+            instance = new SkyBoxRenderer();
+        }
+        return instance;
     }
 
     /**
-     * Renders the scene.
+     Renders the scene.
      */
     @Override
-    public void render() {
-	if (Scene.getParameters().get(Scene.MAIN_SKYBOX) == null) {
-	    return;
-	}
-	beforeDrawShader();
+    public void render(){
+        if(Scene.getParameters().get(Scene.MAIN_SKYBOX) == null){
+            return;
+        }
+        beforeDrawShader();
 
-	beforeDrawRenderable(box);
-	beforeDrawInstance();
-	box.draw();
-	afterDrawRenderable(box);
+        beforeDrawRenderable(box);
+        beforeDrawInstance();
+        box.draw();
+        afterDrawRenderable(box);
 
-	shader.stop();
-	OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS);
+        shader.stop();
+        OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS);
     }
 
     /**
-     * Prepares the shader to the rendering.
+     Prepares the shader to the rendering.
      */
-    private void beforeDrawShader() {
-	if (!Utility.isUsable(shader)) {
-	    shader = SkyBoxShader.getInstance();
-	}
-	CameraComponent.refreshMatricesUbo();
-	shader.start();
-	RenderingPipeline.bindFbo();
-	OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS_OR_EQUAL);
-	OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
-	boolean wirefreame = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.WIREFRAME_MODE, false);
-	OpenGl.setWireframe(wirefreame);
+    private void beforeDrawShader(){
+        if(!Utility.isUsable(shader)){
+            shader = SkyBoxShader.getInstance();
+        }
+        CameraComponent.refreshMatricesUbo();
+        shader.start();
+        RenderingPipeline.bindFbo();
+        OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS_OR_EQUAL);
+        OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
+        boolean wirefreame = RenderingPipeline.getParameters()
+                .getValueOrDefault(RenderingPipeline.WIREFRAME_MODE, false);
+        OpenGl.setWireframe(wirefreame);
     }
 
     /**
-     * Prepares the given Renderable to the rendering.
-     *
-     * @param renderable Renderable
+     Prepares the given Renderable to the rendering.
+
+     @param renderable Renderable
      */
-    private void beforeDrawRenderable(@NotNull Renderable renderable) {
-	renderable.beforeDraw();
-//        GL20.glEnableVertexAttribArray(0);
+    private void beforeDrawRenderable(@NotNull Renderable renderable){
+        renderable.beforeDraw();
+        //        GL20.glEnableVertexAttribArray(0);
     }
 
     /**
-     * Unbinds the Renderable's VAO and the vertex attrib arrays after
-     * rendering.
-     *
-     * @param renderable Renderable
+     Unbinds the Renderable's VAO and the vertex attrib arrays after rendering.
+
+     @param renderable Renderable
      */
-    private void afterDrawRenderable(@NotNull Renderable renderable) {
-//        GL20.glDisableVertexAttribArray(0);
-	renderable.afterDraw();
+    private void afterDrawRenderable(@NotNull Renderable renderable){
+        //        GL20.glDisableVertexAttribArray(0);
+        renderable.afterDraw();
     }
 
     /**
-     * Prepares the MeshComponent to the rendering.
-     *
-     * @param rc MeshComponent
+     Prepares the MeshComponent to the rendering.
+
+     @param rc MeshComponent
      */
-    private void beforeDrawInstance() {
-	shader.loadUniforms();
+    private void beforeDrawInstance(){
+        shader.loadUniforms();
     }
 
     /**
-     * Removes the shader program from the GPU's memory. After this method call
-     * you can't use this shader.
+     Removes the shader program from the GPU's memory. After this method call you can't use this shader.
      */
     @Override
-    public void release() {
-	shader.release();
-    }
-
-    @Override
-    public void removeFromRenderingPipeline() {
-
+    public void release(){
+        shader.release();
     }
 
     @Override
-    public boolean isUsable() {
-	return true;
+    public void removeFromRenderingPipeline(){
+
     }
 
     @Override
-    public String toString() {
-	return super.toString() + "\nSkyBoxRenderer{" + "shader=" + shader + '}';
+    public boolean isUsable(){
+        return true;
+    }
+
+    @Override
+    public String toString(){
+        return super.toString() + "\nSkyBoxRenderer{" + "shader=" + shader + '}';
     }
 
 }

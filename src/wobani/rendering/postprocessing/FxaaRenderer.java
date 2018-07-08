@@ -4,45 +4,45 @@ import wobani.resources.shader.postprocessing.*;
 import wobani.toolbox.annotation.*;
 
 /**
- * Performs FXAA.
+ Performs FXAA.
  */
-public class FxaaRenderer extends PostProcessingRenderer {
+public class FxaaRenderer extends PostProcessingRenderer{
 
     /**
-     * The only FxaaRenderer instance.
+     The only FxaaRenderer instance.
      */
     private static FxaaRenderer instance;
 
     /**
-     * Initializes a new FxaaRenderer.
+     Initializes a new FxaaRenderer.
      */
-    private FxaaRenderer() {
-	refreshShader();
-    }
-
-    @Override
-    protected void refreshShader() {
-	if (shader == null || !shader.isUsable()) {
-	    shader = FxaaShader.getInstance();
-	}
+    private FxaaRenderer(){
+        refreshShader();
     }
 
     /**
-     * Returns the FxaaRenderer instance.
-     *
-     * @return the FxaaRenderer instance
+     Returns the FxaaRenderer instance.
+
+     @return the FxaaRenderer instance
      */
     @NotNull
-    public static FxaaRenderer getInstance() {
-	if (instance == null) {
-	    instance = new FxaaRenderer();
-	}
-	return instance;
+    public static FxaaRenderer getInstance(){
+        if(instance == null){
+            instance = new FxaaRenderer();
+        }
+        return instance;
     }
 
     @Override
-    public boolean isUsable() {
-	return true;
+    protected void refreshShader(){
+        if(shader == null || !shader.isUsable()){
+            shader = FxaaShader.getInstance();
+        }
+    }
+
+    @Override
+    public boolean isUsable(){
+        return true;
     }
 
 }

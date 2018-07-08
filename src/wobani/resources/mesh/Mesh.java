@@ -3,14 +3,14 @@ package wobani.resources.mesh;
 import wobani.resources.*;
 
 /**
- * Interface for meshes.
+ Interface for meshes.
  */
-public interface Mesh extends Renderable {
+public interface Mesh extends Renderable{
 
     /**
-     * Returns the mseh's triangle count.
-     *
-     * @return triangle count
+     Returns the mseh's triangle count.
+
+     @return triangle count
      */
     public int getFaceCount();
 

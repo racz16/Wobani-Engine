@@ -1,12 +1,12 @@
 package wobani.toolbox.invalidatable;
 
 /**
- * This interface allows you to invalidate the object that implements it.
+ This interface allows you to invalidate the object that implements it.
  */
-public interface Invalidatable {
+public interface Invalidatable{
 
     /**
-     * Invalidates this object's data.
+     Invalidates this object's data.
      */
     public void invalidate();
 }

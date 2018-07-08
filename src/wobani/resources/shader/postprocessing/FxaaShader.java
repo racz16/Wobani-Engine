@@ -1,77 +1,78 @@
 package wobani.resources.shader.postprocessing;
 
-import java.io.*;
-import java.util.*;
 import wobani.resources.*;
 import wobani.resources.shader.*;
 import wobani.toolbox.annotation.*;
 
+import java.io.*;
+import java.util.*;
+
 /**
- * Performs FXAA.
+ Performs FXAA.
  */
-public class FxaaShader extends Shader {
+public class FxaaShader extends Shader{
 
     /**
-     * The only FxaaShader instance.
-     */
-    private static FxaaShader instance;
-    /**
-     * The resource's unique id.
-     */
-    private final ResourceId resourceId;
-    /**
-     * The vertex shader's path.
+     The vertex shader's path.
      */
     private static final String vertexPath = "res/shaders/postProcessing/fxaa/vertexShader.glsl";
     /**
-     * The fragment shader's path
+     The fragment shader's path
      */
     private static final String fragmentPath = "res/shaders/postProcessing/fxaa/fragmentShader.glsl";
+    /**
+     The only FxaaShader instance.
+     */
+    private static FxaaShader instance;
+    /**
+     The resource's unique id.
+     */
+    private final ResourceId resourceId;
 
     /**
-     * Initializes a new FxaaShader.
+     Initializes a new FxaaShader.
      */
-    private FxaaShader() {
-	super(vertexPath, fragmentPath, null, null, null);
-	List<File> paths = new ArrayList<>(2);
-	paths.add(new File(vertexPath));
-	paths.add(new File(fragmentPath));
-	resourceId = new ResourceId(paths);
-	ResourceManager.addShader(this);
+    private FxaaShader(){
+        super(vertexPath, fragmentPath, null, null, null);
+        List<File> paths = new ArrayList<>(2);
+        paths.add(new File(vertexPath));
+        paths.add(new File(fragmentPath));
+        resourceId = new ResourceId(paths);
+        ResourceManager.addShader(this);
     }
 
     /**
-     * Returns the FxaaShader instance.
-     *
-     * @return the FxaaShader instance
+     Returns the FxaaShader instance.
+
+     @return the FxaaShader instance
      */
     @NotNull
-    public static FxaaShader getInstance() {
-	if (instance == null || !instance.isUsable()) {
-	    instance = new FxaaShader();
-	}
-	return instance;
+    public static FxaaShader getInstance(){
+        if(instance == null || !instance.isUsable()){
+            instance = new FxaaShader();
+        }
+        return instance;
     }
 
     @Override
-    public void connectTextureUnits() {
-	connectTextureUnit("image", 0);
+    public void connectTextureUnits(){
+        connectTextureUnit("image", 0);
     }
 
     @Override
-    protected void connectUniforms() {
-	connectUniform("image");
+    protected void connectUniforms(){
+        connectUniform("image");
     }
 
     @NotNull
     @Override
-    public ResourceId getResourceId() {
-	return resourceId;
+    public ResourceId getResourceId(){
+        return resourceId;
     }
 
     @Override
-    public String toString() {
-	return super.toString() + "\nFxaaShader{" + "resourceId=" + resourceId + '}';
+    public String toString(){
+        return super.toString() + "\nFxaaShader{" + "resourceId=" + resourceId + '}';
     }
 
 }

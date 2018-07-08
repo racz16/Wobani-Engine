@@ -9,110 +9,109 @@ import wobani.toolbox.annotation.*;
 import wobani.window.*;
 
 /**
- * Renders the rendering pipeline's final frame to a fullscreen quad.
+ Renders the rendering pipeline's final frame to a fullscreen quad.
  */
-public class ScreenRenderer extends Renderer {
+public class ScreenRenderer extends Renderer{
 
     /**
-     * Textured quad shader.
+     The only ScreenRenderer instance.
+     */
+    private static ScreenRenderer instance;
+    /**
+     Textured quad shader.
      */
     private TexturedQuadShader shader;
     /**
-     * The fullscreen quad.
+     The fullscreen quad.
      */
     private QuadMesh quad;
-    /**
-     * The only ScreenRenderer instance.
-     */
-    private static ScreenRenderer instance;
 
     /**
-     * Initializes a new ScreenRenderer.
+     Initializes a new ScreenRenderer.
      */
-    private ScreenRenderer() {
-	shader = TexturedQuadShader.getInstance();
-	quad = QuadMesh.getInstance();
+    private ScreenRenderer(){
+        shader = TexturedQuadShader.getInstance();
+        quad = QuadMesh.getInstance();
     }
 
     /**
-     * Returns the ScreenRenderer instance.
-     *
-     * @return the ScreenRenderer instance
+     Returns the ScreenRenderer instance.
+
+     @return the ScreenRenderer instance
      */
     @NotNull
-    public static ScreenRenderer getInstance() {
-	if (instance == null) {
-	    instance = new ScreenRenderer();
-	}
-	return instance;
+    public static ScreenRenderer getInstance(){
+        if(instance == null){
+            instance = new ScreenRenderer();
+        }
+        return instance;
     }
 
     @Override
-    public void render() {
-	beforeShader();
-	shader.start();
-	beforeDrawQuad();
-	quad.draw();
-	afterDrawQuad();
-	shader.stop();
+    public void render(){
+        beforeShader();
+        shader.start();
+        beforeDrawQuad();
+        quad.draw();
+        afterDrawQuad();
+        shader.stop();
     }
 
     /**
-     * Prepares the shader to the rendering.
+     Prepares the shader to the rendering.
      */
-    private void beforeShader() {
-	if (shader == null || !shader.isUsable()) {
-	    shader = TexturedQuadShader.getInstance();
-	}
-	if (quad == null || !quad.isUsable()) {
-	    quad = QuadMesh.getInstance();
-	}
-	OpenGl.setWireframe(false);
-	OpenGl.bindDefaultFrameBuffer();
-	OpenGl.setViewport(Window.getClientAreaSize(), new Vector2i());
+    private void beforeShader(){
+        if(shader == null || !shader.isUsable()){
+            shader = TexturedQuadShader.getInstance();
+        }
+        if(quad == null || !quad.isUsable()){
+            quad = QuadMesh.getInstance();
+        }
+        OpenGl.setWireframe(false);
+        OpenGl.bindDefaultFrameBuffer();
+        OpenGl.setViewport(Window.getClientAreaSize(), new Vector2i());
     }
 
     /**
-     * Prepares the quad to the rendering.
+     Prepares the quad to the rendering.
      */
-    private void beforeDrawQuad() {
-	quad.beforeDraw();
-//	GL20.glEnableVertexAttribArray(0);
-//	GL20.glEnableVertexAttribArray(1);
-	Texture2D image = RenderingPipeline.getParameters().getValue(RenderingPipeline.WORK);
-	image.bindToTextureUnit(0);
+    private void beforeDrawQuad(){
+        quad.beforeDraw();
+        //	GL20.glEnableVertexAttribArray(0);
+        //	GL20.glEnableVertexAttribArray(1);
+        Texture2D image = RenderingPipeline.getParameters().getValue(RenderingPipeline.WORK);
+        image.bindToTextureUnit(0);
     }
 
     /**
-     * Unbinds the quad's VAO after rendering.
+     Unbinds the quad's VAO after rendering.
      */
-    private void afterDrawQuad() {
-//	GL20.glDisableVertexAttribArray(0);
-//	GL20.glDisableVertexAttribArray(1);
-	quad.afterDraw();
+    private void afterDrawQuad(){
+        //	GL20.glDisableVertexAttribArray(0);
+        //	GL20.glDisableVertexAttribArray(1);
+        quad.afterDraw();
     }
 
     @Override
-    public void release() {
-	if (shader.isUsable()) {
-	    shader.release();
-	}
+    public void release(){
+        if(shader.isUsable()){
+            shader.release();
+        }
     }
 
     @Override
-    public void removeFromRenderingPipeline() {
+    public void removeFromRenderingPipeline(){
 
     }
 
     @Override
-    public boolean isUsable() {
-	return true;
+    public boolean isUsable(){
+        return true;
     }
 
     @Override
-    public String toString() {
-	return super.toString() + "\nScreenRenderer{" + "shader=" + shader
-		+ ", quad=" + quad + '}';
+    public String toString(){
+        return super.toString() + "\nScreenRenderer{" + "shader=" + shader + ", quad=" + quad + '}';
     }
 
 }

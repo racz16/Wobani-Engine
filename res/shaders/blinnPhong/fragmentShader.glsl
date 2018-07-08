@@ -285,7 +285,7 @@ vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVec
 }
 
 vec3 parallaxCorrectReflectionVector(vec3 reflectionVector){
-    return material.geometryProxyRadius * (fragmentPositionF - material.environmentProbePosition) + reflectionVector;;
+    return material.geometryProxyRadius * (fragmentPositionF - material.environmentProbePosition) + reflectionVector;
 }
 
 vec3 getIntensity(vec2 textureCoordinates){

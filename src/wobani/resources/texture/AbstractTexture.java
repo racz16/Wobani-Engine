@@ -1,276 +1,275 @@
 package wobani.resources.texture;
 
-import java.nio.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
+import java.nio.*;
+
 /**
- * Basic data and methods for implementing a texture.
+ Basic data and methods for implementing a texture.
  */
-public abstract class AbstractTexture implements Texture {
+public abstract class AbstractTexture implements Texture{
 
     /**
-     * Texture's id.
-     */
-    protected int id = 0;
-    /**
-     * Texture's width and height.
+     Texture's width and height.
      */
     protected final Vector2i size = new Vector2i(-1);
     /**
-     * Determines whether the texture is in sRGB color space.
+     Texture's border color.
+     */
+    protected final Vector4f borderColor = new Vector4f(0);
+    /**
+     Texture's id.
+     */
+    protected int id = 0;
+    /**
+     Determines whether the texture is in sRGB color space.
      */
     protected boolean sRgb;
     /**
-     * Texture wrap along the U direcion.
+     Texture wrap along the U direcion.
      */
     protected TextureWrap wrapingU = TextureWrap.REPEAT;
     /**
-     * Texture wrap along the V direcion.
+     Texture wrap along the V direcion.
      */
     protected TextureWrap wrapingV = TextureWrap.REPEAT;
     /**
-     * Texture wrap along the W direcion.
+     Texture wrap along the W direcion.
      */
     protected TextureWrap wrapingW = TextureWrap.REPEAT;
     /**
-     * Texture's magnification filter.
+     Texture's magnification filter.
      */
     protected TextureFilter magnification = TextureFilter.NEAREST;
     /**
-     * Texture's minification filter.
+     Texture's minification filter.
      */
     protected TextureFilter minification = TextureFilter.NEAREST;
-    /**
-     * Texture's border color.
-     */
-    protected final Vector4f borderColor = new Vector4f(0);
 
-    @NotNull @ReadOnly
+    @NotNull
+    @ReadOnly
     @Override
-    public Vector2i getSize() {
-	return new Vector2i(size);
+    public Vector2i getSize(){
+        return new Vector2i(size);
     }
 
     @Override
-    public void update() {
+    public void update(){
     }
 
     /**
-     * Generates an id for the texture.
+     Generates an id for the texture.
      */
-    protected void glGenerateTextureId() {
-	id = GL11.glGenTextures();
+    protected void glGenerateTextureId(){
+        id = GL11.glGenTextures();
     }
 
     /**
-     * Returns the textures's id.
-     *
-     * @return texture's id
+     Returns the textures's id.
+
+     @return texture's id
      */
-    protected int glGetId() {
-	return id;
+    protected int glGetId(){
+        return id;
     }
 
     /**
-     * Binds the texture.
+     Binds the texture.
      */
-    protected void glBind() {
-	GL11.glBindTexture(getTextureType(), id);
+    protected void glBind(){
+        GL11.glBindTexture(getTextureType(), id);
     }
 
     /**
-     * Activates the textture in the given texture unit.
-     *
-     * @param textureUnit texture unit (0;31)
-     *
-     * @throws IllegalArgumentException invalid texture unit
+     Activates the textture in the given texture unit.
+
+     @param textureUnit texture unit (0;31)
+
+     @throws IllegalArgumentException invalid texture unit
      */
-    protected void glActivate(int textureUnit) {
-	if (textureUnit < 0 || textureUnit > 31) {
-	    throw new IllegalArgumentException("Invalid texture unit");
-	}
+    protected void glActivate(int textureUnit){
+        if(textureUnit < 0 || textureUnit > 31){
+            throw new IllegalArgumentException("Invalid texture unit");
+        }
 
-	GL13.glActiveTexture(textureUnit + 0x84C0);
+        GL13.glActiveTexture(textureUnit + 0x84C0);
     }
 
     /**
-     * Unbinds the texture.
+     Unbinds the texture.
      */
-    protected void glUnbind() {
-	GL11.glBindTexture(getTextureType(), 0);
+    protected void glUnbind(){
+        GL11.glBindTexture(getTextureType(), 0);
     }
 
     /**
-     * Generates the texture's mipmaps.
-     */
-    @Bind
-    protected void glGenerateMipmaps() {
-	GL30.glGenerateMipmap(getTextureType());
-    }
-
-    /**
-     * Transfers image data to the texture based on the given values.
-     *
-     * @param internalFormat internal format
-     * @param format         format
-     * @param type           type
-     * @param data           image data
+     Generates the texture's mipmaps.
      */
     @Bind
-    protected void glTexImage(int internalFormat, int format, int type, @Nullable ByteBuffer data) {
-	GL11.glTexImage2D(getTextureType(), 0, internalFormat, size.x, size.y, 0, format, type, data);
+    protected void glGenerateMipmaps(){
+        GL30.glGenerateMipmap(getTextureType());
     }
 
     /**
-     * Returns the texture's border color.
-     *
-     * @return the texture's border color
+     Transfers image data to the texture based on the given values.
+
+     @param internalFormat internal format
+     @param format         format
+     @param type           type
+     @param data           image data
+     */
+    @Bind
+    protected void glTexImage(int internalFormat, int format, int type, @Nullable ByteBuffer data){
+        GL11.glTexImage2D(getTextureType(), 0, internalFormat, size.x, size.y, 0, format, type, data);
+    }
+
+    /**
+     Returns the texture's border color.
+
+     @return the texture's border color
      */
     @NotNull
-    protected Vector4f glGetBorderColor() {
-	return borderColor;
+    protected Vector4f glGetBorderColor(){
+        return borderColor;
     }
 
     /**
-     * Sets the texture's border color to the given value.
-     *
-     * @param borderColor border color
-     *
-     * @throws NullPointerException     borderColor can't be null
-     * @throws IllegalArgumentException border color can't be lower than 0
+     Sets the texture's border color to the given value.
+
+     @param borderColor border color
+
+     @throws NullPointerException     borderColor can't be null
+     @throws IllegalArgumentException border color can't be lower than 0
      */
     @Bind
-    protected void glSetBorderColor(@NotNull Vector4f borderColor) {
-	if (borderColor == null) {
-	    throw new NullPointerException();
-	}
-	if (!Utility.isHdrColor(new Vector3f(borderColor.x, borderColor.y, borderColor.z))) {
-	    throw new IllegalArgumentException("Border color can't be lower than 0");
-	}
-	this.borderColor.set(borderColor);
-	float bc[] = {borderColor.x, borderColor.y, borderColor.z, borderColor.w};
-	GL11.glTexParameterfv(getTextureType(), GL11.GL_TEXTURE_BORDER_COLOR, bc);
+    protected void glSetBorderColor(@NotNull Vector4f borderColor){
+        if(borderColor == null){
+            throw new NullPointerException();
+        }
+        if(!Utility.isHdrColor(new Vector3f(borderColor.x, borderColor.y, borderColor.z))){
+            throw new IllegalArgumentException("Border color can't be lower than 0");
+        }
+        this.borderColor.set(borderColor);
+        float bc[] = {borderColor.x, borderColor.y, borderColor.z, borderColor.w};
+        GL11.glTexParameterfv(getTextureType(), GL11.GL_TEXTURE_BORDER_COLOR, bc);
 
     }
 
     /**
-     * Returns the texture's specified wrap mode.
-     *
-     * @param type texture wrap direction
-     *
-     * @return the texture's specified wrap mode
-     *
-     * @throws NullPointerException parameter can't be null
+     Returns the texture's specified wrap mode.
+
+     @param type texture wrap direction
+
+     @return the texture's specified wrap mode
+
+     @throws NullPointerException parameter can't be null
      */
     @NotNull
-    protected TextureWrap glGetWrap(@NotNull TextureWrapDirection type) {
-	if (type == null) {
-	    throw new NullPointerException();
-	}
-	switch (type) {
-	    case WRAP_U:
-		return wrapingU;
-	    case WRAP_V:
-		return wrapingV;
-	    case WRAP_W:
-		return wrapingW;
-	}
-	return null;
+    protected TextureWrap glGetWrap(@NotNull TextureWrapDirection type){
+        if(type == null){
+            throw new NullPointerException();
+        }
+        switch(type){
+            case WRAP_U:
+                return wrapingU;
+            case WRAP_V:
+                return wrapingV;
+            case WRAP_W:
+                return wrapingW;
+        }
+        return null;
     }
 
     /**
-     * Sets the texture's specified wrap mode to the given value.
-     *
-     * @param type  texture wrap direction
-     * @param value texture wrap
-     *
-     * @throws NullPointerException type and value can't be null
+     Sets the texture's specified wrap mode to the given value.
+
+     @param type  texture wrap direction
+     @param value texture wrap
+
+     @throws NullPointerException type and value can't be null
      */
     @Bind
-    protected void glSetWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap value) {
-	if (type == null || value == null) {
-	    throw new NullPointerException();
-	}
-	switch (type) {
-	    case WRAP_U:
-		wrapingU = value;
-		break;
-	    case WRAP_V:
-		wrapingV = value;
-		break;
-	    case WRAP_W:
-		wrapingW = value;
-		break;
-	}
-	GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
+    protected void glSetWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap value){
+        if(type == null || value == null){
+            throw new NullPointerException();
+        }
+        switch(type){
+            case WRAP_U:
+                wrapingU = value;
+                break;
+            case WRAP_V:
+                wrapingV = value;
+                break;
+            case WRAP_W:
+                wrapingW = value;
+                break;
+        }
+        GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
     }
 
     /**
-     * Returns the texture's specified filter mode.
-     *
-     * @param type texture filter type
-     *
-     * @return the texture's specified filter mode
-     *
-     * @throws NullPointerException parameter can't be null
+     Returns the texture's specified filter mode.
+
+     @param type texture filter type
+
+     @return the texture's specified filter mode
+
+     @throws NullPointerException parameter can't be null
      */
     @NotNull
-    protected TextureFilter glGetFilter(@NotNull TextureFilterType type) {
-	if (type == null) {
-	    throw new NullPointerException();
-	}
-	if (type == TextureFilterType.MAGNIFICATION) {
-	    return magnification;
-	} else {
-	    return minification;
-	}
+    protected TextureFilter glGetFilter(@NotNull TextureFilterType type){
+        if(type == null){
+            throw new NullPointerException();
+        }
+        if(type == TextureFilterType.MAGNIFICATION){
+            return magnification;
+        }else{
+            return minification;
+        }
     }
 
     /**
-     * Sets the texture's specified filter to the given value.
-     *
-     * @param type  texture filter type
-     * @param value texture filter
-     *
-     * @throws NullPointerException type and value can't be null
+     Sets the texture's specified filter to the given value.
+
+     @param type  texture filter type
+     @param value texture filter
+
+     @throws NullPointerException type and value can't be null
      */
     @Bind
-    protected void glSetFilter(@NotNull TextureFilterType type, @NotNull TextureFilter value) {
-	if (type == null || value == null) {
-	    throw new NullPointerException();
-	}
-	if (type == TextureFilterType.MAGNIFICATION) {
-	    magnification = value;
-	} else {
-	    minification = value;
-	}
-	GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
+    protected void glSetFilter(@NotNull TextureFilterType type, @NotNull TextureFilter value){
+        if(type == null || value == null){
+            throw new NullPointerException();
+        }
+        if(type == TextureFilterType.MAGNIFICATION){
+            magnification = value;
+        }else{
+            minification = value;
+        }
+        GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
     }
 
     /**
-     * Releases the texture's data.
+     Releases the texture's data.
      */
-    protected void glRelease() {
-	GL11.glDeleteTextures(id);
-	id = 0;
+    protected void glRelease(){
+        GL11.glDeleteTextures(id);
+        id = 0;
     }
 
     /**
-     * Returns the texture's native OpenGL type.
-     *
-     * @return the texture's native OpenGL types
+     Returns the texture's native OpenGL type.
+
+     @return the texture's native OpenGL types
      */
     protected abstract int getTextureType();
 
     @Override
-    public String toString() {
-	return "AbstractTexture{" + "textureId=" + id + ", size=" + size
-		+ ", sRgb=" + sRgb + ", wrapingU=" + wrapingU + ", wrapingV=" + wrapingV
-		+ ", magnification=" + magnification + ", minification=" + minification
-		+ ", borderColor=" + borderColor + '}';
+    public String toString(){
+        return "AbstractTexture{" + "textureId=" + id + ", size=" + size + ", sRgb=" + sRgb + ", wrapingU=" + wrapingU + ", wrapingV=" + wrapingV + ", magnification=" + magnification + ", minification=" + minification + ", borderColor=" + borderColor + '}';
     }
 
 }

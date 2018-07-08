@@ -1,61 +1,62 @@
 package wobani.resources.spline;
 
-import wobani.toolbox.annotation.Nullable;
 import org.joml.*;
+import wobani.toolbox.annotation.*;
 
 /**
- * Implementation of the Catmull-Rom spline.
- * <p>
+ Implementation of the Catmull-Rom spline.
+ <p>
  */
-public class CatmullRomSpline extends CubicSpline {
+public class CatmullRomSpline extends CubicSpline{
 
     /**
-     * Catmull-Rom spline's tension.
+     Catmull-Rom spline's tension.
      */
     private float tension;
 
     /**
-     * Initializes a new CatmullRomSpline.
+     Initializes a new CatmullRomSpline.
      */
-    public CatmullRomSpline() {
+    public CatmullRomSpline(){
         this(0.5f);
     }
 
     /**
-     * Initializes a new CatmullRomSpline to the given value.
-     *
-     * @param tension tension
+     Initializes a new CatmullRomSpline to the given value.
+
+     @param tension tension
      */
-    public CatmullRomSpline(float tension) {
+    public CatmullRomSpline(float tension){
         super();
         setTension(tension);
     }
 
     @Nullable
     @Override
-    protected Vector3f getValue(int startIndex, float t) {
-        if (getNumberOfControlPoints() < getRequiredControlPoints()) {
+    protected Vector3f getValue(int startIndex, float t){
+        if(getNumberOfControlPoints() < getRequiredControlPoints()){
             return super.getValue(startIndex, t);
-        } else {
+        }else{
             Vector4f vec = new Vector4f(t * t * t, t * t, t, 1).mul(basisMatrix);
             Vector3f[] cps = new Vector3f[4];
-            for (int i = -1; i < 3; i++) {
-                if (isLoopSpline()) {
-                    if (startIndex + i == -1) {
+            for(int i = -1; i < 3; i++){
+                if(isLoopSpline()){
+                    if(startIndex + i == -1){
                         cps[i + 1] = getControlPoint(getNumberOfControlPoints() - 1);
-                    } else if (startIndex + i == getNumberOfControlPoints()) {
+                    }else if(startIndex + i == getNumberOfControlPoints()){
                         cps[i + 1] = getControlPoint(0);
-                    } else if (startIndex + i == getNumberOfControlPoints() + 1) {
+                    }else if(startIndex + i == getNumberOfControlPoints() + 1){
                         cps[i + 1] = getControlPoint(1);
-                    } else {
+                    }else{
                         cps[i + 1] = getControlPoint(startIndex + i);
                     }
-                } else {
-                    if (startIndex + i == -1) {
+                }else{
+                    if(startIndex + i == -1){
                         cps[i + 1] = getControlPoint(0).add(getControlPoint(0).sub(getControlPoint(1)));
-                    } else if (startIndex + i == getNumberOfControlPoints()) {
-                        cps[i + 1] = getControlPoint(startIndex + i - 1).add(getControlPoint(startIndex + i - 1).sub(getControlPoint(startIndex + i - 2)));
-                    } else {
+                    }else if(startIndex + i == getNumberOfControlPoints()){
+                        cps[i + 1] = getControlPoint(startIndex + i - 1)
+                                .add(getControlPoint(startIndex + i - 1).sub(getControlPoint(startIndex + i - 2)));
+                    }else{
                         cps[i + 1] = getControlPoint(startIndex + i);
                     }
                 }
@@ -70,40 +71,38 @@ public class CatmullRomSpline extends CubicSpline {
     }
 
     @Override
-    protected void computeBasisMatrix() {
-        basisMatrix.set(-tension, 2 - tension, tension - 2, tension,
-                2 * tension, tension - 3, 3 - 2 * tension, -tension,
-                -tension, 0, tension, 0,
-                0, 1, 0, 0);
+    protected void computeBasisMatrix(){
+        basisMatrix
+                .set(-tension, 2 - tension, tension - 2, tension, 2 * tension, tension - 3, 3 - 2 * tension, -tension, -tension, 0, tension, 0, 0, 1, 0, 0);
         valid = false;
     }
 
     /**
-     * Returns the spline's tension.
-     *
-     * @return the spline's tension
+     Returns the spline's tension.
+
+     @return the spline's tension
      */
-    public float getTension() {
+    public float getTension(){
         return tension;
     }
 
     /**
-     * Sets the spline's tension to the given value.
-     *
-     * @param newTension tension
+     Sets the spline's tension to the given value.
+
+     @param newTension tension
      */
-    public void setTension(float newTension) {
+    public void setTension(float newTension){
         tension = newTension;
         computeBasisMatrix();
     }
 
     @Override
-    public int getRequiredControlPoints() {
+    public int getRequiredControlPoints(){
         return 4;
     }
 
     @Override
-    public String toString() {
+    public String toString(){
         return super.toString() + "\nCatmullRomSpline{" + "tension=" + tension + '}';
     }
 
