@@ -3,8 +3,8 @@ package wobani.resources.texture.texture2d;
 import java.nio.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
-import wobani.resources.Fbo.FboAttachmentSlot;
 import wobani.resources.*;
+import wobani.resources.buffers.Fbo.FboAttachmentSlot;
 import wobani.resources.texture.*;
 import wobani.resources.texture.Texture.TextureWrapDirection;
 import wobani.toolbox.annotation.*;
@@ -75,7 +75,7 @@ public class DynamicTexture2D extends DynamicTexture implements Texture2D {
 	} else {
 	    glTexImage(attachmentType.getInternalFormat(floatingPoint), attachmentType.getFormat(), attachmentType.getType(), image);
 	}
-
+	//FIXME: filter, texture wrap és border color nem álltható, ha multisampled a textura
 	setFilter(TextureFilterType.MINIFICATION, minification);
 	setFilter(TextureFilterType.MAGNIFICATION, magnification);
 	setTextureWrap(TextureWrapDirection.WRAP_U, wrapingU);

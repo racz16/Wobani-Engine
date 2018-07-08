@@ -1,11 +1,10 @@
 package wobani.core;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
 import java.util.logging.*;
 import wobani.rendering.*;
 import wobani.resources.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 import wobani.window.*;
 
 /**
@@ -32,11 +31,11 @@ public class GameLoop {
      * @param parameters parameters for the window
      */
     public static void initialize(@Nullable WindowParameters parameters) {
-        try {
-            initializeWithoutInspection(parameters);
-        } catch (Exception e) {
-            handleException(e);
-        }
+	try {
+	    initializeUnsafe(parameters);
+	} catch (Exception e) {
+	    handleException(e);
+	}
     }
 
     /**
@@ -46,11 +45,11 @@ public class GameLoop {
      *
      * @param parameters parameters for the window
      */
-    public static void initializeWithoutInspection(@Nullable WindowParameters parameters) {
-        Utility.initializeLogging();
-        initializeWindowAndInput(parameters);
-        RenderingPipeline.initialize();
-        initializeOpenGlOpenAl();
+    private static void initializeUnsafe(@Nullable WindowParameters parameters) {
+	Utility.initializeLogging();
+	initializeWindowAndInput(parameters);
+	RenderingPipeline.initialize();
+	initializeOpenGlOpenAl();
     }
 
     /**
@@ -59,16 +58,16 @@ public class GameLoop {
      * @param parameters parameters for the window
      */
     private static void initializeWindowAndInput(@Nullable WindowParameters parameters) {
-        Window.initialize(parameters);
-        Input.initialize();
+	Window.initialize(parameters);
+	Input.initialize();
     }
 
     /**
      * Initializes OpenGL and OpenAL.
      */
     private static void initializeOpenGlOpenAl() {
-        OpenGl.initializeToDefaults();
-        OpenAl.initialize();
+	OpenGl.initializeToDefaults();
+	OpenAl.initialize();
     }
 
     /**
@@ -78,9 +77,9 @@ public class GameLoop {
      * @param ex Exception
      */
     private static void handleException(@NotNull Exception ex) {
-        Utility.logException(ex);
-        release();
-        System.exit(1);
+	Utility.logException(ex);
+	release();
+	System.exit(1);
     }
 
     /**
@@ -89,56 +88,57 @@ public class GameLoop {
      * any OpenGL or OpenAL related code and before the GameLoop's run method.
      */
     public static void initialize() {
-        initialize(new WindowParameters());
+	initialize(new WindowParameters());
     }
 
     /**
-     * The engine's game loop. It updates all Components of the GameObjectContainer,
- updates the Resources, renders the scene, handles the input and swaps the
- buffers and handle exceptions. Before calling this method, you should
- initialize the engine. You can do it by by calling the initialize method.
+     * The engine's game loop. It updates all Components of the
+     * GameObjectContainer, updates the Resources, renders the scene, handles
+     * the input and swaps the buffers and handle exceptions. Before calling
+     * this method, you should initialize the engine. You can do it by by
+     * calling the initialize method.
      */
     public static void run() {
-        try {
-            gameLoop();
-        } catch (Exception e) {
-            Utility.logException(e);
-        } finally {
-            release();
-        }
+	try {
+	    gameLoop();
+	} catch (Exception e) {
+	    Utility.logException(e);
+	} finally {
+	    release();
+	}
     }
 
     /**
-     * The engine's game loop. It updates all Components of the GameObjectContainer,
- updates the resources, renders the scene, handles the input and swaps the
- buffers in every frame.
+     * The engine's game loop. It updates all Components of the
+     * GameObjectContainer, updates the resources, renders the scene, handles
+     * the input and swaps the buffers in every frame.
      */
     private static void gameLoop() {
-        while (!Window.isWindowShouldClose()) {
-            LOG.info("Frame started");
-            update();
-            RenderingPipeline.render();
-            windowing();
-        }
+	while (!Window.isWindowShouldClose()) {
+	    LOG.info("Frame started");
+	    update();
+	    RenderingPipeline.render();
+	    windowing();
+	}
     }
 
     /**
      * Updates the Resources, the Components and update.
      */
     private static void update() {
-        Time.update();
-        LOG.info("Updating resources");
-        ResourceManager.updateResources();
-        LOG.info("Updating components");
-        Scene.getGameObjects().updateComponents();
+	Time.update();
+	LOG.info("Updating resources");
+	ResourceManager.updateResources();
+	LOG.info("Updating components");
+	Scene.getGameObjects().updateComponents();
     }
 
     /**
      * Swaps the window's buffers and poll events.
      */
     private static void windowing() {
-        Window.swapBuffers();
-        Window.pollEvents();
+	Window.swapBuffers();
+	Window.pollEvents();
     }
 
     /**
@@ -147,11 +147,11 @@ public class GameLoop {
      * sounds, FBOs, the rendering pipeline or the window.
      */
     public static void release() {
-        ResourceManager.releaseResources();
-        Input.release();
-        Window.release();
-        OpenAl.release();
-        LOG.info("All resources released");
+	ResourceManager.releaseResources();
+	Input.release();
+	Window.release();
+	OpenAl.release();
+	LOG.info("All resources released");
     }
 
 }

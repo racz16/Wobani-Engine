@@ -3,7 +3,7 @@ layout (location = 0) in vec3 position;
 
 out vec3 textureCoordinates;
 
-layout (std140, binding = 2) uniform Matrices {
+layout (std140, binding = 1) uniform Matrices {
     mat4 viewMatrix;                                //0
     mat4 projectionMatrix;                          //64
 };                                                  //128

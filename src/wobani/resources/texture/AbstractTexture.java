@@ -1,13 +1,10 @@
 package wobani.resources.texture;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Bind;
-import wobani.toolbox.annotation.ReadOnly;
 import java.nio.*;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Basic data and methods for implementing a texture.
@@ -54,7 +51,7 @@ public abstract class AbstractTexture implements Texture {
     @NotNull @ReadOnly
     @Override
     public Vector2i getSize() {
-        return new Vector2i(size);
+	return new Vector2i(size);
     }
 
     @Override
@@ -65,7 +62,7 @@ public abstract class AbstractTexture implements Texture {
      * Generates an id for the texture.
      */
     protected void glGenerateTextureId() {
-        id = GL11.glGenTextures();
+	id = GL11.glGenTextures();
     }
 
     /**
@@ -74,14 +71,14 @@ public abstract class AbstractTexture implements Texture {
      * @return texture's id
      */
     protected int glGetId() {
-        return id;
+	return id;
     }
 
     /**
      * Binds the texture.
      */
     protected void glBind() {
-        GL11.glBindTexture(getTextureType(), id);
+	GL11.glBindTexture(getTextureType(), id);
     }
 
     /**
@@ -92,18 +89,18 @@ public abstract class AbstractTexture implements Texture {
      * @throws IllegalArgumentException invalid texture unit
      */
     protected void glActivate(int textureUnit) {
-        if (textureUnit < 0 || textureUnit > 31) {
-            throw new IllegalArgumentException("Invalid texture unit");
-        }
+	if (textureUnit < 0 || textureUnit > 31) {
+	    throw new IllegalArgumentException("Invalid texture unit");
+	}
 
-        GL13.glActiveTexture(textureUnit + 0x84C0);
+	GL13.glActiveTexture(textureUnit + 0x84C0);
     }
 
     /**
      * Unbinds the texture.
      */
     protected void glUnbind() {
-        GL11.glBindTexture(getTextureType(), 0);
+	GL11.glBindTexture(getTextureType(), 0);
     }
 
     /**
@@ -111,7 +108,7 @@ public abstract class AbstractTexture implements Texture {
      */
     @Bind
     protected void glGenerateMipmaps() {
-        GL30.glGenerateMipmap(getTextureType());
+	GL30.glGenerateMipmap(getTextureType());
     }
 
     /**
@@ -124,7 +121,7 @@ public abstract class AbstractTexture implements Texture {
      */
     @Bind
     protected void glTexImage(int internalFormat, int format, int type, @Nullable ByteBuffer data) {
-        GL11.glTexImage2D(getTextureType(), 0, internalFormat, size.x, size.y, 0, format, type, data);
+	GL11.glTexImage2D(getTextureType(), 0, internalFormat, size.x, size.y, 0, format, type, data);
     }
 
     /**
@@ -134,7 +131,7 @@ public abstract class AbstractTexture implements Texture {
      */
     @NotNull
     protected Vector4f glGetBorderColor() {
-        return borderColor;
+	return borderColor;
     }
 
     /**
@@ -147,15 +144,15 @@ public abstract class AbstractTexture implements Texture {
      */
     @Bind
     protected void glSetBorderColor(@NotNull Vector4f borderColor) {
-        if (borderColor == null) {
-            throw new NullPointerException();
-        }
-        if (!Utility.isHdrColor(new Vector3f(borderColor.x, borderColor.y, borderColor.z))) {
-            throw new IllegalArgumentException("Border color can't be lower than 0");
-        }
-        this.borderColor.set(borderColor);
-        float bc[] = {borderColor.x, borderColor.y, borderColor.z, borderColor.w};
-        GL11.glTexParameterfv(getTextureType(), GL11.GL_TEXTURE_BORDER_COLOR, bc);
+	if (borderColor == null) {
+	    throw new NullPointerException();
+	}
+	if (!Utility.isHdrColor(new Vector3f(borderColor.x, borderColor.y, borderColor.z))) {
+	    throw new IllegalArgumentException("Border color can't be lower than 0");
+	}
+	this.borderColor.set(borderColor);
+	float bc[] = {borderColor.x, borderColor.y, borderColor.z, borderColor.w};
+	GL11.glTexParameterfv(getTextureType(), GL11.GL_TEXTURE_BORDER_COLOR, bc);
 
     }
 
@@ -170,18 +167,18 @@ public abstract class AbstractTexture implements Texture {
      */
     @NotNull
     protected TextureWrap glGetWrap(@NotNull TextureWrapDirection type) {
-        if (type == null) {
-            throw new NullPointerException();
-        }
-        switch (type) {
-            case WRAP_U:
-                return wrapingU;
-            case WRAP_V:
-                return wrapingV;
-            case WRAP_W:
-                return wrapingW;
-        }
-        return null;
+	if (type == null) {
+	    throw new NullPointerException();
+	}
+	switch (type) {
+	    case WRAP_U:
+		return wrapingU;
+	    case WRAP_V:
+		return wrapingV;
+	    case WRAP_W:
+		return wrapingW;
+	}
+	return null;
     }
 
     /**
@@ -194,21 +191,21 @@ public abstract class AbstractTexture implements Texture {
      */
     @Bind
     protected void glSetWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap value) {
-        if (type == null || value == null) {
-            throw new NullPointerException();
-        }
-        switch (type) {
-            case WRAP_U:
-                wrapingU = value;
-                break;
-            case WRAP_V:
-                wrapingV = value;
-                break;
-            case WRAP_W:
-                wrapingW = value;
-                break;
-        }
-        GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
+	if (type == null || value == null) {
+	    throw new NullPointerException();
+	}
+	switch (type) {
+	    case WRAP_U:
+		wrapingU = value;
+		break;
+	    case WRAP_V:
+		wrapingV = value;
+		break;
+	    case WRAP_W:
+		wrapingW = value;
+		break;
+	}
+	GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
     }
 
     /**
@@ -222,14 +219,14 @@ public abstract class AbstractTexture implements Texture {
      */
     @NotNull
     protected TextureFilter glGetFilter(@NotNull TextureFilterType type) {
-        if (type == null) {
-            throw new NullPointerException();
-        }
-        if (type == TextureFilterType.MAGNIFICATION) {
-            return magnification;
-        } else {
-            return minification;
-        }
+	if (type == null) {
+	    throw new NullPointerException();
+	}
+	if (type == TextureFilterType.MAGNIFICATION) {
+	    return magnification;
+	} else {
+	    return minification;
+	}
     }
 
     /**
@@ -242,23 +239,23 @@ public abstract class AbstractTexture implements Texture {
      */
     @Bind
     protected void glSetFilter(@NotNull TextureFilterType type, @NotNull TextureFilter value) {
-        if (type == null || value == null) {
-            throw new NullPointerException();
-        }
-        if (type == TextureFilterType.MAGNIFICATION) {
-            magnification = value;
-        } else {
-            minification = value;
-        }
-        GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
+	if (type == null || value == null) {
+	    throw new NullPointerException();
+	}
+	if (type == TextureFilterType.MAGNIFICATION) {
+	    magnification = value;
+	} else {
+	    minification = value;
+	}
+	GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
     }
 
     /**
      * Releases the texture's data.
      */
     protected void glRelease() {
-        GL11.glDeleteTextures(id);
-        id = 0;
+	GL11.glDeleteTextures(id);
+	id = 0;
     }
 
     /**
@@ -270,10 +267,10 @@ public abstract class AbstractTexture implements Texture {
 
     @Override
     public String toString() {
-        return "AbstractTexture{" + "textureId=" + id + ", size=" + size
-                + ", sRgb=" + sRgb + ", wrapingU=" + wrapingU + ", wrapingV=" + wrapingV
-                + ", magnification=" + magnification + ", minification=" + minification
-                + ", borderColor=" + borderColor + '}';
+	return "AbstractTexture{" + "textureId=" + id + ", size=" + size
+		+ ", sRgb=" + sRgb + ", wrapingU=" + wrapingU + ", wrapingV=" + wrapingV
+		+ ", magnification=" + magnification + ", minification=" + minification
+		+ ", borderColor=" + borderColor + '}';
     }
 
 }

@@ -1,8 +1,6 @@
 package wobani.resources.mesh;
 
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.ReadOnly;
-import wobani.component.renderable.MeshComponent;
+import wobani.resources.buffers.Vao;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
@@ -16,10 +14,12 @@ import static org.lwjgl.assimp.Assimp.aiProcess_JoinIdenticalVertices;
 import static org.lwjgl.assimp.Assimp.aiProcess_Triangulate;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
+import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.resources.ResourceManager.ResourceState;
 import wobani.resources.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Stores a mesh's data. You can load a mesh only once, if you try to load it
@@ -93,19 +93,19 @@ public class StaticMesh implements Mesh {
      * @param resourceId the mesh's id
      */
     private StaticMesh(@NotNull AIMesh mesh, @NotNull File path, @NotNull ResourceId resourceId) {
-        faceCount = mesh.mNumFaces();
-        vertexCount = faceCount * 3;
-        computeFrustumCullingData(mesh);
-        meta.setPaths(Utility.wrapObjectByList(path));
-        meta.setLastActiveToNow();
-        meta.setDataStorePolicy(ResourceState.ACTION);
+	faceCount = mesh.mNumFaces();
+	vertexCount = faceCount * 3;
+	computeFrustumCullingData(mesh);
+	meta.setPaths(Utility.wrapObjectByList(path));
+	meta.setLastActiveToNow();
+	meta.setDataStorePolicy(ResourceState.ACTION);
 
-        hddToRam(mesh);
-        ramToVram();
+	hddToRam(mesh);
+	ramToVram();
 
-        computeDataSize();
-        this.resourceId = resourceId;
-        ResourceManager.addMesh(this);
+	computeDataSize();
+	this.resourceId = resourceId;
+	ResourceManager.addMesh(this);
     }
 
     //
@@ -123,20 +123,20 @@ public class StaticMesh implements Mesh {
      */
     @NotNull
     public static List<StaticMesh> loadModel(@NotNull File path) {
-        AIScene scene = getSceneAssimp(path);
-        List<StaticMesh> meshes = new ArrayList<>();
-        int meshCount = scene.mNumMeshes();
-        PointerBuffer meshesBuffer = scene.mMeshes();
+	AIScene scene = getSceneAssimp(path);
+	List<StaticMesh> meshes = new ArrayList<>();
+	int meshCount = scene.mNumMeshes();
+	PointerBuffer meshesBuffer = scene.mMeshes();
 
-        List<ResourceId> ids = ResourceId.getResourceIds(path, meshCount);
-        for (int i = 0; i < meshCount; ++i) {
-            StaticMesh me = (StaticMesh) ResourceManager.getMesh(new ResourceId(path));
-            if (me == null) {
-                me = new StaticMesh(AIMesh.create(meshesBuffer.get(i)), path, ids.get(i));
-            }
-            meshes.add(me);
-        }
-        return meshes;
+	List<ResourceId> ids = ResourceId.getResourceIds(path, meshCount);
+	for (int i = 0; i < meshCount; ++i) {
+	    StaticMesh me = (StaticMesh) ResourceManager.getMesh(new ResourceId(path));
+	    if (me == null) {
+		me = new StaticMesh(AIMesh.create(meshesBuffer.get(i)), path, ids.get(i));
+	    }
+	    meshes.add(me);
+	}
+	return meshes;
     }
 
     /**
@@ -150,13 +150,13 @@ public class StaticMesh implements Mesh {
      */
     @NotNull
     public static List<GameObject> loadModelToGameObjects(@NotNull File path) {
-        List<GameObject> list = new ArrayList<>();
-        for (StaticMesh me : loadModel(path)) {
-            GameObject g = new GameObject();
-            g.getComponents().add(new MeshComponent(me));
-            list.add(g);
-        }
-        return list;
+	List<GameObject> list = new ArrayList<>();
+	for (StaticMesh me : loadModel(path)) {
+	    GameObject g = new GameObject();
+	    g.getComponents().add(new MeshComponent(me));
+	    list.add(g);
+	}
+	return list;
     }
 
     /**
@@ -170,11 +170,11 @@ public class StaticMesh implements Mesh {
      */
     @NotNull
     public static GameObject loadModelToGameObject(@NotNull File path) {
-        GameObject g = new GameObject();
-        for (StaticMesh me : loadModel(path)) {
-            g.getComponents().add(new MeshComponent(me));
-        }
-        return g;
+	GameObject g = new GameObject();
+	for (StaticMesh me : loadModel(path)) {
+	    g.getComponents().add(new MeshComponent(me));
+	}
+	return g;
     }
 
     /**
@@ -189,28 +189,28 @@ public class StaticMesh implements Mesh {
      */
     @NotNull
     private static AIScene getSceneAssimp(@NotNull File path) {
-        AIScene scene = aiImportFile(path.getPath(), aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
-        if (scene == null) {
-            throw new IllegalStateException(aiGetErrorString());
-        }
-        return scene;
+	AIScene scene = aiImportFile(path.getPath(), aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+	if (scene == null) {
+	    throw new IllegalStateException(aiGetErrorString());
+	}
+	return scene;
     }
 
     /**
      * Computes the mesh's size.
      */
     private void computeDataSize() {
-        int FLOAT_SIZE = 4;
-        int INT_SIZE = 4;
+	int FLOAT_SIZE = 4;
+	int INT_SIZE = 4;
 
-        int size = 0;
-        size += position.capacity() * FLOAT_SIZE;
-        size += uv.capacity() * FLOAT_SIZE;
-        size += normal.capacity() * FLOAT_SIZE;
-        size += tangent.capacity() * FLOAT_SIZE;
-        size += indices.capacity() * INT_SIZE;
+	int size = 0;
+	size += position.capacity() * FLOAT_SIZE;
+	size += uv.capacity() * FLOAT_SIZE;
+	size += normal.capacity() * FLOAT_SIZE;
+	size += tangent.capacity() * FLOAT_SIZE;
+	size += indices.capacity() * INT_SIZE;
 
-        meta.setDataSize(size);
+	meta.setDataSize(size);
     }
 
     /**
@@ -224,17 +224,17 @@ public class StaticMesh implements Mesh {
      */
     @NotNull
     private IntBuffer computeIndicesBuffer(@NotNull AIMesh mesh) {
-        AIFace.Buffer facesBuffer = mesh.mFaces();
-        IntBuffer elementArrayBufferData = MemoryUtil.memAllocInt(vertexCount);
-        for (int j = 0; j < faceCount; ++j) {
-            AIFace face = facesBuffer.get(j);
-            if (face.mNumIndices() != 3) {
-                throw new IllegalStateException("AIFace.mNumIndices() != 3");
-            }
-            elementArrayBufferData.put(face.mIndices());
-        }
-        elementArrayBufferData.flip();
-        return elementArrayBufferData;
+	AIFace.Buffer facesBuffer = mesh.mFaces();
+	IntBuffer elementArrayBufferData = MemoryUtil.memAllocInt(vertexCount);
+	for (int j = 0; j < faceCount; ++j) {
+	    AIFace face = facesBuffer.get(j);
+	    if (face.mNumIndices() != 3) {
+		throw new IllegalStateException("AIFace.mNumIndices() != 3");
+	    }
+	    elementArrayBufferData.put(face.mIndices());
+	}
+	elementArrayBufferData.flip();
+	return elementArrayBufferData;
     }
 
     /**
@@ -244,33 +244,33 @@ public class StaticMesh implements Mesh {
      * @param mesh mesh
      */
     private void computeFrustumCullingData(@NotNull AIMesh mesh) {
-        float max = 0;
-        Vector3f aabbMax = new Vector3f();
-        Vector3f aabbMin = new Vector3f();
-        Vector3f currentVec = new Vector3f();
+	float max = 0;
+	Vector3f aabbMax = new Vector3f();
+	Vector3f aabbMin = new Vector3f();
+	Vector3f currentVec = new Vector3f();
 
-        for (int i = 0; i < mesh.mVertices().limit(); i++) {
-            currentVec.set(mesh.mVertices().get(i).x(),
-                    mesh.mVertices().get(i).y(),
-                    mesh.mVertices().get(i).z());
-            //furthest vertex distance
-            if (max < currentVec.length()) {
-                max = currentVec.length();
-            }
-            //aabb
-            for (int j = 0; j < 3; j++) {
-                if (currentVec.get(j) < aabbMin.get(j)) {
-                    aabbMin.setComponent(j, currentVec.get(j));
-                }
-                if (currentVec.get(j) > aabbMax.get(j)) {
-                    aabbMax.setComponent(j, currentVec.get(j));
-                }
-            }
-        }
+	for (int i = 0; i < mesh.mVertices().limit(); i++) {
+	    currentVec.set(mesh.mVertices().get(i).x(),
+		    mesh.mVertices().get(i).y(),
+		    mesh.mVertices().get(i).z());
+	    //furthest vertex distance
+	    if (max < currentVec.length()) {
+		max = currentVec.length();
+	    }
+	    //aabb
+	    for (int j = 0; j < 3; j++) {
+		if (currentVec.get(j) < aabbMin.get(j)) {
+		    aabbMin.setComponent(j, currentVec.get(j));
+		}
+		if (currentVec.get(j) > aabbMax.get(j)) {
+		    aabbMax.setComponent(j, currentVec.get(j));
+		}
+	    }
+	}
 
-        this.aabbMin.set(aabbMin);
-        this.aabbMax.set(aabbMax);
-        furthestVertexDistance = max;
+	this.aabbMin.set(aabbMin);
+	this.aabbMax.set(aabbMax);
+	furthestVertexDistance = max;
     }
 
     /**
@@ -278,8 +278,8 @@ public class StaticMesh implements Mesh {
      * furthest vertex distance again.
      */
     private void hddToRam() {
-        AIMesh mesh = AIMesh.create(getSceneAssimp(getPath()).mMeshes().get(resourceId.getIndex()));
-        hddToRam(mesh);
+	AIMesh mesh = AIMesh.create(getSceneAssimp(getPath()).mMeshes().get(resourceId.getIndex()));
+	hddToRam(mesh);
     }
 
     /**
@@ -289,13 +289,13 @@ public class StaticMesh implements Mesh {
      * @param mesh mesh
      */
     private void hddToRam(@NotNull AIMesh mesh) {
-        indices = computeIndicesBuffer(mesh);
-        position = mesh.mVertices();
-        uv = mesh.mTextureCoords(0);
-        normal = mesh.mNormals();
-        tangent = mesh.mTangents();
+	indices = computeIndicesBuffer(mesh);
+	position = mesh.mVertices();
+	uv = mesh.mTextureCoords(0);
+	normal = mesh.mNormals();
+	tangent = mesh.mTangents();
 
-        meta.setState(ResourceState.RAM);
+	meta.setState(ResourceState.RAM);
     }
 
     /**
@@ -303,28 +303,33 @@ public class StaticMesh implements Mesh {
      * the data isn't in the RAM.
      */
     private void ramToVram() {
-        vao = new Vao();
-        vao.bindVao();
+	vao = new Vao();
+	vao.bindVao();
 
-        vao.createVbo("position");
-        vao.bindAndAddData("position", 0, 3, position, false);
+	vao.createVbo("position");
+	vao.bindAndAddData("position", 0, 3, position, false);
 
-        vao.createVbo("uv");
-        vao.bindAndAddData("uv", 1, 3, uv, false);
+	vao.createVbo("uv");
+	vao.bindAndAddData("uv", 1, 3, uv, false);
 
-        vao.createVbo("normal");
-        vao.bindAndAddData("normal", 2, 3, normal, false);
+	vao.createVbo("normal");
+	vao.bindAndAddData("normal", 2, 3, normal, false);
 
-        vao.createVbo("tangent");
-        vao.bindAndAddData("tangent", 3, 3, tangent, false);
+	vao.createVbo("tangent");
+	vao.bindAndAddData("tangent", 3, 3, tangent, false);
 
-        vao.createEbo();
-        vao.bindEbo();
-        vao.addIndices(indices, false);
+	vao.createEbo();
+	vao.bindEbo();
+	vao.addIndices(indices, false);
 
-        vao.unbindVao();
+	GL20.glEnableVertexAttribArray(0);
+	GL20.glEnableVertexAttribArray(1);
+	GL20.glEnableVertexAttribArray(2);
+	GL20.glEnableVertexAttribArray(3);
 
-        meta.setState(ResourceState.ACTION);
+	vao.unbindVao();
+
+	meta.setState(ResourceState.ACTION);
     }
 
     /**
@@ -332,10 +337,10 @@ public class StaticMesh implements Mesh {
      * isn't in the ACTION.
      */
     private void vramToRam() {
-        vao.release();
-        vao = null;
+	vao.release();
+	vao = null;
 
-        meta.setState(ResourceState.RAM);
+	meta.setState(ResourceState.RAM);
     }
 
     /**
@@ -343,14 +348,14 @@ public class StaticMesh implements Mesh {
      * isn't in the RAM.
      */
     private void ramToHdd() {
-        position = null;
-        uv = null;
-        normal = null;
-        tangent = null;
-        MemoryUtil.memFree(indices);
-        indices = null;
+	position = null;
+	uv = null;
+	normal = null;
+	tangent = null;
+	MemoryUtil.memFree(indices);
+	indices = null;
 
-        meta.setState(ResourceState.HDD);
+	meta.setState(ResourceState.HDD);
     }
 
     //
@@ -358,29 +363,29 @@ public class StaticMesh implements Mesh {
     //
     @Override
     public void beforeDraw() {
-        if (getState() == ResourceState.ACTION) {
-            vao.bindVao();
-        }
+	if (getState() == ResourceState.ACTION) {
+	    vao.bindVao();
+	}
     }
 
     @Override
     public void draw() {
-        if (getState() != ResourceState.ACTION) {
-            if (getState() == ResourceState.HDD) {
-                hddToRam();
-            }
-            ramToVram();
-            vao.bindVao();
-        }
-        GL11.glDrawElements(GL11.GL_TRIANGLES, getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
-        meta.setLastActiveToNow();
+	if (getState() != ResourceState.ACTION) {
+	    if (getState() == ResourceState.HDD) {
+		hddToRam();
+	    }
+	    ramToVram();
+	    vao.bindVao();
+	}
+	GL11.glDrawElements(GL11.GL_TRIANGLES, getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+	meta.setLastActiveToNow();
     }
 
     @Override
     public void afterDraw() {
-        if (getState() == ResourceState.ACTION) {
-            vao.unbindVao();
-        }
+	if (getState() == ResourceState.ACTION) {
+	    vao.unbindVao();
+	}
     }
 
     //
@@ -395,7 +400,7 @@ public class StaticMesh implements Mesh {
      * @return ACTION time limit (in miliseconds)
      */
     public long getVramTimeLimit() {
-        return meta.getActionTimeLimit();
+	return meta.getActionTimeLimit();
     }
 
     /**
@@ -408,7 +413,7 @@ public class StaticMesh implements Mesh {
      * @param vramTimeLimit ACTION time limit (in miliseconds)
      */
     public void setVramTimeLimit(long vramTimeLimit) {
-        meta.setActionTimeLimit(vramTimeLimit);
+	meta.setActionTimeLimit(vramTimeLimit);
     }
 
     /**
@@ -421,7 +426,7 @@ public class StaticMesh implements Mesh {
      * @return RAM time limit (in miliseconds)
      */
     public long getRamTimeLimit() {
-        return meta.getRamTimeLimit();
+	return meta.getRamTimeLimit();
     }
 
     /**
@@ -434,7 +439,7 @@ public class StaticMesh implements Mesh {
      * @param ramTimeLimit RAM time limit (in miliseconds)
      */
     public void setRamTimeLimit(long ramTimeLimit) {
-        meta.setRamTimeLimit(ramTimeLimit);
+	meta.setRamTimeLimit(ramTimeLimit);
     }
 
     /**
@@ -445,7 +450,7 @@ public class StaticMesh implements Mesh {
      */
     @NotNull
     public ResourceState getState() {
-        return meta.getState();
+	return meta.getState();
     }
 
     /**
@@ -460,7 +465,7 @@ public class StaticMesh implements Mesh {
      */
     @NotNull
     public ResourceState getDataStorePolicy() {
-        return meta.getDataStorePolicy();
+	return meta.getDataStorePolicy();
     }
 
     /**
@@ -474,14 +479,14 @@ public class StaticMesh implements Mesh {
      * @param minState data store policy
      */
     public void setDataStorePolicy(@NotNull ResourceState minState) {
-        meta.setDataStorePolicy(minState);
+	meta.setDataStorePolicy(minState);
 
-        if (minState != ResourceState.HDD && getState() == ResourceState.HDD) {
-            hddToRam();
-        }
-        if (minState == ResourceState.ACTION && getState() != ResourceState.ACTION) {
-            ramToVram();
-        }
+	if (minState != ResourceState.HDD && getState() == ResourceState.HDD) {
+	    hddToRam();
+	}
+	if (minState == ResourceState.ACTION && getState() != ResourceState.ACTION) {
+	    ramToVram();
+	}
     }
 
     /**
@@ -490,36 +495,36 @@ public class StaticMesh implements Mesh {
      * @return the time when the mesh last time used (in miliseconds)
      */
     public long getLastActive() {
-        return meta.getLastActive();
+	return meta.getLastActive();
     }
 
     @Override
     public void update() {
-        long elapsedTime = System.currentTimeMillis() - getLastActive();
-        if (elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceState.ACTION && getState() != ResourceState.HDD) {
-            if (getState() == ResourceState.ACTION) {
-                vramToRam();
-            }
-            if (elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceState.HDD) {
-                ramToHdd();
-            }
-        }
+	long elapsedTime = System.currentTimeMillis() - getLastActive();
+	if (elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceState.ACTION && getState() != ResourceState.HDD) {
+	    if (getState() == ResourceState.ACTION) {
+		vramToRam();
+	    }
+	    if (elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceState.HDD) {
+		ramToHdd();
+	    }
+	}
     }
 
     @Override
     public void release() {
-        if (getState() == ResourceState.ACTION) {
-            vramToRam();
-        }
-        if (getState() == ResourceState.RAM) {
-            ramToHdd();
-        }
+	if (getState() == ResourceState.ACTION) {
+	    vramToRam();
+	}
+	if (getState() == ResourceState.RAM) {
+	    ramToHdd();
+	}
     }
 
     @NotNull
     @Override
     public ResourceId getResourceId() {
-        return resourceId;
+	return resourceId;
     }
 
     //
@@ -532,7 +537,7 @@ public class StaticMesh implements Mesh {
      */
     @NotNull
     public File getPath() {
-        return meta.getPaths().get(0);
+	return meta.getPaths().get(0);
     }
 
     /**
@@ -541,59 +546,59 @@ public class StaticMesh implements Mesh {
      * @return the mesh's index in the loaded model
      */
     public int getIndex() {
-        return resourceId.getIndex();
+	return resourceId.getIndex();
     }
 
     @Override
     public int getDataSizeInRam() {
-        return getState() == ResourceState.HDD ? 0 : meta.getDataSize();
+	return getState() == ResourceState.HDD ? 0 : meta.getDataSize();
     }
 
     @Override
     public int getDataSizeInAction() {
-        return getState() == ResourceState.ACTION ? meta.getDataSize() : 0;
+	return getState() == ResourceState.ACTION ? meta.getDataSize() : 0;
     }
 
     @Override
     public int getVertexCount() {
-        return vertexCount;
+	return vertexCount;
     }
 
     @Override
     public int getFaceCount() {
-        return faceCount;
+	return faceCount;
     }
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 
     @Override
     public float getRadius() {
-        return furthestVertexDistance;
+	return furthestVertexDistance;
     }
 
     @NotNull @ReadOnly
     @Override
     public Vector3f getAabbMax() {
-        return new Vector3f(aabbMax);
+	return new Vector3f(aabbMax);
     }
 
     @NotNull @ReadOnly
     @Override
     public Vector3f getAabbMin() {
-        return new Vector3f(aabbMin);
+	return new Vector3f(aabbMin);
     }
 
     @Override
     public String toString() {
-        return "StaticMesh{" + "vao=" + vao + ", vertexCount=" + vertexCount
-                + ", faceCount=" + faceCount + ", furthestVertexDistance="
-                + furthestVertexDistance + ", aabbMin=" + aabbMin + ", aabbMax="
-                + aabbMax + ", position=" + position + ", uv=" + uv + ", normal="
-                + normal + ", tangent=" + tangent + ", indices=" + indices
-                + ", meta=" + meta + ", resourceId=" + resourceId + '}';
+	return "StaticMesh{" + "vao=" + vao + ", vertexCount=" + vertexCount
+		+ ", faceCount=" + faceCount + ", furthestVertexDistance="
+		+ furthestVertexDistance + ", aabbMin=" + aabbMin + ", aabbMax="
+		+ aabbMax + ", position=" + position + ", uv=" + uv + ", normal="
+		+ normal + ", tangent=" + tangent + ", indices=" + indices
+		+ ", meta=" + meta + ", resourceId=" + resourceId + '}';
     }
 
 }

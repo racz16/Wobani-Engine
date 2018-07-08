@@ -1,38 +1,28 @@
 package wobani.example;
 
-import wobani.resources.texture.cubemaptexture.StaticCubeMapTexture;
-import wobani.resources.spline.BezierSpline;
-import wobani.resources.mesh.StaticMesh;
-import wobani.resources.environmentprobe.StaticEnvironmentProbe;
-import wobani.resources.environmentprobe.EnvironmentProbe;
-import wobani.resources.environmentprobe.DynamicEnvironmentProbe;
-import wobani.toolbox.parameter.Parameter;
-import wobani.toolbox.parameter.ComponentParameter;
-import wobani.window.eventhandler.KeyboardEventHandler;
-import wobani.window.eventhandler.WindowEventHandler;
-import wobani.material.MaterialSlot;
-import wobani.material.Material;
-import wobani.component.light.BlinnPhongSpotLightComponent;
-import wobani.component.audio.AudioListenerComponent;
-import wobani.component.camera.Camera;
-import wobani.component.audio.AudioSourceComponent;
-import wobani.component.camera.CameraComponent;
-import wobani.component.environmentprobe.DynamicEnvironmentProbeComponent;
-import wobani.component.light.BlinnPhongDirectionalLightComponent;
-import wobani.component.renderable.MeshComponent;
-import wobani.component.light.BlinnPhongPointLightComponent;
-import wobani.component.renderable.SplineComponent;
 import java.io.*;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.glfw.*;
+import wobani.component.audio.*;
+import wobani.component.camera.*;
+import wobani.component.environmentprobe.*;
+import wobani.component.light.blinnphong.*;
+import wobani.component.renderable.*;
 import wobani.core.*;
+import wobani.material.*;
 import wobani.rendering.geometry.*;
 import wobani.resources.*;
 import wobani.resources.audio.*;
+import wobani.resources.environmentprobe.*;
+import wobani.resources.mesh.*;
+import wobani.resources.spline.*;
+import wobani.resources.texture.cubemaptexture.*;
 import wobani.toolbox.*;
+import wobani.toolbox.parameter.*;
 import wobani.window.Input.Key;
 import wobani.window.*;
+import wobani.window.eventhandler.*;
 
 public class Example1 {
 
@@ -44,6 +34,7 @@ public class Example1 {
     public static void main(String[] args) {
 	WindowParameters parameters = new WindowParameters();
 	GameLoop.initialize(parameters);
+	//Utility.setLoggingLevel(Level.FINE);
 	testWindow = new Example1Window();
 	if (!Window.isFullscreen()) {
 	    testWindow.setVisible(true);
@@ -100,8 +91,11 @@ public class Example1 {
 	DynamicEnvironmentProbe probe = new DynamicEnvironmentProbe();
 	DynamicEnvironmentProbeComponent probeComponent = new DynamicEnvironmentProbeComponent(probe);
 	GameObject g = new GameObject();
-	g.getTransform().setRelativePosition(new Vector3f(0, -40, 0));
+	g.getTransform().setRelativePosition(new Vector3f(0, -40, -20));
 	g.getComponents().add(probeComponent);
+	probe.setParallaxCorrection(true);
+	probe.setParallaxCorrectionValue(35);
+	probe.setResolution(1024);
 	return probe;
     }
 
@@ -137,16 +131,8 @@ public class Example1 {
 	dragon.getComponents().getOne(MeshComponent.class).setMaterial(material);
 	dragon.getComponents().getOne(MeshComponent.class).setReflectable(true);
 	dragon.setName("dragon");
-	dragon.getTransform().setRelativePosition(new Vector3f(0, -5, -15));
+	dragon.getTransform().setRelativePosition(new Vector3f(0, -5, -20));
 	dragon.getTransform().setRelativeScale(new Vector3f(2.5f));
-	dragon.getComponents().add(new Component() {
-	    private final Vector3f rot = new Vector3f();
-
-	    @Override
-	    public void update() {
-		getGameObject().getTransform().rotate(new Vector3f(0, 0.35f * Time.getDeltaTimeFactor(), 0));
-	    }
-	});
 	return dragon;
     }
 
@@ -155,7 +141,7 @@ public class Example1 {
 	dragon2.getComponents().getOne(MeshComponent.class).setMaterial(material);
 	dragon2.getComponents().getOne(MeshComponent.class).setReflectable(true);
 	dragon2.setName("dragon2");
-	dragon2.getTransform().setRelativePosition(new Vector3f(50, -40, 0));
+	dragon2.getTransform().setRelativePosition(new Vector3f(35, -40, 0));
 	dragon2.getTransform().rotate(new Vector3f(45, 0, 0));
 	dragon2.getComponents().add(new Component() {
 	    @Override
@@ -212,8 +198,9 @@ public class Example1 {
 	spline.setStep(0.01f);
 	for (int i = 0; i < 6; i++) {
 	    float x = i % 2 == 0 ? 5 : -5;
+	    //x -= 10;
 	    float y = 3 * i;
-	    spline.addControlPointToTheEnd(new Vector3f(x, y, 0));
+	    spline.addControlPointToTheEnd(new Vector3f(x, y, -5));
 	}
 	spline.normalizeHelperPoints(5);
 	spline.setLoopSpline(true);

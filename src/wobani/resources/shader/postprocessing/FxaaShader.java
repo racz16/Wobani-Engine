@@ -32,7 +32,7 @@ public class FxaaShader extends Shader {
      * Initializes a new FxaaShader.
      */
     private FxaaShader() {
-	super(vertexPath, fragmentPath, null, null, null, null);
+	super(vertexPath, fragmentPath, null, null, null);
 	List<File> paths = new ArrayList<>(2);
 	paths.add(new File(vertexPath));
 	paths.add(new File(fragmentPath));

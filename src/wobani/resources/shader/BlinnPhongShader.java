@@ -49,8 +49,8 @@ public class BlinnPhongShader extends Shader {
     /**
      * Inizializes a new Blinn-Phong shader.
      */
-    public BlinnPhongShader(Map<String, String> param) {
-	super(vertexPath, fragmentPath, null, null, null, param);
+    public BlinnPhongShader() {
+	super(vertexPath, fragmentPath, null, null, null);
 	List<File> paths = new ArrayList<>(2);
 	paths.add(new File(vertexPath));
 	paths.add(new File(fragmentPath));
@@ -100,6 +100,10 @@ public class BlinnPhongShader extends Shader {
 	connectUniform("material.environmentIntensityColor");
 	connectUniform("material.environmentIntensityTile");
 	connectUniform("material.environmentIntensityOffset");
+
+	connectUniform("material.isThereParallaxCorrection");
+	connectUniform("material.geometryProxyRadius");
+	connectUniform("material.environmentProbePosition");
 	//misc
 	connectUniform("wireframe");
 	connectUniform("viewPosition");
@@ -300,6 +304,10 @@ public class BlinnPhongShader extends Shader {
 	String tileName = "material.environmentIntensityTile";
 	String offsetName = "material.environmentIntensityOffset";
 	int intensityTextureUnit = 6;
+	//parallax correction
+	String isThereParallaxCorrection = "material.isThereParallaxCorrection";
+	String parallaxCorrectionValue = "material.geometryProxyRadius";
+	String environmentProbePosition = "material.environmentProbePosition";
 
 	if (reflectionUsable || refractionUsable) {
 	    if (!reflectionUsable && refractionUsable) {
@@ -320,6 +328,14 @@ public class BlinnPhongShader extends Shader {
 		loadBoolean(isThereRefractionMap, true);
 		refractionSlot.getEnvironmentProbe().bindToTextureUnit(refractionTextureUnit);
 		loadFloat(refractionIndex, index);
+	    }
+	    if (reflectionUsable) {
+		boolean pc = reflectionSlot.getEnvironmentProbe().isParallaxCorrection();
+		loadBoolean(isThereParallaxCorrection, pc);
+		if (pc) {
+		    loadFloat(parallaxCorrectionValue, reflectionSlot.getEnvironmentProbe().getParallaxCorrectionValue());
+		    loadVector3(environmentProbePosition, reflectionSlot.getEnvironmentProbe().getPosition());
+		}
 	    }
 	    if (intensitySlot != null && intensitySlot.isActive()) {
 		Texture2D texture = intensitySlot.getTexture();

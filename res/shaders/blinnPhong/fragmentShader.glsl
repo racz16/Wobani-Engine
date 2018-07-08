@@ -1,4 +1,4 @@
-#version 420 core 
+#version 430 core
 
 struct Material {
     bool isThereDiffuseMap;
@@ -35,15 +35,19 @@ struct Material {
     vec2 environmentIntensityTile;
     vec2 environmentIntensityOffset;
     vec3 environmentIntensityColor;
+
+    bool isThereParallaxCorrection;
+    float geometryProxyRadius;
+    vec3 environmentProbePosition;
 }; 
 
 struct Light {              //base alignment        alignment offset
-    vec3 position;          //16                    0
-    vec3 direction;         //16                    16
-    vec3 attenuation;       //16                    32
-    vec3 ambient;           //16                    48
-    vec3 diffuse;           //16                    64
-    vec3 specular;          //16                    80
+    vec3 ambient;           //16                    0
+    vec3 diffuse;           //16                    16
+    vec3 specular;          //16                    32
+    vec3 direction;         //16                    48
+    vec3 position;          //16                    64
+    vec3 attenuation;       //16                    80
     vec2 cutOff;            //8                     96
     int type;               //4                     104
     bool lightActive;       //4                     108
@@ -52,13 +56,30 @@ struct Light {              //base alignment        alignment offset
 const int DIRECTIONAL_LIGHT = 0;
 const int POINT_LIGHT = 1;
 const int SPOT_LIGHT = 2;
-const int lightNumber = WOBANI_LIGHT_NUMBER;
 
-layout (std140, binding = 1) uniform LightSources {
-    Light lights[lightNumber];                      //i * 112
-    Light directionalLight;                         //1792
-    int maxLightSources;                            //1904
-};                                                  //1908
+layout(std140, binding = 2) uniform DirectionalLight{
+    Light directionalLight;
+};
+
+layout(std140, binding = 3) buffer NondirectionalLights1 {
+    int count1;
+    Light lights1[];
+};
+
+layout(std140, binding = 4) buffer NondirectionalLights2 {
+    int count2;
+    Light lights2[];
+};
+
+layout(std140, binding = 5) buffer NondirectionalLights3 {
+    int count3;
+    Light lights3[];
+};
+
+layout(std140, binding = 6) buffer NondirectionalLights4 {
+    int count4;
+    Light lights4[];
+};
 
 in vec3 fragmentPositionF;
 in vec3 normalF;
@@ -86,6 +107,7 @@ float calculateAttenuation(vec3 fragmentPosition, vec3 lightPosition, vec3 light
 float calculateCutOff(vec3 lightToFragmentDirection, vec3 lightDirection, vec2 lightCutOff);
 //data collection
 vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVector);
+vec3 parallaxCorrectReflectionVector(vec3 reflectionVector);
 vec4 getSpecularColor(vec2 textureCoordinates);
 vec3 getNormalVector(vec2 textureCoordinates);
 vec2 getTextureCoordinates();
@@ -111,9 +133,24 @@ void main(){
     //shadows
     result *= calculateShadow(receiveShadow, fragmentPositionLightSpace, normalVector);
     //point and spotlights
-    for(int i=0; i<maxLightSources; i++){
-        if(lights[i].lightActive){
-            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights[i]);
+    for(int i=0; i<count1; i++){
+        if(lights1[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights1[i]);
+        }
+    }
+    for(int i=0; i<count2; i++){
+        if(lights2[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights2[i]);
+        }
+    }
+    for(int i=0; i<count3; i++){
+        if(lights3[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights3[i]);
+        }
+    }
+    for(int i=0; i<count4; i++){
+        if(lights4[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights4[i]);
         }
     }
 
@@ -233,6 +270,9 @@ vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVec
     vec3 reflectionColor;
     if(material.isThereReflectionMap){
         vec3 reflectionVector = reflect(-viewDirection, normalVector);
+        if(material.isThereParallaxCorrection){
+            reflectionVector = parallaxCorrectReflectionVector(reflectionVector);
+        }
         reflectionColor = texture(material.reflection, reflectionVector).rgb;
     }
     vec3 refractionColor;
@@ -242,6 +282,10 @@ vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVec
     }
     vec3 intensity = getIntensity(textureCoordinates);
     return diffuse * intensity.r + reflectionColor * intensity.g + refractionColor * intensity.b;
+}
+
+vec3 parallaxCorrectReflectionVector(vec3 reflectionVector){
+    return material.geometryProxyRadius * (fragmentPositionF - material.environmentProbePosition) + reflectionVector;;
 }
 
 vec3 getIntensity(vec2 textureCoordinates){

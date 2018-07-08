@@ -1,5 +1,6 @@
 package wobani.rendering.stage;
 
+import wobani.resources.buffers.Fbo;
 import java.util.*;
 import wobani.rendering.*;
 import wobani.rendering.postprocessing.*;

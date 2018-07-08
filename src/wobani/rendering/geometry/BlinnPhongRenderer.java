@@ -1,9 +1,8 @@
 package wobani.rendering.geometry;
 
-import java.util.*;
 import org.joml.*;
-import org.lwjgl.opengl.*;
-import wobani.component.light.*;
+import wobani.component.camera.*;
+import wobani.component.light.blinnphong.*;
 import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.material.*;
@@ -51,21 +50,7 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      * Initializes a new BlinnPhongRenderer.
      */
     private BlinnPhongRenderer() {
-	createNewShader(16);
-    }
-
-    public void setLightNumber(int lightNumber) {
-	if (lightNumber < 0) {
-	    throw new IllegalArgumentException();
-	}
-	shader.release();
-	createNewShader(lightNumber);
-    }
-
-    private void createNewShader(int lightNumber) {
-	Map<String, String> params = new HashMap<>();
-	params.put("WOBANI_LIGHT_NUMBER", String.valueOf(lightNumber));
-	shader = new BlinnPhongShader(params);
+	shader = new BlinnPhongShader();
     }
 
     /**
@@ -109,9 +94,11 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      * Prepares the shader to the rendering.
      */
     private void beforeDrawShader() {
-	if (shader == null || !shader.isUsable()) {
-	    createNewShader(16);
+	if (!Utility.isUsable(shader)) {
+	    shader = new BlinnPhongShader();
 	}
+	CameraComponent.refreshMatricesUbo();
+	BlinnPhongLightSources.refresh();
 	shader.start();
 	shader.loadGlobalUniforms();
 	RenderingPipeline.bindFbo();
@@ -134,11 +121,6 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      */
     private void beforeDrawRenderable(@NotNull Renderable renderable) {
 	renderable.beforeDraw();
-	//TODO: to Renderable
-	GL20.glEnableVertexAttribArray(0);
-	GL20.glEnableVertexAttribArray(1);
-	GL20.glEnableVertexAttribArray(2);
-	GL20.glEnableVertexAttribArray(3);
     }
 
     /**
@@ -147,11 +129,6 @@ public class BlinnPhongRenderer extends GeometryRenderer {
      * @param renderable Renderable
      */
     private void afterDrawRenderable(@NotNull Renderable renderable) {
-	//TODO: to Renderable
-	GL20.glDisableVertexAttribArray(0);
-	GL20.glDisableVertexAttribArray(1);
-	GL20.glDisableVertexAttribArray(2);
-	GL20.glDisableVertexAttribArray(3);
 	renderable.afterDraw();
     }
 
@@ -159,6 +136,7 @@ public class BlinnPhongRenderer extends GeometryRenderer {
 	numberOfRenderedElements++;
 	numberOfRenderedFaces += rc.getFaceCount();
 	Transform transform = rc.getGameObject().getTransform();
+	BlinnPhongLightSources.bindClosestLightSources(transform.getAbsolutePosition());
 	shader.loadObjectUniforms(transform.getModelMatrix(), new Matrix3f(transform.getInverseModelMatrix()), rc.isReceiveShadows());
 	Material material = rc.getMaterial();
 	shader.loadMaterial(material);

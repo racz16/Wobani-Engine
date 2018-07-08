@@ -1,20 +1,19 @@
 package wobani.rendering.prepare;
 
-import wobani.resources.shader.EnvironmentShader;
-import wobani.resources.environmentprobe.DynamicEnvironmentProbe;
-import wobani.toolbox.annotation.NotNull;
-import wobani.rendering.stage.GeometryRenderingStage;
-import wobani.material.Material;
-import wobani.component.environmentprobe.DynamicEnvironmentProbeComponent;
-import wobani.component.renderable.RenderableComponent;
 import java.util.*;
 import org.joml.*;
-import org.lwjgl.opengl.*;
+import wobani.component.environmentprobe.*;
+import wobani.component.renderable.*;
 import wobani.core.*;
+import wobani.material.*;
 import wobani.rendering.*;
 import wobani.rendering.geometry.*;
+import wobani.rendering.stage.*;
 import wobani.resources.*;
+import wobani.resources.environmentprobe.*;
+import wobani.resources.shader.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
 public class EnvironmentMapRenderer extends PrepareRenderer {
 
@@ -147,9 +146,9 @@ public class EnvironmentMapRenderer extends PrepareRenderer {
      */
     private void beforeDrawRenderable(@NotNull Renderable renderable) {
 	renderable.beforeDraw();
-	GL20.glEnableVertexAttribArray(0);
-	GL20.glEnableVertexAttribArray(1);
-	GL20.glEnableVertexAttribArray(2);
+//	GL20.glEnableVertexAttribArray(0);
+//	GL20.glEnableVertexAttribArray(1);
+//	GL20.glEnableVertexAttribArray(2);
     }
 
     /**
@@ -158,9 +157,9 @@ public class EnvironmentMapRenderer extends PrepareRenderer {
      * @param renderable Renderable
      */
     private void afterDrawRenderable(@NotNull Renderable renderable) {
-	GL20.glDisableVertexAttribArray(0);
-	GL20.glDisableVertexAttribArray(1);
-	GL20.glDisableVertexAttribArray(2);
+//	GL20.glDisableVertexAttribArray(0);
+//	GL20.glDisableVertexAttribArray(1);
+//	GL20.glDisableVertexAttribArray(2);
 	renderable.afterDraw();
     }
 

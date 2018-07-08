@@ -1,15 +1,14 @@
 package wobani.rendering.prepare;
 
-import wobani.resources.shader.SkyBoxShader;
-import wobani.resources.mesh.Mesh;
-import wobani.resources.mesh.CubeMesh;
-import wobani.toolbox.annotation.NotNull;
 import org.joml.*;
-import org.lwjgl.opengl.*;
+import wobani.component.camera.*;
 import wobani.core.*;
 import wobani.rendering.*;
 import wobani.resources.*;
+import wobani.resources.mesh.*;
+import wobani.resources.shader.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * This renderer can draw a skybox. In theory it can render any number of meshes
@@ -35,8 +34,8 @@ public class SkyBoxRenderer extends Renderer {
      * Initializes a new SkyBoxRenderer.
      */
     private SkyBoxRenderer() {
-        shader = SkyBoxShader.getInstance();
-        box = CubeMesh.getInstance();
+	shader = SkyBoxShader.getInstance();
+	box = CubeMesh.getInstance();
     }
 
     /**
@@ -46,10 +45,10 @@ public class SkyBoxRenderer extends Renderer {
      */
     @NotNull
     public static SkyBoxRenderer getInstance() {
-        if (instance == null) {
-            instance = new SkyBoxRenderer();
-        }
-        return instance;
+	if (instance == null) {
+	    instance = new SkyBoxRenderer();
+	}
+	return instance;
     }
 
     /**
@@ -57,33 +56,34 @@ public class SkyBoxRenderer extends Renderer {
      */
     @Override
     public void render() {
-        if (Scene.getParameters().get(Scene.MAIN_SKYBOX) == null) {
-            return;
-        }
-        beforeDrawShader();
+	if (Scene.getParameters().get(Scene.MAIN_SKYBOX) == null) {
+	    return;
+	}
+	beforeDrawShader();
 
-        beforeDrawRenderable(box);
-        beforeDrawInstance();
-        box.draw();
-        afterDrawRenderable(box);
+	beforeDrawRenderable(box);
+	beforeDrawInstance();
+	box.draw();
+	afterDrawRenderable(box);
 
-        shader.stop();
-        OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS);
+	shader.stop();
+	OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS);
     }
 
     /**
      * Prepares the shader to the rendering.
      */
     private void beforeDrawShader() {
-        if (shader == null || !shader.isUsable()) {
-            shader = SkyBoxShader.getInstance();
-        }
-        shader.start();
-        RenderingPipeline.bindFbo();
-        OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS_OR_EQUAL);
-        OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
-        boolean wirefreame = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.WIREFRAME_MODE, false);
-        OpenGl.setWireframe(wirefreame);
+	if (!Utility.isUsable(shader)) {
+	    shader = SkyBoxShader.getInstance();
+	}
+	CameraComponent.refreshMatricesUbo();
+	shader.start();
+	RenderingPipeline.bindFbo();
+	OpenGl.setDepthTestMode(OpenGl.DepthTestMode.LESS_OR_EQUAL);
+	OpenGl.setViewport(RenderingPipeline.getRenderingSize(), new Vector2i());
+	boolean wirefreame = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.WIREFRAME_MODE, false);
+	OpenGl.setWireframe(wirefreame);
     }
 
     /**
@@ -92,8 +92,8 @@ public class SkyBoxRenderer extends Renderer {
      * @param renderable Renderable
      */
     private void beforeDrawRenderable(@NotNull Renderable renderable) {
-        renderable.beforeDraw();
-        GL20.glEnableVertexAttribArray(0);
+	renderable.beforeDraw();
+//        GL20.glEnableVertexAttribArray(0);
     }
 
     /**
@@ -103,8 +103,8 @@ public class SkyBoxRenderer extends Renderer {
      * @param renderable Renderable
      */
     private void afterDrawRenderable(@NotNull Renderable renderable) {
-        GL20.glDisableVertexAttribArray(0);
-        renderable.afterDraw();
+//        GL20.glDisableVertexAttribArray(0);
+	renderable.afterDraw();
     }
 
     /**
@@ -113,7 +113,7 @@ public class SkyBoxRenderer extends Renderer {
      * @param rc MeshComponent
      */
     private void beforeDrawInstance() {
-        shader.loadUniforms();
+	shader.loadUniforms();
     }
 
     /**
@@ -122,7 +122,7 @@ public class SkyBoxRenderer extends Renderer {
      */
     @Override
     public void release() {
-        shader.release();
+	shader.release();
     }
 
     @Override
@@ -132,12 +132,12 @@ public class SkyBoxRenderer extends Renderer {
 
     @Override
     public boolean isUsable() {
-        return true;
+	return true;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "\nSkyBoxRenderer{" + "shader=" + shader + '}';
+	return super.toString() + "\nSkyBoxRenderer{" + "shader=" + shader + '}';
     }
 
 }

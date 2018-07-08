@@ -1,19 +1,14 @@
 package wobani.resources;
 
-import wobani.resources.texture.Texture;
-import wobani.resources.texture.ChangableColorSpace;
-import wobani.resources.texture.EasyFiltering;
-import wobani.resources.shader.Shader;
-import wobani.resources.mesh.Mesh;
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.ReadOnly;
-import wobani.component.camera.CameraComponent;
-import wobani.component.light.BlinnPhongLightSources;
 import java.util.*;
 import org.joml.*;
 import wobani.rendering.*;
 import wobani.resources.audio.*;
+import wobani.resources.buffers.*;
+import wobani.resources.mesh.*;
+import wobani.resources.shader.*;
+import wobani.resources.texture.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * Manages the loaded models, textures and splines.
@@ -25,19 +20,19 @@ public class ResourceManager {
      * Resource's state.
      */
     public enum ResourceState {
-        /**
-         * ACTION (means that the resource ready to use, stored like in VRAM or
-         * in the sound system).
-         */
-        ACTION,
-        /**
-         * RAM.
-         */
-        RAM,
-        /**
-         * HDD.
-         */
-        HDD
+	/**
+	 * ACTION (means that the resource ready to use, stored like in VRAM or
+	 * in the sound system).
+	 */
+	ACTION,
+	/**
+	 * RAM.
+	 */
+	RAM,
+	/**
+	 * HDD.
+	 */
+	HDD
     }
 
     /**
@@ -60,6 +55,10 @@ public class ResourceManager {
      * Contains all the UBOs.
      */
     private static final Map<ResourceId, Ubo> ubos = new HashMap<>();
+    /**
+     * Contains all the SSBOs.
+     */
+    private static final Map<ResourceId, Ssbo> ssbos = new HashMap<>();
     /**
      * Contains all the VAOs.
      */
@@ -97,7 +96,7 @@ public class ResourceManager {
      */
     @NotNull
     public static EasyFiltering.TextureFiltering getTextureFiltering() {
-        return textureFiltering;
+	return textureFiltering;
     }
 
     /**
@@ -108,13 +107,13 @@ public class ResourceManager {
      * @throws NullPointerException texture filtering can't be null
      */
     public static void setTextureFiltering(@NotNull EasyFiltering.TextureFiltering tf) {
-        if (tf == null) {
-            throw new NullPointerException();
-        }
-        if (textureFiltering != tf) {
-            textureFiltering = tf;
-            changeTextureFiltering();
-        }
+	if (tf == null) {
+	    throw new NullPointerException();
+	}
+	if (textureFiltering != tf) {
+	    textureFiltering = tf;
+	    changeTextureFiltering();
+	}
     }
 
     /**
@@ -130,20 +129,20 @@ public class ResourceManager {
      * Updates all the resources.
      */
     public static void updateResources() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastUpdateTime > resourceUpdatePeriod) {
-            updateResourceMap(meshes);
-            updateResourceMap(textures);
-            updateResourceMap(splines);
-            updateResourceMap(fbos);
-            updateResourceMap(ubos);
-            updateResourceMap(vaos);
-            updateResourceMap(shaders);
-            updateResourceMap(audioBuffers);
-            updateResourceMap(audioSources);
+	long currentTime = System.currentTimeMillis();
+	if (currentTime - lastUpdateTime > resourceUpdatePeriod) {
+	    updateResourceMap(meshes);
+	    updateResourceMap(textures);
+	    updateResourceMap(splines);
+	    updateResourceMap(fbos);
+	    updateResourceMap(ubos);
+	    updateResourceMap(vaos);
+	    updateResourceMap(shaders);
+	    updateResourceMap(audioBuffers);
+	    updateResourceMap(audioSources);
 
-            lastUpdateTime = currentTime;
-        }
+	    lastUpdateTime = currentTime;
+	}
     }
 
     /**
@@ -155,20 +154,20 @@ public class ResourceManager {
      * @throws NullPointerException map can't be null
      */
     private static <T extends Resource> void updateResourceMap(@NotNull Map<ResourceId, T> resources) {
-        if (resources == null) {
-            throw new NullPointerException();
-        }
-        ResourceId[] keys = new ResourceId[resources.keySet().size()];
-        resources.keySet().toArray(keys);
+	if (resources == null) {
+	    throw new NullPointerException();
+	}
+	ResourceId[] keys = new ResourceId[resources.keySet().size()];
+	resources.keySet().toArray(keys);
 
-        for (ResourceId key : keys) {
-            Resource resource = resources.get(key);
-            if (resource.isUsable()) {
-                resource.update();
-            } else {
-                resources.remove(key);
-            }
-        }
+	for (ResourceId key : keys) {
+	    Resource resource = resources.get(key);
+	    if (resource.isUsable()) {
+		resource.update();
+	    } else {
+		resources.remove(key);
+	    }
+	}
     }
 
     /**
@@ -177,7 +176,7 @@ public class ResourceManager {
      * @return the resources' update time period (in miliseconds)
      */
     public static long getResourceUpdatePeroid() {
-        return resourceUpdatePeriod;
+	return resourceUpdatePeriod;
     }
 
     /**
@@ -188,10 +187,10 @@ public class ResourceManager {
      * @throws IllegalArgumentException update period can't be negative
      */
     public static void setResourceUpdatePeriod(long updatePeriod) {
-        if (updatePeriod < 0) {
-            throw new IllegalArgumentException("Update period can't be negative");
-        }
-        resourceUpdatePeriod = updatePeriod;
+	if (updatePeriod < 0) {
+	    throw new IllegalArgumentException("Update period can't be negative");
+	}
+	resourceUpdatePeriod = updatePeriod;
     }
 
     //
@@ -206,7 +205,7 @@ public class ResourceManager {
      */
     @Nullable
     public static Texture getTexture(@Nullable ResourceId key) {
-        return textures.get(key);
+	return textures.get(key);
     }
 
     /**
@@ -215,9 +214,9 @@ public class ResourceManager {
      * @param texture texture
      */
     public static void addTexture(@NotNull Texture texture) {
-        if (!textures.containsKey(texture.getResourceId())) {
-            textures.put(texture.getResourceId(), texture);
-        }
+	if (!textures.containsKey(texture.getResourceId())) {
+	    textures.put(texture.getResourceId(), texture);
+	}
     }
 
     /**
@@ -228,14 +227,14 @@ public class ResourceManager {
      * @see Settings#getTextureFiltering()
      */
     public static void changeTextureFiltering() {
-        for (ResourceId key : textures.keySet()) {
-            if (EasyFiltering.class.isInstance(textures.get(key))) {
-                EasyFiltering texture = (EasyFiltering) textures.get(key);
-                texture.bind();
-                texture.setTextureFiltering(getTextureFiltering());
-                texture.unbind();
-            }
-        }
+	for (ResourceId key : textures.keySet()) {
+	    if (EasyFiltering.class.isInstance(textures.get(key))) {
+		EasyFiltering texture = (EasyFiltering) textures.get(key);
+		texture.bind();
+		texture.setTextureFiltering(getTextureFiltering());
+		texture.unbind();
+	    }
+	}
     }
 
     /**
@@ -246,14 +245,14 @@ public class ResourceManager {
      * @see Settings#getGamma()
      */
     public static void changeTextureColorSpace() {
-        float gamma = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.GAMMA, 1f);
-        boolean sRgb = gamma != 1;
-        for (ResourceId key : textures.keySet()) {
-            if (ChangableColorSpace.class.isInstance(textures.get(key))) {
-                ChangableColorSpace texture = (ChangableColorSpace) textures.get(key);
-                texture.setsRgb(sRgb);
-            }
-        }
+	float gamma = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.GAMMA, 1f);
+	boolean sRgb = gamma != 1;
+	for (ResourceId key : textures.keySet()) {
+	    if (ChangableColorSpace.class.isInstance(textures.get(key))) {
+		ChangableColorSpace texture = (ChangableColorSpace) textures.get(key);
+		texture.setsRgb(sRgb);
+	    }
+	}
     }
 
     /**
@@ -265,17 +264,17 @@ public class ResourceManager {
      */
     @NotNull @ReadOnly
     public static Vector3i getTextureData() {
-        int ram = 0;
-        int vram = 0;
-        int count = 0;
-        for (Texture texture : textures.values()) {
-            if (texture.isUsable()) {
-                count++;
-                ram += texture.getDataSizeInRam();
-                vram += texture.getDataSizeInAction();
-            }
-        }
-        return new Vector3i(count, ram, vram);
+	int ram = 0;
+	int vram = 0;
+	int count = 0;
+	for (Texture texture : textures.values()) {
+	    if (texture.isUsable()) {
+		count++;
+		ram += texture.getDataSizeInRam();
+		vram += texture.getDataSizeInAction();
+	    }
+	}
+	return new Vector3i(count, ram, vram);
     }
 
     //
@@ -290,7 +289,7 @@ public class ResourceManager {
      */
     @Nullable
     public static Mesh getMesh(@Nullable ResourceId key) {
-        return meshes.get(key);
+	return meshes.get(key);
     }
 
     /**
@@ -299,9 +298,9 @@ public class ResourceManager {
      * @param mesh mesh
      */
     public static void addMesh(@NotNull Mesh mesh) {
-        if (!meshes.containsKey(mesh.getResourceId())) {
-            meshes.put(mesh.getResourceId(), mesh);
-        }
+	if (!meshes.containsKey(mesh.getResourceId())) {
+	    meshes.put(mesh.getResourceId(), mesh);
+	}
     }
 
     /**
@@ -313,17 +312,17 @@ public class ResourceManager {
      */
     @NotNull @ReadOnly
     public static Vector3i getMeshData() {
-        int ram = 0;
-        int vram = 0;
-        int count = 0;
-        for (Mesh mesh : meshes.values()) {
-            if (mesh.isUsable()) {
-                count++;
-                ram += mesh.getDataSizeInRam();
-                vram += mesh.getDataSizeInAction();
-            }
-        }
-        return new Vector3i(count, ram, vram);
+	int ram = 0;
+	int vram = 0;
+	int count = 0;
+	for (Mesh mesh : meshes.values()) {
+	    if (mesh.isUsable()) {
+		count++;
+		ram += mesh.getDataSizeInRam();
+		vram += mesh.getDataSizeInAction();
+	    }
+	}
+	return new Vector3i(count, ram, vram);
     }
 
     //
@@ -338,7 +337,7 @@ public class ResourceManager {
      */
     @Nullable
     public static Renderable getSpline(@Nullable ResourceId key) {
-        return splines.get(key);
+	return splines.get(key);
     }
 
     /**
@@ -348,9 +347,9 @@ public class ResourceManager {
      *
      */
     public static void addSpline(@NotNull Renderable spline) {
-        if (!splines.containsKey(spline.getResourceId())) {
-            splines.put(spline.getResourceId(), spline);
-        }
+	if (!splines.containsKey(spline.getResourceId())) {
+	    splines.put(spline.getResourceId(), spline);
+	}
     }
 
     /**
@@ -362,17 +361,17 @@ public class ResourceManager {
      */
     @NotNull @ReadOnly
     public static Vector3i getSplineData() {
-        int ram = 0;
-        int vram = 0;
-        int count = 0;
-        for (Renderable spline : splines.values()) {
-            if (spline.isUsable()) {
-                count++;
-                ram += spline.getDataSizeInRam();
-                vram += spline.getDataSizeInAction();
-            }
-        }
-        return new Vector3i(count, ram, vram);
+	int ram = 0;
+	int vram = 0;
+	int count = 0;
+	for (Renderable spline : splines.values()) {
+	    if (spline.isUsable()) {
+		count++;
+		ram += spline.getDataSizeInRam();
+		vram += spline.getDataSizeInAction();
+	    }
+	}
+	return new Vector3i(count, ram, vram);
     }
 
     //
@@ -387,7 +386,7 @@ public class ResourceManager {
      */
     @Nullable
     public static Fbo getFbo(@Nullable ResourceId key) {
-        return fbos.get(key);
+	return fbos.get(key);
     }
 
     /**
@@ -396,9 +395,9 @@ public class ResourceManager {
      * @param fbo FBO
      */
     public static void addFbo(@NotNull Fbo fbo) {
-        if (!fbos.containsKey(fbo.getResourceId())) {
-            fbos.put(fbo.getResourceId(), fbo);
-        }
+	if (!fbos.containsKey(fbo.getResourceId())) {
+	    fbos.put(fbo.getResourceId(), fbo);
+	}
     }
 
     /**
@@ -410,13 +409,13 @@ public class ResourceManager {
      */
     @NotNull @ReadOnly
     public static Vector3i getFboData() {
-        int count = 0;
-        for (Fbo fbo : fbos.values()) {
-            if (fbo.isUsable()) {
-                count++;
-            }
-        }
-        return new Vector3i(count, 0, 0);
+	int count = 0;
+	for (Fbo fbo : fbos.values()) {
+	    if (fbo.isUsable()) {
+		count++;
+	    }
+	}
+	return new Vector3i(count, 0, 0);
     }
 
     /**
@@ -428,32 +427,32 @@ public class ResourceManager {
      */
     @NotNull @ReadOnly
     public static Vector3i getRboData() {
-        int count = 0;
-        int vram = 0;
-        for (Fbo fbo : fbos.values()) {
-            if (fbo.isUsable()) {
-                int attachmentSize = fbo.getSize().x() * fbo.getSize().y() * 4 * 4 * fbo.getNumberOfSamples();
-                for (int i = 0; i < 8; i++) {
-                    if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.RBO, i)) {
-                        count++;
-                        vram += attachmentSize;
-                    }
-                }
-                if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.DEPTH, Fbo.FboAttachmentType.RBO, 0)) {
-                    count++;
-                    vram += attachmentSize;
-                }
-                if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.STENCIL, Fbo.FboAttachmentType.RBO, 0)) {
-                    count++;
-                    vram += attachmentSize;
-                }
-                if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.DEPTH_STENCIL, Fbo.FboAttachmentType.RBO, 0)) {
-                    count++;
-                    vram += attachmentSize;
-                }
-            }
-        }
-        return new Vector3i(count, 0, vram);
+	int count = 0;
+	int vram = 0;
+	for (Fbo fbo : fbos.values()) {
+	    if (fbo.isUsable()) {
+		int attachmentSize = fbo.getSize().x() * fbo.getSize().y() * 4 * 4 * fbo.getNumberOfSamples();
+		for (int i = 0; i < 8; i++) {
+		    if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.RBO, i)) {
+			count++;
+			vram += attachmentSize;
+		    }
+		}
+		if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.DEPTH, Fbo.FboAttachmentType.RBO, 0)) {
+		    count++;
+		    vram += attachmentSize;
+		}
+		if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.STENCIL, Fbo.FboAttachmentType.RBO, 0)) {
+		    count++;
+		    vram += attachmentSize;
+		}
+		if (fbo.isThereAttachment(Fbo.FboAttachmentSlot.DEPTH_STENCIL, Fbo.FboAttachmentType.RBO, 0)) {
+		    count++;
+		    vram += attachmentSize;
+		}
+	    }
+	}
+	return new Vector3i(count, 0, vram);
     }
 
     //
@@ -468,7 +467,7 @@ public class ResourceManager {
      */
     @Nullable
     public static Ubo getUbo(@Nullable ResourceId key) {
-        return ubos.get(key);
+	return ubos.get(key);
     }
 
     /**
@@ -477,9 +476,9 @@ public class ResourceManager {
      * @param ubo UBO
      */
     public static void addUbo(@NotNull Ubo ubo) {
-        if (!ubos.containsKey(ubo.getResourceId())) {
-            ubos.put(ubo.getResourceId(), ubo);
-        }
+	if (!ubos.containsKey(ubo.getResourceId())) {
+	    ubos.put(ubo.getResourceId(), ubo);
+	}
     }
 
     /**
@@ -491,17 +490,65 @@ public class ResourceManager {
      */
     @NotNull @ReadOnly
     public static Vector3i getUboData() {
-        int ram = 0;
-        int vram = 0;
-        int count = 0;
-        for (Ubo ubo : ubos.values()) {
-            if (ubo.isUsable()) {
-                count++;
-                ram += ubo.getDataSizeInRam();
-                vram += ubo.getDataSizeInAction();
-            }
-        }
-        return new Vector3i(count, ram, vram);
+	int ram = 0;
+	int vram = 0;
+	int count = 0;
+	for (Ubo ubo : ubos.values()) {
+	    if (ubo.isUsable()) {
+		count++;
+		ram += ubo.getDataSizeInRam();
+		vram += ubo.getDataSizeInAction();
+	    }
+	}
+	return new Vector3i(count, ram, vram);
+    }
+
+    //
+    //SSBOs----------------------------------------------------------------------
+    //
+    /**
+     * Returns the specified SSBO.
+     *
+     * @param key SSBO's key
+     *
+     * @return SSBO
+     */
+    @Nullable
+    public static Ssbo getSsbo(@Nullable ResourceId key) {
+	return ssbos.get(key);
+    }
+
+    /**
+     * Adds the given SSBO to the list of SSBOs.
+     *
+     * @param ssbo SSBO
+     */
+    public static void addSsbo(@NotNull Ssbo ssbo) {
+	if (!ssbos.containsKey(ssbo.getResourceId())) {
+	    ssbos.put(ssbo.getResourceId(), ssbo);
+	}
+    }
+
+    /**
+     * Returns data about the SSBOs. The x coordinate means the number of usable
+     * SSBOs, the y means the data size in bytes, stored in the RAM, the z means
+     * the data size in bytes, stored in the ACTION.
+     *
+     * @return data about the SSBOs
+     */
+    @NotNull @ReadOnly
+    public static Vector3i getSsboData() {
+	int ram = 0;
+	int vram = 0;
+	int count = 0;
+	for (Ssbo ssbo : ssbos.values()) {
+	    if (ssbo.isUsable()) {
+		count++;
+		ram += ssbo.getDataSizeInRam();
+		vram += ssbo.getDataSizeInAction();
+	    }
+	}
+	return new Vector3i(count, ram, vram);
     }
 
     //
@@ -516,7 +563,7 @@ public class ResourceManager {
      */
     @Nullable
     public static Vao getVao(@Nullable ResourceId key) {
-        return vaos.get(key);
+	return vaos.get(key);
     }
 
     /**
@@ -525,9 +572,9 @@ public class ResourceManager {
      * @param vao VAO
      */
     public static void addVao(@NotNull Vao vao) {
-        if (!vaos.containsKey(vao.getResourceId())) {
-            vaos.put(vao.getResourceId(), vao);
-        }
+	if (!vaos.containsKey(vao.getResourceId())) {
+	    vaos.put(vao.getResourceId(), vao);
+	}
     }
 
     /**
@@ -539,13 +586,13 @@ public class ResourceManager {
      */
     @NotNull @ReadOnly
     public static Vector3i getVaoData() {
-        int count = 0;
-        for (Vao vao : vaos.values()) {
-            if (vao.isUsable()) {
-                count++;
-            }
-        }
-        return new Vector3i(count, 0, 0);
+	int count = 0;
+	for (Vao vao : vaos.values()) {
+	    if (vao.isUsable()) {
+		count++;
+	    }
+	}
+	return new Vector3i(count, 0, 0);
     }
 
     //
@@ -560,7 +607,7 @@ public class ResourceManager {
      */
     @Nullable
     public static Shader getShader(@Nullable ResourceId key) {
-        return shaders.get(key);
+	return shaders.get(key);
     }
 
     /**
@@ -569,9 +616,9 @@ public class ResourceManager {
      * @param shader sound
      */
     public static void addShader(@NotNull Shader shader) {
-        if (!shaders.containsKey(shader.getResourceId())) {
-            shaders.put(shader.getResourceId(), shader);
-        }
+	if (!shaders.containsKey(shader.getResourceId())) {
+	    shaders.put(shader.getResourceId(), shader);
+	}
     }
 
     /**
@@ -583,13 +630,13 @@ public class ResourceManager {
      */
     @NotNull @ReadOnly
     public static Vector3i getShaderData() {
-        int count = 0;
-        for (Shader shader : shaders.values()) {
-            if (shader.isUsable()) {
-                count++;
-            }
-        }
-        return new Vector3i(count, 0, 0);
+	int count = 0;
+	for (Shader shader : shaders.values()) {
+	    if (shader.isUsable()) {
+		count++;
+	    }
+	}
+	return new Vector3i(count, 0, 0);
     }
 
     //
@@ -604,7 +651,7 @@ public class ResourceManager {
      */
     @Nullable
     public static AudioBuffer getAudioBuffer(@Nullable ResourceId key) {
-        return audioBuffers.get(key);
+	return audioBuffers.get(key);
     }
 
     /**
@@ -613,9 +660,9 @@ public class ResourceManager {
      * @param sound audio buffer
      */
     public static void addAudioBuffer(@NotNull AudioBuffer sound) {
-        if (!audioBuffers.containsKey(sound.getResourceId())) {
-            audioBuffers.put(sound.getResourceId(), sound);
-        }
+	if (!audioBuffers.containsKey(sound.getResourceId())) {
+	    audioBuffers.put(sound.getResourceId(), sound);
+	}
     }
 
     /**
@@ -627,17 +674,17 @@ public class ResourceManager {
      */
     @NotNull @ReadOnly
     public static Vector3i getAudioBufferData() {
-        int ram = 0;
-        int vram = 0;
-        int count = 0;
-        for (AudioBuffer sound : audioBuffers.values()) {
-            if (sound.isUsable()) {
-                count++;
-                ram += sound.getDataSizeInRam();
-                vram += sound.getDataSizeInAction();
-            }
-        }
-        return new Vector3i(count, ram, vram);
+	int ram = 0;
+	int vram = 0;
+	int count = 0;
+	for (AudioBuffer sound : audioBuffers.values()) {
+	    if (sound.isUsable()) {
+		count++;
+		ram += sound.getDataSizeInRam();
+		vram += sound.getDataSizeInAction();
+	    }
+	}
+	return new Vector3i(count, ram, vram);
     }
 
     //
@@ -652,7 +699,7 @@ public class ResourceManager {
      */
     @Nullable
     public static AudioSource getAudioSource(@Nullable ResourceId key) {
-        return audioSources.get(key);
+	return audioSources.get(key);
     }
 
     /**
@@ -661,9 +708,9 @@ public class ResourceManager {
      * @param source audio source
      */
     public static void addAudioSource(@NotNull AudioSource source) {
-        if (!audioSources.containsKey(source.getResourceId())) {
-            audioSources.put(source.getResourceId(), source);
-        }
+	if (!audioSources.containsKey(source.getResourceId())) {
+	    audioSources.put(source.getResourceId(), source);
+	}
     }
 
     /**
@@ -675,13 +722,13 @@ public class ResourceManager {
      */
     @NotNull @ReadOnly
     public static Vector3i getAudioSourceData() {
-        int count = 0;
-        for (AudioSource sound : audioSources.values()) {
-            if (sound.isUsable()) {
-                count++;
-            }
-        }
-        return new Vector3i(count, 0, 0);
+	int count = 0;
+	for (AudioSource sound : audioSources.values()) {
+	    if (sound.isUsable()) {
+		count++;
+	    }
+	}
+	return new Vector3i(count, 0, 0);
     }
 
     //
@@ -691,18 +738,18 @@ public class ResourceManager {
      * Releases the textures, meshes, splines, FBOs and the window.
      */
     public static void releaseResources() {
-        releaseResourceMap(meshes);
-        releaseResourceMap(textures);
-        releaseResourceMap(splines);
-        releaseResourceMap(fbos);
-        releaseResourceMap(ubos);
-        releaseResourceMap(vaos);
-        releaseResourceMap(shaders);
-        releaseResourceMap(audioBuffers);
-        releaseResourceMap(audioSources);
-        BlinnPhongLightSources.releaseUbo();
-        CameraComponent.releaseUbo();
-        RenderingPipeline.release();
+	releaseResourceMap(meshes);
+	releaseResourceMap(textures);
+	releaseResourceMap(splines);
+	releaseResourceMap(fbos);
+	releaseResourceMap(ubos);
+	releaseResourceMap(ssbos);
+	releaseResourceMap(vaos);
+	releaseResourceMap(shaders);
+	releaseResourceMap(audioBuffers);
+	releaseResourceMap(audioSources);
+
+	RenderingPipeline.release();
     }
 
     /**
@@ -714,20 +761,20 @@ public class ResourceManager {
      * @throws NullPointerException the map can't be null
      */
     private static <T extends Resource> void releaseResourceMap(@NotNull Map<ResourceId, T> resources) {
-        if (resources == null) {
-            throw new NullPointerException();
-        }
+	if (resources == null) {
+	    throw new NullPointerException();
+	}
 
-        ResourceId[] keys = new ResourceId[resources.keySet().size()];
-        resources.keySet().toArray(keys);
+	ResourceId[] keys = new ResourceId[resources.keySet().size()];
+	resources.keySet().toArray(keys);
 
-        for (ResourceId key : keys) {
-            Resource resource = resources.get(key);
-            if (resource.isUsable()) {
-                resource.release();
-            }
-            resources.remove(key);
-        }
+	for (ResourceId key : keys) {
+	    Resource resource = resources.get(key);
+	    if (resource.isUsable()) {
+		resource.release();
+	    }
+	    resources.remove(key);
+	}
     }
 
 }

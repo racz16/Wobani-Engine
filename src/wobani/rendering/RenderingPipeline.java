@@ -1,15 +1,16 @@
 package wobani.rendering;
 
+import wobani.component.light.blinnphong.BlinnPhongDirectionalLightComponent;
 import java.util.*;
 import org.joml.*;
 import wobani.component.camera.*;
-import wobani.component.light.*;
 import wobani.core.*;
 import wobani.rendering.geometry.*;
 import wobani.rendering.postprocessing.*;
 import wobani.rendering.prepare.*;
 import wobani.rendering.stage.*;
 import wobani.resources.*;
+import wobani.resources.buffers.*;
 import wobani.resources.texture.texture2d.*;
 import static wobani.toolbox.EngineInfo.Library.OPENGL;
 import wobani.toolbox.*;
@@ -241,7 +242,6 @@ public class RenderingPipeline {
      * Renders the scene.
      */
     public static void render() {
-
 	beforeRender();
 	OpenGl.setDepthTest(true);
 	prepare.render();
@@ -315,11 +315,11 @@ public class RenderingPipeline {
 	PostProcessingRenderer renderer = InvertRenderer.getInstance();
 	renderer.setActive(false);
 	post.addRendererToTheEnd(renderer);
-//
+
 	renderer = GrayscaleRenderer.getInstance();
 	renderer.setActive(false);
 	post.addRendererToTheEnd(renderer);
-//
+
 	renderer = FxaaRenderer.getInstance();
 	renderer.setActive(false);
 	post.addRendererToTheEnd(renderer);

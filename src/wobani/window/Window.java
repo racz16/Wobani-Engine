@@ -200,10 +200,11 @@ public class Window {
      * Intializes the Glfw' hints with OpenGL settings.
      */
     private static void initializeDefaultHints() {
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, EngineInfo.isDebugMode() ? GLFW_TRUE : GLFW_FALSE);
     }
 
     /**
@@ -652,7 +653,7 @@ public class Window {
 	if (minWidth >= 0 && maxWidth >= 0 && minWidth > maxWidth || minHeight >= 0 && maxHeight >= 0 && minHeight > maxHeight) {
 	    throw new IllegalArgumentException("Min width can't be lower than max width and min height can't be lower than max height");
 	}
-	setClientAreaSizeLimitsWithoutInspection(minWidth, minHeight, maxWidth, maxHeight);
+	setClientAreaSizeLimitsUnsafe(minWidth, minHeight, maxWidth, maxHeight);
     }
 
     /**
@@ -664,7 +665,7 @@ public class Window {
      * @param maxWidth  maximum width
      * @param maxHeight maximum height
      */
-    private static void setClientAreaSizeLimitsWithoutInspection(int minWidth, int minHeight, int maxWidth, int maxHeight) {
+    private static void setClientAreaSizeLimitsUnsafe(int minWidth, int minHeight, int maxWidth, int maxHeight) {
 	minWidth = minWidth < 0 ? GLFW_DONT_CARE : minWidth;
 	minHeight = minHeight < 0 ? GLFW_DONT_CARE : minHeight;
 	maxWidth = maxWidth < 0 ? GLFW_DONT_CARE : maxWidth;

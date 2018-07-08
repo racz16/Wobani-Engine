@@ -31,12 +31,12 @@ public class TexturedQuadShader extends Shader {
      * Initializes a new TexturedQuadShader.
      */
     private TexturedQuadShader() {
-        super(vertexPath, fragmentPath, null, null, null, null);
-        List<File> paths = new ArrayList<>(2);
-        paths.add(new File(vertexPath));
-        paths.add(new File(fragmentPath));
-        resourceId = new ResourceId(paths);
-        ResourceManager.addShader(this);
+	super(vertexPath, fragmentPath, null, null, null);
+	List<File> paths = new ArrayList<>(2);
+	paths.add(new File(vertexPath));
+	paths.add(new File(fragmentPath));
+	resourceId = new ResourceId(paths);
+	ResourceManager.addShader(this);
     }
 
     /**
@@ -46,32 +46,32 @@ public class TexturedQuadShader extends Shader {
      */
     @NotNull
     public static TexturedQuadShader getInstance() {
-        if (instance == null || !instance.isUsable()) {
-            instance = new TexturedQuadShader();
-        }
-        return instance;
+	if (instance == null || !instance.isUsable()) {
+	    instance = new TexturedQuadShader();
+	}
+	return instance;
     }
 
     @Override
     public void connectTextureUnits() {
-        connectTextureUnit("image", 0);
+	connectTextureUnit("image", 0);
     }
 
     @Override
     protected void connectUniforms() {
-        connectUniform("image");
+	connectUniform("image");
     }
 
     @NotNull
     @Override
     public ResourceId getResourceId() {
-        return resourceId;
+	return resourceId;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "\nTexturedQuadShader{" + "resourceId="
-                + resourceId + '}';
+	return super.toString() + "\nTexturedQuadShader{" + "resourceId="
+		+ resourceId + '}';
     }
 
 }

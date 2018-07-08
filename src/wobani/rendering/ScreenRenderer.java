@@ -1,7 +1,6 @@
 package wobani.rendering;
 
 import org.joml.*;
-import org.lwjgl.opengl.*;
 import wobani.resources.mesh.*;
 import wobani.resources.shader.*;
 import wobani.resources.texture.texture2d.*;
@@ -78,8 +77,8 @@ public class ScreenRenderer extends Renderer {
      */
     private void beforeDrawQuad() {
 	quad.beforeDraw();
-	GL20.glEnableVertexAttribArray(0);
-	GL20.glEnableVertexAttribArray(1);
+//	GL20.glEnableVertexAttribArray(0);
+//	GL20.glEnableVertexAttribArray(1);
 	Texture2D image = RenderingPipeline.getParameters().getValue(RenderingPipeline.WORK);
 	image.bindToTextureUnit(0);
     }
@@ -88,14 +87,16 @@ public class ScreenRenderer extends Renderer {
      * Unbinds the quad's VAO after rendering.
      */
     private void afterDrawQuad() {
-	GL20.glDisableVertexAttribArray(0);
-	GL20.glDisableVertexAttribArray(1);
+//	GL20.glDisableVertexAttribArray(0);
+//	GL20.glDisableVertexAttribArray(1);
 	quad.afterDraw();
     }
 
     @Override
     public void release() {
-	shader.release();
+	if (shader.isUsable()) {
+	    shader.release();
+	}
     }
 
     @Override

@@ -1,15 +1,12 @@
 package wobani.window;
 
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.NotNull;
-import wobani.window.eventhandler.MouseEventHandler;
-import wobani.window.eventhandler.KeyboardEventHandler;
-import wobani.window.eventhandler.JoystickEventHandler;
 import java.util.*;
 import org.joml.*;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
 import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
+import wobani.window.eventhandler.*;
 
 /**
  * For handling mouse, keyboard or joystick input.
@@ -763,7 +760,7 @@ public class Input {
         if (eh == null) {
             throw new NullPointerException();
         }
-        addMouseEventHandlerWithoutInspection(eh);
+        addMouseEventHandlerUnsafe(eh);
     }
 
     /**
@@ -771,7 +768,7 @@ public class Input {
      *
      * @param eh mouse event handler
      */
-    private static void addMouseEventHandlerWithoutInspection(@NotNull MouseEventHandler eh) {
+    private static void addMouseEventHandlerUnsafe(@NotNull MouseEventHandler eh) {
         if (!Utility.containsReference(mouseEventHandlers, eh)) {
             mouseEventHandlers.add(eh);
         }
@@ -1033,7 +1030,7 @@ public class Input {
         if (eh == null) {
             throw new NullPointerException();
         }
-        addKeyboardEventHandlerWithoutInspection(eh);
+        addKeyboardEventHandlerUnsafe(eh);
     }
 
     /**
@@ -1042,7 +1039,7 @@ public class Input {
      *
      * @param eh keyboard event handler
      */
-    private static void addKeyboardEventHandlerWithoutInspection(@NotNull KeyboardEventHandler eh) {
+    private static void addKeyboardEventHandlerUnsafe(@NotNull KeyboardEventHandler eh) {
         if (!Utility.containsReference(keyboardEventHandlers, eh)) {
             keyboardEventHandlers.add(eh);
         }

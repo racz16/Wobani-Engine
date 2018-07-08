@@ -49,7 +49,7 @@ public class InvalidatableContainer<T> {
 	if (invalidatable == container) {
 	    throw new IllegalArgumentException("Invalidatable can't be this");
 	}
-	addInvalidatableWithoutInspection(invalidatable);
+	addInvalidatableUnsafe(invalidatable);
     }
 
     /**
@@ -57,7 +57,7 @@ public class InvalidatableContainer<T> {
      *
      * @param invalidatable Invalidatable
      */
-    private void addInvalidatableWithoutInspection(@NotNull Invalidatable invalidatable) {
+    private void addInvalidatableUnsafe(@NotNull Invalidatable invalidatable) {
 	if (!containsInvalidatable(invalidatable)) {
 	    invalidatables.add(invalidatable);
 	}

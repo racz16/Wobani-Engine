@@ -6,7 +6,7 @@ import java.util.logging.*;
 import org.joml.*;
 import org.lwjgl.*;
 import wobani.core.*;
-import wobani.resources.*;
+import wobani.resources.buffers.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
@@ -79,6 +79,11 @@ public class CameraComponent extends Component implements Camera {
      * Determines whether the frustum culling is enabled.
      */
     private boolean frustumCulling = true;
+    /**
+     * Reference for the main camera if it's a CameraComponent and needs to
+     * refresh it in the Matrices UBO.
+     */
+    private static CameraComponent camera;
     /**
      * The class's logger.
      */
@@ -287,7 +292,9 @@ public class CameraComponent extends Component implements Camera {
     public void invalidate() {
 	valid = false;
 	super.invalidate();
-	refreshUbo();
+	if (isTheMainCamera()) {
+	    camera = this;
+	}
     }
 
     /**
@@ -393,7 +400,7 @@ public class CameraComponent extends Component implements Camera {
 	if (radius < 0) {
 	    throw new IllegalArgumentException("Radius can't be negative");
 	}
-	return isInsideFrustumWithoutInspection(position, radius);
+	return isInsideFrustumUnsafe(position, radius);
     }
 
     /**
@@ -407,7 +414,7 @@ public class CameraComponent extends Component implements Camera {
      *
      * @return false if the sphere is fully outside the frustum, true otherwise
      */
-    private boolean isInsideFrustumWithoutInspection(@NotNull Vector3f position, float radius) {
+    private boolean isInsideFrustumUnsafe(@NotNull Vector3f position, float radius) {
 	if (isFrustumCulling() && getGameObject() != null) {
 	    refresh();
 	    return frustum.testSphere(position, radius);
@@ -436,7 +443,7 @@ public class CameraComponent extends Component implements Camera {
 	if (aabbMin == null || aabbMax == null) {
 	    throw new NullPointerException();
 	}
-	return isInsideFrustumWithoutInspection(aabbMin, aabbMax);
+	return isInsideFrustumUnsafe(aabbMin, aabbMax);
     }
 
     /**
@@ -452,7 +459,7 @@ public class CameraComponent extends Component implements Camera {
      * @return false if the bounding box is fully outside the frustum, true
      *         otherwise
      */
-    private boolean isInsideFrustumWithoutInspection(@NotNull Vector3f aabbMin, @NotNull Vector3f aabbMax) {
+    private boolean isInsideFrustumUnsafe(@NotNull Vector3f aabbMin, @NotNull Vector3f aabbMax) {
 	if (isFrustumCulling() && getGameObject() != null) {
 	    refresh();
 	    return frustum.testAab(aabbMin, aabbMax);
@@ -493,7 +500,7 @@ public class CameraComponent extends Component implements Camera {
 	if (cornerPoint == null) {
 	    throw new NullPointerException();
 	}
-	return getFrustumCornerPointWithoutInspection(cornerPoint);
+	return getFrustumCornerPointUnsafe(cornerPoint);
     }
 
     /**
@@ -505,7 +512,7 @@ public class CameraComponent extends Component implements Camera {
      * @return frustum's specified corner point
      */
     @Nullable @ReadOnly
-    private Vector3f getFrustumCornerPointWithoutInspection(@NotNull CornerPoint cornerPoint) {
+    private Vector3f getFrustumCornerPointUnsafe(@NotNull CornerPoint cornerPoint) {
 	if (getGameObject() != null) {
 	    refresh();
 	    return new Vector3f(cornerPoints.get(cornerPoint));
@@ -560,65 +567,109 @@ public class CameraComponent extends Component implements Camera {
 	return new Matrix4f(projectionMatrix);
     }
 
+    //
+    //UBO
+    //
     /**
-     * Refreshes the matrices in the UBO.
+     * Refreshes the Matrices UBO if it's needed. Recreates the whole UBO if
+     * it's released.
      */
-    @Internal
-    protected void refreshUbo() {
-	if (isTheMainCamera() && Utility.isUsable(ubo)) {
-	    refreshUboWithoutInspection();
-	    LOG.fine("Camera UBO refreshed");
+    public static void refreshMatricesUbo() {
+	if (camera != null) {
+	    createUbo();
+	    refreshUboUnsafe();
 	}
     }
 
     /**
-     * Refreshes the matrices in the UBO.
+     * Refreshes the Matrices UBO.
      */
-    private void refreshUboWithoutInspection() {
-	temp.position(0);
-	getViewMatrix().get(temp);
-	getProjectionMatrix().get(16, temp);
+    private static void refreshUboUnsafe() {
+	setMatricesBuffer();
+	refreshUbo();
+	camera = null;
+    }
 
+    /**
+     * Fills the temporary FloatBuffer with the main camera's matrices.
+     */
+    private static void setMatricesBuffer() {
+	temp.position(0);
+	camera.getViewMatrix().get(temp);
+	camera.getProjectionMatrix().get(16, temp);
+    }
+
+    /**
+     * Refreshes the Matrices UBO with the temporary FloatBuffer.
+     */
+    private static void refreshUbo() {
 	ubo.bind();
 	ubo.storeData(temp, 0);
 	ubo.unbind();
+	LOG.fine("Matrices UBO refreshed");
     }
 
     /**
-     * Creates the UBO.
+     * Recreates and fills the Matrices UBO it it's released.
+     */
+    public static void makeMatricesUboUsable() {
+	createUbo();
+	refreshMatricesUbo();
+    }
+
+    /**
+     * Invalidates the scene's main camera.
+     */
+    private static void invalidateMainCamera() {
+	Camera cam = Scene.getParameters().getValue(Scene.MAIN_CAMERA);
+	if (cam != null) {
+	    cam.invalidate();
+	}
+    }
+
+    /**
+     * Creates the Matrices UBO if it's not already created.
      */
     private static void createUbo() {
-	if (!Utility.isUsable(ubo)) {
-	    createUboWithoutInspection();
-	    LOG.fine("Camera UBO created");
+	if (!isMatricesUboUsable()) {
+	    createUboUnsafe();
+	    LOG.fine("Matrices UBO created");
 	}
     }
 
     /**
-     * Creates the UBO.
+     * Creates the Matrices UBO.
      */
-    private static void createUboWithoutInspection() {
+    private static void createUboUnsafe() {
 	ubo = new Ubo();
 	ubo.bind();
+	ubo.setName("Matrices");
 	ubo.allocateMemory(128, false);
 	ubo.unbind();
-	ubo.bindToBindingPoint(2);
+	ubo.bindToBindingPoint(1);
     }
 
     /**
-     * Releases the UBO. After calling this mathod, you can't use the Matrices
-     * UBO and can't recreate it. Note that some renderers (like the
-     * BlinnPhongRenderer) may expect to access to the Matrices UBO (which isn't
-     * possible after calling this method).
+     * Releases the Matrices UBO.
      *
-     * @see #createUbo()
+     * @see #makeMatricesUboUsable()
      */
-    public static void releaseUbo() {
-	if (Utility.isUsable(ubo)) {
+    public static void releaseMatricesUbo() {
+	invalidateMainCamera();
+	if (isMatricesUboUsable()) {
 	    ubo.release();
 	    ubo = null;
-	    LOG.fine("Camera UBO released");
+	    LOG.fine("Matrices UBO released");
 	}
+    }
+
+    /**
+     * Returns true if the Matrices UBO is usable, and false if it's released.
+     *
+     * @return true if the Matrices UBO is usable, false otherwise
+     */
+    public static boolean isMatricesUboUsable() {
+	return Utility.isUsable(ubo);
     }
 
     /**
@@ -626,7 +677,7 @@ public class CameraComponent extends Component implements Camera {
      *
      * @return true if it's the Scene's main Canera, false otherwise
      */
-    private boolean isTheMainCamera() {
+    public boolean isTheMainCamera() {
 	Camera camera = Scene.getParameters().getValue(Scene.MAIN_CAMERA);
 	return camera == this;
     }

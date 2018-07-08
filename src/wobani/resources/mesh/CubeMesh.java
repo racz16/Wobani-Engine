@@ -1,12 +1,12 @@
 package wobani.resources.mesh;
 
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.ReadOnly;
+import wobani.resources.buffers.Vao;
 import java.util.*;
 import org.joml.Math;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.resources.*;
+import wobani.toolbox.annotation.*;
 
 /**
  * A simple cube mesh. It can be useful for the skybox.
@@ -99,6 +99,8 @@ public class CubeMesh implements Mesh {
 	    //position
 	    vao.createVbo("position");
 	    vao.bindAndAddData("position", 0, 3, positions, false);
+
+	    GL20.glEnableVertexAttribArray(0);
 	    vao.unbindVao();
 	}
     }

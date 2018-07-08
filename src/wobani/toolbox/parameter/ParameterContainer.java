@@ -82,7 +82,7 @@ public class ParameterContainer {
 	if (key == null) {
 	    throw new NullPointerException();
 	}
-	setWithoutInspection(key, parameter);
+	setUnsafe(key, parameter);
     }
 
     /**
@@ -92,7 +92,7 @@ public class ParameterContainer {
      * @param <T>       type of the Parameter's stored value
      * @param parameter Parameter
      */
-    private <T> void setWithoutInspection(@NotNull ParameterKey<T> key, @Nullable Parameter<T> parameter) {
+    private <T> void setUnsafe(@NotNull ParameterKey<T> key, @Nullable Parameter<T> parameter) {
 	ParameterContainerMap<T> pcm = getParameterContainerMap(key);
 	if (pcm == null) {
 	    pcm = new ParameterContainerMap<>();

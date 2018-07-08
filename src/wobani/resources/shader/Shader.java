@@ -81,8 +81,6 @@ public abstract class Shader implements Resource {
 	}
     }
 
-    private Map<String, String> params;
-
     /**
      * It creates the shader program and stores the ids of the uniform
      * variables.
@@ -103,8 +101,7 @@ public abstract class Shader implements Resource {
      *                           shader's source (with extension like
      *                           "res/shaders/myShader.glsl")
      */
-    public Shader(@NotNull String vertexFile, @NotNull String fragmentFile, @Nullable String geometryFile, @Nullable String tessControlFil, @Nullable String tessEvaluationFile, Map<String, String> parameters) {
-	params = parameters;
+    public Shader(@NotNull String vertexFile, @NotNull String fragmentFile, @Nullable String geometryFile, @Nullable String tessControlFil, @Nullable String tessEvaluationFile) {
 	//load, compile, check shaders
 	int[] shaders = {-1, -1, -1, -1, -1};
 	shaders[0] = loadShader(vertexFile, ShaderStage.VERTEX_SHADER);
@@ -125,7 +122,7 @@ public abstract class Shader implements Resource {
 	//detach, delete
 	for (int shaderId : shaders) {
 	    if (shaderId != -1) {
-		GL20.glDetachShader(programId, shaderId);
+		//GL20.glDetachShader(programId, shaderId);//???
 		GL20.glDeleteShader(shaderId);
 	    }
 	}
@@ -349,32 +346,20 @@ public abstract class Shader implements Resource {
 	} catch (IOException ex) {
 	    Utility.logException(ex);
 	}
-	if (params != null) {
-	    Set<String> keys = params.keySet();
-	    for (String key : keys) {
-		String value = params.get(key);
-		replaceAllOccurrances(shaderSource, key, value);
-	    }
-	}
 
 	//creating the shader, compiling
 	int shaderId = GL20.glCreateShader(stage.getCode());
 	GL20.glShaderSource(shaderId, shaderSource);
 	GL20.glCompileShader(shaderId);
 	if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-	    throw new NativeException(OPENGL, shaderFilePath + "\n" + GL20.glGetShaderInfoLog(shaderId, 512));
+	    int length = GL20.glGetShaderi(shaderId, GL20.GL_INFO_LOG_LENGTH);
+	    String errorMessage = GL20.glGetShaderInfoLog(shaderId, length);
+	    GL20.glDeleteShader(shaderId);
+	    throw new NativeException(OPENGL, shaderFilePath + "\n" + errorMessage);
 	}
 	return shaderId;
     }
-
-    private void replaceAllOccurrances(StringBuilder source, String key, String value) {
-	int index = source.indexOf(key);
-	while (index != -1) {
-	    source.replace(index, index + key.length(), value);
-	    index = source.indexOf(key);
-	}
-    }
-
+    
     @Override
     public int getDataSizeInRam() {
 	return 0;
