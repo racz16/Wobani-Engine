@@ -4,45 +4,45 @@ import wobani.resources.shader.postprocessing.*;
 import wobani.toolbox.annotation.*;
 
 /**
- * Inverts the frame's colors.
+ Inverts the frame's colors.
  */
-public class InvertRenderer extends PostProcessingRenderer {
+public class InvertRenderer extends PostProcessingRenderer{
 
     /**
-     * The only InvertRenderer instance.
+     The only InvertRenderer instance.
      */
     protected static InvertRenderer instance;
 
     /**
-     * Initializes a new InvertRenderer.
+     Initializes a new InvertRenderer.
      */
-    private InvertRenderer() {
-	refreshShader();
-    }
-
-    @Override
-    protected void refreshShader() {
-	if (shader == null || !shader.isUsable()) {
-	    shader = InvertShader.getInstance();
-	}
+    private InvertRenderer(){
+        refreshShader();
     }
 
     /**
-     * Returns the InvertRenderer instance.
-     *
-     * @return the InvertRenderer instance
+     Returns the InvertRenderer instance.
+
+     @return the InvertRenderer instance
      */
     @NotNull
-    public static InvertRenderer getInstance() {
-	if (instance == null) {
-	    instance = new InvertRenderer();
-	}
-	return instance;
+    public static InvertRenderer getInstance(){
+        if(instance == null){
+            instance = new InvertRenderer();
+        }
+        return instance;
     }
 
     @Override
-    public boolean isUsable() {
-	return true;
+    protected void refreshShader(){
+        if(shader == null || !shader.isUsable()){
+            shader = InvertShader.getInstance();
+        }
+    }
+
+    @Override
+    public boolean isUsable(){
+        return true;
     }
 
 }

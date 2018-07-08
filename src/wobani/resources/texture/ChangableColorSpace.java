@@ -1,14 +1,14 @@
 package wobani.resources.texture;
 
 /**
- * Interface for textures where allowed to change the color space.
+ Interface for textures where allowed to change the color space.
  */
-public interface ChangableColorSpace {
+public interface ChangableColorSpace{
 
     /**
-     * Sets whether or not the texture is in sRGB color space.
-     *
-     * @param sRgb sRGB
+     Sets whether or not the texture is in sRGB color space.
+
+     @param sRgb sRGB
      */
     public void setsRgb(boolean sRgb);
 }
