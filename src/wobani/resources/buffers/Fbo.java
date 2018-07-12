@@ -560,8 +560,8 @@ public class Fbo implements Resource{
     public int getDataSizeInAction(){
         int attachmentSize = size.x * size.y * 4 * 4 * samples;
         int size = 0;
-        for(int i = 0; i < color.length; i++){
-            size += color[i].isThereAttachment() ? attachmentSize : 0;
+        for(AttachmentSlot aColor : color){
+            size += aColor.isThereAttachment() ? attachmentSize : 0;
         }
         size += depth.isThereAttachment() ? attachmentSize : 0;
         size += stencil.isThereAttachment() ? attachmentSize : 0;

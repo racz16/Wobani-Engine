@@ -25,15 +25,15 @@ public class MaterialSlot{
      */
     public static final ParameterKey<Float> USE_POM = new ParameterKey<>(Float.class, "PARAM_USE_POM");
     /**
-     Parallax occlussion map's scale factor.
+     Parallax occlusion map's scale factor.
      */
     public static final ParameterKey<Float> POM_SCALE = new ParameterKey<>(Float.class, "PARAM_POM_SCALE");
     /**
-     Parallax occlussion map's minimum layers.
+     Parallax occlusion map's minimum layers.
      */
     public static final ParameterKey<Float> POM_MIN_LAYERS = new ParameterKey<>(Float.class, "PARAM_POM_MIN_LAYERS");
     /**
-     Parallax occlussion map's maximum layers.
+     Parallax occlusion map's maximum layers.
      */
     public static final ParameterKey<Float> POM_MAX_LAYERS = new ParameterKey<>(Float.class, "PARAM_POM_MAX_LAYERS");
     /**

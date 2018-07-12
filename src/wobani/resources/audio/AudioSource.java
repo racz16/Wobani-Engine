@@ -348,7 +348,7 @@ public class AudioSource implements Resource{
 
          @param code state's native OpenAL code
          */
-        private AudioSourceState(int code){
+        AudioSourceState(int code){
             this.code = code;
         }
 

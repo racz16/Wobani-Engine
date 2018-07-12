@@ -16,21 +16,21 @@ public interface Camera extends ComponentBase{
 
      @return view matrix
      */
-    public Matrix4f getViewMatrix();
+    Matrix4f getViewMatrix();
 
     /**
      Returns the projection matrix.
 
      @return projection matrix
      */
-    public Matrix4f getProjectionMatrix();
+    Matrix4f getProjectionMatrix();
 
     /**
      Returns the frustum's center point.
 
      @return frustum's center
      */
-    public Vector3f getFrustumCenter();
+    Vector3f getFrustumCenter();
 
     /**
      Returns the frustum's specified corner point.
@@ -39,28 +39,28 @@ public interface Camera extends ComponentBase{
 
      @return frustum's specified corner point
      */
-    public Vector3f getFrustumCornerPoint(@NotNull CornerPoint cornerPoint);
+    Vector3f getFrustumCornerPoint(@NotNull CornerPoint cornerPoint);
 
     /**
      Returns the frustum's corner points.
 
      @return frustum's corner points
      */
-    public Map<CornerPoint, Vector3f> getFrustumCornerPoints();
+    Map<CornerPoint, Vector3f> getFrustumCornerPoints();
 
     /**
      Determines whether frustum culling is enabled.
 
      @return true if frustum culling is enabled, false otherwise
      */
-    public boolean isFrustumCulling();
+    boolean isFrustumCulling();
 
     /**
      Sets whether or not frustum culling is enabled.
 
      @param frustumCulling true if frustum culling should be enabled, false otherwise
      */
-    public void setFrustumCulling(boolean frustumCulling);
+    void setFrustumCulling(boolean frustumCulling);
 
     /**
      Returns true if the sphere (determined by the given parameters) is inside, or intersects the frustum and returns
@@ -71,23 +71,23 @@ public interface Camera extends ComponentBase{
 
      @return false if the sphere is fully outside the frustum, true otherwise
      */
-    public boolean isInsideFrustum(Vector3f position, float radius);
+    boolean isInsideFrustum(Vector3f position, float radius);
 
     /**
-     Returns true if the axis alligned bounding box (determined by the given parameters) is inside, or intersects the
+     Returns true if the axis aligned bounding box (determined by the given parameters) is inside, or intersects the
      frustum and returns false if it is fully outside.
 
-     @param aabbMin the axis alligned bounding box's minimum x, y and z values
-     @param aabbMax the axis alligned bounding box's maximum x, y and z values
+     @param aabbMin the axis aligned bounding box's minimum x, y and z values
+     @param aabbMax the axis aligned bounding box's maximum x, y and z values
 
      @return false if the bounding box is fully outside the frustum, true otherwise
      */
-    public boolean isInsideFrustum(Vector3f aabbMin, Vector3f aabbMax);
+    boolean isInsideFrustum(Vector3f aabbMin, Vector3f aabbMax);
 
     /**
      One of the camera frustum's corner points.
      */
-    public enum CornerPoint{
+    enum CornerPoint{
         /**
          Far-top-left corner point.
          */
@@ -124,7 +124,7 @@ public interface Camera extends ComponentBase{
 
          @param pos position in clip space
          */
-        private CornerPoint(@NotNull Vector4f pos){
+        CornerPoint(@NotNull Vector4f pos){
             clipSpacePosition = new Vector4f(pos.x, pos.y, pos.z, pos.w);
         }
 
@@ -144,13 +144,13 @@ public interface Camera extends ComponentBase{
     /**
      The camera can work in one of the following projection modes: perspective or orthographic.
      */
-    public enum ProjectionMode{
+    enum ProjectionMode{
         /**
          Perspective projection mode.
          */
         PERSPECTIVE, /**
          Orthographic projection mode.
          */
-        ORTHOGRAPHIC;
+        ORTHOGRAPHIC
     }
 }

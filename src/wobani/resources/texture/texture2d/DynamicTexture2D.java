@@ -77,8 +77,8 @@ public class DynamicTexture2D extends DynamicTexture implements Texture2D{
         //FIXME: filter, texture wrap és border color nem álltható, ha multisampled a textura
         setFilter(TextureFilterType.MINIFICATION, minification);
         setFilter(TextureFilterType.MAGNIFICATION, magnification);
-        setTextureWrap(TextureWrapDirection.WRAP_U, wrapingU);
-        setTextureWrap(TextureWrapDirection.WRAP_V, wrapingV);
+        setTextureWrap(TextureWrapDirection.WRAP_U, wrappingU);
+        setTextureWrap(TextureWrapDirection.WRAP_V, wrappingV);
         setBorderColor(borderColor);
 
         resourceId = new ResourceId();

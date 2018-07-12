@@ -23,7 +23,7 @@ public class RenderableContainer{
     /**
      Adds the given RenderableComponent if it's attached to a GameObject.
 
-     @param renderableComponent RenerableComponent you want to add
+     @param renderableComponent RenderableComponent you want to add
      */
     @Internal
     public void add(@NotNull RenderableComponent<? extends Renderable> renderableComponent){
@@ -43,7 +43,7 @@ public class RenderableContainer{
     /**
      Removes the given RenderableComponent if it's not attached to a GameObject.
 
-     @param renderableComponent RenerableComponent you want to remove
+     @param renderableComponent RenderableComponent you want to remove
      */
     @Internal
     public void remove(@NotNull RenderableComponent<? extends Renderable> renderableComponent){
@@ -61,7 +61,7 @@ public class RenderableContainer{
      */
     private void removeRenderableComponentWhenChanged(@NotNull RenderableComponent<? extends Renderable> renderableComponent, @NotNull Renderable fromRenderable, @NotNull Material fromMaterial){
         RenderableMap map = get(fromMaterial.getRenderer());
-        map.removeWhemChanged(renderableComponent, fromRenderable, fromMaterial);
+        map.removeWhenChanged(renderableComponent, fromRenderable, fromMaterial);
     }
 
     /**
@@ -95,7 +95,7 @@ public class RenderableContainer{
     }
 
     /**
-     Returns a RenderableMap based on the given Material's Renderer. If there is no appropirate RenderableMap, this
+     Returns a RenderableMap based on the given Material's Renderer. If there is no appropriate RenderableMap, this
      method creates one.
 
      @param renderer GeometryRenderer
@@ -112,7 +112,7 @@ public class RenderableContainer{
     }
 
     /**
-     Returns a RenderableMap based on the given Material's Renderer. If there is no appropirate RenderableMap, this
+     Returns a RenderableMap based on the given Material's Renderer. If there is no appropriate RenderableMap, this
      method returns null.
 
      @param renderer GeometryRenderer
@@ -303,7 +303,7 @@ public class RenderableContainer{
 
          @throws ComponentAttachmentException RenderableComponent is not yet attached to a GameObject
          */
-        public void removeWhemChanged(@NotNull RenderableComponent<? extends Renderable> renderableComponent, @NotNull Renderable fromRenderable, @NotNull Material fromMaterial){
+        public void removeWhenChanged(@NotNull RenderableComponent<? extends Renderable> renderableComponent, @NotNull Renderable fromRenderable, @NotNull Material fromMaterial){
             if(renderableComponent.getGameObject() == null){
                 throw new ComponentAttachmentException(renderableComponent);
             }
@@ -311,11 +311,11 @@ public class RenderableContainer{
         }
 
         /**
-         Return the number of RendereableComponents using the given Renderable.
+         Return the number of RenderableComponents using the given Renderable.
 
          @param renderable Renderable
 
-         @return the number of RendereableComponents using the given Renderable
+         @return the number of RenderableComponents using the given Renderable
          */
         public int getRenderableComponentCount(@Nullable Renderable renderable){
             RenderableComponentList list = map.get(renderable);
@@ -347,7 +347,7 @@ public class RenderableContainer{
         }
 
         /**
-         Returns a RenderableComponentList based on the given RenderableComponent. If there is no appropirate
+         Returns a RenderableComponentList based on the given RenderableComponent. If there is no appropriate
          RenderableComponentList, this method creates one.
 
          @param renderableComponent RenderableComponentList
@@ -364,7 +364,7 @@ public class RenderableContainer{
         }
 
         /**
-         Returns a RenderableComponentList based on the given Renderable. If there is no appropirate
+         Returns a RenderableComponentList based on the given Renderable. If there is no appropriate
          RenderableComponentList, this method returns null.
 
          @param renderable Renderable
@@ -527,27 +527,22 @@ public class RenderableContainer{
         }
 
         @Override
-        public int hashCode(){
-            int hash = 7;
-            return hash;
+        public boolean equals(Object o){
+            if(this == o){
+                return true;
+            }
+            if(o == null || getClass() != o.getClass()){
+                return false;
+            }
+
+            RenderableComponentList that = (RenderableComponentList) o;
+
+            return list.equals(that.list);
         }
 
         @Override
-        public boolean equals(Object obj){
-            if(this == obj){
-                return true;
-            }
-            if(obj == null){
-                return false;
-            }
-            if(getClass() != obj.getClass()){
-                return false;
-            }
-            final RenderableComponentList other = (RenderableComponentList) obj;
-            if(!Objects.equals(this.list, other.list)){
-                return false;
-            }
-            return true;
+        public int hashCode(){
+            return list.hashCode();
         }
 
         @Override

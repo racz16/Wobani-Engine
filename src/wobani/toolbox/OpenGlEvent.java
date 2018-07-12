@@ -30,6 +30,7 @@ public class OpenGlEvent{
      The event message.
      */
     private String message;
+
     /**
      Initializes a new OpenGlEvent to the given values.
 
@@ -185,7 +186,7 @@ public class OpenGlEvent{
 
          @param code source's OpenGL code
          */
-        private OpenGlEventSource(int code){
+        OpenGlEventSource(int code){
             this.code = code;
         }
 
@@ -226,7 +227,7 @@ public class OpenGlEvent{
          Error.
          */
         ERROR(0x824C), /**
-         Deprecated behívior.
+         Deprecated behavior.
          */
         DEPRECATED_BEHAVIOR(0x824D), /**
          Undefined behavior.
@@ -255,7 +256,7 @@ public class OpenGlEvent{
 
          @param code type's OpenGL code
          */
-        private OpenGlEventType(int code){
+        OpenGlEventType(int code){
             this.code = code;
         }
 
@@ -316,7 +317,7 @@ public class OpenGlEvent{
 
          @param code severity's OpenGL code
          */
-        private OpenGlEventSeverity(int code){
+        OpenGlEventSeverity(int code){
             this.code = code;
         }
 

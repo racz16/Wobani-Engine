@@ -62,7 +62,7 @@ public class Utility{
      <p>
      Info: OpenGL low severity messages and system wide events like new frame computation started etc.
      <p>
-     Fine: Events inconnection with resources
+     Fine: Events in connection with resources
      <p>
      Finer: Computation intensive tasks
      <p>
@@ -184,7 +184,7 @@ public class Utility{
      @return inverse of the model matrix
      */
     @NotNull
-    public static Matrix4f computetInverseModelMatrix(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Vector3f scale){
+    public static Matrix4f computeInverseModelMatrix(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Vector3f scale){
         return new Matrix4f().translationRotateScaleInvert(position, new Quaternionf()
                 .rotation(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility
                         .toRadians(rotation.z)), scale);
@@ -200,7 +200,7 @@ public class Utility{
      */
     @NotNull
     public static Matrix4f computeViewMatrix(@NotNull Vector3f position, @NotNull Vector3f rotation){
-        return computetInverseModelMatrix(position, rotation, new Vector3f(1));
+        return computeInverseModelMatrix(position, rotation, new Vector3f(1));
     }
 
     /**
@@ -313,7 +313,7 @@ public class Utility{
 
      @param angle an angle, in degrees
 
-     @return the measurement of the angle angdeg in radians.
+     @return the measurement of the angle in radians.
      */
     public static float toRadians(float angle){
         return angle / 180 * PI;
@@ -339,7 +339,7 @@ public class Utility{
 
      @param angle an angle, in radians
 
-     @return the measurement of the angle {@code angrad} in degrees.
+     @return the measurement of the angle in degrees.
      */
     public static float toDegrees(float angle){
         return angle * 180 / PI;
@@ -362,22 +362,22 @@ public class Utility{
     //
 
     /**
-     Determines whether all of the given vector's cordinates are equals or higher than zero.
+     Determines whether all of the given vector's coordinates are equals or higher than zero.
 
      @param color color
 
-     @return true if all of the given vector's cordinates are equals or higher than zero, false otherwise
+     @return true if all of the given vector's coordinates are equals or higher than zero, false otherwise
      */
     public static boolean isHdrColor(@NotNull Vector3f color){
         return color.get(color.minComponent()) >= 0;
     }
 
     /**
-     Determines whether all of the given vector's cordinates are between zero and one.
+     Determines whether all of the given vector's coordinates are between zero and one.
 
      @param color color
 
-     @return true if all of the given vector's cordinates are between zero and one, false otherwise
+     @return true if all of the given vector's coordinates are between zero and one, false otherwise
      */
     public static boolean isLdrColor(@NotNull Vector3f color){
         return color.get(color.minComponent()) >= 0 && color.get(color.maxComponent()) <= 1;

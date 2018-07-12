@@ -66,7 +66,7 @@ public class Input{
      */
     private static GLFWCharCallback charCallback;
     /**
-     Char modifyers callback.
+     Char modifiers callback.
      */
     private static GLFWCharModsCallback charModsCallback;
     /**
@@ -192,9 +192,9 @@ public class Input{
         if(cursorPosCallback == null){
             glfwSetCursorPosCallback(Window.getId(), cursorPosCallback = new GLFWCursorPosCallback(){
                 @Override
-                public void invoke(long window, double xpos, double ypos){
+                public void invoke(long window, double xPos, double yPos){
                     for(MouseEventHandler eventHandler : mouseEventHandlers){
-                        eventHandler.positionCallback(new Vector2f((float) xpos, (float) ypos));
+                        eventHandler.positionCallback(new Vector2f((float) xPos, (float) yPos));
                     }
                 }
             });
@@ -241,9 +241,9 @@ public class Input{
         if(scrollCallback == null){
             glfwSetScrollCallback(Window.getId(), scrollCallback = new GLFWScrollCallback(){
                 @Override
-                public void invoke(long window, double xoffset, double yoffset){
+                public void invoke(long window, double xOffset, double yOffset){
                     for(MouseEventHandler eventHandler : mouseEventHandlers){
-                        eventHandler.scrollCallback(new Vector2f((float) xoffset, (float) yoffset));
+                        eventHandler.scrollCallback(new Vector2f((float) xOffset, (float) yOffset));
                     }
                 }
             });
@@ -308,10 +308,10 @@ public class Input{
      */
     @NotNull
     public static Vector2f getCursorPosition(){
-        double[] xpos = new double[1];
-        double[] ypos = new double[1];
-        glfwGetCursorPos(Window.getId(), xpos, ypos);
-        return new Vector2f((float) xpos[0], (float) ypos[0]);
+        double[] xPos = new double[1];
+        double[] yPos = new double[1];
+        glfwGetCursorPos(Window.getId(), xPos, yPos);
+        return new Vector2f((float) xPos[0], (float) yPos[0]);
     }
 
     /**
@@ -354,7 +354,7 @@ public class Input{
 
      @param button mouse button in (0;8) (where 0 is the left mouse button, 1 is the right and 2 is the middle)
 
-     @return true if the buttin pressed, false otherwise
+     @return true if the button pressed, false otherwise
 
      @throws IllegalArgumentException button must be in (0;8)
      */
@@ -459,7 +459,7 @@ public class Input{
         if(keyCallback == null){
             glfwSetKeyCallback(Window.getId(), keyCallback = new GLFWKeyCallback(){
                 @Override
-                public void invoke(long window, int key, int scancode, int action, int mods){
+                public void invoke(long window, int key, int scanCode, int action, int mods){
                     for(KeyboardEventHandler eventHandler : keyboardEventHandlers){
                         KeyStatus status = null;
                         for(KeyStatus stat : KeyStatus.values()){
@@ -469,7 +469,7 @@ public class Input{
                             }
                         }
                         eventHandler.keyCallback(Key
-                                .getKey(key), scancode, status, isShiftPressed(mods), isControlPressed(mods), isAltPressed(mods), isSuperPressed(mods));
+                                .getKey(key), scanCode, status, isShiftPressed(mods), isControlPressed(mods), isAltPressed(mods), isSuperPressed(mods));
                     }
                 }
             });
@@ -483,9 +483,9 @@ public class Input{
         if(charCallback == null){
             glfwSetCharCallback(Window.getId(), charCallback = new GLFWCharCallback(){
                 @Override
-                public void invoke(long window, int codepoint){
+                public void invoke(long window, int codePoint){
                     for(KeyboardEventHandler eventHandler : keyboardEventHandlers){
-                        eventHandler.charCallback(codepoint);
+                        eventHandler.charCallback(codePoint);
                     }
                 }
             });
@@ -499,10 +499,10 @@ public class Input{
         if(charModsCallback == null){
             glfwSetCharModsCallback(Window.getId(), charModsCallback = new GLFWCharModsCallback(){
                 @Override
-                public void invoke(long window, int codepoint, int mods){
+                public void invoke(long window, int codePoint, int mods){
                     for(KeyboardEventHandler eventHandler : keyboardEventHandlers){
                         eventHandler
-                                .charModsCallback(codepoint, isShiftPressed(mods), isControlPressed(mods), isAltPressed(mods), isSuperPressed(mods));
+                                .charModsCallback(codePoint, isShiftPressed(mods), isControlPressed(mods), isAltPressed(mods), isSuperPressed(mods));
                     }
                 }
             });
@@ -562,20 +562,20 @@ public class Input{
     }
 
     /**
-     Returns the platform dependent scancode of the specified key.
+     Returns the platform dependent scan code of the specified key.
 
      @param key key
 
-     @return scancode
+     @return scan code
      */
-    public static int getKeyScancode(@NotNull Key key){
+    public static int getKeyScanCode(@NotNull Key key){
         return glfwGetKeyScancode(key.getCode());
     }
 
     /**
      Determines whether the shift button is pressed.
 
-     @param mods modifyers
+     @param mods modifiers
 
      @return true if the shift button is pressed, false otherwise
      */
@@ -586,7 +586,7 @@ public class Input{
     /**
      Determines whether the control button is pressed.
 
-     @param mods modifyers
+     @param mods modifiers
 
      @return true if the control button is pressed, false otherwise
      */
@@ -597,7 +597,7 @@ public class Input{
     /**
      Determines whether the alt button is pressed.
 
-     @param mods modifyers
+     @param mods modifiers
 
      @return true if the alt button is pressed, false otherwise
      */
@@ -608,7 +608,7 @@ public class Input{
     /**
      Determines whether the super button is pressed.
 
-     @param mods modifyers
+     @param mods modifiers
 
      @return true if the super button is pressed, false otherwise
      */
@@ -759,14 +759,14 @@ public class Input{
     }
 
     /**
-     Key satus.
+     Key status.
      */
     public enum KeyStatus{
         /**
          The key is pressed.
          */
         PRESS(GLFW_PRESS), /**
-         The key is pressec continuously.
+         The key is pressed continuously.
          */
         REPEAT(GLFW_REPEAT), /**
          The key is released.
@@ -783,7 +783,7 @@ public class Input{
 
          @param code status's GLFW code
          */
-        private KeyStatus(int code){
+        KeyStatus(int code){
             this.code = code;
         }
 
@@ -802,7 +802,7 @@ public class Input{
      */
     public enum Key{
         /**
-         If the key is KEY_UNKNOWN, the scancode is used to identify the key,.
+         If the key is KEY_UNKNOWN, the scan code is used to identify the key,.
          */
         KEY_UNKNOWN(-1), /**
          Space key.
@@ -1189,14 +1189,14 @@ public class Input{
 
          @param code key's GLFW code
          */
-        private Key(int code){
+        Key(int code){
             this.code = code;
         }
 
         /**
-         Returns the corresponding key to the specified GLFW keycode.
+         Returns the corresponding key to the specified GLFW key code.
 
-         @param key GLFW keycode
+         @param key GLFW key code
 
          @return key
          */
@@ -1225,17 +1225,17 @@ public class Input{
         /**
          Returns the layout-specific name of the key (if it's printable). This is typically the character that key would
          produce without any modifier keys, intended for displaying key bindings to the user. For dead keys, it is
-         typically the diacritic it would add to a character. If the key is KEY_UNKNOWN, the scancode is used to identify
-         the key, otherwise the scancode is ignored. If you specify a non-printable key, or KEY_UNKNOWN and a scancode
-         that maps to a non-printable key, this function returns null.
+         typically the diacritic it would add to a character. If the key is KEY_UNKNOWN, the scan code is used to
+         identify the key, otherwise the scan code is ignored. If you specify a non-printable key, or KEY_UNKNOWN and a
+         scan code that maps to a non-printable key, this function returns null.
 
-         @param scancode the system-specific scancode of the key (only used if the key is KEY_UNKNOWN)
+         @param scanCode the system-specific scan code of the key (only used if the key is KEY_UNKNOWN)
 
          @return the layout-specific name of the key
          */
         @Nullable
-        public String getKeyName(int scancode){
-            return glfwGetKeyName(code, scancode);
+        public String getKeyName(int scanCode){
+            return glfwGetKeyName(code, scanCode);
         }
 
     }
@@ -1271,7 +1271,7 @@ public class Input{
 
          @param code input mode's GLFW code
          */
-        private MouseInputMode(int code){
+        MouseInputMode(int code){
             this.code = code;
         }
 

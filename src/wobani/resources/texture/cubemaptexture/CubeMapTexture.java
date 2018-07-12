@@ -13,7 +13,7 @@ public interface CubeMapTexture extends Texture{
 
         private final int code;
 
-        private CubeMapSide(int code){
+        CubeMapSide(int code){
             this.code = code;
         }
 

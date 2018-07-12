@@ -88,8 +88,8 @@ public class StaticTexture2D extends StaticTexture implements Texture2D{
             glTexImage(GL11.GL_RGBA8, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, image.getData());
         }
 
-        setTextureWrap(TextureWrapDirection.WRAP_U, wrapingU);
-        setTextureWrap(TextureWrapDirection.WRAP_V, wrapingV);
+        setTextureWrap(TextureWrapDirection.WRAP_U, wrappingU);
+        setTextureWrap(TextureWrapDirection.WRAP_V, wrappingV);
         setBorderColor(borderColor);
         changeFiltering();
 

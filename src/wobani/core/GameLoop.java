@@ -70,7 +70,7 @@ public class GameLoop{
     }
 
     /**
-     Handles the given exception. It logs the exception, releases the resoruces and closes the program.
+     Handles the given exception. It logs the exception, releases the resources and closes the program.
 
      @param ex Exception
      */

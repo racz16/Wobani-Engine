@@ -10,5 +10,5 @@ public interface ChangableColorSpace{
 
      @param sRgb sRGB
      */
-    public void setsRgb(boolean sRgb);
+    void setsRgb(boolean sRgb);
 }

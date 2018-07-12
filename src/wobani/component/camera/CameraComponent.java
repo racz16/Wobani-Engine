@@ -320,7 +320,7 @@ public class CameraComponent extends Component implements Camera{
     }
 
     /**
-     Returns the scale value. Note that this value is only used in orhographic mode.
+     Returns the scale value. Note that this value is only used in orthographic mode.
 
      @return scale value
 
@@ -332,7 +332,7 @@ public class CameraComponent extends Component implements Camera{
 
     /**
      Sets the scale to the given value. Note that the scale must be higher than 0 and this value is only used in
-     orhographic mode.
+     orthographic mode.
 
      @param scale scale
 
@@ -350,7 +350,7 @@ public class CameraComponent extends Component implements Camera{
     }
 
     /**
-     Returs the camera's projection mode.
+     Returns the camera's projection mode.
 
      @return projection mode
      */
@@ -434,10 +434,10 @@ public class CameraComponent extends Component implements Camera{
      Refreshes the frustum's corner points.
      */
     private void refreshFrustumCornerPoints(){
-        Matrix4f inverseViewPorjectionMatrix = computeInverseViewPorjectionMatrix();
+        Matrix4f inverseViewProjectionMatrix = computeInverseViewProjectionMatrix();
         Vector4f vec = new Vector4f();
         for(CornerPoint cp : CornerPoint.values()){
-            vec.set(cp.getClipSpacePosition().mul(inverseViewPorjectionMatrix));
+            vec.set(cp.getClipSpacePosition().mul(inverseViewProjectionMatrix));
             vec.div(vec.w);
             cornerPoints.get(cp).set(vec.x, vec.y, vec.z);
         }
@@ -460,7 +460,7 @@ public class CameraComponent extends Component implements Camera{
      @return the inverse of the view projection matrix
      */
     @NotNull
-    private Matrix4f computeInverseViewPorjectionMatrix(){
+    private Matrix4f computeInverseViewProjectionMatrix(){
         if(projectionMode == ProjectionMode.PERSPECTIVE){
             return projectionMatrix.invertPerspectiveView(viewMatrix, new Matrix4f());
         }else{
@@ -516,12 +516,12 @@ public class CameraComponent extends Component implements Camera{
     }
 
     /**
-     Returns true if the axis alligned bounding box (determined by the given parameters) is inside, or intersects the
+     Returns true if the axis aligned bounding box (determined by the given parameters) is inside, or intersects the
      frustum and returns false if it is fully outside. Note that if frustum culling is disabled, or this Component isn't
      connected to a GameObject this method always returns true.
 
-     @param aabbMin the axis alligned bounding box's minimum x, y and z values
-     @param aabbMax the axis alligned bounding box's maximum x, y and z values
+     @param aabbMin the axis aligned bounding box's minimum x, y and z values
+     @param aabbMax the axis aligned bounding box's maximum x, y and z values
 
      @return false if the bounding box is fully outside the frustum, true otherwise
 
@@ -536,12 +536,12 @@ public class CameraComponent extends Component implements Camera{
     }
 
     /**
-     Returns true if the axis alligned bounding box (determined by the given parameters) is inside, or intersects the
+     Returns true if the axis aligned bounding box (determined by the given parameters) is inside, or intersects the
      frustum and returns false if it is fully outside. Note that if frustum culling is disabled, or this Component isn't
      connected to a GameObject this method always returns true.
 
-     @param aabbMin the axis alligned bounding box's minimum x, y and z values
-     @param aabbMax the axis alligned bounding box's maximum x, y and z values
+     @param aabbMin the axis aligned bounding box's minimum x, y and z values
+     @param aabbMax the axis aligned bounding box's maximum x, y and z values
 
      @return false if the bounding box is fully outside the frustum, true otherwise
      */
@@ -660,7 +660,7 @@ public class CameraComponent extends Component implements Camera{
     /**
      Returns true if it's the Scene's main Camera.
 
-     @return true if it's the Scene's main Canera, false otherwise
+     @return true if it's the Scene's main Camera, false otherwise
      */
     public boolean isTheMainCamera(){
         Camera camera = Scene.getParameters().getValue(Scene.MAIN_CAMERA);

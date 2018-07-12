@@ -8,5 +8,5 @@ public interface Invalidatable{
     /**
      Invalidates this object's data.
      */
-    public void invalidate();
+    void invalidate();
 }

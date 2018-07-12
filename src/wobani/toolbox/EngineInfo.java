@@ -98,7 +98,7 @@ public class EngineInfo{
         ASSIMP, /**
          The JOML library.
          */
-        JOML;
+        JOML
     }
 
 }

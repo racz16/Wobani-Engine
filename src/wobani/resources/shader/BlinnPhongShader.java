@@ -295,7 +295,7 @@ public class BlinnPhongShader extends Shader{
         boolean refractionUsable = refractionSlot != null && refractionSlot.isActive() && refractionSlot
                 .getEnvironmentProbe() != null;
         //intensity
-        MaterialSlot intensitySlot = material.getSlot(Material.ENVIRONTMENT_INTENSITY);
+        MaterialSlot intensitySlot = material.getSlot(Material.ENVIRONMENT_INTENSITY);
         String isThereIntensityMap = "material.isThereEnvironmentIntensityMap";
         String intensityColor = "material.environmentIntensityColor";
         String tileName = "material.environmentIntensityTile";

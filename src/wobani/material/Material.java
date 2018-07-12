@@ -8,7 +8,7 @@ import java.util.*;
 
 /**
  Material for Splines and Meshes. It can work together with any kind of Renderers, you should only store the required
- slots in it. Note that not all Rendeers support all types of slots.
+ slots in it. Note that not all Renderers support all types of slots.
  */
 public class Material{
 
@@ -37,10 +37,10 @@ public class Material{
      */
     public static final ParameterKey<MaterialSlot> REFRACTION = new ParameterKey<>(MaterialSlot.class, "REFRACTION");
     /**
-     Environtment intensity slot's key. The r channel means the object's color, the g channel means the reflection
+     Environment intensity slot's key. The r channel means the object's color, the g channel means the reflection
      intensity and the b channel means the refraction intensity.
      */
-    public static final ParameterKey<MaterialSlot> ENVIRONTMENT_INTENSITY = new ParameterKey<>(MaterialSlot.class, "ENVIRONTMENT_INTENSITY");
+    public static final ParameterKey<MaterialSlot> ENVIRONMENT_INTENSITY = new ParameterKey<>(MaterialSlot.class, "ENVIRONMENT_INTENSITY");
     /**
      The Material's slots.
      */
@@ -80,7 +80,7 @@ public class Material{
 
     /**
      Returns the Material's specified slot. You can reach the built-in slots' keys as this Material class's public static
-     variables. Note that not all Rendeers support all types of slots.
+     variables. Note that not all Renderers support all types of slots.
 
      @param key slot's key
 
@@ -98,7 +98,7 @@ public class Material{
 
     /**
      Sets the Material's specified slot to the given value. You can reach the built-in slots' keys as this Material
-     class's public static variables. Note that not all Rendeers support all types of slots.
+     class's public static variables. Note that not all Renderers support all types of slots.
 
      @param key  slot's key
      @param slot Material's slot

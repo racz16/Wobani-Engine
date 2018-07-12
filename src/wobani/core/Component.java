@@ -129,10 +129,7 @@ public abstract class Component implements ComponentBase{
             return false;
         }
         final Component other = (Component) obj;
-        if(this.active != other.active){
-            return false;
-        }
-        return true;
+        return this.active == other.active;
     }
 
     @Override

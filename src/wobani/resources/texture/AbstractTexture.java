@@ -29,17 +29,17 @@ public abstract class AbstractTexture implements Texture{
      */
     protected boolean sRgb;
     /**
-     Texture wrap along the U direcion.
+     Texture wrap along the U direction.
      */
-    protected TextureWrap wrapingU = TextureWrap.REPEAT;
+    protected TextureWrap wrappingU = TextureWrap.REPEAT;
     /**
-     Texture wrap along the V direcion.
+     Texture wrap along the V direction.
      */
-    protected TextureWrap wrapingV = TextureWrap.REPEAT;
+    protected TextureWrap wrappingV = TextureWrap.REPEAT;
     /**
-     Texture wrap along the W direcion.
+     Texture wrap along the W direction.
      */
-    protected TextureWrap wrapingW = TextureWrap.REPEAT;
+    protected TextureWrap wrappingW = TextureWrap.REPEAT;
     /**
      Texture's magnification filter.
      */
@@ -84,7 +84,7 @@ public abstract class AbstractTexture implements Texture{
     }
 
     /**
-     Activates the textture in the given texture unit.
+     Activates the texture in the given texture unit.
 
      @param textureUnit texture unit (0;31)
 
@@ -174,11 +174,11 @@ public abstract class AbstractTexture implements Texture{
         }
         switch(type){
             case WRAP_U:
-                return wrapingU;
+                return wrappingU;
             case WRAP_V:
-                return wrapingV;
+                return wrappingV;
             case WRAP_W:
-                return wrapingW;
+                return wrappingW;
         }
         return null;
     }
@@ -198,13 +198,13 @@ public abstract class AbstractTexture implements Texture{
         }
         switch(type){
             case WRAP_U:
-                wrapingU = value;
+                wrappingU = value;
                 break;
             case WRAP_V:
-                wrapingV = value;
+                wrappingV = value;
                 break;
             case WRAP_W:
-                wrapingW = value;
+                wrappingW = value;
                 break;
         }
         GL11.glTexParameteri(getTextureType(), type.getCode(), value.getCode());
@@ -269,7 +269,7 @@ public abstract class AbstractTexture implements Texture{
 
     @Override
     public String toString(){
-        return "AbstractTexture{" + "textureId=" + id + ", size=" + size + ", sRgb=" + sRgb + ", wrapingU=" + wrapingU + ", wrapingV=" + wrapingV + ", magnification=" + magnification + ", minification=" + minification + ", borderColor=" + borderColor + '}';
+        return "AbstractTexture{" + "textureId=" + id + ", size=" + size + ", sRgb=" + sRgb + ", wrappingU=" + wrappingU + ", wrappingV=" + wrappingV + ", magnification=" + magnification + ", minification=" + minification + ", borderColor=" + borderColor + '}';
     }
 
 }

@@ -38,7 +38,7 @@ public class BlinnPhongLightSourceTile{
      */
     private int slotCount = 0;
     /**
-     Signs that all light sources in the tile need to refresh for exmaple because the SSBO's size changed.
+     Signs that all light sources in the tile need to refresh for example because the SSBO's size changed.
      */
     private boolean refreshAllLights;
     /**
@@ -143,7 +143,7 @@ public class BlinnPhongLightSourceTile{
     /**
      Adds the given light if it should be in this tile.
 
-     @param light positional light sousrce
+     @param light positional light source
      */
     private void addIfNeeded(@NotNull BlinnPhongPositionalLightComponent light){
         if(shouldAdd(light)){
@@ -213,7 +213,7 @@ public class BlinnPhongLightSourceTile{
     /**
      Refreshes the given light in the SSBO.
 
-     @param light positional light sousrce
+     @param light positional light source
      */
     private void refreshIfNeeded(@NotNull BlinnPhongPositionalLightComponent light){
         if(shouldRefresh(light)){
@@ -426,8 +426,8 @@ public class BlinnPhongLightSourceTile{
      */
     private int computeNumberOfLightsInTheTile(){
         int elementCount = 0;
-        for(int i = 0; i < lights.size(); i++){
-            if(lights.get(i) != null){
+        for(BlinnPhongPositionalLightComponent light : lights){
+            if(light != null){
                 elementCount++;
             }
         }
@@ -540,7 +540,7 @@ public class BlinnPhongLightSourceTile{
     }
 
     /**
-     Returns true if the tile and the SSBO are usable, and false if thely're released.
+     Returns true if the tile and the SSBO are usable, and false if they're released.
 
      @return true if the tile and the SSBO are usable, false otherwise
      */

@@ -30,7 +30,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongPositionalLightCompo
     }
 
     /**
-     Sets the cutoff component to the given value. Note that the ccutoff component must be higher than 0 and lower than
+     Sets the cutoff component to the given value. Note that the cutoff component must be higher than 0 and lower than
      the outer cutoff component.
 
      @param cutoff cutoff component (in degrees)
@@ -89,7 +89,7 @@ public class BlinnPhongSpotLightComponent extends BlinnPhongPositionalLightCompo
     private void setTransformParameters(){
         getHelper().setDirection(getGameObject().getTransform().getForwardVector());
         getHelper().setPosition(getGameObject().getTransform().getAbsolutePosition());
-        getHelper().setAttenutation(getConstant(), getLinear(), getQuadratic());
+        getHelper().setAttenuation(getConstant(), getLinear(), getQuadratic());
     }
 
     @Override

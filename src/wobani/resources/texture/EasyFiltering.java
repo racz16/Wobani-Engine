@@ -57,7 +57,7 @@ public interface EasyFiltering extends Texture{
 
          @param index index
          */
-        private TextureFiltering(int index){
+        TextureFiltering(int index){
             this.index = index;
         }
 

@@ -9,7 +9,7 @@ import java.util.*;
  Stores Components in user defined lists. For example if you want to track the Camera interface, you have to call the
  addToTrackedTypes method and pass Camera.class. After that you can get all Components which implement the Camera
  interface and attached to a GameObject by calling the getComponent method. If a Component implements two or more tracked
- interfaces, it'll be stored in all appropirate slots.
+ interfaces, it'll be stored in all appropriate slots.
  */
 public class ComponentLists{
 
@@ -20,7 +20,7 @@ public class ComponentLists{
 
     /**
      Adds the given type to the tracked types. After calling this method, all Components that instances of the given
-     type, and you attached to a GameObject will be presented in the appropirate lists. Note that Components attached to
+     type, and you attached to a GameObject will be presented in the appropriate lists. Note that Components attached to
      GameObjectContainer in the past won't be presented in the new list.
 
      @param type type you want to track
@@ -37,8 +37,8 @@ public class ComponentLists{
     }
 
     /**
-     Removes the given type and the correspondig list from the tracked Components. After calling this method, Components
-     that instances the given type, and you attached to a GameObject no more will be presented in the appropirate list.
+     Removes the given type and the corresponding list from the tracked Components. After calling this method, Components
+     that instances the given type, and you attached to a GameObject no more will be presented in the appropriate list.
 
      @param type type you don't want to track
      */
@@ -60,9 +60,9 @@ public class ComponentLists{
     }
 
     /**
-     Adds the given Component to the appropirate lists. Note that if the given Component is instace of more list's types,
-     it'll be presented in and only in these lists. You can add more types by calling the addToTrackedTypes method but
-     Components attached to GameObjectContainer in the past won't be presented in the new lists.
+     Adds the given Component to the appropriate lists. Note that if the given Component is instance of more list's
+     types, it'll be presented in and only in these lists. You can add more types by calling the addToTrackedTypes method
+     but Components attached to GameObjectContainer in the past won't be presented in the new lists.
 
      @param component Component you want to add
 
@@ -92,7 +92,7 @@ public class ComponentLists{
     }
 
     /**
-     Removes the given Component from the appropirate lists.
+     Removes the given Component from the appropriate lists.
 
      @param component Component you want to remove
 
@@ -136,7 +136,7 @@ public class ComponentLists{
 
     /**
      Returns the indexth Component which implements the given type and attached to a GameObject. Note, that this only
-     works if the appropirate type is tracked. You can track types by calling the addToTrackedTypes method.
+     works if the appropriate type is tracked. You can track types by calling the addToTrackedTypes method.
 
      @param <T>   type
      @param type  type
@@ -162,7 +162,7 @@ public class ComponentLists{
     }
 
     /**
-     Adds all the given GameObject's Components to the appropirate lists.
+     Adds all the given GameObject's Components to the appropriate lists.
 
      @param object GameObject
      */

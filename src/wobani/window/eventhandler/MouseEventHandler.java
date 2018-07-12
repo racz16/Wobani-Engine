@@ -13,14 +13,14 @@ public interface MouseEventHandler{
 
      @param position the new cursor position, relative to the left edge of the client area
      */
-    public void positionCallback(Vector2f position);
+    void positionCallback(Vector2f position);
 
     /**
      This method is called when the cursor enters or leaves the client area of the window.
 
      @param entered true if the cursor entered the window's client area, false if it left it
      */
-    public void enterCallback(boolean entered);
+    void enterCallback(boolean entered);
 
     /**
      This method is called when a mouse button is pressed or released.
@@ -33,7 +33,7 @@ public interface MouseEventHandler{
      @param altPressed     determines whether the alt is pressed
      @param superPressed   determines whether the super is pressed
      */
-    public void buttonCallback(int button, boolean pressed, boolean shiftPressed, boolean controlPressed, boolean altPressed, boolean superPressed);
+    void buttonCallback(int button, boolean pressed, boolean shiftPressed, boolean controlPressed, boolean altPressed, boolean superPressed);
 
     /**
      This method is called when a scrolling device is used. The scroll callback receives all scrolling input, like that
@@ -41,5 +41,5 @@ public interface MouseEventHandler{
 
      @param offset the scroll offset along the x-axis and the y-axis
      */
-    public void scrollCallback(Vector2f offset);
+    void scrollCallback(Vector2f offset);
 }

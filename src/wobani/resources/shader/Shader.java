@@ -279,8 +279,6 @@ public abstract class Shader implements Resource{
             while(reader.ready()){
                 shaderSource.append(reader.readLine()).append("\n");
             }
-        }catch(FileNotFoundException ex){
-            Utility.logException(ex);
         }catch(IOException ex){
             Utility.logException(ex);
         }

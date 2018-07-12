@@ -84,8 +84,8 @@ public class ChildContainer{
      @return true if the given parameter is the descendant of the GameObject but not the child of it, false otherwise
      */
     private boolean containsNonChildDescendant(@Nullable GameObject child){
-        for(int i = 0; i < children.size(); i++){
-            if(children.get(i).getChildren().containsDeep(child)){
+        for(GameObject aChildren : children){
+            if(aChildren.getChildren().containsDeep(child)){
                 return true;
             }
         }

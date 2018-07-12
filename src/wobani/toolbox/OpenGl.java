@@ -16,6 +16,304 @@ import java.util.logging.*;
 public class OpenGl{
 
     /**
+     Blend func factor.
+     */
+    public enum BlendFuncFactor{
+        /**
+         0
+         */
+        ZERO(GL11.GL_ZERO), /**
+         1
+         */
+        ONE(GL11.GL_ONE), /**
+         Source color
+         */
+        SRC_COLOR(GL11.GL_SRC_COLOR), /**
+         1 - source color
+         */
+        ONE_MINUS_SRC_COLOR(GL11.GL_ONE_MINUS_SRC_COLOR), /**
+         Destination color
+         */
+        DST_COLOR(GL11.GL_DST_COLOR), /**
+         1 - destination color
+         */
+        ONE_MINUS_DST_COLOR(GL11.GL_ONE_MINUS_DST_COLOR), /**
+         Source alpha
+         */
+        SRC_ALPHA(GL11.GL_SRC_ALPHA), /**
+         1 - source alpha
+         */
+        ONE_MINUS_SRC_ALPHA(GL11.GL_ONE_MINUS_SRC_ALPHA), /**
+         Destination alpha
+         */
+        DST_ALPHA(GL11.GL_DST_ALPHA), /**
+         1 - destination alpha
+         */
+        ONE_MINUS_DST_ALPHA(GL11.GL_ONE_MINUS_DST_ALPHA), /**
+         Constant color
+         */
+        CONSTANT_COLOR(GL14.GL_CONSTANT_COLOR), /**
+         1 - constant color
+         */
+        ONE_MINUS_CONSTANT_COLOR(GL14.GL_ONE_MINUS_CONSTANT_COLOR), /**
+         Constant alpha
+         */
+        CONSTANT_ALPHA(GL14.GL_CONSTANT_ALPHA), /**
+         1 - constant alpha
+         */
+        ONE_MINUS_CONSTANT_ALPHA(GL14.GL_ONE_MINUS_CONSTANT_ALPHA), /**
+         Source alpha saturate
+         */
+        SRC_ALPHA_SATURATE(GL11.GL_SRC_ALPHA_SATURATE), /**
+         Source 1 color
+         */
+        SRC1_COLOR(GL33.GL_SRC1_COLOR), /**
+         1 - source 1 color
+         */
+        ONE_MINUS_SRC1_COLOR(GL33.GL_ONE_MINUS_SRC1_COLOR), /**
+         Source 1 alpha
+         */
+        SRC1_ALPHA(GL33.GL_ONE_MINUS_SRC1_ALPHA);
+
+        /**
+         Blend func factor's OpenGL code.
+         */
+        private final int code;
+
+        /**
+         Initializes a new BlendFuncFactor to the given value.
+
+         @param code blend func factor's OpenGL code
+         */
+        BlendFuncFactor(int code){
+            this.code = code;
+        }
+
+        /**
+         Returns the BlendFuncFactor of the given OpenGL code.
+
+         @param code OpenGL blend func factor
+
+         @return the BlendFuncFactor of the given OpenGL code
+
+         @throws IllegalArgumentException the given parameter is not a blend func factor
+         */
+        @NotNull
+        public static BlendFuncFactor valueOf(int code){
+            for(BlendFuncFactor mode : BlendFuncFactor.values()){
+                if(mode.getCode() == code){
+                    return mode;
+                }
+            }
+            throw new IllegalArgumentException("The given parameter is not a blend func factor");
+        }
+
+        /**
+         Returns the blend func factor's OpenGL code.
+
+         @return the blend func factor's OpenGL code
+         */
+        public int getCode(){
+            return code;
+        }
+    }
+
+    /**
+     Blend equation.
+     */
+    public enum BlendEquation{
+        /**
+         Add.
+         */
+        FUNC_ADD(GL14.GL_FUNC_ADD), /**
+         Subtract.
+         */
+        FUNC_SUBTRACT(GL14.GL_FUNC_SUBTRACT), /**
+         Reverse subtract.
+         */
+        FUNC_REVERSE_SUBTRACT(GL14.GL_FUNC_REVERSE_SUBTRACT), /**
+         Minimum.
+         */
+        MIN(GL14.GL_MIN), /**
+         Maximum.
+         */
+        MAX(GL14.GL_MAX);
+
+        /**
+         Blend equation's OpenGL code.
+         */
+        private final int code;
+
+        /**
+         Initializes a new BlendEquation to the given value.
+
+         @param code blend equation's OpenGL code
+         */
+        BlendEquation(int code){
+            this.code = code;
+        }
+
+        /**
+         Returns the BlendEquation of the given OpenGL code.
+
+         @param code OpenGL blend equation
+
+         @return the BlendEquation of the given OpenGL code
+
+         @throws IllegalArgumentException the given parameter is not a blend equation
+         */
+        @NotNull
+        public static BlendEquation valueOf(int code){
+            for(BlendEquation mode : BlendEquation.values()){
+                if(mode.getCode() == code){
+                    return mode;
+                }
+            }
+            throw new IllegalArgumentException("The given parameter is not a blend equation");
+        }
+
+        /**
+         Returns the blend equation's OpenGL code.
+
+         @return the blend equation's OpenGL code
+         */
+        public int getCode(){
+            return code;
+        }
+    }
+
+    /**
+     Face culling mode.
+     */
+    public enum FaceCullingMode{
+        /**
+         Front.
+         */
+        FRONT(GL11.GL_FRONT), /**
+         Back.
+         */
+        BACK(GL11.GL_BACK), /**
+         Front and back.
+         */
+        FRONT_AND_BACK(GL11.GL_FRONT_AND_BACK);
+
+        /**
+         Face culling mode's OpenGL code.
+         */
+        private final int code;
+
+        /**
+         Initializes a new FaceCullingMode to the given value.
+
+         @param code face culling mode's OpenGL code
+         */
+        FaceCullingMode(int code){
+            this.code = code;
+        }
+
+        /**
+         Returns the FaceCullingMode of the given OpenGL code.
+
+         @param code OpenGL face culling mode
+
+         @return the FaceCullingMode of the given OpenGL code
+
+         @throws IllegalArgumentException the given parameter is not a face culling mode
+         */
+        @NotNull
+        public static FaceCullingMode valueOf(int code){
+            for(FaceCullingMode mode : FaceCullingMode.values()){
+                if(mode.getCode() == code){
+                    return mode;
+                }
+            }
+            throw new IllegalArgumentException("The given parameter is not a face culling mode");
+        }
+
+        /**
+         Returns the face culling mode's OpenGL code.
+
+         @return the face culling mode's OpenGL code
+         */
+        public int getCode(){
+            return code;
+        }
+    }
+
+    /**
+     Depth test mode.
+     */
+    public enum DepthTestMode{
+        /**
+         Never pass the depth test.
+         */
+        NEVER(GL11.GL_NEVER), /**
+         Pass the depth test if the new value is less.
+         */
+        LESS(GL11.GL_LESS), /**
+         Pass the depth test if the new value is equal.
+         */
+        EQUAL(GL11.GL_EQUAL), /**
+         Pass the depth test if the new value is less or equal.
+         */
+        LESS_OR_EQUAL(GL11.GL_LEQUAL), /**
+         Pass the depth test if the new value is greater.
+         */
+        GREATER(GL11.GL_GREATER), /**
+         Pass the depth test if the new value isn't equal.
+         */
+        NOT_EQUAL(GL11.GL_NOTEQUAL), /**
+         Pass the depth test if the new value is greater or equal.
+         */
+        GREATER_OR_EQUAL(GL11.GL_GEQUAL), /**
+         Always pass the depth test.
+         */
+        ALWAYS(GL11.GL_ALWAYS);
+
+        /**
+         Depth test mode's OpenGL code.
+         */
+        private final int code;
+
+        /**
+         Initializes a new DepthTestMode to the given value.
+
+         @param code depth test mode's OpenGL code
+         */
+        DepthTestMode(int code){
+            this.code = code;
+        }
+
+        /**
+         Returns the DepthTestMode of the given OpenGL code.
+
+         @param code OpenGL depth test mode
+
+         @return the DepthTestMode of the given OpenGL code
+
+         @throws IllegalArgumentException the given parameter is not a depth test mode
+         */
+        @NotNull
+        public static DepthTestMode valueOf(int code){
+            for(DepthTestMode mode : DepthTestMode.values()){
+                if(mode.getCode() == code){
+                    return mode;
+                }
+            }
+            throw new IllegalArgumentException("The given parameter is not a depth test mode");
+        }
+
+        /**
+         Returns the depth test mode's OpenGL code.
+
+         @return the depth test mode's OpenGL code
+         */
+        public int getCode(){
+            return code;
+        }
+    }
+
+    /**
      List of the registered OpenGL error event handlers.
      */
     private static final List<OpenGlDebugEventHandler> eventHandlers = new ArrayList<>();
@@ -33,15 +331,15 @@ public class OpenGl{
         setMultisample(true);
         setFaceCulling(true);
         setFaceCullingMode(OpenGl.FaceCullingMode.BACK);
-        setAlphaBlending(true);
+        setAlphaBlendingToDefault();
         setDepthTest(true);
-        initialzeDebugEventHandling();
+        initializeDebugEventHandling();
     }
 
     /**
      Initializes the OpenGL's error handling.
      */
-    private static void initialzeDebugEventHandling(){
+    private static void initializeDebugEventHandling(){
         if(EngineInfo.isDebugMode()){
             GL11.glEnable(GL43.GL_DEBUG_OUTPUT);
             GL43.glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
@@ -58,8 +356,8 @@ public class OpenGl{
      */
     private static void handleDebugEvent(@NotNull OpenGlEvent event){
         logDebugEvent(event);
-        for(OpenGlDebugEventHandler odeh : eventHandlers){
-            odeh.openGlDebugCallback(event);
+        for(OpenGlDebugEventHandler eventHandler : eventHandlers){
+            eventHandler.openGlDebugCallback(event);
         }
     }
 
@@ -184,7 +482,7 @@ public class OpenGl{
     /**
      Sets whether or not enable the multisampling.
 
-     @param multisample true if you would like to enable multisampling, false otheriwse
+     @param multisample true if you would like to enable multisampling, false otherwise
      */
     public static void setMultisample(boolean multisample){
         if(multisample){
@@ -210,7 +508,7 @@ public class OpenGl{
     /**
      Sets whether or not enable the depth testing.
 
-     @param depthTest true if you would like to enable depth testing, false otheriwse
+     @param depthTest true if you would like to enable depth testing, false otherwise
      */
     public static void setDepthTest(boolean depthTest){
         if(depthTest){
@@ -236,7 +534,7 @@ public class OpenGl{
     /**
      Sets whether or not enable the depth mask.
 
-     @param depthMask true if you would like to enable the depth maks, false otheriwse
+     @param depthMask true if you would like to enable the depth mask, false otherwise
      */
     public static void setDepthMask(boolean depthMask){
         GL11.glDepthMask(depthMask);
@@ -275,17 +573,82 @@ public class OpenGl{
     }
 
     /**
-     Sets whether or not enable the alpha blending (alpha - (1-alpha)).
-
-     @param alphaBlending true if you would like to enable alpha blending, false otheriwse
+     Enables alpha blending and sets the blending function to (alpha - (1-alpha)).
      */
-    public static void setAlphaBlending(boolean alphaBlending){
-        if(alphaBlending){
+    public static void setAlphaBlendingToDefault(){
+        setBlending(true);
+        setBlendingFunction(BlendFuncFactor.SRC_ALPHA, BlendFuncFactor.ONE_MINUS_SRC_ALPHA);
+    }
+
+    /**
+     Returns the blending equation.
+
+     @return the blending equation
+     */
+    @NotNull
+    public static BlendEquation getBlendEquation(){
+        return BlendEquation.valueOf(GL11.glGetInteger(GL20.GL_BLEND_EQUATION_ALPHA));
+    }
+
+    /**
+     Sets the blending equation to the given value.
+
+     @param equation blending equation
+     */
+    public static void setBlendingEquation(@NotNull BlendEquation equation){
+        GL14.glBlendEquation(equation.getCode());
+    }
+
+    /**
+     Returns whether the alpha blending is enabled.
+
+     @return true if the alpha blending is enabled, false otherwise
+     */
+    public static boolean isBlending(){
+        return GL11.glIsEnabled(GL11.GL_BLEND);
+    }
+
+    /**
+     Sets whether or not enable the alpha blending.
+
+     @param blending true if you would like to enable the alpha blending, false otherwise
+     */
+    public static void setBlending(boolean blending){
+        if(blending){
             GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         }else{
             GL11.glDisable(GL11.GL_BLEND);
         }
+    }
+
+    /**
+     Returns the blending function's source factor.
+
+     @return the blending function's source factor
+     */
+    @NotNull
+    public static BlendFuncFactor getBlendingSourceFactor(){
+        return BlendFuncFactor.valueOf(GL11.glGetInteger(GL14.GL_BLEND_SRC_ALPHA));
+    }
+
+    /**
+     Returns the blending function's destination factor.
+
+     @return the blending function's destination factor
+     */
+    @NotNull
+    public static BlendFuncFactor getBlendingDestinationFactor(){
+        return BlendFuncFactor.valueOf(GL11.glGetInteger(GL14.GL_BLEND_DST_ALPHA));
+    }
+
+    /**
+     Sets the blending function's parameters to the given values.
+
+     @param sourceFactor      source factor
+     @param destinationFactor destination factor
+     */
+    public static void setBlendingFunction(@NotNull BlendFuncFactor sourceFactor, @NotNull BlendFuncFactor destinationFactor){
+        GL11.glBlendFunc(sourceFactor.getCode(), destinationFactor.getCode());
     }
 
     /**
@@ -304,7 +667,7 @@ public class OpenGl{
     /**
      Sets whether or not enable the wireframe rendering mode.
 
-     @param wireframeMode true if you would like to enable wireframe mode, false otheriwse
+     @param wireframeMode true if you would like to enable wireframe mode, false otherwise
      */
     public static void setWireframe(boolean wireframeMode){
         if(wireframeMode){
@@ -367,7 +730,7 @@ public class OpenGl{
     /**
      Sets whether or not enable the face culling.
 
-     @param faceCulling true if you would like to enable face culling, false otheriwse
+     @param faceCulling true if you would like to enable face culling, false otherwise
      */
     public static void setFaceCulling(boolean faceCulling){
         if(faceCulling){
@@ -401,7 +764,7 @@ public class OpenGl{
     }
 
     /**
-     Binds the default frambuffer.
+     Binds the default framebuffer.
      */
     public static void bindDefaultFrameBuffer(){
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
@@ -427,17 +790,17 @@ public class OpenGl{
 
      @param clearColor clear color
 
-     @throws IllegalArgumentException environtment color can't be lower than 0
+     @throws IllegalArgumentException environment color can't be lower than 0
      */
     public static void setClearColor(@NotNull Vector4f clearColor){
         if(!Utility.isHdrColor(new Vector3f(clearColor.x, clearColor.y, clearColor.z))){
-            throw new IllegalArgumentException("Environtment color can't be lower than 0");
+            throw new IllegalArgumentException("Environment color can't be lower than 0");
         }
         GL11.glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
     }
 
     /**
-     Clears the currently bound FBO's specified attachmets.
+     Clears the currently bound FBO's specified attachments.
 
      @param color   color attachments
      @param depth   depth attachment
@@ -505,136 +868,5 @@ public class OpenGl{
     @NotNull
     public static String getGlslVersion(){
         return GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION);
-    }
-
-    /**
-     Face culling mode.
-     */
-    public enum FaceCullingMode{
-        /**
-         Front.
-         */
-        FRONT(GL11.GL_FRONT), /**
-         Back.
-         */
-        BACK(GL11.GL_BACK), /**
-         Front and back.
-         */
-        FRONT_AND_BACK(GL11.GL_FRONT_AND_BACK);
-
-        /**
-         Face culling mode's OpenGL code.
-         */
-        private final int code;
-
-        /**
-         Initializes a new FaceCullingMode to the given value.
-
-         @param code face culling mode's OpenGL code
-         */
-        private FaceCullingMode(int code){
-            this.code = code;
-        }
-
-        /**
-         Returns the FaceCullingMode of the given OpenGL code.
-
-         @param code OpenGL face culling mode
-
-         @return the FaceCullingMode of the given OpenGL code
-
-         @throws IllegalArgumentException the given parameter is not a face culling mode
-         */
-        @NotNull
-        public static FaceCullingMode valueOf(int code){
-            for(FaceCullingMode mode : FaceCullingMode.values()){
-                if(mode.getCode() == code){
-                    return mode;
-                }
-            }
-            throw new IllegalArgumentException("The given parameter is not a face culling mode");
-        }
-
-        /**
-         Returns the face culling mode's OpenGL code.
-
-         @return the face culling mode's OpenGL code
-         */
-        public int getCode(){
-            return code;
-        }
-    }
-
-    /**
-     Depth test mode.
-     */
-    public enum DepthTestMode{
-        /**
-         Never pass the depth test.
-         */
-        NEVER(GL11.GL_NEVER), /**
-         Pass the depth test if the new value is less.
-         */
-        LESS(GL11.GL_LESS), /**
-         Pass the depth test if the new value is equal.
-         */
-        EQUAL(GL11.GL_EQUAL), /**
-         Pass the depth test if the new value is less or equal.
-         */
-        LESS_OR_EQUAL(GL11.GL_LEQUAL), /**
-         Pass the depth test if the new value is greater.
-         */
-        GREATER(GL11.GL_GREATER), /**
-         Pass the depth test if the new value isn't equal.
-         */
-        NOT_EQUAL(GL11.GL_NOTEQUAL), /**
-         Pass the depth test if the new value is greater or equal.
-         */
-        GREATER_OR_EQUAL(GL11.GL_GEQUAL), /**
-         Always pass the depth test.
-         */
-        ALWAYS(GL11.GL_ALWAYS);
-
-        /**
-         Depth test mode's OpenGL code.
-         */
-        private final int code;
-
-        /**
-         Initializes a new DepthTestMode to the given value.
-
-         @param code depth test mode's OpenGL code
-         */
-        private DepthTestMode(int code){
-            this.code = code;
-        }
-
-        /**
-         Returns the DepthTestMode of the given OpenGL code.
-
-         @param code OpenGL depth test mode
-
-         @return the DepthTestMode of the given OpenGL code
-
-         @throws IllegalArgumentException the given parameter is not a depth test mode
-         */
-        @NotNull
-        public static DepthTestMode valueOf(int code){
-            for(DepthTestMode mode : DepthTestMode.values()){
-                if(mode.getCode() == code){
-                    return mode;
-                }
-            }
-            throw new IllegalArgumentException("The given parameter is not a depth test mode");
-        }
-
-        /**
-         Returns the depth test mode's OpenGL code.
-
-         @return the depth test mode's OpenGL code
-         */
-        public int getCode(){
-            return code;
-        }
     }
 }

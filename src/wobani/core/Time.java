@@ -11,7 +11,7 @@ import wobani.toolbox.annotation.*;
 public class Time{
 
     /**
-     One second in milseconds.
+     One second in milliseconds.
      */
     private static final long ONE_SECOND = 1000000000;
     /**
@@ -23,7 +23,7 @@ public class Time{
      */
     private static final long OPTIMAL_TIME = ONE_SECOND / TARGET_FPS;
     /**
-     The time when the engine started it's work (in miliseconds).
+     The time when the engine started it's work (in milliseconds).
      */
     private static final long START_TIME;
     /**
@@ -35,15 +35,11 @@ public class Time{
      */
     private static int lastFps;
     /**
-     Time elapsed since last frame (in miliseconds).
-     */
-    private static long lastFrameInterval;
-    /**
      Sum of this second's frame lengths.
      */
     private static long frameIntervalSum;
     /**
-     The time when the last frame rendered (in miliseconds).
+     The time when the last frame rendered (in milliseconds).
      */
     private static long lastFrameTime = System.nanoTime();
     /**
@@ -80,7 +76,7 @@ public class Time{
      */
     private static void refreshDeltaTimeFactor(){
         long currentTime = System.nanoTime();
-        lastFrameInterval = currentTime - lastFrameTime;
+        long lastFrameInterval = currentTime - lastFrameTime;
         frameIntervalSum += lastFrameInterval;
         deltaTimeFactor = lastFrameInterval / ((float) OPTIMAL_TIME);
         lastFrameTime = currentTime;
@@ -119,7 +115,7 @@ public class Time{
     }
 
     /**
-     Retruns the elapsed time since the start.
+     Returns the elapsed time since the start.
 
      @return the elapsed time since the start (in seconds)
      */

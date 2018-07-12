@@ -11,5 +11,5 @@ public interface JoystickEventHandler{
      @param id        the joystick that was connected or disconnected
      @param connected true if the joystick is connected, false if disconnected
      */
-    public void joystickCallback(int id, boolean connected);
+    void joystickCallback(int id, boolean connected);
 }

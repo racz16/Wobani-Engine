@@ -19,11 +19,11 @@ public class RenderableBoundingShape implements Invalidatable{
      */
     private static final Logger LOG = Logger.getLogger(RenderableBoundingShape.class.getName());
     /**
-     The Renderable's calculated axis alligned bouning box's minimum values.
+     The Renderable's calculated axis aligned bounding box's minimum values.
      */
     private final Vector3f aabbMin = new Vector3f();
     /**
-     The Renderable's calculated axis alligned bouning box's maximum values.
+     The Renderable's calculated axis aligned bounding box's maximum values.
      */
     private final Vector3f aabbMax = new Vector3f();
     /**
@@ -40,7 +40,7 @@ public class RenderableBoundingShape implements Invalidatable{
     private RenderableComponent<? extends Renderable> renderableComponent;
 
     /**
-     Initializes a new RenderableBoundingSpahe to the given values.
+     Initializes a new RenderableBoundingSphere to the given values.
 
      @param renderableComponent RenderableComponent
      */
@@ -83,8 +83,8 @@ public class RenderableBoundingShape implements Invalidatable{
     private Vector4f[] computeBoundingBox(){
         Vector4f[] aabb = computeOriginalAabb();
         Matrix4f modelMatrix = renderableComponent.getGameObject().getTransform().getModelMatrix();
-        for(int i = 0; i < aabb.length; i++){
-            aabb[i].mul(modelMatrix);
+        for(Vector4f anAabb : aabb){
+            anAabb.mul(modelMatrix);
         }
         return aabb;
     }
@@ -183,11 +183,11 @@ public class RenderableBoundingShape implements Invalidatable{
     }
 
     /**
-     Returns the axis alligned bounding box's minimum x, y and z values. This value is not depends on the GameObject's
+     Returns the axis aligned bounding box's minimum x, y and z values. This value is not depends on the GameObject's
      position, rotation and scale (object space), so if you move, rotate or scale the GameObject, this method gives you
      wrong value. If you want to get the moved, rotated and scaled value of the AABB min, use the getRealAabbMin method.
 
-     @return the axis alligned bounding box's minimum x, y and z values
+     @return the axis aligned bounding box's minimum x, y and z values
 
      @see #getRealAabbMin()
      @see Transform#getAbsoluteScale()
@@ -200,14 +200,14 @@ public class RenderableBoundingShape implements Invalidatable{
     }
 
     /**
-     Returns the axis alligned bounding box's minimum x, y and z values. This value depends on the GameObject's position,
+     Returns the axis aligned bounding box's minimum x, y and z values. This value depends on the GameObject's position,
      rotation and scale (world space), so even if you move, rotate or scale the GameObject, this method gives you the
      right values. If you want to get the original value of the AABB min (what is not depends on the GameObject's
      position, rotation and scale), use the getOriginalAabbMin method.
      <br>
      Note that if the Component doesn't attached to a GameObject, this method returns the original AABB min.
 
-     @return the axis alligned bounding box's minimum x, y and z values
+     @return the axis aligned bounding box's minimum x, y and z values
 
      @see #getOriginalAabbMin()
      @see Transform#getAbsoluteScale()
@@ -225,11 +225,11 @@ public class RenderableBoundingShape implements Invalidatable{
     }
 
     /**
-     Returns the axis alligned bounding box's maximum x, y and z values. This value is not depends on the GameObject's
+     Returns the axis aligned bounding box's maximum x, y and z values. This value is not depends on the GameObject's
      position, rotation and scale (object space), so if you move, rotate or scale the GameObject, this method gives you
      wrong value. If you want to get the moved, rotated and scaled value of the AABB max, use the getRealAabbMax method.
 
-     @return the axis alligned bounding box's maximum x, y and z values
+     @return the axis aligned bounding box's maximum x, y and z values
 
      @see #getRealAabbMax()
      @see Transform#getAbsoluteScale()
@@ -242,14 +242,14 @@ public class RenderableBoundingShape implements Invalidatable{
     }
 
     /**
-     Returns the axis alligned bounding box's maximum x, y and z values. This value depends on the GameObject's position,
+     Returns the axis aligned bounding box's maximum x, y and z values. This value depends on the GameObject's position,
      rotation and scale (world space), so even if you move, rotate or scale the GameObject, this method gives you the
      right values. If you want to get the original value of the AABB max (what is not depends on the GameObject's
      position, rotation and scale), use the getOriginalAabbMax method.
      <br>
      Note that if the Component doesn't attached to a GameObject, this method returns the original AABB max.
 
-     @return the axis alligned bounding box's maximum x, y and z values
+     @return the axis aligned bounding box's maximum x, y and z values
 
      @see #getOriginalAabbMax()
      @see Transform#getAbsoluteScale()

@@ -145,13 +145,13 @@ public class BlinnPhongShaderHelper{
     }
 
     /**
-     Sets the light source's attenutation to the given values in the buffer.
+     Sets the light source's attenuation to the given values in the buffer.
 
-     @param constant  attenutation constant component
-     @param linear    attenutation linear component
-     @param quadratic attenutation quadratic component
+     @param constant  attenuation constant component
+     @param linear    attenuation linear component
+     @param quadratic attenuation quadratic component
      */
-    public void setAttenutation(float constant, float linear, float quadratic){
+    public void setAttenuation(float constant, float linear, float quadratic){
         FLOAT_BUFFER.put(constant);
         FLOAT_BUFFER.put(linear);
         FLOAT_BUFFER.put(quadratic);

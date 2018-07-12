@@ -12,5 +12,5 @@ public interface OpenGlDebugEventHandler{
 
      @param event OpenGL event
      */
-    public void openGlDebugCallback(@NotNull OpenGlEvent event);
+    void openGlDebugCallback(@NotNull OpenGlEvent event);
 }

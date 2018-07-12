@@ -75,7 +75,7 @@ public class Window{
     private static GLFWWindowPosCallback windowPosCallback;
     //misc----------------------------------------------------------------------
     /**
-     Window minization callback.
+     Window minimization callback.
      */
     private static GLFWWindowIconifyCallback windowIconifyCallback;
     /**
@@ -145,7 +145,7 @@ public class Window{
     }
 
     /**
-     Intializes the Glfw' hints with OpenGL settings.
+     Initializes the Glfw' hints with OpenGL settings.
      */
     private static void initializeDefaultHints(){
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -342,9 +342,9 @@ public class Window{
         if(windowPosCallback == null){
             glfwSetWindowPosCallback(id, windowPosCallback = new GLFWWindowPosCallback(){
                 @Override
-                public void invoke(long window, int xpos, int ypos){
+                public void invoke(long window, int xPos, int yPos){
                     for(WindowEventHandler eventHandler : eventHandlers){
-                        eventHandler.positionCallback(new Vector2i(xpos, ypos));
+                        eventHandler.positionCallback(new Vector2i(xPos, yPos));
                     }
                 }
             });
@@ -512,9 +512,9 @@ public class Window{
     }
 
     /**
-     Returns the size of the window's fremebuffer.
+     Returns the size of the window's framebuffer.
 
-     @return the size of the window's fremebuffer
+     @return the size of the window's framebuffer
      */
     @NotNull
     public static Vector2i getFrameBufferSize(){
@@ -578,7 +578,7 @@ public class Window{
 
     /**
      Sets the size limits of the window's client area to the given values. Max width and max height can't be 0. Max width
-     can't be lower than min width and max height can't be lower than min height. Negative valeues mean don't care.
+     can't be lower than min width and max height can't be lower than min height. Negative values mean don't care.
 
      @param minWidth  minimum width
      @param minHeight minimum height
@@ -600,7 +600,7 @@ public class Window{
     }
 
     /**
-     Sets the size limits of the window's client area to the given values. Negative valeues mean don't care.
+     Sets the size limits of the window's client area to the given values. Negative values mean don't care.
 
      @param minWidth  minimum width
      @param minHeight minimum height
@@ -635,7 +635,7 @@ public class Window{
      @param denominator denominator
      @param numerator   numerator
 
-     @throws IllegalArgumentException width and heigh can't be 0
+     @throws IllegalArgumentException width and height can't be 0
      */
     public static void setAspectRatio(int numerator, int denominator){
         numerator = numerator < 0 ? GLFW_DONT_CARE : numerator;
@@ -667,7 +667,7 @@ public class Window{
     }
 
     /**
-     Returns the glfw window's id. You should use it only if you really don't have other choise.
+     Returns the glfw window's id. You should use it only if you really don't have other choice.
 
      @return window's id
      */
@@ -749,10 +749,10 @@ public class Window{
     public static void setIcon(@NotNull File path){
         Image image = new Image(path, false);
         GLFWImage cursorImage = GLFWImage.malloc();
-        GLFWImage.Buffer imagebf = GLFWImage.malloc(1);
+        GLFWImage.Buffer imgBuffer = GLFWImage.malloc(1);
         cursorImage.set(image.getSize().x, image.getSize().y, image.getData());
-        imagebf.put(0, cursorImage);
-        glfwSetWindowIcon(id, imagebf);
+        imgBuffer.put(0, cursorImage);
+        glfwSetWindowIcon(id, imgBuffer);
         image.release();
     }
 
@@ -922,7 +922,7 @@ public class Window{
     }
 
     /**
-     Determines wheter the Window is usable. If it returns false, you can't use if for anything.
+     Determines whether the Window is usable. If it returns false, you can't use if for anything.
 
      @return true if usable, false otherwise
      */
@@ -978,7 +978,7 @@ public class Window{
 
          @param code mouse shape's GLFW code
          */
-        private MouseShape(int code){
+        MouseShape(int code){
             this.code = code;
         }
 

@@ -8,8 +8,8 @@ import java.util.logging.*;
 
 /**
  Represents an entity which has it's own position, Mesh or any other properties, you should create a new GameObject. A
- GameObjct can store any number of Components, including Cameras, Meshes, Splines, Materials, light sources etc. Of
- course you can create youe own Component. It also offers parent-child relations between GameObjectContainer.
+ GameObject can store any number of Components, including Cameras, Meshes, Splines, Materials, light sources etc. Of
+ course you can create your own Component. It also offers parent-child relations between GameObjectContainer.
 
  @see Component */
 public class GameObject{
@@ -138,7 +138,7 @@ public class GameObject{
     }
 
     /**
-     Sets the given value to this GameObect's (and all of it's descandent's) root.
+     Sets the given value to this GameObject's (and all of it's descendant's) root.
 
      @param root GameObject
      */
@@ -235,7 +235,7 @@ public class GameObject{
         if(transform.getGameObject() != null){
             throw new IllegalArgumentException("Transform is already attached to a GameObject");
         }
-        this.transform.detacheFromGameObject();
+        this.transform.detachFromGameObject();
         transform.attachToGameObject(this);
         this.transform = transform;
     }

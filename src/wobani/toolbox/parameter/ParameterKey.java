@@ -24,7 +24,7 @@ public class ParameterKey<T>{
     /**
      Initializes a new ParameterKey to the given values.
 
-     @param returnType the Parameter's returny type
+     @param returnType the Parameter's return type
      @param key        the Parameter's String key
 
      @throws NullPointerException parameters can't be null

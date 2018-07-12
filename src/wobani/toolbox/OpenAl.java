@@ -240,7 +240,7 @@ public class OpenAl{
 
          @param code the distance model's OpenAL code
          */
-        private AudioDistanceModel(int code){
+        AudioDistanceModel(int code){
             this.code = code;
         }
 

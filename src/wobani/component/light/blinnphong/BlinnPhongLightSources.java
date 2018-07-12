@@ -76,7 +76,7 @@ public class BlinnPhongLightSources{
     }
 
     /**
-     Signs that the given light souce needs to be updated in the VRAM because it is changed.
+     Signs that the given light source needs to be updated in the VRAM because it is changed.
 
      @param light Blinn-Phong light source
 
@@ -96,7 +96,7 @@ public class BlinnPhongLightSources{
      Returns the action time limit. If more than half of a SSBO is empty or even the whole SSBO is empty since a time
      more than this time limit, the system will shrink or even release the SSBO.
 
-     @return action time limit (in milisecs)
+     @return action time limit (in milliseconds)
      */
     public static long getActionTimeLimit(){
         return vramTimeLimit;
@@ -106,7 +106,7 @@ public class BlinnPhongLightSources{
      Sets the action time limit to the given value. If more than half of a SSBO is empty or even the whole SSBO is empty
      since a time more than this time limit, the system will shrink or even release the SSBO.
 
-     @param actionTimeLimit action time limit (in milisecs)
+     @param actionTimeLimit action time limit (in milliseconds)
      */
     public static void setActionTimeLimit(long actionTimeLimit){
         if(actionTimeLimit <= 0){
@@ -555,8 +555,8 @@ public class BlinnPhongLightSources{
      */
     private static void recreateDirectional(){
         if(directionalLight == null){
-            for(BlinnPhongDirectionalLightComponent bpdlc : DIRECTIONAL){
-                bpdlc.refreshLightInVram();
+            for(BlinnPhongDirectionalLightComponent light : DIRECTIONAL){
+                light.refreshLightInVram();
             }
         }
     }
@@ -567,8 +567,8 @@ public class BlinnPhongLightSources{
     private static void recreatePositionals(){
         if(tiles == null){
             tiles = new HashMap<>();
-            for(BlinnPhongPositionalLightComponent bplc : POSITIONAL){
-                bplc.refreshLightInVram();
+            for(BlinnPhongPositionalLightComponent light : POSITIONAL){
+                light.refreshLightInVram();
             }
         }
     }
@@ -609,7 +609,7 @@ public class BlinnPhongLightSources{
     }
 
     /**
-     Returns true if the system and the VGA side buffers are usable, and false if thely're released.
+     Returns true if the system and the VGA side buffers are usable, and false if they're released.
 
      @return true if the system and the VGA side buffers are usable, false otherwise
      */

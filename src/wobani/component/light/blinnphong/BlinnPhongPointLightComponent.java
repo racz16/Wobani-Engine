@@ -27,7 +27,7 @@ public class BlinnPhongPointLightComponent extends BlinnPhongPositionalLightComp
     private void setTransformParameters(){
         getHelper().setFloatNone();    //direction
         getHelper().setPosition(getGameObject().getTransform().getAbsolutePosition());
-        getHelper().setAttenutation(getConstant(), getLinear(), getQuadratic());
+        getHelper().setAttenuation(getConstant(), getLinear(), getQuadratic());
     }
 
     @Override

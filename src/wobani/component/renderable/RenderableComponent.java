@@ -112,7 +112,7 @@ public abstract class RenderableComponent<T extends Renderable> extends Componen
     }
 
     /**
-     Sets the Material to the givan value.
+     Sets the Material to the given value.
 
      @param material Material
 

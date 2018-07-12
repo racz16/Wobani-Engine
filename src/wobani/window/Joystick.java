@@ -34,7 +34,7 @@ public class Joystick{
     private int slot;
 
     /**
-     Initializes a new Joystick to the givan values.
+     Initializes a new Joystick to the given values.
 
      @param name joystick's name
      @param slot joystick's slot
@@ -253,7 +253,7 @@ public class Joystick{
 
          @param index axe's default index
          */
-        private JoystickAxe(int index){
+        JoystickAxe(int index){
             this.index = index;
         }
 
@@ -325,7 +325,7 @@ public class Joystick{
 
          @param index button's default index
          */
-        private JoystickButton(int index){
+        JoystickButton(int index){
             this.index = index;
         }
 

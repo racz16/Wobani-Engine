@@ -86,6 +86,13 @@ public class AudioSourceComponent extends Component{
     }
 
     @Override
+    public void update(){
+        if(!Utility.isUsable(source)){
+            //TODO: reload
+        }
+    }
+
+    @Override
     public void invalidate(){
         super.invalidate();
         if(getGameObject() != null && Utility.isUsable(source)){
@@ -131,16 +138,16 @@ public class AudioSourceComponent extends Component{
     private void refreshNonDirectionalSource(){
         Parameter<AudioListenerComponent> mainAudio = Scene.getParameters().get(Scene.MAIN_AUDIO_LISTENER);
         if(mainAudio == null){
-            refreshSourceIfThereisNoListener();
+            refreshSourceIfThereIsNoListener();
         }else{
-            refreshSourceIfThereisAListener();
+            refreshSourceIfThereIsAListener();
         }
     }
 
     /**
      Refreshes the audio source if it's not a directional source and there is an audio listener in the world.
      */
-    private void refreshSourceIfThereisAListener(){
+    private void refreshSourceIfThereIsAListener(){
         Vector3f currentPosition = new Vector3f(getGameObject().getTransform().getAbsolutePosition());
         Parameter<AudioListenerComponent> mainAudio = Scene.getParameters().get(Scene.MAIN_AUDIO_LISTENER);
         Vector3f direction = new Vector3f();
@@ -151,7 +158,7 @@ public class AudioSourceComponent extends Component{
     /**
      Refreshes the audio source if it's not a directional source and there isn't an audio listener in the world.
      */
-    private void refreshSourceIfThereisNoListener(){
+    private void refreshSourceIfThereIsNoListener(){
         Vector3f forward = getGameObject().getTransform().getForwardVector();
         source.setDirection(forward);
     }
@@ -170,6 +177,7 @@ public class AudioSourceComponent extends Component{
         getGameObject().getTransform().removeInvalidatable(this);
         super.detachFromGameObject();
         invalidate();
+        source.stop();
     }
 
     @Internal

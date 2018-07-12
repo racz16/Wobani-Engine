@@ -116,7 +116,7 @@ public class AudioBuffer implements Resource{
      */
     private void hddToRam(){
         try(STBVorbisInfo info = STBVorbisInfo.malloc()){
-            ByteBuffer vorbis = null;
+            ByteBuffer vorbis;
             try{
                 FileInputStream fis = new FileInputStream(getPath());
                 FileChannel fc = fis.getChannel();
@@ -205,7 +205,7 @@ public class AudioBuffer implements Resource{
      Later if you want to use this audio buffer, you should call the refreshStore method to load the data from file
      again.
 
-     @return ACTION time limit (in miliseconds)
+     @return ACTION time limit (in milliseconds)
 
      @see #refreshStore()
      */
@@ -219,7 +219,7 @@ public class AudioBuffer implements Resource{
      sound system. Later if you want to use this audio buffer, you should call the refreshStore method to load the data
      from file again.
 
-     @param actionTimeLimit ACTION time limit (in miliseconds)
+     @param actionTimeLimit ACTION time limit (in milliseconds)
 
      @see #refreshStore()
      */
@@ -233,7 +233,7 @@ public class AudioBuffer implements Resource{
      RAM. Later if you want to use this texture, you should call the refreshStore method to load the data from file
      again.
 
-     @return RAM time limit (in miliseconds)
+     @return RAM time limit (in milliseconds)
 
      @see #refreshStore()
      */
@@ -247,7 +247,7 @@ public class AudioBuffer implements Resource{
      system or even from RAM. Later if you want to use this audio buffer, you should call the refreshStore method to load
      the data from file again.
 
-     @param ramTimeLimit RAM time limit (in miliseconds)
+     @param ramTimeLimit RAM time limit (in milliseconds)
 
      @see #refreshStore()
      */
@@ -258,7 +258,7 @@ public class AudioBuffer implements Resource{
     /**
      Returns the time when the audio buffer last time used.
 
-     @return the time when the audio buffer last time used (in miliseconds)
+     @return the time when the audio buffer last time used (in milliseconds)
      */
     public long getLastActive(){
         return meta.getLastActive();

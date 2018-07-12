@@ -37,7 +37,7 @@ public abstract class BlinnPhongLightComponent extends Component{
     /**
      Returns a helper object which can help in the communication with the VGA.
 
-     @return helper obeject
+     @return helper object
      */
     @NotNull
     protected BlinnPhongShaderHelper getHelper(){

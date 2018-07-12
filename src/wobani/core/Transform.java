@@ -145,7 +145,7 @@ public class Transform implements Invalidatable{
     }
 
     /**
-     Computes the realtive position based on the given absolute position.
+     Computes the relative position based on the given absolute position.
 
      @param absolutePosition absolute position
 
@@ -221,7 +221,7 @@ public class Transform implements Invalidatable{
     }
 
     /**
-     Computes the realtive rotation based on the given absolute rotation.
+     Computes the relative rotation based on the given absolute rotation.
 
      @param absoluteRotation absolute rotation
 
@@ -290,7 +290,7 @@ public class Transform implements Invalidatable{
     }
 
     /**
-     Computes the realtive scale based on the given absolute scale.
+     Computes the relative scale based on the given absolute scale.
 
      @param absoluteScale absolute scale
 
@@ -353,7 +353,7 @@ public class Transform implements Invalidatable{
      */
     private void refreshMatrices(){
         modelMatrix.set(Utility.computeModelMatrix(absolutePosition, absoluteRotation, absoluteScale));
-        inverseModelMatrix.set(Utility.computetInverseModelMatrix(absolutePosition, absoluteRotation, absoluteScale));
+        inverseModelMatrix.set(Utility.computeInverseModelMatrix(absolutePosition, absoluteRotation, absoluteScale));
     }
 
     /**
@@ -474,7 +474,7 @@ public class Transform implements Invalidatable{
      Detaches the Transform from the GameObject.
      */
     @Internal
-    protected void detacheFromGameObject(){
+    protected void detachFromGameObject(){
         this.gameObject = null;
         invalidate();
     }
@@ -524,7 +524,7 @@ public class Transform implements Invalidatable{
     }
 
     //
-    //invaliadation-------------------------------------------------------------
+    //invalidation-------------------------------------------------------------
     //
 
     /**

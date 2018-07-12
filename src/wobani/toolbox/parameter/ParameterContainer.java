@@ -158,7 +158,7 @@ public class ParameterContainer{
     }
 
     /**
-     Stores Parameters with the spcified type of data.
+     Stores Parameters with the specified type of data.
 
      @param <S> the type of the Parameters' data
      */

@@ -160,7 +160,7 @@ public class Example1{
         StaticEnvironmentProbe probe = new StaticEnvironmentProbe(skybox);
         dragonMat.setSlot(Material.REFLECTION, new MaterialSlot(probe));
         dragonMat.setSlot(Material.REFRACTION, new MaterialSlot(probe));
-        dragonMat.setSlot(Material.ENVIRONTMENT_INTENSITY, new MaterialSlot(new Vector4f(1)));
+        dragonMat.setSlot(Material.ENVIRONMENT_INTENSITY, new MaterialSlot(new Vector4f(1)));
         dragonMat.getParameters().set(Material.REFRACTION_INDEX, new Parameter<>(1f / 1.33f));
         return dragonMat;
     }
@@ -300,18 +300,18 @@ public class Example1{
         Window.setIcon(new File("res/textures/normal12.png"));
         Input.addKeyboardEventHandler(new KeyboardEventHandler(){
             @Override
-            public void keyCallback(Input.Key key, int scancode, Input.KeyStatus action, boolean shiftPressed, boolean controlPressed, boolean altPressed, boolean superPressed){
+            public void keyCallback(Input.Key key, int scanCode, Input.KeyStatus action, boolean shiftPressed, boolean controlPressed, boolean altPressed, boolean superPressed){
                 if(key == Key.KEY_ESCAPE){
                     Window.setWindowShouldClose(true);
                 }
             }
 
             @Override
-            public void charCallback(int codepoint){
+            public void charCallback(int codePoint){
             }
 
             @Override
-            public void charModsCallback(int codepoint, boolean shiftPressed, boolean controlPressed, boolean altPressed, boolean superPressed){
+            public void charModsCallback(int codePoint, boolean shiftPressed, boolean controlPressed, boolean altPressed, boolean superPressed){
             }
         });
         Window.setClientAreaSizeLimits(200, 200, 10000, 10000);
