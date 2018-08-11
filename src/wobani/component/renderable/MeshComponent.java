@@ -1,7 +1,7 @@
 package wobani.component.renderable;
 
 import wobani.material.*;
-import wobani.resources.mesh.*;
+import wobani.resource.mesh.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 

@@ -1,8 +1,8 @@
 package wobani.material;
 
 import org.joml.*;
-import wobani.resources.environmentprobe.*;
-import wobani.resources.texture.texture2d.*;
+import wobani.resource.environmentprobe.*;
+import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 import wobani.toolbox.parameter.*;

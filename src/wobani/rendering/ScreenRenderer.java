@@ -1,9 +1,9 @@
 package wobani.rendering;
 
 import org.joml.*;
-import wobani.resources.mesh.*;
-import wobani.resources.shader.*;
-import wobani.resources.texture.texture2d.*;
+import wobani.resource.mesh.*;
+import wobani.resource.opengl.shader.*;
+import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 import wobani.window.*;

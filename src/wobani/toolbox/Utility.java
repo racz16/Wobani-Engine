@@ -6,7 +6,7 @@ import wobani.component.camera.*;
 import wobani.component.camera.Camera.*;
 import wobani.component.renderable.*;
 import wobani.core.*;
-import wobani.resources.*;
+import wobani.resource.*;
 import wobani.toolbox.annotation.*;
 import wobani.window.*;
 
@@ -32,6 +32,14 @@ public class Utility{
      The engine's root logger.
      */
     private static final Logger WOBANI_LOG = Logger.getLogger("wobani");
+    /**
+     A float's size in bytes.
+     */
+    public static final int FLOAT_SIZE = 4;
+    /**
+     An integer's size in bytes.
+     */
+    public static final int INT_SIZE = 4;
 
     /**
      To can't create Utility instance.
@@ -62,7 +70,7 @@ public class Utility{
      <p>
      Info: OpenGL low severity messages and system wide events like new frame computation started etc.
      <p>
-     Fine: Events in connection with resources
+     Fine: Events in connection with resource
      <p>
      Finer: Computation intensive tasks
      <p>
@@ -154,6 +162,18 @@ public class Utility{
         WOBANI_LOG.log(level, message);
     }
 
+    /**
+     Returns "[size]" if the collection is not null, "null" otherwise.
+
+     @param collection collection
+     @param <T>        element's type stored in the collection
+
+     @return "[length]" if the collection is not null, "null" otherwise
+     */
+    public static <T> String toString(@Nullable Collection<T> collection){
+        return collection == null ? "null" : "[" + collection.size() + "]";
+    }
+
     //
     //matrices------------------------------------------------------------------
     //
@@ -170,8 +190,7 @@ public class Utility{
     @NotNull
     public static Matrix4f computeModelMatrix(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Vector3f scale){
         return new Matrix4f().translationRotateScale(position, new Quaternionf()
-                .rotation(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility
-                        .toRadians(rotation.z)), scale);
+                .rotationXYZ(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)), scale);
     }
 
     /**
@@ -186,8 +205,7 @@ public class Utility{
     @NotNull
     public static Matrix4f computeInverseModelMatrix(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Vector3f scale){
         return new Matrix4f().translationRotateScaleInvert(position, new Quaternionf()
-                .rotation(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility
-                        .toRadians(rotation.z)), scale);
+                .rotationXYZ(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)), scale);
     }
 
     /**

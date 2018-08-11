@@ -750,7 +750,7 @@ public class Input{
     }
 
     /**
-     Releases the input related resources.
+     Releases the input related resource.
      */
     public static void release(){
         removeMouseCallbacks();

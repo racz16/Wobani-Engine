@@ -1,7 +1,7 @@
 package wobani.component.light.blinnphong;
 
 import org.joml.*;
-import wobani.resources.buffers.*;
+import wobani.resource.opengl.buffer.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
@@ -63,7 +63,7 @@ public class BlinnPhongLightSources{
     private static long vramTimeLimit = 10000;
 
     //
-    //resources-----------------------------------------------------------------
+    //resource-----------------------------------------------------------------
     //
     static{
         initialize();
@@ -257,8 +257,8 @@ public class BlinnPhongLightSources{
         FloatBuffer parameters = directionalLight.computeLightParameters();
         IntBuffer metadata = directionalLight.computeLightMetadata();
         ubo.bind();
-        ubo.storeData(parameters, 0);
-        ubo.storeData(metadata, TYPE_ADDRESS);
+        ubo.store(parameters, 0);
+        ubo.store(metadata, TYPE_ADDRESS);
         ubo.unbind();
         LOG.fine("Directional light refreshed in the UBO");
     }
@@ -542,7 +542,7 @@ public class BlinnPhongLightSources{
     }
 
     /**
-     Recreates the whole system and fills the buffers with the correct light data.
+     Recreates the whole system and fills the buffer with the correct light data.
      */
     public static void makeUsable(){
         initialize();
@@ -574,7 +574,7 @@ public class BlinnPhongLightSources{
     }
 
     /**
-     Releases the whole system including the VGA side buffers.
+     Releases the whole system including the VGA side buffer.
      */
     public static void release(){
         releaseUbo();
@@ -609,9 +609,9 @@ public class BlinnPhongLightSources{
     }
 
     /**
-     Returns true if the system and the VGA side buffers are usable, and false if they're released.
+     Returns true if the system and the VGA side buffer are usable, and false if they're released.
 
-     @return true if the system and the VGA side buffers are usable, false otherwise
+     @return true if the system and the VGA side buffer are usable, false otherwise
      */
     public static boolean isUsable(){
         return Utility.isUsable(ubo);
@@ -673,10 +673,9 @@ public class BlinnPhongLightSources{
      Creates a UBO for the main directional light and binds to the 2nd binding point.
      */
     private static void createUboUnsafe(){
-        ubo = new Ubo();
+        ubo = new Ubo("BlinnPhongLightSources Directional Light");
         ubo.bind();
-        ubo.setName("BP Directional Light");
-        ubo.allocateMemory(LIGHT_SIZE, false);
+        ubo.allocate(LIGHT_SIZE, BufferObject.BufferObjectUsage.STATIC_DRAW);
         ubo.unbind();
         ubo.bindToBindingPoint(2);
     }
@@ -710,11 +709,9 @@ public class BlinnPhongLightSources{
      Creates the zero SSBO and fills it with a 0.
      */
     private static void createZeroSsboUnsafe(){
-        zeroSsbo = new Ssbo();
+        zeroSsbo = new Ssbo("zero");
         zeroSsbo.bind();
-        zeroSsbo.setName("zero");
-        zeroSsbo.allocateMemory(4, false);
-        zeroSsbo.storeData(new int[]{0}, 0);
+        zeroSsbo.allocateAndStore(new int[]{0}, BufferObject.BufferObjectUsage.STATIC_DRAW);
         zeroSsbo.unbind();
     }
 

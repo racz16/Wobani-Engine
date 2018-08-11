@@ -22,55 +22,72 @@ public class OpenGl{
         /**
          0
          */
-        ZERO(GL11.GL_ZERO), /**
+        ZERO(GL11.GL_ZERO),
+        /**
          1
          */
-        ONE(GL11.GL_ONE), /**
+        ONE(GL11.GL_ONE),
+        /**
          Source color
          */
-        SRC_COLOR(GL11.GL_SRC_COLOR), /**
+        SRC_COLOR(GL11.GL_SRC_COLOR),
+        /**
          1 - source color
          */
-        ONE_MINUS_SRC_COLOR(GL11.GL_ONE_MINUS_SRC_COLOR), /**
+        ONE_MINUS_SRC_COLOR(GL11.GL_ONE_MINUS_SRC_COLOR),
+        /**
          Destination color
          */
-        DST_COLOR(GL11.GL_DST_COLOR), /**
+        DST_COLOR(GL11.GL_DST_COLOR),
+        /**
          1 - destination color
          */
-        ONE_MINUS_DST_COLOR(GL11.GL_ONE_MINUS_DST_COLOR), /**
+        ONE_MINUS_DST_COLOR(GL11.GL_ONE_MINUS_DST_COLOR),
+        /**
          Source alpha
          */
-        SRC_ALPHA(GL11.GL_SRC_ALPHA), /**
+        SRC_ALPHA(GL11.GL_SRC_ALPHA),
+        /**
          1 - source alpha
          */
-        ONE_MINUS_SRC_ALPHA(GL11.GL_ONE_MINUS_SRC_ALPHA), /**
+        ONE_MINUS_SRC_ALPHA(GL11.GL_ONE_MINUS_SRC_ALPHA),
+        /**
          Destination alpha
          */
-        DST_ALPHA(GL11.GL_DST_ALPHA), /**
+        DST_ALPHA(GL11.GL_DST_ALPHA),
+        /**
          1 - destination alpha
          */
-        ONE_MINUS_DST_ALPHA(GL11.GL_ONE_MINUS_DST_ALPHA), /**
+        ONE_MINUS_DST_ALPHA(GL11.GL_ONE_MINUS_DST_ALPHA),
+        /**
          Constant color
          */
-        CONSTANT_COLOR(GL14.GL_CONSTANT_COLOR), /**
+        CONSTANT_COLOR(GL14.GL_CONSTANT_COLOR),
+        /**
          1 - constant color
          */
-        ONE_MINUS_CONSTANT_COLOR(GL14.GL_ONE_MINUS_CONSTANT_COLOR), /**
+        ONE_MINUS_CONSTANT_COLOR(GL14.GL_ONE_MINUS_CONSTANT_COLOR),
+        /**
          Constant alpha
          */
-        CONSTANT_ALPHA(GL14.GL_CONSTANT_ALPHA), /**
+        CONSTANT_ALPHA(GL14.GL_CONSTANT_ALPHA),
+        /**
          1 - constant alpha
          */
-        ONE_MINUS_CONSTANT_ALPHA(GL14.GL_ONE_MINUS_CONSTANT_ALPHA), /**
+        ONE_MINUS_CONSTANT_ALPHA(GL14.GL_ONE_MINUS_CONSTANT_ALPHA),
+        /**
          Source alpha saturate
          */
-        SRC_ALPHA_SATURATE(GL11.GL_SRC_ALPHA_SATURATE), /**
+        SRC_ALPHA_SATURATE(GL11.GL_SRC_ALPHA_SATURATE),
+        /**
          Source 1 color
          */
-        SRC1_COLOR(GL33.GL_SRC1_COLOR), /**
+        SRC1_COLOR(GL33.GL_SRC1_COLOR),
+        /**
          1 - source 1 color
          */
-        ONE_MINUS_SRC1_COLOR(GL33.GL_ONE_MINUS_SRC1_COLOR), /**
+        ONE_MINUS_SRC1_COLOR(GL33.GL_ONE_MINUS_SRC1_COLOR),
+        /**
          Source 1 alpha
          */
         SRC1_ALPHA(GL33.GL_ONE_MINUS_SRC1_ALPHA);
@@ -125,16 +142,20 @@ public class OpenGl{
         /**
          Add.
          */
-        FUNC_ADD(GL14.GL_FUNC_ADD), /**
+        FUNC_ADD(GL14.GL_FUNC_ADD),
+        /**
          Subtract.
          */
-        FUNC_SUBTRACT(GL14.GL_FUNC_SUBTRACT), /**
+        FUNC_SUBTRACT(GL14.GL_FUNC_SUBTRACT),
+        /**
          Reverse subtract.
          */
-        FUNC_REVERSE_SUBTRACT(GL14.GL_FUNC_REVERSE_SUBTRACT), /**
+        FUNC_REVERSE_SUBTRACT(GL14.GL_FUNC_REVERSE_SUBTRACT),
+        /**
          Minimum.
          */
-        MIN(GL14.GL_MIN), /**
+        MIN(GL14.GL_MIN),
+        /**
          Maximum.
          */
         MAX(GL14.GL_MAX);
@@ -189,10 +210,12 @@ public class OpenGl{
         /**
          Front.
          */
-        FRONT(GL11.GL_FRONT), /**
+        FRONT(GL11.GL_FRONT),
+        /**
          Back.
          */
-        BACK(GL11.GL_BACK), /**
+        BACK(GL11.GL_BACK),
+        /**
          Front and back.
          */
         FRONT_AND_BACK(GL11.GL_FRONT_AND_BACK);
@@ -247,25 +270,32 @@ public class OpenGl{
         /**
          Never pass the depth test.
          */
-        NEVER(GL11.GL_NEVER), /**
+        NEVER(GL11.GL_NEVER),
+        /**
          Pass the depth test if the new value is less.
          */
-        LESS(GL11.GL_LESS), /**
+        LESS(GL11.GL_LESS),
+        /**
          Pass the depth test if the new value is equal.
          */
-        EQUAL(GL11.GL_EQUAL), /**
+        EQUAL(GL11.GL_EQUAL),
+        /**
          Pass the depth test if the new value is less or equal.
          */
-        LESS_OR_EQUAL(GL11.GL_LEQUAL), /**
+        LESS_OR_EQUAL(GL11.GL_LEQUAL),
+        /**
          Pass the depth test if the new value is greater.
          */
-        GREATER(GL11.GL_GREATER), /**
+        GREATER(GL11.GL_GREATER),
+        /**
          Pass the depth test if the new value isn't equal.
          */
-        NOT_EQUAL(GL11.GL_NOTEQUAL), /**
+        NOT_EQUAL(GL11.GL_NOTEQUAL),
+        /**
          Pass the depth test if the new value is greater or equal.
          */
-        GREATER_OR_EQUAL(GL11.GL_GEQUAL), /**
+        GREATER_OR_EQUAL(GL11.GL_GEQUAL),
+        /**
          Always pass the depth test.
          */
         ALWAYS(GL11.GL_ALWAYS);
@@ -429,6 +459,18 @@ public class OpenGl{
         if(!Utility.containsReference(eventHandlers, eh)){
             eventHandlers.add(eh);
         }
+    }
+
+    /**
+     Returns the specified event handler.
+
+     @param index the event handler's index
+
+     @return the specified event handler
+     */
+    @NotNull
+    public static OpenGlDebugEventHandler getEventHandler(int index){
+        return eventHandlers.get(index);
     }
 
     /**

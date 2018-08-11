@@ -75,6 +75,18 @@ public class InvalidatableContainer<T>{
     }
 
     /**
+     Returns the specified invalidatable.
+
+     @param index invalidatable's index
+
+     @return the specified invalidatable
+     */
+    @NotNull
+    public Invalidatable getInvalidatable(int index){
+        return invalidatables.get(index);
+    }
+
+    /**
      Removes the parameter from the list of Invalidatables.
 
      @param invalidatable Invalidatable

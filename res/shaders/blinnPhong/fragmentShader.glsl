@@ -61,22 +61,22 @@ layout(std140, binding = 2) uniform DirectionalLight{
     Light directionalLight;
 };
 
-layout(std140, binding = 3) buffer NondirectionalLights1 {
+layout(std140, binding = 3) buffer PositionalLights1 {
     int count1;
     Light lights1[];
 };
 
-layout(std140, binding = 4) buffer NondirectionalLights2 {
+layout(std140, binding = 4) buffer PositionalLights2 {
     int count2;
     Light lights2[];
 };
 
-layout(std140, binding = 5) buffer NondirectionalLights3 {
+layout(std140, binding = 5) buffer PositionalLights3 {
     int count3;
     Light lights3[];
 };
 
-layout(std140, binding = 6) buffer NondirectionalLights4 {
+layout(std140, binding = 6) buffer PositionalLights4 {
     int count4;
     Light lights4[];
 };

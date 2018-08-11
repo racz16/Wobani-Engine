@@ -8,8 +8,8 @@ import wobani.rendering.*;
 import wobani.rendering.geometry.*;
 import wobani.rendering.postprocessing.*;
 import wobani.rendering.stage.*;
-import wobani.resources.*;
-import wobani.resources.texture.EasyFiltering.*;
+import wobani.resource.*;
+import wobani.resource.opengl.texture.EasyFiltering.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 import wobani.toolbox.parameter.*;
@@ -162,135 +162,7 @@ public class Example1Window extends javax.swing.JFrame{
             changeOpenGLRelatedSettings();
             openGLRelatedSettingsChanged = false;
         }
-    }
-
-    /**
-     Updates the statistics on the UI.
-     */
-    public void updateStats(){
-        updateTextureData();
-        updateMeshData();
-        updateSplineData();
-        updateFboData();
-        updateVaoData();
-        updateUboData();
-        updateShaderData();
-        updateAudioBufferData();
-        updateAudioSourceData();
-        updateRboData();
         updateImportant();
-    }
-
-    /**
-     Updates the texture statistics on the UI.
-     */
-    private void updateTextureData(){
-        Vector3i data = ResourceManager.getTextureData();
-        lblTextureNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblTextureSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblTextureSizeMega.setText(size + " B  (" + sizeM + " MB)");
-    }
-
-    /**
-     Updates the mesh statistics on the UI.
-     */
-    private void updateMeshData(){
-        Vector3i data = ResourceManager.getMeshData();
-        lblMeshNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblMeshSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblMeshSizeMega.setText(size + " B  (" + sizeM + " MB)");
-    }
-
-    /**
-     Updates the spline statistics on the UI.
-     */
-    private void updateSplineData(){
-        Vector3i data = ResourceManager.getSplineData();
-        lblSplineNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblSplineSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblSplineSizeMega.setText(size + " B  (" + sizeM + " MB)");
-    }
-
-    /**
-     Updates the FBO statistics on the UI.
-     */
-    private void updateFboData(){
-        lblFboNumber.setText(ResourceManager.getFboData().x + "");
-    }
-
-    /**
-     Updates the VAO statistics on the UI.
-     */
-    private void updateVaoData(){
-        lblVaoNumber.setText(ResourceManager.getVaoData().x + "");
-    }
-
-    /**
-     Updates the UBO statistics on the UI.
-     */
-    private void updateUboData(){
-        Vector3i data = ResourceManager.getUboData();
-        lblUboNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblUboSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblUboSizeMega.setText(size + " B  (" + sizeM + " MB)");
-    }
-
-    /**
-     Updates the shader statistics on the UI.
-     */
-    private void updateShaderData(){
-        lblShaderNumber.setText(ResourceManager.getShaderData().x + "");
-    }
-
-    /**
-     Updates the Audio Buffer statistics on the UI.
-     */
-    private void updateAudioBufferData(){
-        Vector3i data = ResourceManager.getAudioBufferData();
-        lblAudioBufferNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblAudioBufferSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblAudioBufferSizeMega.setText(size + " B  (" + sizeM + " MB)");
-    }
-
-    /**
-     Updates the Audio Source statistics on the UI.
-     */
-    private void updateAudioSourceData(){
-        lblAudioSourceNumber.setText(ResourceManager.getAudioSourceData().x + "");
-    }
-
-    /**
-     Updates the RBO statistics on the UI.
-     */
-    private void updateRboData(){
-        Vector3i data = ResourceManager.getRboData();
-        lblRboNumber.setText(data.x + "");
-        float size = data.z;
-        float sizeM = size / (1024 * 1024);
-        lblRboSize.setText(size + " B  (" + sizeM + " MB)");
-        size = data.y;
-        sizeM = size / (1024 * 1024);
-        lblRboSizeMega.setText(size + " B  (" + sizeM + " MB)");
     }
 
     /**
@@ -557,7 +429,7 @@ public class Example1Window extends javax.swing.JFrame{
         lblAudioBufferSizeMega.setText(" ");
 
         jLabel16.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel16.setText("Audio buffers");
+        jLabel16.setText("Audio buffer");
 
         lblAudioSourceNumber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 

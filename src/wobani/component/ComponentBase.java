@@ -16,6 +16,15 @@ public interface ComponentBase extends Invalidatable{
     void addInvalidatable(Invalidatable invalidatable);
 
     /**
+     Returns the specified invalidatable.
+
+     @param index the invalidatable's index
+
+     @return the specified invalidatable
+     */
+    Invalidatable getInvalidatable(int index);
+
+    /**
      Returns true if this Component's Invalidatables contains the specified element.
 
      @param invalidatable Invalidatable
@@ -30,6 +39,13 @@ public interface ComponentBase extends Invalidatable{
      @param invalidatable Invalidatable
      */
     void removeInvalidatable(Invalidatable invalidatable);
+
+    /**
+     Returns the number of stored invalidatables.
+
+     @return the number of stored invalidatables
+     */
+    int getInvalidatableCount();
 
     /**
      Determines whether the Component is active. If it's not, your changes may not affect the end result, and the data

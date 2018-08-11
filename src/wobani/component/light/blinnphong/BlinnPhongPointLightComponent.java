@@ -41,5 +41,4 @@ public class BlinnPhongPointLightComponent extends BlinnPhongPositionalLightComp
                 .append(BlinnPhongPointLightComponent.class.getSimpleName()).append("(").append(")");
         return res.toString();
     }
-
 }

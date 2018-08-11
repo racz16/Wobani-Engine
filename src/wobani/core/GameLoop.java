@@ -1,7 +1,7 @@
 package wobani.core;
 
 import wobani.rendering.*;
-import wobani.resources.*;
+import wobani.resource.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 import wobani.window.*;
@@ -70,7 +70,7 @@ public class GameLoop{
     }
 
     /**
-     Handles the given exception. It logs the exception, releases the resources and closes the program.
+     Handles the given exception. It logs the exception, releases the resource and closes the program.
 
      @param ex Exception
      */
@@ -90,7 +90,7 @@ public class GameLoop{
 
     /**
      The engine's game loop. It updates all Components of the GameObjectContainer, updates the Resources, renders the
-     scene, handles the input and swaps the buffers and handle exceptions. Before calling this method, you should
+     scene, handles the input and swaps the buffer and handle exceptions. Before calling this method, you should
      initialize the engine. You can do it by by calling the initialize method.
      */
     public static void run(){
@@ -104,8 +104,8 @@ public class GameLoop{
     }
 
     /**
-     The engine's game loop. It updates all Components of the GameObjectContainer, updates the resources, renders the
-     scene, handles the input and swaps the buffers in every frame.
+     The engine's game loop. It updates all Components of the GameObjectContainer, updates the resource, renders the
+     scene, handles the input and swaps the buffer in every frame.
      */
     private static void gameLoop(){
         while(!Window.isWindowShouldClose()){
@@ -121,14 +121,14 @@ public class GameLoop{
      */
     private static void update(){
         Time.update();
-        LOG.info("Updating resources");
+        LOG.info("Updating resource");
         ResourceManager.updateResources();
         LOG.info("Updating components");
         Scene.getGameObjects().updateComponents();
     }
 
     /**
-     Swaps the window's buffers and poll events.
+     Swaps the window's buffer and poll events.
      */
     private static void windowing(){
         Window.swapBuffers();
@@ -144,7 +144,7 @@ public class GameLoop{
         Input.release();
         Window.release();
         OpenAl.release();
-        LOG.info("All resources released");
+        LOG.info("All resource released");
     }
 
 }

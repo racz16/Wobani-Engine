@@ -156,7 +156,7 @@ public class Transform implements Invalidatable{
         Vector3f parentPosition = new Vector3f(gameObject.getParent().getTransform().getAbsolutePosition());
         Vector3f parentRotation = new Vector3f(gameObject.getParent().getTransform().getAbsoluteRotation());
         Quaternionf rotation = new Quaternionf()
-                .rotation(Utility.toRadians(-parentRotation.x), Utility.toRadians(-parentRotation.y), Utility
+                .rotationXYZ(Utility.toRadians(-parentRotation.x), Utility.toRadians(-parentRotation.y), Utility
                         .toRadians(-parentRotation.z));
         Vector3f relPos = new Vector3f();
         absolutePosition.sub(parentPosition, relPos);
@@ -376,7 +376,7 @@ public class Transform implements Invalidatable{
         Vector3f position = getRelativePosition();
         Vector3f parentRotation = gameObject.getParent().getTransform().getAbsoluteRotation();
         absolutePosition.set(position.rotate(new Quaternionf()
-                .rotation(Utility.toRadians(parentRotation.x), Utility.toRadians(parentRotation.y), Utility
+                .rotationXYZ(Utility.toRadians(parentRotation.x), Utility.toRadians(parentRotation.y), Utility
                         .toRadians(parentRotation.z))));
         absolutePosition.add(gameObject.getParent().getTransform().getAbsolutePosition());
     }
@@ -452,7 +452,7 @@ public class Transform implements Invalidatable{
      */
     private void refreshDirectionVectors(){
         Quaternionf rotation = new Quaternionf()
-                .rotation(Utility.toRadians(absoluteRotation.x), Utility.toRadians(absoluteRotation.y), Utility
+                .rotationXYZ(Utility.toRadians(absoluteRotation.x), Utility.toRadians(absoluteRotation.y), Utility
                         .toRadians(absoluteRotation.z));
         forward.set(new Vector3f(0, 0, -1).rotate(rotation).normalize());
         right.set(new Vector3f(1, 0, 0).rotate(rotation).normalize());

@@ -4,9 +4,9 @@ import org.joml.*;
 import wobani.component.camera.*;
 import wobani.core.*;
 import wobani.rendering.*;
-import wobani.resources.*;
-import wobani.resources.mesh.*;
-import wobani.resources.shader.*;
+import wobani.resource.*;
+import wobani.resource.mesh.*;
+import wobani.resource.opengl.shader.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 

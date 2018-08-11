@@ -8,9 +8,9 @@ import wobani.material.*;
 import wobani.rendering.*;
 import wobani.rendering.geometry.*;
 import wobani.rendering.stage.*;
-import wobani.resources.*;
-import wobani.resources.environmentprobe.*;
-import wobani.resources.shader.*;
+import wobani.resource.*;
+import wobani.resource.environmentprobe.*;
+import wobani.resource.opengl.shader.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 

@@ -4,7 +4,7 @@ import wobani.core.*;
 import wobani.material.*;
 import wobani.rendering.*;
 import wobani.rendering.geometry.*;
-import wobani.resources.*;
+import wobani.resource.*;
 import wobani.toolbox.annotation.*;
 
 import java.util.*;

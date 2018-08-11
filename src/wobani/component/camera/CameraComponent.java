@@ -3,7 +3,7 @@ package wobani.component.camera;
 import org.joml.*;
 import org.lwjgl.*;
 import wobani.core.*;
-import wobani.resources.buffers.*;
+import wobani.resource.opengl.buffer.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
@@ -151,7 +151,7 @@ public class CameraComponent extends Component implements Camera{
      */
     private static void refreshUbo(){
         ubo.bind();
-        ubo.storeData(temp, 0);
+        ubo.store(temp, 0);
         ubo.unbind();
         LOG.fine("Matrices UBO refreshed");
     }
@@ -188,10 +188,9 @@ public class CameraComponent extends Component implements Camera{
      Creates the Matrices UBO.
      */
     private static void createUboUnsafe(){
-        ubo = new Ubo();
+        ubo = new Ubo("Matrices");
         ubo.bind();
-        ubo.setName("Matrices");
-        ubo.allocateMemory(128, false);
+        ubo.allocate(128, BufferObject.BufferObjectUsage.STATIC_DRAW);
         ubo.unbind();
         ubo.bindToBindingPoint(1);
     }

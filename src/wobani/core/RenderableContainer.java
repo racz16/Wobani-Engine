@@ -3,7 +3,7 @@ package wobani.core;
 import wobani.component.renderable.*;
 import wobani.material.*;
 import wobani.rendering.geometry.*;
-import wobani.resources.*;
+import wobani.resource.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 import wobani.toolbox.exceptions.*;
@@ -144,36 +144,21 @@ public class RenderableContainer{
     }
 
     /**
-     Returns the array of Renderables using the given GeometryRenderer.
+     Returns the readonly collection of Renderables using the given GeometryRenderer.
 
      @param renderer GeometryRenderer
 
-     @return the array of Renderables using the given GeometryRenderer
+     @return the readonly collection of Renderables using the given GeometryRenderer
      */
     @NotNull
     @ReadOnly
-    public Renderable[] getRenderables(@NotNull Class<? extends GeometryRenderer> renderer){
+    public Collection<Renderable> getRenderables(@NotNull Class<? extends GeometryRenderer> renderer){
         RenderableMap map = get(renderer);
         if(map == null){
-            return new Renderable[0];
+            return Collections.EMPTY_LIST;
         }else{
-            return getRenderablesArray(map);
+            return Collections.unmodifiableCollection(map.getRenderables());
         }
-    }
-
-    /**
-     Returns the array of Renderables using the given GeometryRenderer.
-
-     @param map RenderableMap
-
-     @return the array of Renderables using the given GeometryRenderer
-     */
-    @NotNull
-    @ReadOnly
-    private Renderable[] getRenderablesArray(@NotNull RenderableMap map){
-        Renderable[] ret = new Renderable[map.getRenderables().size()];
-        map.getRenderables().toArray(ret);
-        return ret;
     }
 
     /**

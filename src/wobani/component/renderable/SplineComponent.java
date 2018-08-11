@@ -1,7 +1,7 @@
 package wobani.component.renderable;
 
 import wobani.material.*;
-import wobani.resources.spline.*;
+import wobani.resource.spline.*;
 import wobani.toolbox.annotation.*;
 
 /**

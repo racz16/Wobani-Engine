@@ -36,6 +36,11 @@ public abstract class Component implements ComponentBase{
     }
 
     @Override
+    public Invalidatable getInvalidatable(int index){
+        return invalidatables.getInvalidatable(index);
+    }
+
+    @Override
     public boolean containsInvalidatable(@Nullable Invalidatable invalidatable){
         return invalidatables.containsInvalidatable(invalidatable);
     }
@@ -43,6 +48,11 @@ public abstract class Component implements ComponentBase{
     @Override
     public void removeInvalidatable(@Nullable Invalidatable invalidatable){
         invalidatables.removeInvalidatable(invalidatable);
+    }
+
+    @Override
+    public int getInvalidatableCount(){
+        return invalidatables.size();
     }
 
     @Override

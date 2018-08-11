@@ -2,7 +2,7 @@ package wobani.core;
 
 import wobani.component.audio.*;
 import wobani.component.camera.*;
-import wobani.resources.environmentprobe.*;
+import wobani.resource.environmentprobe.*;
 import wobani.toolbox.annotation.*;
 import wobani.toolbox.parameter.*;
 

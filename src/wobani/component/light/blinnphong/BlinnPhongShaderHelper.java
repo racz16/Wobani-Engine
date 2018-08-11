@@ -9,7 +9,7 @@ import java.nio.*;
 
 /**
  A helper class which helps the Blinn-Phong light sources in the communication with the VGA. It contains a FloatBuffer,
- an IntBuffer and all the methods necessary to fill these buffers and then you can pass them to the VGA.
+ an IntBuffer and all the methods necessary to fill these buffer and then you can pass them to the VGA.
  */
 public class BlinnPhongShaderHelper{
 

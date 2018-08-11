@@ -1,7 +1,7 @@
 package wobani.component.environmentprobe;
 
 import org.joml.*;
-import wobani.resources.environmentprobe.*;
+import wobani.resource.environmentprobe.*;
 import wobani.toolbox.annotation.*;
 
 /**

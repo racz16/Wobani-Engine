@@ -2,9 +2,9 @@ package wobani.rendering.stage;
 
 import wobani.rendering.*;
 import wobani.rendering.postprocessing.*;
-import wobani.resources.buffers.*;
-import wobani.resources.texture.*;
-import wobani.resources.texture.texture2d.*;
+import wobani.resource.opengl.buffer.*;
+import wobani.resource.opengl.texture.*;
+import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 import wobani.toolbox.exceptions.*;

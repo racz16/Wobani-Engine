@@ -215,6 +215,10 @@ public class Window{
         GL.createCapabilities();
     }
 
+    //
+    //event handlers, callbacks-------------------------------------------------
+    //
+
     /**
      Adds the given window event handler to the list of window event handlers.
 
@@ -231,9 +235,17 @@ public class Window{
         }
     }
 
-    //
-    //event handlers, callbacks-------------------------------------------------
-    //
+    /**
+     Returns the specified event handler.
+
+     @param index event handler's index
+
+     @return the specified event handler
+     */
+    @NotNull
+    public static WindowEventHandler getEventHandler(int index){
+        return eventHandlers.get(index);
+    }
 
     /**
      Removes the given window event handler from the list of window event handlers.
@@ -680,7 +692,7 @@ public class Window{
     //
 
     /**
-     Swaps the back and the front buffers. You should call it once every frame.
+     Swaps the back and the front buffer. You should call it once every frame.
      */
     public static void swapBuffers(){
         glfwSwapBuffers(id);
@@ -931,7 +943,7 @@ public class Window{
     }
 
     /**
-     Releases the resources owned by the window. After calling this method, you can't use the window for anything. You
+     Releases the resource owned by the window. After calling this method, you can't use the window for anything. You
      should only call this method when the program terminates.
      */
     public static void release(){
@@ -951,19 +963,24 @@ public class Window{
         /**
          Arrow (normal) mouse shape.
          */
-        ARROW(GLFW_ARROW_CURSOR), /**
+        ARROW(GLFW_ARROW_CURSOR),
+        /**
          I beam shape (for text editing).
          */
-        IBEAM(GLFW_IBEAM_CURSOR), /**
+        IBEAM(GLFW_IBEAM_CURSOR),
+        /**
          Crosshair mouse shape.
          */
-        CROSSHAIR(GLFW_CROSSHAIR_CURSOR), /**
+        CROSSHAIR(GLFW_CROSSHAIR_CURSOR),
+        /**
          Hand mouse shape.
          */
-        HAND(GLFW_HAND_CURSOR), /**
+        HAND(GLFW_HAND_CURSOR),
+        /**
          Horizontal resize mouse shape.
          */
-        HORIZONTAL_RESIZE(GLFW_HRESIZE_CURSOR), /**
+        HORIZONTAL_RESIZE(GLFW_HRESIZE_CURSOR),
+        /**
          Vertical resize mouse shape.
          */
         VERTICAL_RESIZE(GLFW_VRESIZE_CURSOR);

@@ -1,6 +1,6 @@
 package wobani.rendering.postprocessing;
 
-import wobani.resources.shader.postprocessing.*;
+import wobani.resource.opengl.shader.postprocessing.*;
 import wobani.toolbox.annotation.*;
 
 /**

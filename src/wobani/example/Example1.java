@@ -10,12 +10,12 @@ import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.material.*;
 import wobani.rendering.geometry.*;
-import wobani.resources.*;
-import wobani.resources.audio.*;
-import wobani.resources.environmentprobe.*;
-import wobani.resources.mesh.*;
-import wobani.resources.spline.*;
-import wobani.resources.texture.cubemaptexture.*;
+import wobani.resource.*;
+import wobani.resource.audio.*;
+import wobani.resource.environmentprobe.*;
+import wobani.resource.mesh.*;
+import wobani.resource.opengl.texture.cubemaptexture.*;
+import wobani.resource.spline.*;
 import wobani.toolbox.*;
 import wobani.toolbox.parameter.*;
 import wobani.window.*;
@@ -134,6 +134,12 @@ public class Example1{
         dragon.setName("dragon");
         dragon.getTransform().setRelativePosition(new Vector3f(0, -5, -20));
         dragon.getTransform().setRelativeScale(new Vector3f(2.5f));
+        dragon.getComponents().add(new Component(){
+            @Override
+            public void update(){
+                getGameObject().getTransform().rotate(new Vector3f(0, 0.35f * Time.getDeltaTimeFactor(), 0));
+            }
+        });
         return dragon;
     }
 
@@ -143,7 +149,6 @@ public class Example1{
         dragon2.getComponents().getOne(MeshComponent.class).setReflectable(true);
         dragon2.setName("dragon2");
         dragon2.getTransform().setRelativePosition(new Vector3f(35, -40, 0));
-        dragon2.getTransform().rotate(new Vector3f(45, 0, 0));
         dragon2.getComponents().add(new Component(){
             @Override
             public void update(){
@@ -290,7 +295,7 @@ public class Example1{
                 updateLengthSum += updateLength;
 
                 if(updateLengthSum >= 1000000000){
-                    testWindow.updateStats();
+                    //testWindow.updateStats();
                     updateLengthSum = 0;
                 }
                 testWindow.update();

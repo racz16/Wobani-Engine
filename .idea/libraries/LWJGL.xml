@@ -1,41 +1,40 @@
 <component name="libraryTable">
   <library name="LWJGL">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/joml-1.9.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/joml-1.9.10.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/lwjgl-assimp.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/lwjgl-glfw.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/lwjgl-openal.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/lwjgl-opengl.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/lwjgl-remotery.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/lwjgl-stb.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/lwjgl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/lwjglx-debug-1.0.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/nat/lwjgl-assimp-natives-windows.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/nat/lwjgl-glfw-natives-windows.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/nat/lwjgl-natives-windows.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/nat/lwjgl-openal-natives-windows.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/nat/lwjgl-opengl-natives-windows.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/nat/lwjgl-remotery-natives-windows.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/nat/lwjgl-stb-natives-windows.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/doc/joml-1.9.9-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/doc/joml-1.9.10-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/doc/lwjgl-assimp-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/doc/lwjgl-glfw-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/doc/lwjgl-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/doc/lwjgl-openal-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/doc/lwjgl-opengl-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/doc/lwjgl-remotery-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/doc/lwjgl-stb-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/doc/lwjglx-debug-1.0.0-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/joml-1.9.9-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/joml-1.9.10-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/lwjgl-assimp-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/lwjgl-glfw-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/lwjgl-openal-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/lwjgl-opengl-sources.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/lwjgl-remotery-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/lwjgl-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/lwjgl-stb-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/lwjglx-debug-1.0.0-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

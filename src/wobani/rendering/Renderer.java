@@ -10,7 +10,7 @@ public abstract class Renderer{
     public abstract void render();
 
     /**
-     Releases all of the renderer's resources. After calling this method, the render is no longer usable.
+     Releases all of the renderer's resource. After calling this method, the render is no longer usable.
      */
     public abstract void release();
 

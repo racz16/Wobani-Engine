@@ -3,9 +3,13 @@
     <words>
       <w>aabb</w>
       <w>assimp</w>
+      <w>attrib</w>
+      <w>attribs</w>
+      <w>bindable</w>
       <w>blinn</w>
       <w>catmull</w>
       <w>crosshair</w>
+      <w>ebo</w>
       <w>fbo</w>
       <w>framebuffer</w>
       <w>fullscreen</w>
@@ -45,6 +49,8 @@
       <w>stbi</w>
       <w>struct</w>
       <w>touchpad</w>
+      <w>vao</w>
+      <w>vbos</w>
       <w>vram</w>
       <w>wireframe</w>
       <w>wobani</w>

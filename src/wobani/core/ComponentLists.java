@@ -53,10 +53,8 @@ public class ComponentLists{
      */
     @NotNull
     @ReadOnly
-    public Class<?>[] getTrackedTypes(){
-        Class<?>[] classes = new Class<?>[lists.keySet().size()];
-        lists.keySet().toArray(classes);
-        return classes;
+    public Collection<Class<?>> getTrackedTypes(){
+        return Collections.unmodifiableCollection(lists.keySet());
     }
 
     /**

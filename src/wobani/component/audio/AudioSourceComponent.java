@@ -2,7 +2,7 @@ package wobani.component.audio;
 
 import org.joml.*;
 import wobani.core.*;
-import wobani.resources.audio.*;
+import wobani.resource.audio.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 import wobani.toolbox.parameter.*;

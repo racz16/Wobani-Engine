@@ -1,7 +1,7 @@
 package wobani.component.light.blinnphong;
 
 import org.joml.*;
-import wobani.resources.buffers.*;
+import wobani.resource.opengl.buffer.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
@@ -245,8 +245,8 @@ public class BlinnPhongLightSourceTile{
         FloatBuffer parameters = light.computeLightParameters();
         IntBuffer metadata = light.computeLightMetadata();
         ssbo.bind();
-        ssbo.storeData(parameters, light.getShaderIndex() * LIGHT_SIZE + LIGHT_SOURCES_OFFSET);
-        ssbo.storeData(metadata, light.getShaderIndex() * LIGHT_SIZE + TYPE_ADDRESS + LIGHT_SOURCES_OFFSET);
+        ssbo.store(parameters, light.getShaderIndex() * LIGHT_SIZE + LIGHT_SOURCES_OFFSET);
+        ssbo.store(metadata, light.getShaderIndex() * LIGHT_SIZE + TYPE_ADDRESS + LIGHT_SOURCES_OFFSET);
         ssbo.unbind();
         LOG.fine("Positional light refreshed in the SSBO");
     }
@@ -291,7 +291,7 @@ public class BlinnPhongLightSourceTile{
      */
     private void refreshSlotCountInSsbo(){
         ssbo.bind();
-        ssbo.storeData(new int[]{slotCount}, 0);
+        ssbo.store(new int[]{slotCount}, 0);
         ssbo.unbind();
     }
 
@@ -302,7 +302,7 @@ public class BlinnPhongLightSourceTile{
      */
     private void removeLightFromSsbo(int shaderIndex){
         ssbo.bind();
-        ssbo.storeData(new int[]{0}, shaderIndex * LIGHT_SIZE + ACTIVE_ADDRESS + LIGHT_SOURCES_OFFSET);
+        ssbo.store(new int[]{0}, shaderIndex * LIGHT_SIZE + ACTIVE_ADDRESS + LIGHT_SOURCES_OFFSET);
         ssbo.unbind();
         LOG.fine("Positional light removed from the SSBO");
     }
@@ -315,7 +315,7 @@ public class BlinnPhongLightSourceTile{
     private void changeSsboSizeTo(int lightCount){
         refreshAllLights = true;
         ssbo.bind();
-        ssbo.allocateMemory(lightCount * LIGHT_SIZE + LIGHT_SOURCES_OFFSET, false);
+        ssbo.allocate(lightCount * LIGHT_SIZE + LIGHT_SOURCES_OFFSET, BufferObject.BufferObjectUsage.STATIC_DRAW);
         ssbo.unbind();
         LOG.fine("Positional light SSBO size changed");
     }
@@ -377,7 +377,7 @@ public class BlinnPhongLightSourceTile{
     }
 
     //
-    //resources
+    //resource
     //
 
     /**
@@ -500,10 +500,9 @@ public class BlinnPhongLightSourceTile{
      Creates an SSBO for the lights.
      */
     private void createSsboUnsafe(){
-        ssbo = new Ssbo();
+        ssbo = new Ssbo(getClass().getSimpleName() + " " + getCenter().x() + " " + getCenter().y());
         ssbo.bind();
-        ssbo.setName("BP Positional Lights");
-        ssbo.allocateMemory(LIGHT_SIZE + LIGHT_SOURCES_OFFSET, false);
+        ssbo.allocate(LIGHT_SIZE + LIGHT_SOURCES_OFFSET, BufferObject.BufferObjectUsage.STATIC_DRAW);
         ssbo.unbind();
     }
 

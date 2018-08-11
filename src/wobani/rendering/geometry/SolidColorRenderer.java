@@ -6,8 +6,8 @@ import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.material.*;
 import wobani.rendering.*;
-import wobani.resources.*;
-import wobani.resources.shader.*;
+import wobani.resource.*;
+import wobani.resource.opengl.shader.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
