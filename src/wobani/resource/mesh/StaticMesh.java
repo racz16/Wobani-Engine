@@ -289,42 +289,26 @@ public class StaticMesh implements Mesh{
      */
     private void ramToVram(){
         vao = new Vao(getClass().getSimpleName() + " " + getPath());
-        vao.bind();
 
         Vbo positionVbo = new Vbo(getClass().getSimpleName() + " " + getPath() + " position");
-        positionVbo.bind();
-        vao.setVertexAttribArray(new VertexAttribPointer(0, 3));
-        positionVbo.allocateAndStore(position, BufferObject.BufferObjectUsage.STATIC_DRAW);
-        positionVbo.unbind();
+        positionVbo.allocateAndStoreImmutable(position, false);
+        vao.connectVbo(positionVbo, new VertexAttribPointer(0, 3));
 
         Vbo uvVbo = new Vbo(getClass().getSimpleName() + " " + getPath() + " uv");
-        uvVbo.bind();
-        vao.setVertexAttribArray(new VertexAttribPointer(1, 2));
-        uvVbo.allocateAndStore(uv, BufferObject.BufferObjectUsage.STATIC_DRAW);
-        uvVbo.unbind();
+        uvVbo.allocateAndStoreImmutable(uv, false);
+        vao.connectVbo(uvVbo, new VertexAttribPointer(1, 2));
 
         Vbo normalVbo = new Vbo(getClass().getSimpleName() + " " + getPath() + " normal");
-        normalVbo.bind();
-        vao.setVertexAttribArray(new VertexAttribPointer(2, 3));
-        normalVbo.allocateAndStore(normal, BufferObject.BufferObjectUsage.STATIC_DRAW);
-        normalVbo.unbind();
+        normalVbo.allocateAndStoreImmutable(normal, false);
+        vao.connectVbo(normalVbo, new VertexAttribPointer(2, 3));
 
         Vbo tangentVbo = new Vbo(getClass().getSimpleName() + " " + getPath() + " tangent");
-        tangentVbo.bind();
-        vao.setVertexAttribArray(new VertexAttribPointer(3, 3));
-        tangentVbo.allocateAndStore(tangent, BufferObject.BufferObjectUsage.STATIC_DRAW);
-        tangentVbo.unbind();
-
+        tangentVbo.allocateAndStoreImmutable(tangent, false);
+        vao.connectVbo(tangentVbo, new VertexAttribPointer(3, 3));
+        
         Ebo ebo = new Ebo();
-        ebo.bind();
-        ebo.allocateAndStore(indices, BufferObject.BufferObjectUsage.STATIC_DRAW);
-
-        vao.getVertexAttribArray(0).enable();
-        vao.getVertexAttribArray(1).enable();
-        vao.getVertexAttribArray(2).enable();
-        vao.getVertexAttribArray(3).enable();
-        vao.unbind();
-
+        ebo.allocateAndStoreImmutable(indices, false);
+        vao.connectEbo(ebo);
 
         meta.setState(ResourceState.ACTION);
     }

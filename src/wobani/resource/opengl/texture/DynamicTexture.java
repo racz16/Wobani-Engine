@@ -86,7 +86,7 @@ public abstract class DynamicTexture extends AbstractTexture{
         glBind();
     }
 
-    @Override
+    //TODO: to protected
     public int getId(){
         return glGetId();
     }

@@ -5,21 +5,15 @@ import org.lwjgl.opengl.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
-import java.util.*;
-
 /**
  Object oriented wrapper class above the native Vertex Buffer Object.
  */
 public class Vbo extends BufferObject{
 
     /**
-     The currently bound VBO.
+     The connected vertex attrib array.
      */
-    private static Vbo boundVbo;
-    /**
-     The connected vertex attrib arrays.
-     */
-    private final Set<VertexAttribArray> vertexAttribArrays = new HashSet<>();
+    private VertexAttribArray vertexAttribArray;
 
     /**
      Initializes a new VBO.
@@ -39,23 +33,14 @@ public class Vbo extends BufferObject{
     }
 
     /**
-     Adds the given vertex attrib array to the connected vertex attrib arrays.
+     Sets the connected vertex attrib array to the given value.
 
      @param vaa vertex attrib array
      */
     @Internal
-    void addVertexAttribArray(@Nullable VertexAttribArray vaa){
-        vertexAttribArrays.add(vaa);
-    }
-
-    /**
-     Removes the given vertex attrib array from the connected vertex attrib arrays.
-
-     @param vaa vertex attrib array
-     */
-    @Internal
-    void removeVertexAttribArray(@Nullable VertexAttribArray vaa){
-        vertexAttribArrays.remove(vaa);
+    void setVertexAttribArray(@Nullable VertexAttribArray vaa){
+        checkConnection(vaa);
+        vertexAttribArray = vaa;
     }
 
     @NotNull
@@ -70,89 +55,74 @@ public class Vbo extends BufferObject{
      @param data  data to store
      @param usage data usage
      */
-    @Bind
     public void allocateAndStore(@NotNull AIVector3D.Buffer data, @NotNull BufferObjectUsage usage){
-        checkRelease();
-        checkBind();
         int size = AIVector3D.SIZEOF * data.remaining();
-        setDataSize(size);
-        GL15.nglBufferData(getTarget(), size, data.address(), usage.getCode());
+        allocationGeneral(size, usage);
+        GL45.nglNamedBufferData(getId(), size, data.address(), usage.getCode());
     }
 
     /**
-     Stores the given data in the VBO.
+     Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
+     reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
+
+     @param data                  data to store
+     @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
+     */
+    public void allocateAndStoreImmutable(@NotNull AIVector3D.Buffer data, boolean allowDataModification){
+        int size = AIVector3D.SIZEOF * data.remaining();
+        allocationGeneral(size, null);
+        setImmutable(true);
+        setAllowDataModification(allowDataModification);
+        GL45.nglNamedBufferStorage(getId(), size, data
+                .address(), allowDataModification ? GL44.GL_DYNAMIC_STORAGE_BIT : GL11.GL_NONE);
+    }
+
+    /**
+     Stores the given data on the specified position. You should only call this method if the Buffer Object is not
+     immutable or if it allows data modification.
 
      @param data data to store
      */
-    @Bind
     public void store(@NotNull AIVector3D.Buffer data){
         store(data, 0);
     }
 
     /**
-     Stores the given data on the specified position.
+     Stores the given data on the specified position. You should only call this method if the Buffer Object is not
+     immutable or if it allows data modification.
 
      @param data   data to store
      @param offset data's offset (in bytes)
-
-     @throws IllegalArgumentException if offset is negative or if the data exceeds from the VBO (because of it's size or
-     the offset)
      */
-    @Bind
     public void store(@NotNull AIVector3D.Buffer data, long offset){
-        checkRelease();
-        checkBind();
-        if(offset < 0){
-            throw new IllegalArgumentException("Offset can't be negative");
-        }
-        if(getActiveDataSize() - offset < data.limit() * Utility.FLOAT_SIZE){
-            throw new IllegalStateException("The data exceeds from the VBO, data size or offset is too high");
-        }
-        GL15.nglBufferSubData(getTarget(), offset, AIVector3D.SIZEOF * data.remaining(), data.address());
-    }
-
-    @Override
-    public void bind(){
-        super.bind();
-        boundVbo = this;
-    }
-
-    @Override
-    public void unbind(){
-        super.unbind();
-        boundVbo = null;
-    }
-
-    @Override
-    public boolean isBound(){
-        return this == getBoundVbo();
+        storeGeneral(offset, data.limit() * Utility.FLOAT_SIZE);
+        GL45.nglNamedBufferSubData(getId(), offset, AIVector3D.SIZEOF * data.remaining(), data.address());
     }
 
     /**
-     Returns the currently bound VBO.
+     If the VBO is already connected to a VAO, it throws an IllegalArgumentException.
 
-     @return the currently bound VBO
+     @throws IllegalArgumentException if the VBO is already connected to a VAO
      */
-    @Nullable
-    public static Vbo getBoundVbo(){
-        return boundVbo;
+    private void checkConnection(@Nullable VertexAttribArray vaa){
+        if(vertexAttribArray != null && vaa != null && (vertexAttribArray.getVao() != vaa.getVao() || vaa.getPointer()
+                .getIndex() != vertexAttribArray.getPointer().getIndex())){
+            throw new IllegalArgumentException("The VBO is already connected to a VAO");
+        }
     }
 
     @Override
     public void release(){
         super.release();
-        for(VertexAttribArray vaa : vertexAttribArrays){
-            vaa.getVao().removeVertexAttribArray(vaa.getPointer().getIndex());
-        }
-        vertexAttribArrays.clear();
-        if(isBound()){
-            boundVbo = null;
+        if(vertexAttribArray != null){
+            vertexAttribArray.getVao().removeVertexAttribArray(vertexAttribArray.getPointer().getIndex());
+            vertexAttribArray = null;
         }
     }
 
     @Override
     public String toString(){
-        return super.toString() + "\n" + Vbo.class.getSimpleName() + "(" + "vertexAttribArrays: " + Utility
-                .toString(vertexAttribArrays) + ")";
+        return super.toString() + "\n" + Vbo.class
+                .getSimpleName() + "(" + "vertexAttribArray: " + vertexAttribArray + ")";
     }
 }

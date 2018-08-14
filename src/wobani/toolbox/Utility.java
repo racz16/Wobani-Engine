@@ -2,6 +2,7 @@ package wobani.toolbox;
 
 import org.joml.*;
 import org.lwjgl.*;
+import org.lwjgl.system.*;
 import wobani.component.camera.*;
 import wobani.component.camera.Camera.*;
 import wobani.component.renderable.*;
@@ -190,7 +191,8 @@ public class Utility{
     @NotNull
     public static Matrix4f computeModelMatrix(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Vector3f scale){
         return new Matrix4f().translationRotateScale(position, new Quaternionf()
-                .rotationXYZ(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)), scale);
+                .rotationXYZ(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility
+                        .toRadians(rotation.z)), scale);
     }
 
     /**
@@ -205,7 +207,8 @@ public class Utility{
     @NotNull
     public static Matrix4f computeInverseModelMatrix(@NotNull Vector3f position, @NotNull Vector3f rotation, @NotNull Vector3f scale){
         return new Matrix4f().translationRotateScaleInvert(position, new Quaternionf()
-                .rotationXYZ(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility.toRadians(rotation.z)), scale);
+                .rotationXYZ(Utility.toRadians(rotation.x), Utility.toRadians(rotation.y), Utility
+                        .toRadians(rotation.z)), scale);
     }
 
     /**
@@ -424,7 +427,7 @@ public class Utility{
      @return int buffer containing the given data
      */
     @NotNull
-    public static IntBuffer storeDataInIntBuffer(@NotNull int[] data){
+    public static IntBuffer storeInBuffer(@NotNull int[] data){
         IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
         buffer.put(data);
         buffer.flip();
@@ -439,8 +442,40 @@ public class Utility{
      @return float buffer containing the given data
      */
     @NotNull
-    public static FloatBuffer storeDataInFloatBuffer(@NotNull float[] data){
+    public static FloatBuffer storeInBuffer(@NotNull float[] data){
         FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
+        buffer.put(data);
+        buffer.flip();
+        return buffer;
+    }
+
+    /**
+     Creates a float buffer with the given memory stack and stores the data in it.
+
+     @param stack memory stack
+     @param data  data to store
+
+     @return float buffer containing the given data
+     */
+    @NotNull
+    public static FloatBuffer storeInBuffer(@NotNull MemoryStack stack, @NotNull float[] data){
+        FloatBuffer buffer = stack.mallocFloat(data.length);
+        buffer.put(data);
+        buffer.flip();
+        return buffer;
+    }
+
+    /**
+     Creates a int buffer with the given memory stack and stores the data in it.
+
+     @param stack memory stack
+     @param data  data to store
+
+     @return float buffer containing the given data
+     */
+    @NotNull
+    public static IntBuffer storeInBuffer(@NotNull MemoryStack stack, @NotNull int[] data){
+        IntBuffer buffer = stack.mallocInt(data.length);
         buffer.put(data);
         buffer.flip();
         return buffer;

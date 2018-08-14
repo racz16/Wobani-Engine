@@ -9,10 +9,6 @@ import wobani.toolbox.annotation.*;
 public class Ebo extends BufferObject{
 
     /**
-     The currently bound EBO.
-     */
-    private static Ebo boundEbo;
-    /**
      The EBO's VAO.
      */
     private Vao vao;
@@ -51,69 +47,37 @@ public class Ebo extends BufferObject{
     }
 
     /**
-     Binds the EBO and connects to the currently bound VAO.
+     Sets the VAO to the given value.
+
+     @param vao connected VAO
      */
-    @Override
-    public void bind(){
-        super.bind();
-        boundEbo = this;
-        removeFromPreviousVao();
-        addToBoundVao();
+    protected void setVao(@Nullable Vao vao){
+        checkConnection(vao);
+        this.vao = vao;
     }
 
     /**
-     Removes this EBO from it's VAO.
+     If the EBO is already connected to a VAO, it throws an IllegalArgumentException.
+
+     @throws IllegalArgumentException if the EBO is already connected to a VAO
      */
-    private void removeFromPreviousVao(){
-        if(vao != null){
-            vao.setEbo(null);
-            this.vao = null;
+    private void checkConnection(@Nullable Vao vao){
+        if(this.vao != null && vao != null && this.vao != vao){
+            throw new IllegalArgumentException("The EBO is already connected to a VAO");
         }
-    }
-
-    /**
-     Adds this EBO to the currently bound VAO.
-     */
-    private void addToBoundVao(){
-        Vao vao = Vao.getBoundVao();
-        if(vao != null){
-            vao.setEbo(this);
-            this.vao = vao;
-        }
-    }
-
-    @Override
-    public void unbind(){
-        super.unbind();
-        boundEbo = null;
-    }
-
-    @Override
-    public boolean isBound(){
-        return this == getBoundEbo();
-    }
-
-    /**
-     Returns the currently bound EBO.
-
-     @return the currently bound EBO
-     */
-    @Nullable
-    public static Ebo getBoundEbo(){
-        return boundEbo;
     }
 
     @Override
     public void release(){
         super.release();
-        removeFromPreviousVao();
-        if(isBound()){
-            boundEbo = null;
+        if(vao != null){
+            vao.setEbo(null);
+            vao = null;
         }
     }
 
     @Override
     public String toString(){
-        return super.toString() + "\n" + Ebo.class.getSimpleName() + "(" + ")";
+        return super.toString() + "\n" + Ebo.class.getSimpleName() + "(" + "vao: " + vao + ")";
     }
 }

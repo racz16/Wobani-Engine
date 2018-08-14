@@ -19,52 +19,51 @@ public abstract class IndexBindableBufferObject extends BufferObject{
     /**
      Initializes a new IndexBindableBufferObject to the given target.
 
-     @param target type
+     @param target Buffer Object's target
      */
     public IndexBindableBufferObject(int target){
         super(target);
     }
 
     /**
-     Binds the Buffer Object to the given binding point. You don't have to bind the Buffer Object itself before calling
-     this method (but it's not a problem if you do). Note that this method doesn't bind the Buffer Object, it binds to a
-     binding point. If you want to bind the Buffer, you should call the bind method.
+     Checks whether the binding is possible.
 
      @param bindingPoint binding point
 
      @throws IllegalArgumentException if binding point is lower than 0 or higher than the highest valid binding point
-     @see #bind()
      */
-    public void bindToBindingPoint(int bindingPoint){
+    private void bindingGeneral(int bindingPoint){
         checkRelease();
         if(bindingPoint < 0 || bindingPoint > getHighestValidBindingPoint()){
             throw new IllegalArgumentException("Binding point can't be lower than 0 or higher than the highest valid binding point");
         }
+    }
+
+    /**
+     Binds the Buffer Object to the given binding point.
+
+     @param bindingPoint binding point
+     */
+    public void bindToBindingPoint(int bindingPoint){
+        bindingGeneral(bindingPoint);
         this.bindingPoints.add(bindingPoint);
         GL30.glBindBufferBase(getTarget(), bindingPoint, getId());
     }
 
     /**
-     Unbinds the Buffer Object from the given binding point. You don't have to bind the Buffer Object before calling this
-     method (but it's not a problem if you do). Note that this method doesn't unbind the Buffer Object, it unbinds from a
-     binding point. If you want to unbind the Buffer, you should call the unbind method.
+     Unbinds the Buffer Object from the given binding point.
 
      @param bindingPoint binding point
 
-     @throws IllegalArgumentException if binding point is lower than 0 or higher than the highest valid binding point or
-     if the Buffer Object isn't bound to the given binding point
-     @see #unbind()
+     @throws IllegalArgumentException if the Buffer Object isn't bound to the given binding point
      */
     public void unbindFromBindingPoint(int bindingPoint){
-        checkRelease();
-        if(bindingPoint < 0 || bindingPoint > getHighestValidBindingPoint()){
-            throw new IllegalArgumentException("Binding point can't be lower than 0 or higher than the highest valid binding point");
-        }
+        bindingGeneral(bindingPoint);
         if(!bindingPoints.contains(bindingPoint)){
             throw new IllegalArgumentException("The Buffer Object not bound to the given binding point");
         }
-        GL30.glBindBufferBase(getTarget(), bindingPoint, 0);
         bindingPoints.remove(bindingPoint);
+        GL30.glBindBufferBase(getTarget(), bindingPoint, 0);
 
     }
 

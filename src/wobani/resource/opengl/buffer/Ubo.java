@@ -10,11 +10,6 @@ import wobani.toolbox.annotation.*;
 public class Ubo extends IndexBindableBufferObject{
 
     /**
-     The currently bound UBO.
-     */
-    private static Ubo boundUbo;
-
-    /**
      Initializes a new UBO.
      */
     public Ubo(){
@@ -37,36 +32,9 @@ public class Ubo extends IndexBindableBufferObject{
         return "UBO";
     }
 
-    /**
-     Returns the currently bound UBO.
-
-     @return the currently bound UBO
-     */
-    @Nullable
-    public static Ubo getBoundUbo(){
-        return boundUbo;
-    }
-
-    @Override
-    public boolean isBound(){
-        return this == getBoundUbo();
-    }
-
     @Override
     protected int getMaxDataSize(){
         return OpenGlConstants.MAX_UNIFORM_BLOCK_SIZE;
-    }
-
-    @Override
-    public void bind(){
-        super.bind();
-        boundUbo = this;
-    }
-
-    @Override
-    public void unbind(){
-        super.unbind();
-        boundUbo = null;
     }
 
     @Override
@@ -81,14 +49,6 @@ public class Ubo extends IndexBindableBufferObject{
      */
     public static int getAvailableBindingPointCount(){
         return OpenGlConstants.MAX_UNIFORM_BUFFER_BINDINGS;
-    }
-
-    @Override
-    public void release(){
-        super.release();
-        if(isBound()){
-            boundUbo = null;
-        }
     }
 
     @Override

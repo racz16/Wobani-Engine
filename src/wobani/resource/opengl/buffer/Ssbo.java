@@ -10,11 +10,6 @@ import wobani.toolbox.annotation.*;
 public class Ssbo extends IndexBindableBufferObject{
 
     /**
-     The currently bound SSBO.
-     */
-    private static Ssbo boundSsbo;
-
-    /**
      Initializes a new SSBO.
      */
     public Ssbo(){
@@ -37,36 +32,9 @@ public class Ssbo extends IndexBindableBufferObject{
         return "SSBO";
     }
 
-    /**
-     Returns the currently bound SSBO.
-
-     @return the currently bound SSBO
-     */
-    @Nullable
-    public static Ssbo getBoundSsbo(){
-        return boundSsbo;
-    }
-
-    @Override
-    public boolean isBound(){
-        return this == getBoundSsbo();
-    }
-
     @Override
     protected int getMaxDataSize(){
         return OpenGlConstants.MAX_SHADER_STORAGE_BLOCK_SIZE;
-    }
-
-    @Override
-    public void bind(){
-        super.bind();
-        boundSsbo = this;
-    }
-
-    @Override
-    public void unbind(){
-        super.unbind();
-        boundSsbo = null;
     }
 
     @Override
@@ -81,14 +49,6 @@ public class Ssbo extends IndexBindableBufferObject{
      */
     public static int getAvailableBindingPointCount(){
         return OpenGlConstants.MAX_SHADER_STORAGE_BUFFER_BINDINGS;
-    }
-
-    @Override
-    public void release(){
-        super.release();
-        if(isBound()){
-            boundSsbo = null;
-        }
     }
 
     @Override

@@ -114,22 +114,18 @@ public class VertexAttribArray{
     /**
      Enables the vertex attrib array.
      */
-    @Bind
     public void enable(){
         checkRelease();
-        checkBind();
-        GL20.glEnableVertexAttribArray(pointer.getIndex());
+        GL45.glEnableVertexArrayAttrib(vao.getId(), pointer.getIndex());
         enabled = true;
     }
 
     /**
      Disables the vertex attrib array.
      */
-    @Bind
     public void disable(){
         checkRelease();
-        checkBind();
-        GL20.glDisableVertexAttribArray(pointer.getIndex());
+        GL45.glDisableVertexArrayAttrib(vao.getId(), pointer.getIndex());
         enabled = false;
     }
 
@@ -152,17 +148,6 @@ public class VertexAttribArray{
             throw new ReleasedException(vao);
         }else if(!Utility.isUsable(vbo)){
             throw new ReleasedException(vbo);
-        }
-    }
-
-    /**
-     If the VAO is not bound it throws a NotBoundException.
-
-     @throws NotBoundException if the VAO is not bound
-     */
-    private void checkBind(){
-        if(Vao.getBoundVao() != vao){
-            throw new NotBoundException(vao);
         }
     }
 

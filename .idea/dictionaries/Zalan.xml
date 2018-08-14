@@ -27,6 +27,7 @@
       <w>joml</w>
       <w>lwjgl</w>
       <w>minification</w>
+      <w>mipmap</w>
       <w>mipmaps</w>
       <w>msaa</w>
       <w>multisample</w>

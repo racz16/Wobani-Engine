@@ -244,10 +244,8 @@ public class BlinnPhongLightSourceTile{
     private void refreshInSsbo(@NotNull BlinnPhongPositionalLightComponent light){
         FloatBuffer parameters = light.computeLightParameters();
         IntBuffer metadata = light.computeLightMetadata();
-        ssbo.bind();
         ssbo.store(parameters, light.getShaderIndex() * LIGHT_SIZE + LIGHT_SOURCES_OFFSET);
         ssbo.store(metadata, light.getShaderIndex() * LIGHT_SIZE + TYPE_ADDRESS + LIGHT_SOURCES_OFFSET);
-        ssbo.unbind();
         LOG.fine("Positional light refreshed in the SSBO");
     }
 
@@ -269,7 +267,7 @@ public class BlinnPhongLightSourceTile{
      */
     private void setSlotCount(){
         slotCount = computeSlotCount();
-        refreshSlotCountInSsbo();
+        ssbo.store(new int[]{slotCount}, 0);
     }
 
     /**
@@ -287,23 +285,12 @@ public class BlinnPhongLightSourceTile{
     }
 
     /**
-     Refreshes the tile's slot count in the SSBO.
-     */
-    private void refreshSlotCountInSsbo(){
-        ssbo.bind();
-        ssbo.store(new int[]{slotCount}, 0);
-        ssbo.unbind();
-    }
-
-    /**
      Removes the light source from the SSBO based on the given shader index.
 
      @param shaderIndex light shader index
      */
     private void removeLightFromSsbo(int shaderIndex){
-        ssbo.bind();
         ssbo.store(new int[]{0}, shaderIndex * LIGHT_SIZE + ACTIVE_ADDRESS + LIGHT_SOURCES_OFFSET);
-        ssbo.unbind();
         LOG.fine("Positional light removed from the SSBO");
     }
 
@@ -314,9 +301,7 @@ public class BlinnPhongLightSourceTile{
      */
     private void changeSsboSizeTo(int lightCount){
         refreshAllLights = true;
-        ssbo.bind();
         ssbo.allocate(lightCount * LIGHT_SIZE + LIGHT_SOURCES_OFFSET, BufferObject.BufferObjectUsage.STATIC_DRAW);
-        ssbo.unbind();
         LOG.fine("Positional light SSBO size changed");
     }
 
@@ -501,9 +486,7 @@ public class BlinnPhongLightSourceTile{
      */
     private void createSsboUnsafe(){
         ssbo = new Ssbo(getClass().getSimpleName() + " " + getCenter().x() + " " + getCenter().y());
-        ssbo.bind();
         ssbo.allocate(LIGHT_SIZE + LIGHT_SOURCES_OFFSET, BufferObject.BufferObjectUsage.STATIC_DRAW);
-        ssbo.unbind();
     }
 
     /**

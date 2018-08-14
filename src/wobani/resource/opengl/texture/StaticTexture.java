@@ -179,7 +179,7 @@ public abstract class StaticTexture extends AbstractTexture implements EasyFilte
         glBind();
     }
 
-    @Override
+    //TODO: to protected
     public int getId(){
         return id;
     }

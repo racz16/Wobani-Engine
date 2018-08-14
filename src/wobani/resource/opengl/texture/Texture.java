@@ -12,61 +12,61 @@ public interface Texture extends Resource{
     /**
      Binds the texture.
      */
-    public void bind();
-
-    /**
-     Returns the texture's id.
-
-     @return the texture's id
-     */
-    public int getId();
+    void bind();
 
     /**
      Unbinds the texture.
      */
-    public void unbind();
+    void unbind();
 
     /**
      Returns the texture's width and height.
 
      @return the texture's width and height
      */
-    public Vector2i getSize();
+    Vector2i getSize();
 
     /**
      Activates the texture in the specified texture unit.
 
      @param textureUnit texture unit (0;31)
      */
-    public void bindToTextureUnit(int textureUnit);
+    void bindToTextureUnit(int textureUnit);
 
     /**
      Determines whether the texture is in sRGB color space.
 
      @return true if the texture's color space is sRGB, false otherwise
      */
-    public boolean issRgb();
+    boolean issRgb();
+
+    int getId();
 
     /**
      Texture filter mode.
      */
-    public enum TextureFilter{
+    enum TextureFilter{
         /**
          Nearest filter.
          */
-        NEAREST(GL11.GL_NEAREST), /**
+        NEAREST(GL11.GL_NEAREST),
+        /**
          Linear filter.
          */
-        LINEAR(GL11.GL_LINEAR), /**
+        LINEAR(GL11.GL_LINEAR),
+        /**
          Nearest mipmap nearest filter.
          */
-        NEAREST_MIPMAP_NEAREST(GL11.GL_NEAREST_MIPMAP_NEAREST), /**
+        NEAREST_MIPMAP_NEAREST(GL11.GL_NEAREST_MIPMAP_NEAREST),
+        /**
          Linear mipmap linear filter.
          */
-        LINEAR_MIPMAP_LINEAR(GL11.GL_LINEAR_MIPMAP_LINEAR), /**
+        LINEAR_MIPMAP_LINEAR(GL11.GL_LINEAR_MIPMAP_LINEAR),
+        /**
          Nearest mipmap linear filter.
          */
-        NEAREST_MIPMAP_LINEAR(GL11.GL_NEAREST_MIPMAP_LINEAR), /**
+        NEAREST_MIPMAP_LINEAR(GL11.GL_NEAREST_MIPMAP_LINEAR),
+        /**
          Linear mipmap nearest filter.
          */
         LINEAR_MIPMAP_NEAREST(GL11.GL_LINEAR_MIPMAP_NEAREST);
@@ -81,7 +81,7 @@ public interface Texture extends Resource{
 
          @param code filter's OpenGL code
          */
-        private TextureFilter(int code){
+        TextureFilter(int code){
             openGlCode = code;
         }
 
@@ -98,11 +98,12 @@ public interface Texture extends Resource{
     /**
      Texture filter type.
      */
-    public enum TextureFilterType{
+    enum TextureFilterType{
         /**
          Magnification.
          */
-        MAGNIFICATION(GL11.GL_TEXTURE_MAG_FILTER), /**
+        MAGNIFICATION(GL11.GL_TEXTURE_MAG_FILTER),
+        /**
          Minification.
          */
         MINIFICATION(GL11.GL_TEXTURE_MIN_FILTER);
@@ -117,7 +118,7 @@ public interface Texture extends Resource{
 
          @param code texture filter type's OpenGL code
          */
-        private TextureFilterType(int code){
+        TextureFilterType(int code){
             openGlCode = code;
         }
 
@@ -134,17 +135,20 @@ public interface Texture extends Resource{
     /**
      Texture wrap mode.
      */
-    public enum TextureWrap{
+    enum TextureWrap{
         /**
          Repeat.
          */
-        REPEAT(GL11.GL_REPEAT), /**
+        REPEAT(GL11.GL_REPEAT),
+        /**
          Mirrored repeat.
          */
-        MIRRORED_REPEAT(GL14.GL_MIRRORED_REPEAT), /**
+        MIRRORED_REPEAT(GL14.GL_MIRRORED_REPEAT),
+        /**
          Clamp to edge.
          */
-        CLAMP_TO_EDGE(GL12.GL_CLAMP_TO_EDGE), /**
+        CLAMP_TO_EDGE(GL12.GL_CLAMP_TO_EDGE),
+        /**
          Clamp to border. It uses the border color.
          */
         CLAMP_TO_BORDER(GL13.GL_CLAMP_TO_BORDER);
@@ -159,7 +163,7 @@ public interface Texture extends Resource{
 
          @param code texture wrap mode's OpenGL code
          */
-        private TextureWrap(int code){
+        TextureWrap(int code){
             openGlCode = code;
         }
 
@@ -176,14 +180,16 @@ public interface Texture extends Resource{
     /**
      Texture wrap direction.
      */
-    public enum TextureWrapDirection{
+    enum TextureWrapDirection{
         /**
          U direction in texture space.
          */
-        WRAP_U(GL11.GL_TEXTURE_WRAP_S), /**
+        WRAP_U(GL11.GL_TEXTURE_WRAP_S),
+        /**
          V direction in texture space.
          */
-        WRAP_V(GL11.GL_TEXTURE_WRAP_T), /**
+        WRAP_V(GL11.GL_TEXTURE_WRAP_T),
+        /**
          W direction in texture space.
          */
         WRAP_W(GL12.GL_TEXTURE_WRAP_R);
@@ -198,7 +204,7 @@ public interface Texture extends Resource{
 
          @param code texture wrap type's OpenGL code
          */
-        private TextureWrapDirection(int code){
+        TextureWrapDirection(int code){
             openGlCode = code;
         }
 

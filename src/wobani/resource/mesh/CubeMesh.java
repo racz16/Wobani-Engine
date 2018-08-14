@@ -59,19 +59,10 @@ public class CubeMesh implements Mesh{
     private void loadData(){
         if(vao == null || !vao.isUsable()){
             vao = new Vao(getClass().getSimpleName());
-            vao.bind();
-            createPositionVbo();
-            vao.unbind();
+            Vbo pos = new Vbo(getClass().getSimpleName() + " position");
+            pos.allocateAndStoreImmutable(positions, false);
+            vao.connectVbo(pos, new VertexAttribPointer(0, 3));
         }
-    }
-
-    private void createPositionVbo(){
-        Vbo pos = new Vbo(getClass().getSimpleName() + " position");
-        pos.bind();
-        pos.allocateAndStore(positions, BufferObject.BufferObjectUsage.STATIC_DRAW);
-        vao.setVertexAttribArray(new VertexAttribPointer(0, 3));
-        vao.getVertexAttribArray(0).enable();
-        pos.unbind();
     }
 
     @Override

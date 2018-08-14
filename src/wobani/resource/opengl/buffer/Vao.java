@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class Vao extends OpenGlObject{
     /**
-     The connected vertex attrib array.
+     The connected vertex attrib arrays.
      */
     private final Map<Integer, VertexAttribArray> vertexAttribArrays = new HashMap<>();
     /**
@@ -31,19 +31,27 @@ public class Vao extends OpenGlObject{
     private static final VaoPool VAO_POOL = new VaoPool();
 
     /**
-     Initializes a new VAO to the given value.
+     Initializes a new Vao.
+     */
+    public Vao(){
+    }
+
+    /**
+     Initializes a new Vao to the given value.
 
      @param label label
      */
     public Vao(@NotNull String label){
-        super();
-        //FIXME: currently not working
-        //setLabel(label);
+        setLabel(label);
     }
 
     @Override
     protected int createId(){
         return VAO_POOL.getResource();
+    }
+
+    protected int getId(){
+        return super.getId();
     }
 
     @NotNull
@@ -75,19 +83,34 @@ public class Vao extends OpenGlObject{
     //
 
     /**
-     Adds the given vertex attrib pointer to the VAO.
+     Connects the given VBO with the vertex attrib pointer to this VAO.
 
+     @param vbo VBO
      @param vap vertex attrib pointer
      */
-    @Bind
-    public void setVertexAttribArray(@NotNull VertexAttribPointer vap){
+    public void connectVbo(@NotNull Vbo vbo, @NotNull VertexAttribPointer vap){
         checkRelease();
-        checkBind();
-        Vbo vbo = Vbo.getBoundVbo();
+        vbo.checkRelease();
         removeVertexAttribArray(vap.getIndex());
-        if(vbo != null){
-            setVertexAttribArrayUnsafe(vap, vbo);
-        }
+        VertexAttribArray vaa = new VertexAttribArray(this, vbo, vap);
+        vertexAttribArrays.put(vap.getIndex(), vaa);
+        vbo.setVertexAttribArray(vaa);
+        connectVboUnsafe(vaa, vap);
+    }
+
+    /**
+     Connects the given vertex attrib array with the vertex attrib pointer to this VAO.
+
+     @param vaa vertex attrib array
+     @param vap vertex attrib pointer
+     */
+    private void connectVboUnsafe(@NotNull VertexAttribArray vaa, @NotNull VertexAttribPointer vap){
+        vaa.enable();
+        GL45.glVertexArrayVertexBuffer(getId(), vap.getIndex(), vaa.getVbo().getId(), vap.getOffset(), vap
+                .getSize() * 4);
+        GL45.glVertexArrayAttribFormat(getId(), vap.getIndex(), vap.getSize(), vap.getType().getCode(), vap
+                .isNormalized(), vap.getRelativeOffset());
+        GL45.glVertexArrayAttribBinding(getId(), vap.getIndex(), vap.getIndex());
     }
 
     /**
@@ -100,22 +123,8 @@ public class Vao extends OpenGlObject{
         VertexAttribArray vaa = vertexAttribArrays.get(index);
         if(vaa != null){
             vertexAttribArrays.remove(index);
-            vaa.getVbo().removeVertexAttribArray(vaa);
+            vaa.getVbo().setVertexAttribArray(null);
         }
-    }
-
-    /**
-     Adds a vertex attrib array to the VAO with the given vertex attrib pointer and VBO.
-
-     @param vap vertex attrib pointer
-     @param vbo bound VBO
-     */
-    private void setVertexAttribArrayUnsafe(@NotNull VertexAttribPointer vap, @NotNull Vbo vbo){
-        VertexAttribArray vaa = new VertexAttribArray(this, vbo, vap);
-        vertexAttribArrays.put(vap.getIndex(), vaa);
-        vbo.addVertexAttribArray(vaa);
-        GL20.glVertexAttribPointer(vap.getIndex(), vap.getSize(), vap.getType().getCode(), vap.isNormalized(), vap
-                .getStride(), vap.getPointer());
     }
 
     /**
@@ -141,29 +150,24 @@ public class Vao extends OpenGlObject{
         return Collections.unmodifiableCollection(vertexAttribArrays.keySet());
     }
 
-    /**
-     If the VAO is not bound it throws a NotBoundException.
+    //
+    //EBO---------------------------------------------------------------------------------------------------------------
+    //
 
-     @throws NotBoundException if the VAO is not bound
+    /**
+     Connects the given EBO to this VAO.
+
+     @param ebo EBO
      */
-    protected void checkBind(){
-        if(!isBound()){
-            throw new NotBoundException(this);
+    public void connectEbo(@NotNull Ebo ebo){
+        checkRelease();
+        ebo.checkRelease();
+        if(Utility.isUsable(this.ebo)){
+            this.ebo.setVao(null);
         }
-    }
-
-    //
-    //EBO-----------------------------------------------------------------------
-    //
-
-    /**
-     Sets the EBO to the given value.
-
-     @param ebo ebo
-     */
-    @Internal
-    void setEbo(@Nullable Ebo ebo){
+        ebo.setVao(this);
         this.ebo = ebo;
+        GL45.glVertexArrayElementBuffer(getId(), ebo.getId());
     }
 
     /**
@@ -176,13 +180,22 @@ public class Vao extends OpenGlObject{
         return ebo;
     }
 
+    /**
+     Sets the EBO to the given value.
+
+     @param ebo ebo
+     */
+    @Internal
+    void setEbo(@Nullable Ebo ebo){
+        this.ebo = ebo;
+    }
+
     //
-    //misc----------------------------------------------------------------------
+    //misc--------------------------------------------------------------------------------------------------------------
     //
     @Override
     protected int getType(){
         return GL11.GL_VERTEX_ARRAY;
-
     }
 
     /**
@@ -202,6 +215,17 @@ public class Vao extends OpenGlObject{
         checkBind();
         GL30.glBindVertexArray(0);
         boundVao = null;
+    }
+
+    /**
+     If the VAO is not bound it throws a NotBoundException.
+
+     @throws NotBoundException if the VAO is not bound
+     */
+    protected void checkBind(){
+        if(!isBound()){
+            throw new NotBoundException(this);
+        }
     }
 
     /**
@@ -251,7 +275,7 @@ public class Vao extends OpenGlObject{
      */
     private void removeVertexAttribArrays(){
         for(VertexAttribArray vaa : vertexAttribArrays.values()){
-            vaa.getVbo().removeVertexAttribArray(vaa);
+            vaa.getVbo().setVertexAttribArray(null);
         }
         vertexAttribArrays.clear();
     }
@@ -292,13 +316,19 @@ public class Vao extends OpenGlObject{
 
     }
 
+    @Override
+    public String toString(){
+        return super.toString() + "\n" + Vao.class
+                .getSimpleName() + "(" + "vertexAttribArrays: " + vertexAttribArrays + ", " + "ebo: " + ebo + ")";
+    }
+
     /**
      For creating VAOs efficiently.
      */
     private static class VaoPool extends ResourcePool{
         @Override
         protected void createResources(int[] resources){
-            GL30.glGenVertexArrays(resources);
+            GL45.glCreateVertexArrays(resources);
         }
 
         @Override
@@ -307,9 +337,4 @@ public class Vao extends OpenGlObject{
         }
     }
 
-    @Override
-    public String toString(){
-        return super.toString() + "\n" + Vao.class
-                .getSimpleName() + "(" + "vertexAttribArrays: " + vertexAttribArrays + ", " + "ebo: " + ebo + ")";
-    }
 }

@@ -5,7 +5,7 @@ import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
 /**
- Object oriented wrapper above the vertex attrib pointer.
+ Object oriented wrapper above the vertex attrib relativeOffset.
  */
 public class VertexAttribPointer{
     /**
@@ -25,22 +25,69 @@ public class VertexAttribPointer{
      */
     private boolean normalized = false;
     /**
-     Stride.
+     Offset.
      */
-    private int stride = 0;
+    private int offset = 0;
     /**
-     Pointer.
+     Relative offset.
      */
-    private int pointer = 0;
+    private int relativeOffset = 0;
 
     /**
-     Vertex attrib pointer type.
+     Vertex attrib relativeOffset type.
      */
     public enum VertexAttribPointerType{
-        BYTE(GL11.GL_BYTE), UNSIGNED_BYTE(GL11.GL_UNSIGNED_BYTE), SHORT(GL11.GL_SHORT), UNSIGNED_SHORT(GL11.GL_UNSIGNED_SHORT), INT(GL11.GL_INT), UNSIGNED_INT(GL11.GL_UNSIGNED_INT), HALF_FLOAT(GL30.GL_HALF_FLOAT), FLOAT(GL11.GL_FLOAT), DOUBLE(GL11.GL_DOUBLE), UNSIGNED_INT_2_10_10_10_REV(GL12.GL_UNSIGNED_INT_2_10_10_10_REV), INT_2_10_10_10_REV(GL33.GL_INT_2_10_10_10_REV), FIXED(GL41.GL_FIXED);
+        /**
+         Byte.
+         */
+        BYTE(GL11.GL_BYTE),
+        /**
+         Unsigned byte.
+         */
+        UNSIGNED_BYTE(GL11.GL_UNSIGNED_BYTE),
+        /**
+         Short.
+         */
+        SHORT(GL11.GL_SHORT),
+        /**
+         Unsigned short.
+         */
+        UNSIGNED_SHORT(GL11.GL_UNSIGNED_SHORT),
+        /**
+         Integer.
+         */
+        INT(GL11.GL_INT),
+        /**
+         Unsigned integer.
+         */
+        UNSIGNED_INT(GL11.GL_UNSIGNED_INT),
+        /**
+         Half float.
+         */
+        HALF_FLOAT(GL30.GL_HALF_FLOAT),
+        /**
+         Float.
+         */
+        FLOAT(GL11.GL_FLOAT),
+        /**
+         Double.
+         */
+        DOUBLE(GL11.GL_DOUBLE),
+        /**
+         Unsigned integer 2-10-10-10.
+         */
+        UNSIGNED_INT_2_10_10_10_REV(GL12.GL_UNSIGNED_INT_2_10_10_10_REV),
+        /**
+         Integer 2-10-10-10.
+         */
+        INT_2_10_10_10_REV(GL33.GL_INT_2_10_10_10_REV),
+        /**
+         Fixed.
+         */
+        FIXED(GL41.GL_FIXED);
 
         /**
-         Vertex attrib pointer type's OpenGL code.
+         Vertex attrib array type's OpenGL code.
          */
         private final int code;
 
@@ -73,9 +120,9 @@ public class VertexAttribPointer{
         }
 
         /**
-         Returns the vertex attrib pointer type's OpenGL code.
+         Returns the vertex attrib array pointer's OpenGL code.
 
-         @return the vertex attrib pointer type's OpenGL code
+         @return the vertex attrib array pointer's OpenGL code
          */
         public int getCode(){
             return code;
@@ -109,22 +156,22 @@ public class VertexAttribPointer{
     /**
      Initializes a new VertexAttribPointer to the given values.
 
-     @param index      index, must be lower than the maximum vertex attribs
-     @param size       size, must be in the (1;4) interval
-     @param type       type
-     @param normalized normalized
-     @param stride     stride, can't be negative
-     @param pointer    pointer, can't be negative
+     @param index          index, must be lower than the maximum vertex attribs
+     @param size           size, must be in the (1;4) interval
+     @param type           type
+     @param normalized     normalized
+     @param offset         offset, can't be negative
+     @param relativeOffset relative offset, can't be negative
 
      @see OpenGlConstants#MAX_VERTEX_ATTRIBS
      */
-    public VertexAttribPointer(int index, int size, @NotNull VertexAttribPointerType type, boolean normalized, int stride, int pointer){
+    public VertexAttribPointer(int index, int size, @NotNull VertexAttribPointerType type, boolean normalized, int offset, int relativeOffset){
         setIndex(index);
         setSize(size);
         setType(type);
         setNormalized(normalized);
-        setStride(stride);
-        setPointer(pointer);
+        setOffset(offset);
+        setRelativeOffset(relativeOffset);
     }
 
     /**
@@ -208,58 +255,58 @@ public class VertexAttribPointer{
     }
 
     /**
-     Sets whether or not the vertex attrib array is normalized.
+     Sets whether or not the vertex attrib pointer is normalized.
 
-     @param normalized true if this vertex attrib array should be normalized, false otherwise
+     @param normalized true if this vertex attrib pointer should be normalized, false otherwise
      */
     private void setNormalized(boolean normalized){
         this.normalized = normalized;
     }
 
     /**
-     Returns the stride.
+     Returns the offset.
 
-     @return the stride
+     @return the offset
      */
-    public int getStride(){
-        return stride;
+    public int getOffset(){
+        return offset;
     }
 
     /**
-     Sets stride to the given value.
+     Sets offset to the given value.
 
-     @param stride stride, can't be negative
+     @param offset offset, can't be negative
 
-     @throws IllegalArgumentException if stride is negative
+     @throws IllegalArgumentException if offset is negative
      */
-    private void setStride(int stride){
-        if(stride < 0){
-            throw new IllegalArgumentException("Stride is negative");
+    private void setOffset(int offset){
+        if(offset < 0){
+            throw new IllegalArgumentException("Offset is negative");
         }
-        this.stride = stride;
+        this.offset = offset;
     }
 
     /**
-     Returns the pointer.
+     Returns the relative offset.
 
-     @return the pointer
+     @return the relative offset
      */
-    public int getPointer(){
-        return pointer;
+    public int getRelativeOffset(){
+        return relativeOffset;
     }
 
     /**
-     Sets pointer to the given value.
+     Sets relative offset to the given value.
 
-     @param pointer pointer, can't be negative
+     @param relativeOffset relative offset, can't be negative
 
-     @throws IllegalArgumentException if pointer is negative
+     @throws IllegalArgumentException if relative offset is negative
      */
-    private void setPointer(int pointer){
-        if(pointer < 0){
-            throw new IllegalArgumentException("Pointer is negative");
+    private void setRelativeOffset(int relativeOffset){
+        if(relativeOffset < 0){
+            throw new IllegalArgumentException("Relative offset is negative");
         }
-        this.pointer = pointer;
+        this.relativeOffset = relativeOffset;
     }
 
     @Override
@@ -282,10 +329,10 @@ public class VertexAttribPointer{
         if(normalized != that.normalized){
             return false;
         }
-        if(stride != that.stride){
+        if(offset != that.offset){
             return false;
         }
-        if(pointer != that.pointer){
+        if(relativeOffset != that.relativeOffset){
             return false;
         }
         return type == that.type;
@@ -297,15 +344,15 @@ public class VertexAttribPointer{
         result = 31 * result + size;
         result = 31 * result + type.hashCode();
         result = 31 * result + (normalized ? 1 : 0);
-        result = 31 * result + stride;
-        result = 31 * result + pointer;
+        result = 31 * result + offset;
+        result = 31 * result + relativeOffset;
         return result;
     }
 
     @Override
     public String toString(){
         return VertexAttribPointer.class
-                .getSimpleName() + "(" + "index: " + index + ", " + "size: " + size + ", " + "type: " + type + ", " + "normalized: " + normalized + ", " + "stride: " + stride + ", " + "pointer: " + pointer + ")";
+                .getSimpleName() + "(" + "index: " + index + ", " + "size: " + size + ", " + "type: " + type + ", " + "normalized: " + normalized + ", " + "offset: " + offset + ", " + "relativeOffset: " + relativeOffset + ")";
     }
 
 

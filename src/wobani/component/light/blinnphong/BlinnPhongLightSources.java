@@ -256,10 +256,8 @@ public class BlinnPhongLightSources{
     private static void refreshDirectionalInUbo(){
         FloatBuffer parameters = directionalLight.computeLightParameters();
         IntBuffer metadata = directionalLight.computeLightMetadata();
-        ubo.bind();
         ubo.store(parameters, 0);
         ubo.store(metadata, TYPE_ADDRESS);
-        ubo.unbind();
         LOG.fine("Directional light refreshed in the UBO");
     }
 
@@ -674,9 +672,7 @@ public class BlinnPhongLightSources{
      */
     private static void createUboUnsafe(){
         ubo = new Ubo("BlinnPhongLightSources Directional Light");
-        ubo.bind();
-        ubo.allocate(LIGHT_SIZE, BufferObject.BufferObjectUsage.STATIC_DRAW);
-        ubo.unbind();
+        ubo.allocateImmutable(LIGHT_SIZE);
         ubo.bindToBindingPoint(2);
     }
 
@@ -710,9 +706,7 @@ public class BlinnPhongLightSources{
      */
     private static void createZeroSsboUnsafe(){
         zeroSsbo = new Ssbo("zero");
-        zeroSsbo.bind();
         zeroSsbo.allocateAndStore(new int[]{0}, BufferObject.BufferObjectUsage.STATIC_DRAW);
-        zeroSsbo.unbind();
     }
 
     /**

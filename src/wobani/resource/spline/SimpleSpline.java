@@ -86,13 +86,14 @@ public class SimpleSpline implements Spline{
             if(getRequiredControlPoints() <= getNumberOfControlPoints()){
                 if(vao == null){
                     vao = new Vao(getClass().getSimpleName());
-                    vao.bind();
+                    //vao.bind();
                     Vbo vbo = new Vbo(getClass().getSimpleName() + " position");
-                    vbo.bind();
-                    vao.setVertexAttribArray(new VertexAttribPointer(0, 3));
-                    vao.getVertexAttribArray(0).enable();
-                    vbo.unbind();
-                    vao.unbind();
+                    //vbo.bind();
+                    vao.connectVbo(vbo, new VertexAttribPointer(0, 3));
+                    //vao.setVertexAttribArray(new VertexAttribPointer(0, 3));
+                    //vao.getVertexAttribArray(0).enable();
+                    //vbo.unbind();
+                    //vao.unbind();
                 }
             }else{
                 if(vao != null){
@@ -104,13 +105,13 @@ public class SimpleSpline implements Spline{
             float[] data = computeSplineData();
             numberOfPoints = data.length / 3;
             dataSize = numberOfPoints * 3 * 4;
-            vao.bind();
+            //vao.bind();
             //vao.bindAndAddData("position", 0, 3, data, isDynamic());
             Vbo vbo = vao.getVertexAttribArray(0).getVbo();
-            vbo.bind();
+            //vbo.bind();
             vbo.allocateAndStore(data, BufferObject.BufferObjectUsage.STATIC_DRAW);
-            vbo.unbind();
-            vao.unbind();
+            //vbo.unbind();
+            //vao.unbind();
             valid = true;
         }
     }

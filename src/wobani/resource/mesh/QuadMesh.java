@@ -72,29 +72,23 @@ public class QuadMesh implements Mesh{
             positions[11] = 0;
 
             vao = new Vao(getClass().getSimpleName());
-            vao.bind();
-            //indices
+
             int[] indices = {0, 2, 3, 1, 0, 3};
             Ebo ebo = new Ebo(getClass().getSimpleName());
-            ebo.bind();
-            ebo.allocateAndStore(indices, BufferObject.BufferObjectUsage.STATIC_DRAW);
-            //position
+            ebo.allocateAndStoreImmutable(indices, false);
+            vao.connectEbo(ebo);
+
             Vbo positionVbo = new Vbo(getClass().getSimpleName() + " position");
-            positionVbo.bind();
-            positionVbo.allocateAndStore(positions, BufferObject.BufferObjectUsage.STATIC_DRAW);
-            vao.setVertexAttribArray(new VertexAttribPointer(0, 3));
-            positionVbo.unbind();
-            //uv
+            positionVbo.allocateAndStoreImmutable(positions, false);
+            vao.connectVbo(positionVbo, new VertexAttribPointer(0, 3));
+
             float[] uv = {0, 1, 1, 1, 0, 0, 1, 0};
             Vbo uvVbo = new Vbo(getClass().getSimpleName() + " uv");
-            uvVbo.bind();
-            uvVbo.allocateAndStore(uv, BufferObject.BufferObjectUsage.STATIC_DRAW);
-            vao.setVertexAttribArray(new VertexAttribPointer(1, 2));
-            uvVbo.unbind();
+            uvVbo.allocateAndStoreImmutable(uv, false);
+            vao.connectVbo(uvVbo, new VertexAttribPointer(1, 2));
 
-            vao.getVertexAttribArray(0).enable();
-            vao.getVertexAttribArray(1).enable();
-            vao.unbind();
+            uvVbo.release();
+
         }
     }
 

@@ -6,7 +6,6 @@ import wobani.resource.*;
 import wobani.resource.opengl.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
-import wobani.toolbox.exceptions.*;
 
 import java.nio.*;
 
@@ -26,6 +25,19 @@ public abstract class BufferObject extends OpenGlObject{
      */
     private int dataSize;
     /**
+     Determines whether the Buffer Object is immutable. If it is, you cannot reallocate the data and if {@link
+    #allowDataModification} is false you cannot even modify the data.
+     */
+    private boolean immutable;
+    /**
+     Determines whether the immutable data is modifiable. It cannot be false if the Buffer Object isn't immutable.
+     */
+    private boolean allowDataModification = true;
+    /**
+     The Buffer Object's usage hint.0
+     */
+    private BufferObjectUsage usage;
+    /**
      For creating Buffer Objects efficiently.
      */
     private static final BufferObjectPool BUFFER_OBJECT_POOL = new BufferObjectPool();
@@ -34,15 +46,20 @@ public abstract class BufferObject extends OpenGlObject{
      Initializes a new Buffer Object.
 
      @param target buffer's target
-
-     @throws IllegalArgumentException if the given target is not valid
      */
     public BufferObject(int target){
-        super();
-        if(!isTargetValid(target)){
-            throw new IllegalArgumentException("The given target is not valid");
-        }
+        checkTarget(target);
         this.target = target;
+    }
+
+    @Override
+    protected int getId(){
+        return super.getId();
+    }
+
+    @Override
+    protected void checkRelease(){
+        super.checkRelease();
     }
 
     @Override
@@ -61,10 +78,12 @@ public abstract class BufferObject extends OpenGlObject{
 
      @param target buffer's type
 
-     @return true if the given parameter is a valid OpenGL Buffer Object target, false otherwise
+     @throws IllegalArgumentException if the given target is not valid
      */
-    private boolean isTargetValid(int target){
-        return target == GL15.GL_ARRAY_BUFFER || target == GL42.GL_ATOMIC_COUNTER_BUFFER || target == GL31.GL_COPY_READ_BUFFER || target == GL31.GL_COPY_WRITE_BUFFER || target == GL43.GL_DISPATCH_INDIRECT_BUFFER || target == GL40.GL_DRAW_INDIRECT_BUFFER || target == GL15.GL_ELEMENT_ARRAY_BUFFER || target == GL21.GL_PIXEL_PACK_BUFFER || target == GL21.GL_PIXEL_UNPACK_BUFFER || target == GL44.GL_QUERY_BUFFER || target == GL43.GL_SHADER_STORAGE_BUFFER || target == GL31.GL_TEXTURE_BUFFER || target == GL30.GL_TRANSFORM_FEEDBACK_BUFFER || target == GL31.GL_UNIFORM_BUFFER;
+    private void checkTarget(int target){
+        if(target != GL15.GL_ARRAY_BUFFER && target != GL42.GL_ATOMIC_COUNTER_BUFFER && target != GL31.GL_COPY_READ_BUFFER && target != GL31.GL_COPY_WRITE_BUFFER && target != GL43.GL_DISPATCH_INDIRECT_BUFFER && target != GL40.GL_DRAW_INDIRECT_BUFFER && target != GL15.GL_ELEMENT_ARRAY_BUFFER && target != GL21.GL_PIXEL_PACK_BUFFER && target != GL21.GL_PIXEL_UNPACK_BUFFER && target != GL44.GL_QUERY_BUFFER && target != GL43.GL_SHADER_STORAGE_BUFFER && target != GL31.GL_TEXTURE_BUFFER && target != GL30.GL_TRANSFORM_FEEDBACK_BUFFER && target != GL31.GL_UNIFORM_BUFFER){
+            throw new IllegalArgumentException("The given target is not valid");
+        }
     }
 
     /**
@@ -94,93 +113,26 @@ public abstract class BufferObject extends OpenGlObject{
         BUFFER_OBJECT_POOL.setMaxPoolSize(size);
     }
 
+    //
+    //data allocation---------------------------------------------------------------------------------------------------
+    //
+
     /**
-     Allocates memory for the Buffer Object.
+     Checks whether the allocation is possible and stores the given parameters.
 
      @param size  memory size to allocate (in bytes)
-     @param usage data usage
+     @param usage usage hint
 
      @throws IllegalArgumentException if size is negative or higher than the maximum
      */
-    @Bind
-    public void allocate(int size, @NotNull BufferObjectUsage usage){
+    protected void allocationGeneral(int size, @Nullable BufferObjectUsage usage){
         checkRelease();
-        checkBind();
+        checkReallocation();
         if(size < 0 || size > getMaxDataSize()){
             throw new IllegalArgumentException("Size is negative or higher than the maximum");
         }
         dataSize = size;
-        GL15.glBufferData(target, size, usage.getCode());
-    }
-
-    /**
-     Allocates memory for the Buffer Object and fills it with the given data.
-
-     @param data  data to store
-     @param usage data usage
-     */
-    @Bind
-    public void allocateAndStore(@NotNull float[] data, @NotNull BufferObjectUsage usage){
-        try(MemoryStack stack = stackPush()){
-            FloatBuffer buffer = stack.mallocFloat(data.length);
-            buffer.put(data);
-            buffer.flip();
-            allocateAndStore(buffer, usage);
-        }
-    }
-
-    /**
-     Allocates memory for the Buffer Object and fills it with the given data.
-
-     @param data  data to store
-     @param usage data usage
-
-     @throws IllegalArgumentException if size is bigger than the maximum
-     */
-    @Bind
-    public void allocateAndStore(@NotNull FloatBuffer data, @NotNull BufferObjectUsage usage){
-        checkRelease();
-        checkBind();
-        dataSize = data.limit() * Utility.FLOAT_SIZE;
-        if(dataSize > getMaxDataSize()){
-            throw new IllegalArgumentException("Size is bigger than the maximum");
-        }
-        GL15.glBufferData(target, data, usage.getCode());
-    }
-
-    /**
-     Allocates memory for the Buffer Object and fills it with the given data.
-
-     @param data  data to store
-     @param usage data usage
-     */
-    @Bind
-    public void allocateAndStore(@NotNull int[] data, @NotNull BufferObjectUsage usage){
-        try(MemoryStack stack = stackPush()){
-            IntBuffer buffer = stack.mallocInt(data.length);
-            buffer.put(data);
-            buffer.flip();
-            allocateAndStore(buffer, usage);
-        }
-    }
-
-    /**
-     Allocates memory for the Buffer Object and fills it with the given data.
-
-     @param data  data to store
-     @param usage data usage
-
-     @throws IllegalArgumentException if size is bigger than the maximum
-     */
-    @Bind
-    public void allocateAndStore(@NotNull IntBuffer data, @NotNull BufferObjectUsage usage){
-        checkRelease();
-        checkBind();
-        dataSize = data.limit() * Utility.INT_SIZE;
-        if(dataSize > getMaxDataSize()){
-            throw new IllegalArgumentException("Size is bigger than the maximum");
-        }
-        GL15.glBufferData(target, data, usage.getCode());
+        this.usage = usage;
     }
 
     /**
@@ -193,100 +145,248 @@ public abstract class BufferObject extends OpenGlObject{
     }
 
     /**
-     Stores the given data in the Buffer Object.
+     If the Buffer Object is immutable it throws an UnsupportedOperationException.
+
+     @throws UnsupportedOperationException if the Buffer Object is immutable
+     */
+    protected void checkReallocation(){
+        if(isImmutable()){
+            throw new UnsupportedOperationException("You cannot reallocate immutable data");
+        }
+    }
+
+    /**
+     Allocates memory for the Buffer Object.
+
+     @param size  memory size to allocate (in bytes)
+     @param usage data usage
+     */
+    public void allocate(int size, @NotNull BufferObjectUsage usage){
+        allocationGeneral(size, usage);
+        this.usage = usage;
+        GL45.glNamedBufferData(getId(), size, usage.getCode());
+    }
+
+    /**
+     Allocates memory for the Buffer Object. It'll be immutable which means in this case that you can't reallocate it,
+     however you can modify the stored data.
+
+     @param size memory size to allocate (in bytes)
+     */
+    public void allocateImmutable(int size){
+        allocationGeneral(size, null);
+        immutable = true;
+        GL45.glNamedBufferStorage(getId(), size, GL44.GL_DYNAMIC_STORAGE_BIT);
+    }
+
+    /**
+     Allocates memory for the Buffer Object and fills it with the given data.
+
+     @param data  data to store
+     @param usage data usage
+     */
+    public void allocateAndStore(@NotNull float[] data, @NotNull BufferObjectUsage usage){
+        try(MemoryStack stack = stackPush()){
+            allocateAndStore(Utility.storeInBuffer(stack, data), usage);
+        }
+    }
+
+    /**
+     Allocates memory for the Buffer Object and fills it with the given data.
+
+     @param data  data to store
+     @param usage data usage
+     */
+    public void allocateAndStore(@NotNull FloatBuffer data, @NotNull BufferObjectUsage usage){
+        allocationGeneral(data.limit() * Utility.FLOAT_SIZE, usage);
+        GL45.glNamedBufferData(getId(), data, usage.getCode());
+    }
+
+    /**
+     Allocates memory for the Buffer Object and fills it with the given data.
+
+     @param data  data to store
+     @param usage data usage
+     */
+    public void allocateAndStore(@NotNull int[] data, @NotNull BufferObjectUsage usage){
+        try(MemoryStack stack = stackPush()){
+            allocateAndStore(Utility.storeInBuffer(stack, data), usage);
+        }
+    }
+
+    /**
+     Allocates memory for the Buffer Object and fills it with the given data.
+
+     @param data  data to store
+     @param usage data usage
+     */
+    public void allocateAndStore(@NotNull IntBuffer data, @NotNull BufferObjectUsage usage){
+        allocationGeneral(data.limit() * Utility.INT_SIZE, usage);
+        GL45.glNamedBufferData(getId(), data, usage.getCode());
+    }
+
+    /**
+     Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
+     reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
+
+     @param data                  data to store
+     @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
+     */
+    public void allocateAndStoreImmutable(@NotNull float[] data, boolean allowDataModification){
+        try(MemoryStack stack = stackPush()){
+            allocateAndStoreImmutable(Utility.storeInBuffer(stack, data), allowDataModification);
+        }
+    }
+
+    /**
+     Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
+     reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
+
+     @param data                  data to store
+     @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
+     */
+    public void allocateAndStoreImmutable(@NotNull FloatBuffer data, boolean allowDataModification){
+        allocationGeneral(data.limit() * Utility.FLOAT_SIZE, null);
+        immutable = true;
+        this.allowDataModification = allowDataModification;
+        GL45.glNamedBufferStorage(getId(), data, allowDataModification ? GL44.GL_DYNAMIC_STORAGE_BIT : GL11.GL_NONE);
+    }
+
+    /**
+     Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
+     reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
+
+     @param data                  data to store
+     @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
+     */
+    public void allocateAndStoreImmutable(@NotNull int[] data, boolean allowDataModification){
+        try(MemoryStack stack = stackPush()){
+            allocateAndStoreImmutable(Utility.storeInBuffer(stack, data), allowDataModification);
+        }
+    }
+
+    /**
+     Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
+     reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
+
+     @param data                  data to store
+     @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
+     */
+    public void allocateAndStoreImmutable(@NotNull IntBuffer data, boolean allowDataModification){
+        allocationGeneral(data.limit() * Utility.INT_SIZE, null);
+        immutable = true;
+        this.allowDataModification = allowDataModification;
+        GL45.glNamedBufferStorage(getId(), data, allowDataModification ? GL44.GL_DYNAMIC_STORAGE_BIT : GL11.GL_NONE);
+    }
+
+    //
+    //data store--------------------------------------------------------------------------------------------------------
+    //
+
+    /**
+     Checks whether the data modifications is possible with the given parameters.
+
+     @param offset data's offset (in bytes)
+     @param size   data's size (in bytes)
+
+     @throws IllegalArgumentException if offset is negative or if the data exceeds from the Buffer Object (because of
+     it's size or the offset)
+     */
+    protected void storeGeneral(long offset, int size){
+        checkRelease();
+        checkDataModification();
+        if(offset < 0){
+            throw new IllegalArgumentException("Offset can't be negative");
+        }
+        if(getActiveDataSize() - offset < size){
+            throw new IllegalStateException("The data exceeds from the Buffer Object, data size or offset is too high");
+        }
+    }
+
+    /**
+     If the Buffer Object not allows data modification it throws an UnsupportedOperationException.
+
+     @throws UnsupportedOperationException if the Buffer Object not allows data modification
+     */
+    protected void checkDataModification(){
+        if(!isAllowDataModification()){
+            throw new UnsupportedOperationException("You cannot modify immutable data");
+        }
+    }
+
+    /**
+     Stores the given data in the Buffer Object. You should only call this method if the Buffer Object is not immutable
+     or if it allows data modification.
 
      @param data data to store
      */
-    @Bind
     public void store(@NotNull float[] data){
         store(data, 0);
     }
 
     /**
-     Stores the given data on the specified position.
+     Stores the given data on the specified position. You should only call this method if the Buffer Object is not
+     immutable or if it allows data modification.
 
      @param data   data to store
      @param offset data's offset (in bytes)
      */
-    @Bind
     public void store(@NotNull float[] data, long offset){
         try(MemoryStack stack = stackPush()){
-            FloatBuffer buffer = stack.mallocFloat(data.length);
-            buffer.put(data);
-            buffer.flip();
-            store(buffer, offset);
+            store(Utility.storeInBuffer(stack, data), offset);
         }
     }
 
     /**
-     Stores the given data on the specified position.
+     Stores the given data on the specified position. You should only call this method if the Buffer Object is not
+     immutable or if it allows data modification.
 
      @param data   data to store
      @param offset data's offset (in bytes)
-
-     @throws IllegalArgumentException if offset is negative or if the data exceeds from the Buffer Object (because of
-     it's size or the offset)
      */
-    @Bind
     public void store(@NotNull FloatBuffer data, long offset){
-        checkRelease();
-        checkBind();
-        if(offset < 0){
-            throw new IllegalArgumentException("Offset can't be negative");
-        }
-        if(getActiveDataSize() - offset < data.limit() * Utility.FLOAT_SIZE){
-            throw new IllegalStateException("The data exceeds from the Buffer Object, data size or offset is too high");
-        }
-        GL15.glBufferSubData(target, offset, data);
+        storeGeneral(offset, data.limit() * Utility.FLOAT_SIZE);
+        GL45.glNamedBufferSubData(getId(), offset, data);
     }
 
     /**
-     Stores the given data in the Buffer Object.
+     Stores the given data in the Buffer Object. You should only call this method if the Buffer Object is not immutable
+     or if it allows data modification.
 
      @param data data to store
      */
-    @Bind
     public void store(@NotNull int[] data){
         store(data, 0);
     }
 
     /**
-     Stores the given data on the specified position.
+     Stores the given data on the specified position. You should only call this method if the Buffer Object is not
+     immutable or if it allows data modification.
 
      @param data   data to store
      @param offset data's offset (in bytes)
      */
-    @Bind
     public void store(@NotNull int[] data, long offset){
         try(MemoryStack stack = stackPush()){
-            IntBuffer buffer = stack.mallocInt(data.length);
-            buffer.put(data);
-            buffer.flip();
-            store(buffer, offset);
+            store(Utility.storeInBuffer(stack, data), offset);
         }
     }
 
     /**
-     Stores the given data on the specified position.
+     Stores the given data on the specified position. You should only call this method if the Buffer Object is not
+     immutable or if it allows data modification.
 
      @param data   data to store
      @param offset data's offset (in bytes)
-
-     @throws IllegalArgumentException if offset is negative or if the data exceeds from the Buffer Object (because of
-     it's size or the offset)
      */
-    @Bind
     public void store(@NotNull IntBuffer data, long offset){
-        checkRelease();
-        checkBind();
-        if(offset < 0){
-            throw new IllegalArgumentException("Offset can't be negative");
-        }
-        if(getActiveDataSize() - offset < data.limit() * Utility.INT_SIZE){
-            throw new IllegalStateException("The data exceeds from the Buffer Object, data size or offset is too high");
-        }
-        GL15.glBufferSubData(target, offset, data);
+        storeGeneral(offset, data.limit() * Utility.INT_SIZE);
+        GL45.glNamedBufferSubData(getId(), offset, data);
     }
+
+    //
+    //data copy---------------------------------------------------------------------------------------------------------
+    //
 
     /**
      Copies the defined data from this Buffer Object to the given.
@@ -295,24 +395,22 @@ public abstract class BufferObject extends OpenGlObject{
      @param readOffset  read offset (in bytes)
      @param writeOffset write offset (in bytes)
      @param size        size of the data (in bytes)
-
-     @throws ReleasedException if this or the parameter Buffer Object is released
      */
     public void copyDataTo(@NotNull BufferObject writeTarget, int readOffset, int writeOffset, int size){
         checkRelease();
-        if(!Utility.isUsable(writeTarget)){
-            throw new ReleasedException(writeTarget);
-        }
+        writeTarget.checkRelease();
+        checkDataModification();
+        writeTarget.checkDataModification();
         checkOffsetAndSize(readOffset, writeOffset, size);
         checkDataExceed(writeTarget, readOffset, writeOffset, size);
         checkRangeOverlapItself(writeTarget, readOffset, writeOffset, size);
-        copyDataToUnsafe(writeTarget, readOffset, writeOffset, size);
+        GL45.glCopyNamedBufferSubData(getId(), writeTarget.getId(), readOffset, writeOffset, size);
     }
 
     /**
-     If one of the offsets are negative or the size is not positive it throws a NotBoundException.
+     If one of the offsets are negative or the size is not positive it throws an IllegalArgumentException.
 
-     @throws NotBoundException if one of the offsets are negative or the size is not positive
+     @throws IllegalArgumentException if one of the offsets are negative or the size is not positive
      */
     private void checkOffsetAndSize(int readOffset, int writeOffset, int size){
         if(readOffset < 0 || writeOffset < 0 || size <= 0){
@@ -321,9 +419,10 @@ public abstract class BufferObject extends OpenGlObject{
     }
 
     /**
-     If the data exceeds from the write Buffer Object it throws a NotBoundException.
+     If the data exceeds from the write Buffer Object, it throws an IllegalArgumentException.
 
-     @throws NotBoundException if the data exceeds from the write Buffer Object (because of it's size or the offset)
+     @throws IllegalArgumentException if the data exceeds from the write Buffer Object (because of it's size or the
+     offset)
      */
     private void checkDataExceed(@NotNull BufferObject writeTarget, int readOffset, int writeOffset, int size){
         if(readOffset + size > dataSize || writeOffset + size > writeTarget.dataSize){
@@ -332,69 +431,71 @@ public abstract class BufferObject extends OpenGlObject{
     }
 
     /**
-     If the read and write Buffer Objects are the same and the ranges are overlapping, it throws a NotBoundException.
+     If the read and write Buffer Objects are the same and the ranges are overlapping, it throws an
+     IllegalArgumentException.
 
-     @throws NotBoundException if the read and write Buffer Objects are the same and the ranges are overlapping
+     @throws IllegalArgumentException if the read and write Buffer Objects are the same and the ranges are overlapping
      */
     private void checkRangeOverlapItself(@NotNull BufferObject writeTarget, int readOffset, int writeOffset, int size){
-        if(writeTarget == this && readOffset <= writeOffset && readOffset + size >= writeOffset || readOffset <= writeOffset + size && readOffset + size >= writeOffset + size){
+        if(writeTarget == this && (readOffset <= writeOffset && readOffset + size >= writeOffset || readOffset <= writeOffset + size && readOffset + size >= writeOffset + size)){
             throw new IllegalArgumentException("The read and write Buffer Objects are the same and the ranges are overlapping");
         }
     }
 
-    /**
-     Copies the defined data from this Buffer Object to the given Buffer Object.
+    //
+    //misc--------------------------------------------------------------------------------------------------------------
+    //
 
-     @param writeTarget data's destination
-     @param readOffset  read offset (in bytes)
-     @param writeOffset write offset (in bytes)
-     @param size        size of the data (in bytes)
+    /**
+     Returns the Buffer Object's usage hint.
+
+     @return the Buffer Object's usage hint
      */
-    private void copyDataToUnsafe(@NotNull BufferObject writeTarget, int readOffset, int writeOffset, int size){
-        GL15.glBindBuffer(GL31.GL_COPY_READ_BUFFER, getId());
-        GL15.glBindBuffer(GL31.GL_COPY_WRITE_BUFFER, writeTarget.getId());
-        GL31.glCopyBufferSubData(GL31.GL_COPY_READ_BUFFER, GL31.GL_COPY_WRITE_BUFFER, readOffset, writeOffset, size);
+    @Nullable
+    public BufferObjectUsage getUsage(){
+        return usage;
+    }
+
+    /**
+     Determines whether the Buffer Object is immutable. If it is, you cannot reallocate the data and if {@link
+    #isAllowDataModification()} is false you cannot even modify the data.
+
+     @return true if the Buffer Object is immutable, false otherwise
+     */
+    public boolean isImmutable(){
+        return immutable;
+    }
+
+    /**
+     Sets whether or not the Buffer Object is immutable.
+
+     @param immutable true if this Buffer Object should be immutable, false otherwise
+     */
+    protected void setImmutable(boolean immutable){
+        this.immutable = immutable;
+    }
+
+    /**
+     Determines whether the immutable data is modifiable. It cannot be false if the Buffer Object isn't immutable.
+
+     @return true if the Buffer Object's data is modifiable, false otherwise
+     */
+    public boolean isAllowDataModification(){
+        return allowDataModification;
+    }
+
+    /**
+     Sets whether or not the Buffer Object is allow data modification.
+
+     @param allowDataModification true if this Buffer Object should allow data modification, false otherwise
+     */
+    protected void setAllowDataModification(boolean allowDataModification){
+        this.allowDataModification = allowDataModification;
     }
 
     @Override
     protected int getType(){
         return GL43.GL_BUFFER;
-    }
-
-    /**
-     Determines whether this Buffer Object is bound.
-
-     @return true if this Buffer Object is bound, false otherwise
-     */
-    public abstract boolean isBound();
-
-    /**
-     Binds the Buffer Object.
-     */
-    public void bind(){
-        checkRelease();
-        GL15.glBindBuffer(target, getId());
-    }
-
-    /**
-     Unbinds the Buffer Object. The Buffers Object must be bound.
-     */
-    @Bind
-    public void unbind(){
-        checkRelease();
-        checkBind();
-        GL15.glBindBuffer(target, 0);
-    }
-
-    /**
-     If the Buffer Object is not bound it throws a NotBoundException.
-
-     @throws NotBoundException if the Buffer Object is not bound
-     */
-    protected void checkBind(){
-        if(!isBound()){
-            throw new NotBoundException(this);
-        }
     }
 
     /**
@@ -436,7 +537,7 @@ public abstract class BufferObject extends OpenGlObject{
     @Override
     public String toString(){
         return super.toString() + "\n" + BufferObject.class
-                .getSimpleName() + "(" + "target: " + target + ", " + "dataSize: " + dataSize + ")";
+                .getSimpleName() + "(" + "target: " + target + ", " + "dataSize: " + dataSize + ", " + "immutable: " + immutable + ", " + "allowDataModification: " + allowDataModification + ")";
     }
 
     /**
@@ -501,7 +602,7 @@ public abstract class BufferObject extends OpenGlObject{
 
          @return the BufferObjectUsage of the given OpenGL code
 
-         @throws IllegalArgumentException the given parameter is not a Buffer Object usage
+         @throws IllegalArgumentException if the given parameter is not a Buffer Object usage
          */
         @NotNull
         public static BufferObjectUsage valueOf(int code){
@@ -530,7 +631,7 @@ public abstract class BufferObject extends OpenGlObject{
 
         @Override
         protected void createResources(int[] resources){
-            GL15.glGenBuffers(resources);
+            GL45.glCreateBuffers(resources);
         }
 
         @Override

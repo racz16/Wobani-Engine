@@ -150,9 +150,7 @@ public class CameraComponent extends Component implements Camera{
      Refreshes the Matrices UBO with the temporary FloatBuffer.
      */
     private static void refreshUbo(){
-        ubo.bind();
         ubo.store(temp, 0);
-        ubo.unbind();
         LOG.fine("Matrices UBO refreshed");
     }
 
@@ -189,9 +187,7 @@ public class CameraComponent extends Component implements Camera{
      */
     private static void createUboUnsafe(){
         ubo = new Ubo("Matrices");
-        ubo.bind();
-        ubo.allocate(128, BufferObject.BufferObjectUsage.STATIC_DRAW);
-        ubo.unbind();
+        ubo.allocateImmutable(128);
         ubo.bindToBindingPoint(1);
     }
 
