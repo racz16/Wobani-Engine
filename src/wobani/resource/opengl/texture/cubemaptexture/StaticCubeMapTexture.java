@@ -1,41 +1,42 @@
 package wobani.resource.opengl.texture.cubemaptexture;
 
-import org.lwjgl.opengl.*;
-import org.lwjgl.stb.*;
-import wobani.resource.*;
-import wobani.resource.opengl.texture.*;
-import wobani.toolbox.*;
-import wobani.toolbox.annotation.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL21;
+import org.lwjgl.stb.STBImage;
+import wobani.resource.ResourceId;
+import wobani.resource.ResourceManager;
+import wobani.resource.opengl.texture.StaticTexture;
+import wobani.toolbox.Image;
+import wobani.toolbox.annotation.NotNull;
 
-import java.io.*;
-import java.nio.*;
-import java.util.*;
+import java.io.File;
+import java.nio.ByteBuffer;
+import java.util.List;
 
 /**
- Stores data about a loaded texture. You can load a texture only once, if you try to load it twice, you get reference to
- the already loaded one.
-
- @see #loadTexture(List paths, boolean sRgb) */
-public class StaticCubeMapTexture extends StaticTexture implements CubeMapTexture{
+ * Stores data about a loaded texture. You can load a texture only once, if you try to load it twice, you get reference to
+ * the already loaded one.
+ *
+ * @see #loadTexture(List paths, boolean sRgb)
+ */
+public class StaticCubeMapTexture extends StaticTexture implements CubeMapTexture {
 
     /**
-     Texture's pixel data.
+     * Texture's pixel data.
      */
     private final ByteBuffer[] data = new ByteBuffer[6];
-    /**
-     The resource's unique id.
-     */
-    private final ResourceId resourceId;
 
     /**
-     Initializes a new StaticCubeMapTexture to the given parameters.
-
-     @param paths textures' relative path (with extension like "res/textures/myTexture.png")
-     @param sRgb  determines whether the texture is in sRgb color space
+     * Initializes a new StaticCubeMapTexture to the given parameters.
+     *
+     * @param paths textures' relative path (with extension like "res/textures/myTexture.png")
+     * @param sRgb  determines whether the texture is in sRgb color space
      */
-    public StaticCubeMapTexture(@NotNull List<File> paths, boolean sRgb){
+    public StaticCubeMapTexture(@NotNull List<File> paths, boolean sRgb) {
+        super(new ResourceId(paths));
         basesRgb = sRgb;
-        this.sRgb = sRgb;
+        getTexture().setsRgb(sRgb);
         meta.setPaths(paths);
         meta.setLastActiveToNow();
         meta.setDataStorePolicy(ResourceManager.ResourceState.ACTION);
@@ -45,12 +46,10 @@ public class StaticCubeMapTexture extends StaticTexture implements CubeMapTextur
         ramToVram();
 
         int size = 0;
-        for(int i = 0; i < 6; i++){
+        for (int i = 0; i < 6; i++) {
             size += data[i].capacity();
         }
         meta.setDataSize(size);
-        resourceId = new ResourceId(paths);
-        ResourceManager.addResource(this);
     }
 
     //
@@ -58,37 +57,36 @@ public class StaticCubeMapTexture extends StaticTexture implements CubeMapTextur
     //
 
     /**
-     Loads a texture from the given path. You can load a texture only once, if you try to load it twice, you get
-     reference to the already loaded one.
-
-     @param paths texture's relative path (with extension like "res/textures/myTexture.png")
-     @param sRgb  determines whether the texture is in sRGB color space
-
-     @return texture
+     * Loads a texture from the given path. You can load a texture only once, if you try to load it twice, you get
+     * reference to the already loaded one.
+     *
+     * @param paths texture's relative path (with extension like "res/textures/myTexture.png")
+     * @param sRgb  determines whether the texture is in sRGB color space
+     * @return texture
      */
     @NotNull
-    public static StaticCubeMapTexture loadTexture(@NotNull List<File> paths, boolean sRgb){
+    public static StaticCubeMapTexture loadTexture(@NotNull List<File> paths, boolean sRgb) {
         StaticCubeMapTexture tex = ResourceManager.getResource(new ResourceId(paths), StaticCubeMapTexture.class);
         //StaticCubeMapTexture tex = (StaticCubeMapTexture) ResourceManager.getTexture(new ResourceId(paths));
-        if(tex != null){
+        if (tex != null) {
             return tex;
         }
         return new StaticCubeMapTexture(paths, sRgb);
     }
 
     /**
-     Loads the texture's data from file to the RAM.
-
-     @throws IllegalStateException each image have to be the same size
+     * Loads the texture's data from file to the RAM.
+     *
+     * @throws IllegalStateException each image have to be the same size
      */
     @Override
-    protected void hddToRam(){
-        for(int i = 0; i < 6; i++){
+    protected void hddToRam() {
+        for (int i = 0; i < 6; i++) {
             Image image = new Image(getPath(i), false);
-            if(i == 0){
-                size.set(image.getSize());
-            }else{
-                if(!size.equals(image.getSize())){
+            if (i == 0) {
+                getTexture().setSize(image.getSize());
+            } else {
+                if (!getTexture().getSize().equals(image.getSize())) {
                     throw new IllegalStateException("Each image have to be the same size");
                 }
             }
@@ -99,37 +97,37 @@ public class StaticCubeMapTexture extends StaticTexture implements CubeMapTextur
     }
 
     @Override
-    protected void ramToVram(){
-        glGenerateTextureId();
+    protected void ramToVram() {
+        getTexture().createTexture(getTarget());
         bind();
 
-        for(int i = 0; i < 6; i++){
-            if(sRgb){
-                GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL21.GL_SRGB, size.x, size.y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data[i]);
-            }else{
-                GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL11.GL_RGB, size.x, size.y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data[i]);
+        for (int i = 0; i < 6; i++) {
+            if (getTexture().isSRgb()) {
+                GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL21.GL_SRGB, getTexture().getSize().x, getTexture().getSize().y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data[i]);
+            } else {
+                GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL11.GL_RGB, getTexture().getSize().x, getTexture().getSize().y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data[i]);
             }
         }
 
         setTextureWrap(TextureWrapDirection.WRAP_U, TextureWrap.CLAMP_TO_EDGE);
         setTextureWrap(TextureWrapDirection.WRAP_V, TextureWrap.CLAMP_TO_EDGE);
         setTextureWrap(TextureWrapDirection.WRAP_W, TextureWrap.CLAMP_TO_EDGE);
-        setBorderColor(borderColor);
+        setBorderColor(getTexture().getBorderColor());
         changeFiltering();
 
         meta.setState(ResourceManager.ResourceState.ACTION);
     }
 
     @Override
-    protected void vramToRam(){
-        glRelease();
+    protected void vramToRam() {
+        getTexture().release();
 
         meta.setState(ResourceManager.ResourceState.RAM);
     }
 
     @Override
-    protected void ramToHdd(){
-        for(int i = 0; i < 6; i++){
+    protected void ramToHdd() {
+        for (int i = 0; i < 6; i++) {
             STBImage.stbi_image_free(data[i]);
             data[i] = null;
         }
@@ -140,32 +138,24 @@ public class StaticCubeMapTexture extends StaticTexture implements CubeMapTextur
     //
     //misc----------------------------------------------------------------------
     //
-    @Override
-    protected int getTextureType(){
-        return GL13.GL_TEXTURE_CUBE_MAP;
-    }
 
     /**
-     Returns the texture's specified path.
-
-     @param index the method returns the indexth path, it must be in the (0;6) interval
-
-     @return the texture's specified path
+     * Returns the texture's specified path.
+     *
+     * @param index the method returns the indexth path, it must be in the (0;6) interval
+     * @return the texture's specified path
      */
     @NotNull
-    public File getPath(int index){
+    public File getPath(int index) {
         return meta.getPaths().get(index);
     }
 
-    @NotNull
-    @Override
-    public ResourceId getResourceId(){
-        return resourceId;
+    private int getTarget() {
+        return GL13.GL_TEXTURE_CUBE_MAP;
     }
 
     @Override
-    public String toString(){
-        return super.toString() + "\nStaticCubeMapTexture{" + "data=" + data + ", resourceId=" + resourceId + '}';
+    protected String getTypeName() {
+        return "Static CubeMap Texture";
     }
-
 }

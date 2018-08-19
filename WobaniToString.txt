@@ -1,0 +1,20 @@
+public String toString() {
+   return ##
+   #if($class.hasSuper)
+      super.toString() + "\n" +
+   #end
+   #set($i=0)
+   $classname .class.getSimpleName() + "(" +
+   #foreach ($member in $members)
+      #if($member.array || $member.collection)
+         "$member.name: " + wobani.toolbox.Utility.toString($member.accessor) + ##
+      #else
+         "$member.name: " + $member.accessor + ##
+      #end
+      #set($i=$i+1)
+      #if($i<$members.size())
+         ", " +
+      #end
+   #end
+   ")";
+}

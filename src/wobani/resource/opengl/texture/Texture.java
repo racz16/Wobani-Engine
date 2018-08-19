@@ -1,219 +1,223 @@
 package wobani.resource.opengl.texture;
 
-import org.joml.*;
+import org.joml.Vector2i;
 import org.lwjgl.opengl.*;
-import wobani.resource.*;
+import wobani.resource.Resource;
 
 /**
- Base interface for all types of textures.
+ * Base interface for all types of textures.
  */
-public interface Texture extends Resource{
+public interface Texture extends Resource {
 
     /**
-     Binds the texture.
+     * Binds the texture.
      */
     void bind();
 
     /**
-     Unbinds the texture.
+     * Unbinds the texture.
      */
     void unbind();
 
     /**
-     Returns the texture's width and height.
-
-     @return the texture's width and height
+     * Returns the texture's width and height.
+     *
+     * @return the texture's width and height
      */
     Vector2i getSize();
 
     /**
-     Activates the texture in the specified texture unit.
-
-     @param textureUnit texture unit (0;31)
+     * Activates the texture in the specified texture unit.
+     *
+     * @param textureUnit texture unit (0;31)
      */
     void bindToTextureUnit(int textureUnit);
 
     /**
-     Determines whether the texture is in sRGB color space.
-
-     @return true if the texture's color space is sRGB, false otherwise
+     * Determines whether the texture is in sRGB color space.
+     *
+     * @return true if the texture's color space is sRGB, false otherwise
      */
     boolean issRgb();
 
     int getId();
 
     /**
-     Texture filter mode.
+     * Texture filter mode.
      */
-    enum TextureFilter{
+    enum TextureFilter {
         /**
-         Nearest filter.
+         * Nearest filter.
          */
         NEAREST(GL11.GL_NEAREST),
         /**
-         Linear filter.
+         * Linear filter.
          */
         LINEAR(GL11.GL_LINEAR),
         /**
-         Nearest mipmap nearest filter.
+         * Nearest mipmap nearest filter.
          */
         NEAREST_MIPMAP_NEAREST(GL11.GL_NEAREST_MIPMAP_NEAREST),
         /**
-         Linear mipmap linear filter.
+         * Linear mipmap linear filter.
          */
         LINEAR_MIPMAP_LINEAR(GL11.GL_LINEAR_MIPMAP_LINEAR),
         /**
-         Nearest mipmap linear filter.
+         * Nearest mipmap linear filter.
          */
         NEAREST_MIPMAP_LINEAR(GL11.GL_NEAREST_MIPMAP_LINEAR),
         /**
-         Linear mipmap nearest filter.
+         * Linear mipmap nearest filter.
          */
         LINEAR_MIPMAP_NEAREST(GL11.GL_LINEAR_MIPMAP_NEAREST);
 
         /**
-         Texture filter's OpenGL code.
+         * Texture filter's OpenGL code.
          */
         private final int openGlCode;
 
         /**
-         Initializes a new TextureFilter to the given value.
-
-         @param code filter's OpenGL code
+         * Initializes a new TextureFilter to the given value.
+         *
+         * @param code filter's OpenGL code
          */
-        TextureFilter(int code){
+        TextureFilter(int code) {
             openGlCode = code;
         }
 
         /**
-         Returns the filter's OpenGL code.
-
-         @return the filter's OpenGL code
+         * Returns the filter's OpenGL code.
+         *
+         * @return the filter's OpenGL code
          */
-        public int getCode(){
+        public int getCode() {
             return openGlCode;
         }
     }
 
     /**
-     Texture filter type.
+     * Texture filter type.
      */
-    enum TextureFilterType{
+    enum TextureFilterType {
         /**
-         Magnification.
+         * Magnification.
          */
         MAGNIFICATION(GL11.GL_TEXTURE_MAG_FILTER),
         /**
-         Minification.
+         * Minification.
          */
         MINIFICATION(GL11.GL_TEXTURE_MIN_FILTER);
 
         /**
-         Texture filter type's OpenGL code.
+         * Texture filter type's OpenGL code.
          */
         private final int openGlCode;
 
         /**
-         Initializes a new TextureFilterType to the given value.
-
-         @param code texture filter type's OpenGL code
+         * Initializes a new TextureFilterType to the given value.
+         *
+         * @param code texture filter type's OpenGL code
          */
-        TextureFilterType(int code){
+        TextureFilterType(int code) {
             openGlCode = code;
         }
 
         /**
-         Returns the texture filter type's OpenGL code.
-
-         @return the texture filter type's OpenGL code
+         * Returns the texture filter type's OpenGL code.
+         *
+         * @return the texture filter type's OpenGL code
          */
-        public int getCode(){
+        public int getCode() {
             return openGlCode;
         }
     }
 
     /**
-     Texture wrap mode.
+     * Texture wrap mode.
      */
-    enum TextureWrap{
+    enum TextureWrap {
         /**
-         Repeat.
+         * Repeat.
          */
         REPEAT(GL11.GL_REPEAT),
         /**
-         Mirrored repeat.
+         * Mirrored repeat.
          */
         MIRRORED_REPEAT(GL14.GL_MIRRORED_REPEAT),
         /**
-         Clamp to edge.
+         * Clamp to edge.
          */
         CLAMP_TO_EDGE(GL12.GL_CLAMP_TO_EDGE),
         /**
-         Clamp to border. It uses the border color.
+         * Clamp to border. It uses the border color.
          */
-        CLAMP_TO_BORDER(GL13.GL_CLAMP_TO_BORDER);
+        CLAMP_TO_BORDER(GL13.GL_CLAMP_TO_BORDER),
+        /**
+         * Mirrors the image once each direction than clams to the edge.
+         */
+        MIRROR_CLAMP_TO_EDGE(GL44.GL_MIRROR_CLAMP_TO_EDGE);
 
         /**
-         Texture wrap mode's OpenGL code.
+         * Texture wrap mode's OpenGL code.
          */
         private final int openGlCode;
 
         /**
-         Initializes a new TextureWrap to the given value.
-
-         @param code texture wrap mode's OpenGL code
+         * Initializes a new TextureWrap to the given value.
+         *
+         * @param code texture wrap mode's OpenGL code
          */
-        TextureWrap(int code){
+        TextureWrap(int code) {
             openGlCode = code;
         }
 
         /**
-         Return the texture wrap mode's OpenGL code.
-
-         @return the texture wrap mode's OpenGL code
+         * Return the texture wrap mode's OpenGL code.
+         *
+         * @return the texture wrap mode's OpenGL code
          */
-        public int getCode(){
+        public int getCode() {
             return openGlCode;
         }
     }
 
     /**
-     Texture wrap direction.
+     * Texture wrap direction.
      */
-    enum TextureWrapDirection{
+    enum TextureWrapDirection {
         /**
-         U direction in texture space.
+         * U direction in texture space.
          */
         WRAP_U(GL11.GL_TEXTURE_WRAP_S),
         /**
-         V direction in texture space.
+         * V direction in texture space.
          */
         WRAP_V(GL11.GL_TEXTURE_WRAP_T),
         /**
-         W direction in texture space.
+         * W direction in texture space.
          */
         WRAP_W(GL12.GL_TEXTURE_WRAP_R);
 
         /**
-         Texture wrap type's OpenGL code.
+         * Texture wrap type's OpenGL code.
          */
         private final int openGlCode;
 
         /**
-         Initializes a new TextureWrapDirection to the given value.
-
-         @param code texture wrap type's OpenGL code
+         * Initializes a new TextureWrapDirection to the given value.
+         *
+         * @param code texture wrap type's OpenGL code
          */
-        TextureWrapDirection(int code){
+        TextureWrapDirection(int code) {
             openGlCode = code;
         }
 
         /**
-         Returns the texture wrap type's OpenGL code.
-
-         @return the texture wrap type's OpenGL code
+         * Returns the texture wrap type's OpenGL code.
+         *
+         * @return the texture wrap type's OpenGL code
          */
-        public int getCode(){
+        public int getCode() {
             return openGlCode;
         }
     }
