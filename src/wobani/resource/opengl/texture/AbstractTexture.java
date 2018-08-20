@@ -7,6 +7,7 @@ import wobani.resource.opengl.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
+import java.lang.Math;
 import java.nio.*;
 
 /**

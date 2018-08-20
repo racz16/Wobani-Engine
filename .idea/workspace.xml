@@ -6,34 +6,8 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6d58700-f594-48e4-9558-88bc52d959c1" name="Default" comment="refactoring textures">
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/WobaniEngine.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/WobaniEngine.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/Zalan.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/Zalan.xml" afterDir="false" />
+    <list default="true" id="d6d58700-f594-48e4-9558-88bc52d959c1" name="Default" comment="refactoring textures, solving texture coordinate problem">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/example/Example1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/example/Example1.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/example/Example1Window.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/example/Example1Window.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/rendering/RenderingPipeline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/rendering/RenderingPipeline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/rendering/prepare/ShadowRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/rendering/prepare/ShadowRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/ResourceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/ResourceManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/mesh/StaticMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/mesh/StaticMesh.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/BufferObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/BufferObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/shader/BlinnPhongShader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/shader/BlinnPhongShader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/AbstractTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/AbstractTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/ChangableColorSpace.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/DynamicTexture.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/EasyFiltering.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/NativeTexture.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/StaticTexture.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/Texture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/CubeMapTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/CubeMapTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/DynamicCubeMapTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/DynamicCubeMapTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/StaticCubeMapTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/StaticCubeMapTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/DynamicTexture2D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/DynamicTexture2D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/StaticTexture2D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/StaticTexture2D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/Texture2D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/Texture2D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/toolbox/OpenGl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/toolbox/OpenGl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/toolbox/OpenGlConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/toolbox/OpenGlConstants.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -83,7 +57,7 @@
           <entry key="java" value="816" />
           <entry key="obj" value="1" />
           <entry key="png" value="1" />
-          <entry key="xml" value="12" />
+          <entry key="xml" value="13" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
@@ -93,7 +67,7 @@
           <entry key="Image" value="1" />
           <entry key="JAVA" value="816" />
           <entry key="PLAIN_TEXT" value="2" />
-          <entry key="XML" value="12" />
+          <entry key="XML" value="13" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -101,15 +75,15 @@
           <entry key="Wobani" value="339" />
           <entry key="WobaniToString" value="480" />
           <entry key="glsl" value="199" />
-          <entry key="java" value="44501" />
-          <entry key="txt" value="72" />
+          <entry key="java" value="44502" />
+          <entry key="txt" value="108" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="GLSL shader file" value="199" />
-          <entry key="JAVA" value="44501" />
-          <entry key="PLAIN_TEXT" value="891" />
+          <entry key="JAVA" value="44502" />
+          <entry key="PLAIN_TEXT" value="927" />
         </counts>
       </usages-collector>
     </session>
@@ -119,13 +93,12 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/AbstractTexture.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="95" column="10" selection-start-line="95" selection-start-column="10" selection-end-line="95" selection-end-column="10" />
+            <state relative-caret-position="159">
+              <caret line="94" column="21" selection-start-line="94" selection-start-column="21" selection-end-line="94" selection-end-column="21" />
               <folding>
-                <element signature="e#2638#2788#0" />
                 <element signature="e#2859#3086#0" />
                 <element signature="e#3092#3367#0" />
                 <element signature="e#3963#4323#0" />
@@ -152,7 +125,7 @@
         <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/StaticTexture2D.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="143">
-              <caret line="88" column="35" selection-start-line="88" selection-start-column="35" selection-end-line="88" selection-end-column="35" />
+              <caret line="84" column="35" selection-start-line="84" selection-start-column="35" selection-end-line="84" selection-end-column="35" />
               <folding>
                 <element signature="method#StaticTexture2D#0;class#StaticTexture2D#0" />
                 <element signature="e#1667#1669#0" />
@@ -179,8 +152,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/DynamicTexture2D.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="49" column="62" selection-start-line="49" selection-start-column="62" selection-end-line="49" selection-end-column="62" />
+            <state relative-caret-position="92">
+              <caret line="39" column="51" lean-forward="true" selection-start-line="39" selection-start-column="51" selection-end-line="39" selection-end-column="51" />
               <folding>
                 <element signature="docComment;method#DynamicTexture2D#0;class#DynamicTexture2D#0" expanded="true" />
                 <element signature="e#3705#3706#0" expanded="true" />
@@ -195,157 +168,6 @@
                 <element signature="e#5055#5056#0" expanded="true" />
                 <element signature="e#5107#5108#0" expanded="true" />
                 <element signature="e#5149#5150#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/wobani/example/Example1.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="97">
-              <caret line="36" selection-start-line="36" selection-end-line="36" />
-              <folding>
-                <element signature="method#createSphere#0;class#Example1#0" />
-                <element signature="method#createSphereMaterial#0;class#Example1#0" />
-                <element signature="method#createReflectionProbe#0;class#Example1#0" />
-                <element signature="method#createSkybox#0;class#Example1#0" />
-                <element signature="method#createDragon1#0;class#Example1#0" />
-                <element signature="method#createDragon2#0;class#Example1#0" />
-                <element signature="method#createDragonMaterial#0;class#Example1#0" />
-                <element signature="method#createCharacter#0;class#Example1#0" />
-                <element signature="method#createSpline#0;class#Example1#0" />
-                <element signature="method#createSplineResource#0;class#Example1#0" />
-                <element signature="method#createLightSources#0;class#Example1#0" />
-                <element signature="method#createDirectionalLight#0;class#Example1#0" />
-                <element signature="method#createPointLight#0;class#Example1#0" />
-                <element signature="method#createSpotLight#0;class#Example1#0" />
-                <element signature="method#createMusic#0;class#Example1#0" />
-                <element signature="method#createMisc#0;class#Example1#0" />
-                <element signature="method#setWindowPositions#0;class#Example1#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/wobani/rendering/prepare/ShadowRenderer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="177">
-              <caret line="373" selection-start-line="373" selection-end-line="373" />
-              <folding>
-                <element signature="method#ShadowRenderer#0;class#ShadowRenderer#0" />
-                <element signature="method#getInstance#0;class#ShadowRenderer#0" />
-                <element signature="method#isInsideFrustum#0;class#ShadowRenderer#0" />
-                <element signature="method#isInsideFrustum#1;class#ShadowRenderer#0" />
-                <element signature="method#setResolution#0;class#ShadowRenderer#0" />
-                <element signature="method#setShadowCameraDistance#0;class#ShadowRenderer#0" />
-                <element signature="method#setShadowCameraNearDistance#0;class#ShadowRenderer#0" />
-                <element signature="method#setShadowCameraFarDistance#0;class#ShadowRenderer#0" />
-                <element signature="method#beforeShader#0;class#ShadowRenderer#0" />
-                <element signature="method#afterShader#0;class#ShadowRenderer#0" />
-                <element signature="method#beforeDrawRenderable#0;class#ShadowRenderer#0" />
-                <element signature="method#afterDrawRenderable#0;class#ShadowRenderer#0" />
-                <element signature="method#beforeDrawMeshInstance#0;class#ShadowRenderer#0" />
-                <element signature="method#isInsideFrustum#2;class#ShadowRenderer#0" />
-                <element signature="e#13628#13646#0" />
-                <element signature="method#releaseFbo#0;class#ShadowRenderer#0" />
-                <element signature="method#release#0;class#ShadowRenderer#0" />
-                <element signature="method#setActive#0;class#ShadowRenderer#0" />
-                <element signature="method#removeFromRenderingPipeline#0;class#ShadowRenderer#0" />
-                <element signature="method#toString#0;class#ShadowRenderer#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/wobani/core/GameLoop.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="57">
-              <caret line="113" selection-start-line="113" selection-end-line="113" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/wobani/rendering/RenderingPipeline.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="83">
-              <caret line="239" selection-start-line="239" selection-end-line="239" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/wobani/rendering/stage/PrepareRenderingStage.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="56">
-              <caret line="17" selection-start-line="17" selection-end-line="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="920" column="31" selection-start-line="920" selection-start-column="31" selection-end-line="920" selection-end-column="31" />
-              <folding>
-                <element signature="e#2349#3724#0" />
-                <element signature="e#5828#6395#0" />
-                <element signature="e#6401#7819#0" />
-                <element signature="e#7825#9065#0" />
-                <element signature="e#9071#10255#0" />
-                <element signature="e#10261#11433#0" />
-                <element signature="e#11439#12074#0" />
-                <element signature="e#12080#13151#0" />
-                <element signature="e#13157#13763#0" />
-                <element signature="e#13769#13771#0" />
-                <element signature="e#13865#14785#0" />
-                <element signature="e#15654#15659#0" />
-                <element signature="e#15496#15968#0" />
-                <element signature="e#16718#17334#0" />
-                <element signature="e#17340#18285#0" />
-                <element signature="e#18291#21059#0" />
-                <element signature="e#21173#21182#0" />
-                <element signature="e#21350#21836#0" />
-                <element signature="e#21842#21885#0" />
-                <element signature="e#21891#22359#0" />
-                <element signature="e#22365#23041#0" />
-                <element signature="e#23047#23055#0" />
-                <element signature="e#23625#23997#0" />
-                <element signature="e#25509#26139#0" />
-                <element signature="e#26359#26930#0" />
-                <element signature="e#27358#27567#0" />
-                <element signature="e#27573#29169#0" />
-                <element signature="e#29862#30902#0" />
-                <element signature="e#33638#33995#0" />
-                <element signature="e#34005#34589#0" />
-                <element signature="e#34599#34761#0" />
-                <element signature="e#34771#35048#0" />
-                <element signature="e#35058#35331#0" />
-                <element signature="e#35341#35603#0" />
-                <element signature="e#36148#36509#0" />
-                <element signature="e#36519#37367#0" />
-                <element signature="e#37377#37574#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/StaticCubeMapTexture.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="108" column="35" selection-start-line="108" selection-start-column="35" selection-end-line="108" selection-end-column="35" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="method#loadTexture#0;class#StaticCubeMapTexture#0" />
-                <element signature="method#ramToHdd#0;class#StaticCubeMapTexture#0" />
-                <element signature="method#update#0;class#StaticCubeMapTexture#0" />
-                <element signature="method#getCachedDataSize#0;class#StaticCubeMapTexture#0" />
-                <element signature="method#getActiveDataSize#0;class#StaticCubeMapTexture#0" />
               </folding>
             </state>
           </provider>
@@ -461,9 +283,9 @@
         <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/StaticCubeMapTexture.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/StaticTexture2D.java" />
         <option value="$PROJECT_DIR$/src/wobani/rendering/prepare/ShadowRenderer.java" />
+        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/DynamicTexture2D.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/AbstractTexture.java" />
-        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java" />
       </list>
     </option>
   </component>
@@ -746,7 +568,14 @@
       <option name="project" value="LOCAL" />
       <updated>1534688199884</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="refactoring textures, solving texture coordinate problem">
+      <created>1534800545421</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1534800545421</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -787,13 +616,13 @@
       <window_info id="DB Browser" order="5" show_stripe_button="false" weight="0.32980832" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.4348442" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.48578984" visible="true" weight="0.24504249" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.48578984" visible="true" weight="0.24504249" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="5" show_stripe_button="false" sideWeight="0.49798658" weight="0.26694915" />
       <window_info anchor="bottom" x="0" y="291" width="1536" height="241" id="TODO" order="6" sideWeight="0.49966952" weight="0.30311614" />
       <window_info anchor="bottom" x="128" y="250" width="1316" height="340" id="Version Control" order="7" sideWeight="0.49966952" weight="0.27053824" />
-      <window_info anchor="bottom" id="Messages" order="8" sideWeight="0.51421016" side_tool="true" weight="0.19971672" />
+      <window_info active="true" anchor="bottom" id="Messages" order="8" sideWeight="0.51421016" side_tool="true" visible="true" weight="0.24504249" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50033045" side_tool="true" weight="0.460452" />
       <window_info anchor="bottom" id="Inspection Results" order="10" sideWeight="0.6173166" weight="0.39093485" />
       <window_info anchor="bottom" id="Statistic" order="11" weight="0.4490085" />
@@ -879,21 +708,10 @@
     <MESSAGE value="OpenGL buffer refactoring" />
     <MESSAGE value="OpenGL buffers: immutable option, DSA" />
     <MESSAGE value="refactoring textures" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactoring textures" />
+    <MESSAGE value="refactoring textures, solving texture coordinate problem" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactoring textures, solving texture coordinate problem" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/wobani/rendering/prepare/ShadowRenderer.java</url>
-          <line>371</line>
-          <properties />
-          <option name="timeStamp" value="20" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
@@ -924,13 +742,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/lwjgl-opengl-sources.jar!/org/lwjgl/opengl/GL30.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="398" column="8" selection-start-line="398" selection-start-column="8" selection-end-line="398" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/../../Konyvtarak/LWJGL/src/lwjgl-opengl-sources.jar!/org/lwjgl/opengl/GL45C.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="106">
@@ -1437,25 +1248,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/StaticCubeMapTexture.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="108" column="35" selection-start-line="108" selection-start-column="35" selection-end-line="108" selection-end-column="35" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#loadTexture#0;class#StaticCubeMapTexture#0" />
-            <element signature="method#ramToHdd#0;class#StaticCubeMapTexture#0" />
-            <element signature="method#update#0;class#StaticCubeMapTexture#0" />
-            <element signature="method#getCachedDataSize#0;class#StaticCubeMapTexture#0" />
-            <element signature="method#getActiveDataSize#0;class#StaticCubeMapTexture#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/StaticTexture2D.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
-          <caret line="88" column="35" selection-start-line="88" selection-start-column="35" selection-end-line="88" selection-end-column="35" />
+          <caret line="84" column="35" selection-start-line="84" selection-start-column="35" selection-end-line="84" selection-end-column="35" />
           <folding>
             <element signature="method#StaticTexture2D#0;class#StaticTexture2D#0" />
             <element signature="e#1667#1669#0" />
@@ -1478,135 +1274,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/DynamicTexture2D.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="49" column="62" selection-start-line="49" selection-start-column="62" selection-end-line="49" selection-end-column="62" />
-          <folding>
-            <element signature="docComment;method#DynamicTexture2D#0;class#DynamicTexture2D#0" expanded="true" />
-            <element signature="e#3705#3706#0" expanded="true" />
-            <element signature="e#3742#3743#0" expanded="true" />
-            <element signature="e#4220#4221#0" expanded="true" />
-            <element signature="e#4244#4245#0" expanded="true" />
-            <element signature="e#4407#4408#0" expanded="true" />
-            <element signature="e#4438#4439#0" expanded="true" />
-            <element signature="e#4485#4486#0" expanded="true" />
-            <element signature="e#4520#4521#0" expanded="true" />
-            <element signature="e#4966#4967#0" expanded="true" />
-            <element signature="e#5055#5056#0" expanded="true" />
-            <element signature="e#5107#5108#0" expanded="true" />
-            <element signature="e#5149#5150#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/AbstractTexture.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="95" column="10" selection-start-line="95" selection-start-column="10" selection-end-line="95" selection-end-column="10" />
-          <folding>
-            <element signature="e#2638#2788#0" />
-            <element signature="e#2859#3086#0" />
-            <element signature="e#3092#3367#0" />
-            <element signature="e#3963#4323#0" />
-            <element signature="e#4998#4999#0" expanded="true" />
-            <element signature="e#5027#5028#0" expanded="true" />
-            <element signature="e#6116#6933#0" />
-            <element signature="e#6968#7164#0" />
-            <element signature="e#7170#7368#0" />
-            <element signature="e#7378#7576#0" />
-            <element signature="e#6939#7503#0" />
-            <element signature="e#7509#8212#0" />
-            <element signature="e#8218#8760#0" />
-            <element signature="e#8766#9417#0" />
-            <element signature="e#10702#10703#0" expanded="true" />
-            <element signature="e#10734#10735#0" expanded="true" />
-            <element signature="e#10773#10774#0" expanded="true" />
-            <element signature="e#10798#10799#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/core/GameLoop.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="57">
-          <caret line="113" selection-start-line="113" selection-end-line="113" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/rendering/RenderingPipeline.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="239" selection-start-line="239" selection-end-line="239" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/rendering/stage/PrepareRenderingStage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/example/Example1.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="97">
-          <caret line="36" selection-start-line="36" selection-end-line="36" />
-          <folding>
-            <element signature="method#createSphere#0;class#Example1#0" />
-            <element signature="method#createSphereMaterial#0;class#Example1#0" />
-            <element signature="method#createReflectionProbe#0;class#Example1#0" />
-            <element signature="method#createSkybox#0;class#Example1#0" />
-            <element signature="method#createDragon1#0;class#Example1#0" />
-            <element signature="method#createDragon2#0;class#Example1#0" />
-            <element signature="method#createDragonMaterial#0;class#Example1#0" />
-            <element signature="method#createCharacter#0;class#Example1#0" />
-            <element signature="method#createSpline#0;class#Example1#0" />
-            <element signature="method#createSplineResource#0;class#Example1#0" />
-            <element signature="method#createLightSources#0;class#Example1#0" />
-            <element signature="method#createDirectionalLight#0;class#Example1#0" />
-            <element signature="method#createPointLight#0;class#Example1#0" />
-            <element signature="method#createSpotLight#0;class#Example1#0" />
-            <element signature="method#createMusic#0;class#Example1#0" />
-            <element signature="method#createMisc#0;class#Example1#0" />
-            <element signature="method#setWindowPositions#0;class#Example1#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/rendering/prepare/ShadowRenderer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="373" selection-start-line="373" selection-end-line="373" />
-          <folding>
-            <element signature="method#ShadowRenderer#0;class#ShadowRenderer#0" />
-            <element signature="method#getInstance#0;class#ShadowRenderer#0" />
-            <element signature="method#isInsideFrustum#0;class#ShadowRenderer#0" />
-            <element signature="method#isInsideFrustum#1;class#ShadowRenderer#0" />
-            <element signature="method#setResolution#0;class#ShadowRenderer#0" />
-            <element signature="method#setShadowCameraDistance#0;class#ShadowRenderer#0" />
-            <element signature="method#setShadowCameraNearDistance#0;class#ShadowRenderer#0" />
-            <element signature="method#setShadowCameraFarDistance#0;class#ShadowRenderer#0" />
-            <element signature="method#beforeShader#0;class#ShadowRenderer#0" />
-            <element signature="method#afterShader#0;class#ShadowRenderer#0" />
-            <element signature="method#beforeDrawRenderable#0;class#ShadowRenderer#0" />
-            <element signature="method#afterDrawRenderable#0;class#ShadowRenderer#0" />
-            <element signature="method#beforeDrawMeshInstance#0;class#ShadowRenderer#0" />
-            <element signature="method#isInsideFrustum#2;class#ShadowRenderer#0" />
-            <element signature="e#13628#13646#0" />
-            <element signature="method#releaseFbo#0;class#ShadowRenderer#0" />
-            <element signature="method#release#0;class#ShadowRenderer#0" />
-            <element signature="method#setActive#0;class#ShadowRenderer#0" />
-            <element signature="method#removeFromRenderingPipeline#0;class#ShadowRenderer#0" />
-            <element signature="method#toString#0;class#ShadowRenderer#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="920" column="31" selection-start-line="920" selection-start-column="31" selection-end-line="920" selection-end-column="31" />
+        <state relative-caret-position="153">
+          <caret line="904" column="9" lean-forward="true" selection-start-line="904" selection-start-column="9" selection-end-line="904" selection-end-column="9" />
           <folding>
             <element signature="e#2349#3724#0" />
             <element signature="e#5828#6395#0" />
@@ -1645,6 +1316,148 @@
             <element signature="e#36148#36509#0" />
             <element signature="e#36519#37367#0" />
             <element signature="e#37377#37574#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/rendering/stage/PrepareRenderingStage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="107">
+          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/rendering/RenderingPipeline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="83">
+          <caret line="239" selection-start-line="239" selection-end-line="239" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/core/GameLoop.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="113" selection-start-line="113" selection-end-line="113" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/rendering/prepare/ShadowRenderer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="373" selection-start-line="373" selection-end-line="373" />
+          <folding>
+            <element signature="method#ShadowRenderer#0;class#ShadowRenderer#0" />
+            <element signature="method#getInstance#0;class#ShadowRenderer#0" />
+            <element signature="method#isInsideFrustum#0;class#ShadowRenderer#0" />
+            <element signature="method#isInsideFrustum#1;class#ShadowRenderer#0" />
+            <element signature="method#setResolution#0;class#ShadowRenderer#0" />
+            <element signature="method#setShadowCameraDistance#0;class#ShadowRenderer#0" />
+            <element signature="method#setShadowCameraNearDistance#0;class#ShadowRenderer#0" />
+            <element signature="method#setShadowCameraFarDistance#0;class#ShadowRenderer#0" />
+            <element signature="method#beforeShader#0;class#ShadowRenderer#0" />
+            <element signature="method#afterShader#0;class#ShadowRenderer#0" />
+            <element signature="method#beforeDrawRenderable#0;class#ShadowRenderer#0" />
+            <element signature="method#afterDrawRenderable#0;class#ShadowRenderer#0" />
+            <element signature="method#beforeDrawMeshInstance#0;class#ShadowRenderer#0" />
+            <element signature="method#isInsideFrustum#2;class#ShadowRenderer#0" />
+            <element signature="e#13628#13646#0" />
+            <element signature="method#releaseFbo#0;class#ShadowRenderer#0" />
+            <element signature="method#release#0;class#ShadowRenderer#0" />
+            <element signature="method#setActive#0;class#ShadowRenderer#0" />
+            <element signature="method#removeFromRenderingPipeline#0;class#ShadowRenderer#0" />
+            <element signature="method#toString#0;class#ShadowRenderer#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/example/Example1.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="97">
+          <caret line="36" selection-start-line="36" selection-end-line="36" />
+          <folding>
+            <element signature="method#createSphere#0;class#Example1#0" />
+            <element signature="method#createSphereMaterial#0;class#Example1#0" />
+            <element signature="method#createReflectionProbe#0;class#Example1#0" />
+            <element signature="method#createSkybox#0;class#Example1#0" />
+            <element signature="method#createDragon1#0;class#Example1#0" />
+            <element signature="method#createDragon2#0;class#Example1#0" />
+            <element signature="method#createDragonMaterial#0;class#Example1#0" />
+            <element signature="method#createCharacter#0;class#Example1#0" />
+            <element signature="method#createSpline#0;class#Example1#0" />
+            <element signature="method#createSplineResource#0;class#Example1#0" />
+            <element signature="method#createLightSources#0;class#Example1#0" />
+            <element signature="method#createDirectionalLight#0;class#Example1#0" />
+            <element signature="method#createPointLight#0;class#Example1#0" />
+            <element signature="method#createSpotLight#0;class#Example1#0" />
+            <element signature="method#createMusic#0;class#Example1#0" />
+            <element signature="method#createMisc#0;class#Example1#0" />
+            <element signature="method#setWindowPositions#0;class#Example1#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/StaticCubeMapTexture.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="108" column="35" selection-start-line="108" selection-start-column="35" selection-end-line="108" selection-end-column="35" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#loadTexture#0;class#StaticCubeMapTexture#0" />
+            <element signature="method#ramToHdd#0;class#StaticCubeMapTexture#0" />
+            <element signature="method#update#0;class#StaticCubeMapTexture#0" />
+            <element signature="method#getCachedDataSize#0;class#StaticCubeMapTexture#0" />
+            <element signature="method#getActiveDataSize#0;class#StaticCubeMapTexture#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/DynamicTexture2D.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="39" column="51" lean-forward="true" selection-start-line="39" selection-start-column="51" selection-end-line="39" selection-end-column="51" />
+          <folding>
+            <element signature="docComment;method#DynamicTexture2D#0;class#DynamicTexture2D#0" expanded="true" />
+            <element signature="e#3705#3706#0" expanded="true" />
+            <element signature="e#3742#3743#0" expanded="true" />
+            <element signature="e#4220#4221#0" expanded="true" />
+            <element signature="e#4244#4245#0" expanded="true" />
+            <element signature="e#4407#4408#0" expanded="true" />
+            <element signature="e#4438#4439#0" expanded="true" />
+            <element signature="e#4485#4486#0" expanded="true" />
+            <element signature="e#4520#4521#0" expanded="true" />
+            <element signature="e#4966#4967#0" expanded="true" />
+            <element signature="e#5055#5056#0" expanded="true" />
+            <element signature="e#5107#5108#0" expanded="true" />
+            <element signature="e#5149#5150#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/AbstractTexture.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="159">
+          <caret line="94" column="21" selection-start-line="94" selection-start-column="21" selection-end-line="94" selection-end-column="21" />
+          <folding>
+            <element signature="e#2859#3086#0" />
+            <element signature="e#3092#3367#0" />
+            <element signature="e#3963#4323#0" />
+            <element signature="e#4998#4999#0" expanded="true" />
+            <element signature="e#5027#5028#0" expanded="true" />
+            <element signature="e#6116#6933#0" />
+            <element signature="e#6968#7164#0" />
+            <element signature="e#7170#7368#0" />
+            <element signature="e#7378#7576#0" />
+            <element signature="e#6939#7503#0" />
+            <element signature="e#7509#8212#0" />
+            <element signature="e#8218#8760#0" />
+            <element signature="e#8766#9417#0" />
+            <element signature="e#10702#10703#0" expanded="true" />
+            <element signature="e#10734#10735#0" expanded="true" />
+            <element signature="e#10773#10774#0" expanded="true" />
+            <element signature="e#10798#10799#0" expanded="true" />
           </folding>
         </state>
       </provider>
