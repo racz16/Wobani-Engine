@@ -765,10 +765,12 @@ public class Input{
         /**
          The key is pressed.
          */
-        PRESS(GLFW_PRESS), /**
+        PRESS(GLFW_PRESS),
+        /**
          The key is pressed continuously.
          */
-        REPEAT(GLFW_REPEAT), /**
+        REPEAT(GLFW_REPEAT),
+        /**
          The key is released.
          */
         RELEASE(GLFW_RELEASE);
@@ -804,364 +806,484 @@ public class Input{
         /**
          If the key is KEY_UNKNOWN, the scan code is used to identify the key,.
          */
-        KEY_UNKNOWN(-1), /**
+        KEY_UNKNOWN(-1),
+        /**
          Space key.
          */
-        KEY_SPACE(32), /**
+        KEY_SPACE(32),
+        /**
          Apostrophe key.
          */
-        KEY_APOSTROPHE(39), /**
+        KEY_APOSTROPHE(39),
+        /**
          Comma key.
          */
-        KEY_COMMA(44), /**
+        KEY_COMMA(44),
+        /**
          Minus key.
          */
-        KEY_MINUS(45), /**
+        KEY_MINUS(45),
+        /**
          Period key.
          */
-        KEY_PERIOD(46), /**
+        KEY_PERIOD(46),
+        /**
          Slash key.
          */
-        KEY_SLASH(47), /**
+        KEY_SLASH(47),
+        /**
          0 key.
          */
-        KEY_0(48), /**
+        KEY_0(48),
+        /**
          1 key.
          */
-        KEY_1(49), /**
+        KEY_1(49),
+        /**
          2 key.
          */
-        KEY_2(50), /**
+        KEY_2(50),
+        /**
          3 key.
          */
-        KEY_3(51), /**
+        KEY_3(51),
+        /**
          4 key.
          */
-        KEY_4(52), /**
+        KEY_4(52),
+        /**
          5 key.
          */
-        KEY_5(53), /**
+        KEY_5(53),
+        /**
          6 key.
          */
-        KEY_6(54), /**
+        KEY_6(54),
+        /**
          7 key.
          */
-        KEY_7(55), /**
+        KEY_7(55),
+        /**
          8 key.
          */
-        KEY_8(56), /**
+        KEY_8(56),
+        /**
          9 key.
          */
-        KEY_9(57), /**
+        KEY_9(57),
+        /**
          Semicolon key.
          */
-        KEY_SEMICOLON(59), /**
+        KEY_SEMICOLON(59),
+        /**
          Equal key.
          */
-        KEY_EQUAL(61), /**
+        KEY_EQUAL(61),
+        /**
          A key.
          */
-        KEY_A(65), /**
+        KEY_A(65),
+        /**
          B key.
          */
-        KEY_B(66), /**
+        KEY_B(66),
+        /**
          C key.
          */
-        KEY_C(67), /**
+        KEY_C(67),
+        /**
          D key.
          */
-        KEY_D(68), /**
+        KEY_D(68),
+        /**
          E key.
          */
-        KEY_E(69), /**
+        KEY_E(69),
+        /**
          F key.
          */
-        KEY_F(70), /**
+        KEY_F(70),
+        /**
          G key.
          */
-        KEY_G(71), /**
+        KEY_G(71),
+        /**
          H key.
          */
-        KEY_H(72), /**
+        KEY_H(72),
+        /**
          I key.
          */
-        KEY_I(73), /**
+        KEY_I(73),
+        /**
          J key.
          */
-        KEY_J(74), /**
+        KEY_J(74),
+        /**
          K key.
          */
-        KEY_K(75), /**
+        KEY_K(75),
+        /**
          L key.
          */
-        KEY_L(76), /**
+        KEY_L(76),
+        /**
          M key.
          */
-        KEY_M(77), /**
+        KEY_M(77),
+        /**
          N key.
          */
-        KEY_N(78), /**
+        KEY_N(78),
+        /**
          O key.
          */
-        KEY_O(79), /**
+        KEY_O(79),
+        /**
          P key.
          */
-        KEY_P(80), /**
+        KEY_P(80),
+        /**
          Q key.
          */
-        KEY_Q(81), /**
+        KEY_Q(81),
+        /**
          R key.
          */
-        KEY_R(82), /**
+        KEY_R(82),
+        /**
          S key.
          */
-        KEY_S(83), /**
+        KEY_S(83),
+        /**
          T key.
          */
-        KEY_T(84), /**
+        KEY_T(84),
+        /**
          U key.
          */
-        KEY_U(85), /**
+        KEY_U(85),
+        /**
          V key.
          */
-        KEY_V(86), /**
+        KEY_V(86),
+        /**
          W key.
          */
-        KEY_W(87), /**
+        KEY_W(87),
+        /**
          X key.
          */
-        KEY_X(88), /**
+        KEY_X(88),
+        /**
          Y key.
          */
-        KEY_Y(89), /**
+        KEY_Y(89),
+        /**
          Z key.
          */
-        KEY_Z(90), /**
+        KEY_Z(90),
+        /**
          Left bracket key.
          */
-        KEY_LEFT_BRACKET(91), /**
+        KEY_LEFT_BRACKET(91),
+        /**
          Backslash key.
          */
-        KEY_BACKSLASH(92), /**
+        KEY_BACKSLASH(92),
+        /**
          Right bracket key.
          */
-        KEY_RIGHT_BRACKET(93), /**
+        KEY_RIGHT_BRACKET(93),
+        /**
          Grave accent key.
          */
-        KEY_GRAVE_ACCENT(96), /**
+        KEY_GRAVE_ACCENT(96),
+        /**
          World 1 key.
          */
-        KEY_WORLD_1(161), /**
+        KEY_WORLD_1(161),
+        /**
          World 2 key.
          */
-        KEY_WORLD_2(162), /**
+        KEY_WORLD_2(162),
+        /**
          Escape key.
          */
-        KEY_ESCAPE(256), /**
+        KEY_ESCAPE(256),
+        /**
          Enter key.
          */
-        KEY_ENTER(257), /**
+        KEY_ENTER(257),
+        /**
          Tab key.
          */
-        KEY_TAB(258), /**
+        KEY_TAB(258),
+        /**
          Backspace key.
          */
-        KEY_BACKSPACE(259), /**
+        KEY_BACKSPACE(259),
+        /**
          Insert key.
          */
-        KEY_INSERT(260), /**
+        KEY_INSERT(260),
+        /**
          Delete key.
          */
-        KEY_DELETE(261), /**
+        KEY_DELETE(261),
+        /**
          Right key.
          */
-        KEY_RIGHT(262), /**
+        KEY_RIGHT(262),
+        /**
          Left key.
          */
-        KEY_LEFT(263), /**
+        KEY_LEFT(263),
+        /**
          Down key.
          */
-        KEY_DOWN(264), /**
+        KEY_DOWN(264),
+        /**
          Up key.
          */
-        KEY_UP(265), /**
+        KEY_UP(265),
+        /**
          Page up key.
          */
-        KEY_PAGE_UP(266), /**
+        KEY_PAGE_UP(266),
+        /**
          Page down key.
          */
-        KEY_PAGE_DOWN(267), /**
+        KEY_PAGE_DOWN(267),
+        /**
          Home key.
          */
-        KEY_HOME(268), /**
+        KEY_HOME(268),
+        /**
          End key.
          */
-        KEY_END(269), /**
+        KEY_END(269),
+        /**
          Caps lock key.
          */
-        KEY_CAPS_LOCK(280), /**
+        KEY_CAPS_LOCK(280),
+        /**
          Scroll lock key.
          */
-        KEY_SCROLL_LOCK(281), /**
+        KEY_SCROLL_LOCK(281),
+        /**
          Num lock key.
          */
-        KEY_NUM_LOCK(282), /**
+        KEY_NUM_LOCK(282),
+        /**
          Print screen key.
          */
-        KEY_PRINT_SCREEN(283), /**
+        KEY_PRINT_SCREEN(283),
+        /**
          Pause key.
          */
-        KEY_PAUSE(284), /**
+        KEY_PAUSE(284),
+        /**
          F1 key.
          */
-        KEY_F1(290), /**
+        KEY_F1(290),
+        /**
          F2 key.
          */
-        KEY_F2(291), /**
+        KEY_F2(291),
+        /**
          F3 key.
          */
-        KEY_F3(292), /**
+        KEY_F3(292),
+        /**
          F4 key.
          */
-        KEY_F4(293), /**
+        KEY_F4(293),
+        /**
          F5 key.
          */
-        KEY_F5(294), /**
+        KEY_F5(294),
+        /**
          F6 key.
          */
-        KEY_F6(295), /**
+        KEY_F6(295),
+        /**
          F7 key.
          */
-        KEY_F7(296), /**
+        KEY_F7(296),
+        /**
          F8 key.
          */
-        KEY_F8(297), /**
+        KEY_F8(297),
+        /**
          F9 key.
          */
-        KEY_F9(298), /**
+        KEY_F9(298),
+        /**
          F10 key.
          */
-        KEY_F10(299), /**
+        KEY_F10(299),
+        /**
          F11 key.
          */
-        KEY_F11(300), /**
+        KEY_F11(300),
+        /**
          F12 key.
          */
-        KEY_F12(301), /**
+        KEY_F12(301),
+        /**
          F13 key.
          */
-        KEY_F13(302), /**
+        KEY_F13(302),
+        /**
          F14 key.
          */
-        KEY_F14(303), /**
+        KEY_F14(303),
+        /**
          F15 key.
          */
-        KEY_F15(304), /**
+        KEY_F15(304),
+        /**
          F16 key.
          */
-        KEY_F16(305), /**
+        KEY_F16(305),
+        /**
          F17 key.
          */
-        KEY_F17(306), /**
+        KEY_F17(306),
+        /**
          F18 key.
          */
-        KEY_F18(307), /**
+        KEY_F18(307),
+        /**
          F19 key.
          */
-        KEY_F19(308), /**
+        KEY_F19(308),
+        /**
          F20 key.
          */
-        KEY_F20(309), /**
+        KEY_F20(309),
+        /**
          F21 key.
          */
-        KEY_F21(310), /**
+        KEY_F21(310),
+        /**
          F22 key.
          */
-        KEY_F22(311), /**
+        KEY_F22(311),
+        /**
          F23 key.
          */
-        KEY_F23(312), /**
+        KEY_F23(312),
+        /**
          F24 key.
          */
-        KEY_F24(313), /**
+        KEY_F24(313),
+        /**
          F25 key.
          */
-        KEY_F25(314), /**
+        KEY_F25(314),
+        /**
          Keypad 0 key.
          */
-        KEY_KP_0(320), /**
+        KEY_KP_0(320),
+        /**
          Keypad 1 key.
          */
-        KEY_KP_1(321), /**
+        KEY_KP_1(321),
+        /**
          Keypad 2 key.
          */
-        KEY_KP_2(322), /**
+        KEY_KP_2(322),
+        /**
          Keypad 3 key.
          */
-        KEY_KP_3(323), /**
+        KEY_KP_3(323),
+        /**
          Keypad 4 key.
          */
-        KEY_KP_4(324), /**
+        KEY_KP_4(324),
+        /**
          Keypad 5 key.
          */
-        KEY_KP_5(325), /**
+        KEY_KP_5(325),
+        /**
          Keypad 6 key.
          */
-        KEY_KP_6(326), /**
+        KEY_KP_6(326),
+        /**
          Keypad 7 key.
          */
-        KEY_KP_7(327), /**
+        KEY_KP_7(327),
+        /**
          Keypad 8 key.
          */
-        KEY_KP_8(328), /**
+        KEY_KP_8(328),
+        /**
          Keypad 9 key.
          */
-        KEY_KP_9(329), /**
+        KEY_KP_9(329),
+        /**
          Keypad decimal key.
          */
-        KEY_KP_DECIMAL(330), /**
+        KEY_KP_DECIMAL(330),
+        /**
          Keypad divide key.
          */
-        KEY_KP_DIVIDE(331), /**
+        KEY_KP_DIVIDE(331),
+        /**
          Keypad multiply key.
          */
-        KEY_KP_MULTIPLY(332), /**
+        KEY_KP_MULTIPLY(332),
+        /**
          Keypad subtract key.
          */
-        KEY_KP_SUBTRACT(333), /**
+        KEY_KP_SUBTRACT(333),
+        /**
          Keypad add key.
          */
-        KEY_KP_ADD(334), /**
+        KEY_KP_ADD(334),
+        /**
          Keypad enter key.
          */
-        KEY_KP_ENTER(335), /**
+        KEY_KP_ENTER(335),
+        /**
          Keypad equal key.
          */
-        KEY_KP_EQUAL(336), /**
+        KEY_KP_EQUAL(336),
+        /**
          Left shift key.
          */
-        KEY_LEFT_SHIFT(340), /**
+        KEY_LEFT_SHIFT(340),
+        /**
          Left control key.
          */
-        KEY_LEFT_CONTROL(341), /**
+        KEY_LEFT_CONTROL(341),
+        /**
          Left alt key.
          */
-        KEY_LEFT_ALT(342), /**
+        KEY_LEFT_ALT(342),
+        /**
          Left super key.
          */
-        KEY_LEFT_SUPER(343), /**
+        KEY_LEFT_SUPER(343),
+        /**
          Right shift key.
          */
-        KEY_RIGHT_SHIFT(344), /**
+        KEY_RIGHT_SHIFT(344),
+        /**
          Right control key.
          */
-        KEY_RIGHT_CONTROL(345), /**
+        KEY_RIGHT_CONTROL(345),
+        /**
          Right alt key.
          */
-        KEY_RIGHT_ALT(346), /**
+        KEY_RIGHT_ALT(346),
+        /**
          Right super key.
          */
-        KEY_RIGHT_SUPER(347), /**
+        KEY_RIGHT_SUPER(347),
+        /**
          Menu key.
          */
         KEY_MENU(348);
@@ -1251,11 +1373,13 @@ public class Input{
         /**
          Makes the cursor visible and behaving normally.
          */
-        NORMAL(GLFW_CURSOR_NORMAL), /**
+        NORMAL(GLFW_CURSOR_NORMAL),
+        /**
          Makes the cursor invisible when it is over the client area of the window but does not restrict the cursor from
          leaving.
          */
-        HIDDEN(GLFW_CURSOR_HIDDEN), /**
+        HIDDEN(GLFW_CURSOR_HIDDEN),
+        /**
          Hides and grabs the cursor, providing virtual and unlimited cursor movement. This is useful for implementing for
          example 3D camera controls.
          */

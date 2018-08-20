@@ -56,6 +56,12 @@ public class StaticCubeMapTexture extends CubeMapTexture{
         meta.setDataSize(size);
     }
 
+    @Override
+    protected int createTextureId(){
+        //TODO instead of this, create pool
+        return GL45.glCreateTextures(getTarget());
+    }
+
     //
     //loading/saving------------------------------------------------------------
     //

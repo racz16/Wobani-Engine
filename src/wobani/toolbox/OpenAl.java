@@ -213,19 +213,24 @@ public class OpenAl{
         /**
          Inverse distance model.
          */
-        INVERSE_DISTANCE(AL10.AL_INVERSE_DISTANCE), /**
+        INVERSE_DISTANCE(AL10.AL_INVERSE_DISTANCE),
+        /**
          Inverse distance clamped model.
          */
-        INVERSE_DISTANCE_CLAMPED(AL10.AL_INVERSE_DISTANCE_CLAMPED), /**
+        INVERSE_DISTANCE_CLAMPED(AL10.AL_INVERSE_DISTANCE_CLAMPED),
+        /**
          Exponent distance model.
          */
-        EXPONENT_DISTANCE(AL11.AL_EXPONENT_DISTANCE), /**
+        EXPONENT_DISTANCE(AL11.AL_EXPONENT_DISTANCE),
+        /**
          Exponent distance clamped model.
          */
-        EXPONENT_DISTANCE_CLAMPED(AL11.AL_EXPONENT_DISTANCE_CLAMPED), /**
+        EXPONENT_DISTANCE_CLAMPED(AL11.AL_EXPONENT_DISTANCE_CLAMPED),
+        /**
          Linear distance model.
          */
-        LINEAR_DISTANCE(AL11.AL_LINEAR_DISTANCE), /**
+        LINEAR_DISTANCE(AL11.AL_LINEAR_DISTANCE),
+        /**
          Linear distance clamped model.
          */
         LINEAR_DISTANCE_CLAMPED(AL11.AL_LINEAR_DISTANCE_CLAMPED);

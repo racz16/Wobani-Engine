@@ -159,19 +159,24 @@ public class OpenGlEvent{
         /**
          API.
          */
-        API(0x8246), /**
+        API(0x8246),
+        /**
          Window system.
          */
-        WINDOW_SYSTEM(0x8247), /**
+        WINDOW_SYSTEM(0x8247),
+        /**
          Shader compiler.
          */
-        SHADER_COMPILER(0x8248), /**
+        SHADER_COMPILER(0x8248),
+        /**
          Third party.
          */
-        THIRD_PARTY(0x8249), /**
+        THIRD_PARTY(0x8249),
+        /**
          Application.
          */
-        APPLICATION(0x824A), /**
+        APPLICATION(0x824A),
+        /**
          Other.
          */
         OTHER(0x824B);
@@ -226,22 +231,28 @@ public class OpenGlEvent{
         /**
          Error.
          */
-        ERROR(0x824C), /**
+        ERROR(0x824C),
+        /**
          Deprecated behavior.
          */
-        DEPRECATED_BEHAVIOR(0x824D), /**
+        DEPRECATED_BEHAVIOR(0x824D),
+        /**
          Undefined behavior.
          */
-        UNDEFINED_BEHAVIOR(0x824E), /**
+        UNDEFINED_BEHAVIOR(0x824E),
+        /**
          Portability.
          */
-        PORTABILITY(0x824F), /**
+        PORTABILITY(0x824F),
+        /**
          Performance.
          */
-        PERFORMANCE(0x8250), /**
+        PERFORMANCE(0x8250),
+        /**
          Other.
          */
-        OTHER(0x8251), /**
+        OTHER(0x8251),
+        /**
          Marker.
          */
         MARKER(0x8268);
@@ -296,13 +307,16 @@ public class OpenGlEvent{
         /**
          High severity.
          */
-        HIGH(0x9146), /**
+        HIGH(0x9146),
+        /**
          Medium severity.
          */
-        MEDIUM(0x9147), /**
+        MEDIUM(0x9147),
+        /**
          Low severity.
          */
-        LOW(0x9148), /**
+        LOW(0x9148),
+        /**
          Notification.
          */
         NOTIFICATION(0x826B);

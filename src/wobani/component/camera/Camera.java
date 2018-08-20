@@ -91,25 +91,32 @@ public interface Camera extends ComponentBase{
         /**
          Far-top-left corner point.
          */
-        FAR_TOP_LEFT(new Vector4f(-1, 1, 1, 1)), /**
+        FAR_TOP_LEFT(new Vector4f(-1, 1, 1, 1)),
+        /**
          Far-top-right corner point.
          */
-        FAR_TOP_RIGHT(new Vector4f(1, 1, 1, 1)), /**
+        FAR_TOP_RIGHT(new Vector4f(1, 1, 1, 1)),
+        /**
          Far-bottom-left corner point.
          */
-        FAR_BOTTOM_LEFT(new Vector4f(-1, -1, 1, 1)), /**
+        FAR_BOTTOM_LEFT(new Vector4f(-1, -1, 1, 1)),
+        /**
          Far-bottom-right corner point.
          */
-        FAR_BOTTOM_RIGHT(new Vector4f(1, -1, 1, 1)), /**
+        FAR_BOTTOM_RIGHT(new Vector4f(1, -1, 1, 1)),
+        /**
          Near-top-left corner point.
          */
-        NEAR_TOP_LEFT(new Vector4f(-1, 1, -1, 1)), /**
+        NEAR_TOP_LEFT(new Vector4f(-1, 1, -1, 1)),
+        /**
          Near-top-right corner point.
          */
-        NEAR_TOP_RIGHT(new Vector4f(1, 1, -1, 1)), /**
+        NEAR_TOP_RIGHT(new Vector4f(1, 1, -1, 1)),
+        /**
          Near-bottom-left corner point.
          */
-        NEAR_BOTTOM_LEFT(new Vector4f(-1, -1, -1, 1)), /**
+        NEAR_BOTTOM_LEFT(new Vector4f(-1, -1, -1, 1)),
+        /**
          Near-bottom-right corner point.
          */
         NEAR_BOTTOM_RIGHT(new Vector4f(1, -1, -1, 1));
@@ -148,7 +155,8 @@ public interface Camera extends ComponentBase{
         /**
          Perspective projection mode.
          */
-        PERSPECTIVE, /**
+        PERSPECTIVE,
+        /**
          Orthographic projection mode.
          */
         ORTHOGRAPHIC

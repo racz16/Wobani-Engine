@@ -30,6 +30,12 @@ public class DynamicCubeMapTexture extends CubeMapTexture{
         }
     }
 
+    @Override
+    protected int createTextureId(){
+        //TODO instead of this, create pool
+        return GL45.glCreateTextures(getTarget());
+    }
+
     public void setSide(@NotNull CubeMapSide side, @NotNull DynamicTexture2D texture){
         //        GL11.glTexImage2D(side.getCode(), 0, GL11.GL_RGB, size.x, size.y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data[i]);
     }

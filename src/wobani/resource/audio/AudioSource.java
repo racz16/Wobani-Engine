@@ -327,13 +327,16 @@ public class AudioSource implements Resource{
         /**
          Initial.
          */
-        INITIAL(AL10.AL_INITIAL), /**
+        INITIAL(AL10.AL_INITIAL),
+        /**
          Playing.
          */
-        PLAYING(AL10.AL_PLAYING), /**
+        PLAYING(AL10.AL_PLAYING),
+        /**
          Paused.
          */
-        PAUSED(AL10.AL_PAUSED), /**
+        PAUSED(AL10.AL_PAUSED),
+        /**
          Stopped.
          */
         STOPPED(AL10.AL_STOPPED);

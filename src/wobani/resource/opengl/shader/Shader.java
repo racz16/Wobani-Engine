@@ -322,16 +322,20 @@ public abstract class Shader implements Resource{
         /**
          Vertex shader.
          */
-        VERTEX_SHADER(GL20.GL_VERTEX_SHADER), /**
+        VERTEX_SHADER(GL20.GL_VERTEX_SHADER),
+        /**
          Fragment shader.
          */
-        FRAGMENT_SHADER(GL20.GL_FRAGMENT_SHADER), /**
+        FRAGMENT_SHADER(GL20.GL_FRAGMENT_SHADER),
+        /**
          Geometry shader.
          */
-        GEOMETRY_SHADER(GL32.GL_GEOMETRY_SHADER), /**
+        GEOMETRY_SHADER(GL32.GL_GEOMETRY_SHADER),
+        /**
          Tessellation control shader.
          */
-        TESS_CONTROL_SHADER(GL40.GL_TESS_CONTROL_SHADER), /**
+        TESS_CONTROL_SHADER(GL40.GL_TESS_CONTROL_SHADER),
+        /**
          Tessellation evaluation shader.
          */
         TESS_EVALUATION_SHADER(GL40.GL_TESS_EVALUATION_SHADER);

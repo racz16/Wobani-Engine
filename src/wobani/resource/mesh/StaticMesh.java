@@ -20,72 +20,71 @@ import java.util.*;
 import static org.lwjgl.assimp.Assimp.*;
 
 /**
- * Stores a mesh's data. You can load a mesh only once, if you try to load it twice, you get reference to the already
- * loaded one. You can specify the StaticMesh's data store policy including when and where the data should be stored.
- *
- * @see #loadModel(File path)
- */
+ Stores a mesh's data. You can load a mesh only once, if you try to load it twice, you get reference to the already
+ loaded one. You can specify the StaticMesh's data store policy including when and where the data should be stored.
+
+ @see #loadModel(File path) */
 public class StaticMesh implements Mesh{
 
     /**
-     * Vertex count.
+     Vertex count.
      */
     private final int vertexCount;
     /**
-     * Triangle count.
+     Triangle count.
      */
     private final int faceCount;
     /**
-     * Axis alligned bounding box's min x, y and z values.
+     Axis alligned bounding box's min x, y and z values.
      */
     private final Vector3f aabbMin = new Vector3f();
     /**
-     * Axis alligned bounding box's max x, y and z values.
+     Axis alligned bounding box's max x, y and z values.
      */
     private final Vector3f aabbMax = new Vector3f();
     /**
-     * Stores meta data about this mesh.
+     Stores meta data about this mesh.
      */
     private final DataStoreManager meta = new DataStoreManager();
     /**
-     * The resource's unique id.
+     The resource's unique id.
      */
     private final ResourceId resourceId;
     /**
-     * The mesh's VAO.
+     The mesh's VAO.
      */
     private Vao vao;
     /**
-     * Furthest vertex distance.
+     Furthest vertex distance.
      */
     private float furthestVertexDistance;
     /**
-     * Stores the mesh's position data.
+     Stores the mesh's position data.
      */
     private AIVector3D.Buffer position;
     /**
-     * Stores the mesh's texture coordinate data.
+     Stores the mesh's texture coordinate data.
      */
     private AIVector3D.Buffer uv;
     /**
-     * Stores the mesh's normal vector data.
+     Stores the mesh's normal vector data.
      */
     private AIVector3D.Buffer normal;
     /**
-     * Stores the mesh's tangent vector data.
+     Stores the mesh's tangent vector data.
      */
     private AIVector3D.Buffer tangent;
     /**
-     * Stores the mesh's index data.
+     Stores the mesh's index data.
      */
     private IntBuffer indices;
 
     /**
-     * Initializes a new StaticMesh to the given values.
-     *
-     * @param mesh       mesh
-     * @param path       model's relative path (with extension like "res/models/myModel.obj")
-     * @param resourceId the mesh's id
+     Initializes a new StaticMesh to the given values.
+
+     @param mesh       mesh
+     @param path       model's relative path (with extension like "res/models/myModel.obj")
+     @param resourceId the mesh's id
      */
     private StaticMesh(@NotNull AIMesh mesh, @NotNull File path, @NotNull ResourceId resourceId){
         faceCount = mesh.mNumFaces();
@@ -108,11 +107,12 @@ public class StaticMesh implements Mesh{
     //
 
     /**
-     * Loads a model from the given path into meshes. You can load a mesh only once, if you try to load it twice, you get
-     * reference to the already loaded one.
-     *
-     * @param path model's relative path (with extension like "res/models/myModel.obj")
-     * @return list of model's meshes
+     Loads a model from the given path into meshes. You can load a mesh only once, if you try to load it twice, you get
+     reference to the already loaded one.
+
+     @param path model's relative path (with extension like "res/models/myModel.obj")
+
+     @return list of model's meshes
      */
     @NotNull
     public static List<StaticMesh> loadModel(@NotNull File path){
@@ -134,10 +134,11 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Loads a model from the given path into meshes, and adds each mesh as a OldMeshComponent to it's own GameObject.
-     *
-     * @param path model's relative path (with extension like "res/models/myModel.obj")
-     * @return list of GameObjects
+     Loads a model from the given path into meshes, and adds each mesh as a OldMeshComponent to it's own GameObject.
+
+     @param path model's relative path (with extension like "res/models/myModel.obj")
+
+     @return list of GameObjects
      */
     @NotNull
     public static List<GameObject> loadModelToGameObjects(@NotNull File path){
@@ -151,10 +152,11 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Loads a model from the given path into meshes, and adds all the meshes as MeshComponents to a single GameObject.
-     *
-     * @param path model's relative path (with extension like "res/models/myModel.obj")
-     * @return GameObject
+     Loads a model from the given path into meshes, and adds all the meshes as MeshComponents to a single GameObject.
+
+     @param path model's relative path (with extension like "res/models/myModel.obj")
+
+     @return GameObject
      */
     @NotNull
     public static GameObject loadModelToGameObject(@NotNull File path){
@@ -166,11 +168,13 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Returns the model's scene stored in the given path.
-     *
-     * @param path model's relative path (with extension like "res/models/myModel.obj")
-     * @return model's scene
-     * @throws IllegalStateException if assimp can't load the data from the file
+     Returns the model's scene stored in the given path.
+
+     @param path model's relative path (with extension like "res/models/myModel.obj")
+
+     @return model's scene
+
+     @throws IllegalStateException if assimp can't load the data from the file
      */
     @NotNull
     private static AIScene getSceneAssimp(@NotNull File path){
@@ -183,7 +187,7 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Computes the mesh's size.
+     Computes the mesh's size.
      */
     private void computeDataSize(){
         int FLOAT_SIZE = 4;
@@ -200,11 +204,13 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Computes the mesh's indices buffer.
-     *
-     * @param mesh mesh
-     * @return indices buffer
-     * @throws IllegalStateException a face is not a triangle
+     Computes the mesh's indices buffer.
+
+     @param mesh mesh
+
+     @return indices buffer
+
+     @throws IllegalStateException a face is not a triangle
      */
     @NotNull
     private IntBuffer computeIndicesBuffer(@NotNull AIMesh mesh){
@@ -222,9 +228,9 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Computes the mesh's axis alligned bounding box and it's furthest vertex distance.
-     *
-     * @param mesh mesh
+     Computes the mesh's axis alligned bounding box and it's furthest vertex distance.
+
+     @param mesh mesh
      */
     private void computeFrustumCullingData(@NotNull AIMesh mesh){
         float max = 0;
@@ -255,7 +261,7 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Loads the mesh's data from file to the RAM. It doesn't compute AABB and furthest vertex distance again.
+     Loads the mesh's data from file to the RAM. It doesn't compute AABB and furthest vertex distance again.
      */
     private void hddToRam(){
         AIMesh mesh = AIMesh.create(getSceneAssimp(getPath()).mMeshes().get(resourceId.getIndex()));
@@ -263,10 +269,10 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Loads the mesh's data from the given parameter to the RAM. It doesn't compute AABB and furthest vertex distance
-     * again.
-     *
-     * @param mesh mesh
+     Loads the mesh's data from the given parameter to the RAM. It doesn't compute AABB and furthest vertex distance
+     again.
+
+     @param mesh mesh
      */
     private void hddToRam(@NotNull AIMesh mesh){
         indices = computeIndicesBuffer(mesh);
@@ -279,7 +285,7 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Loads the mesh's data from the RAM to the ACTION. It may cause errors if the data isn't in the RAM.
+     Loads the mesh's data from the RAM to the ACTION. It may cause errors if the data isn't in the RAM.
      */
     private void ramToVram(){
         vao = new Vao(getClass().getSimpleName() + " " + getPath());
@@ -322,7 +328,7 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Removes the mesh's data from the ACTION. It may cause errors if the data isn't in the ACTION.
+     Removes the mesh's data from the ACTION. It may cause errors if the data isn't in the ACTION.
      */
     private void vramToRam(){
         vao.release();
@@ -332,7 +338,7 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Removes the mesh's data from the RAM. It may cause errors if the data isn't in the RAM.
+     Removes the mesh's data from the RAM. It may cause errors if the data isn't in the RAM.
      */
     private void ramToHdd(){
         position = null;
@@ -380,53 +386,53 @@ public class StaticMesh implements Mesh{
     //
 
     /**
-     * Returns the ACTION time limit. If the elapsed time since this mesh's last use is higher than this value and the
-     * mesh's data store policy is RAM or HDD, the mesh's data may be removed from ACTION. Later if you want to render this
-     * mesh, it'll automatically load the data from file again.
-     *
-     * @return ACTION time limit (in miliseconds)
+     Returns the ACTION time limit. If the elapsed time since this mesh's last use is higher than this value and the
+     mesh's data store policy is RAM or HDD, the mesh's data may be removed from ACTION. Later if you want to render this
+     mesh, it'll automatically load the data from file again.
+
+     @return ACTION time limit (in miliseconds)
      */
     public long getVramTimeLimit(){
         return meta.getActionTimeLimit();
     }
 
     /**
-     * Sets the ACTION time limit to the given value. If the elapsed time since this mesh's last use is higher than this
-     * value and the mesh's data store policy is RAM or HDD, the mesh's data may be removed from ACTION. Later if you want
-     * to render this mesh, it'll automatically load the data from file again.
-     *
-     * @param vramTimeLimit ACTION time limit (in miliseconds)
+     Sets the ACTION time limit to the given value. If the elapsed time since this mesh's last use is higher than this
+     value and the mesh's data store policy is RAM or HDD, the mesh's data may be removed from ACTION. Later if you want
+     to render this mesh, it'll automatically load the data from file again.
+
+     @param vramTimeLimit ACTION time limit (in miliseconds)
      */
     public void setVramTimeLimit(long vramTimeLimit){
         meta.setActionTimeLimit(vramTimeLimit);
     }
 
     /**
-     * Returns the RAM time limit. If the elapsed time since this mesh's last use is higher than this value and the mesh's
-     * data store policy is HDD, the mesh's data may be removed from ACTION or even from RAM. Later if you want to render
-     * this mesh, it'll automatically load the data from file again.
-     *
-     * @return RAM time limit (in miliseconds)
+     Returns the RAM time limit. If the elapsed time since this mesh's last use is higher than this value and the mesh's
+     data store policy is HDD, the mesh's data may be removed from ACTION or even from RAM. Later if you want to render
+     this mesh, it'll automatically load the data from file again.
+
+     @return RAM time limit (in miliseconds)
      */
     public long getRamTimeLimit(){
         return meta.getCacheTimeLimit();
     }
 
     /**
-     * Sets the RAM time limit to the given value. If the elapsed time since this mesh's last use is higher than this value
-     * and the mesh's data store policy is HDD, the mesh's data may be removed from ACTION or even from RAM. Later if you
-     * want to render this mesh, it'll automatically load the data from file again.
-     *
-     * @param ramTimeLimit RAM time limit (in miliseconds)
+     Sets the RAM time limit to the given value. If the elapsed time since this mesh's last use is higher than this value
+     and the mesh's data store policy is HDD, the mesh's data may be removed from ACTION or even from RAM. Later if you
+     want to render this mesh, it'll automatically load the data from file again.
+
+     @param ramTimeLimit RAM time limit (in miliseconds)
      */
     public void setRamTimeLimit(long ramTimeLimit){
         meta.setCacheTimeLimit(ramTimeLimit);
     }
 
     /**
-     * Returns the mesh's state. It determines where the mesh is currently stored.
-     *
-     * @return the mesh's state
+     Returns the mesh's state. It determines where the mesh is currently stored.
+
+     @return the mesh's state
      */
     @NotNull
     public ResourceState getState(){
@@ -434,12 +440,12 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Returns the mesh's data store policy. ACTION means that the mesh's data will be stored in ACTION. RAM means that the
-     * mesh's data may be removed from ACTION to RAM if it's rarely used. HDD means that the mesh's data may be removed
-     * from ACTION or even from RAM if it's rarely used. Later if you want to render this mesh, it'll automatically load
-     * the data from file again.
-     *
-     * @return the mesh's data store policy
+     Returns the mesh's data store policy. ACTION means that the mesh's data will be stored in ACTION. RAM means that the
+     mesh's data may be removed from ACTION to RAM if it's rarely used. HDD means that the mesh's data may be removed
+     from ACTION or even from RAM if it's rarely used. Later if you want to render this mesh, it'll automatically load
+     the data from file again.
+
+     @return the mesh's data store policy
      */
     @NotNull
     public ResourceState getDataStorePolicy(){
@@ -447,12 +453,12 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Sets the mesh's data store policy to the given value. ACTION means that the mesh's data will be stored in ACTION.
-     * RAM means that the mesh's data may be removed from ACTION to RAM if it's rarely rendered. HDD means that the mesh's
-     * data may be removed from ACTION or even from RAM if it's rarely rendered. Later if you want to render this mesh,
-     * it'll automatically load the data from file again.
-     *
-     * @param minState data store policy
+     Sets the mesh's data store policy to the given value. ACTION means that the mesh's data will be stored in ACTION.
+     RAM means that the mesh's data may be removed from ACTION to RAM if it's rarely rendered. HDD means that the mesh's
+     data may be removed from ACTION or even from RAM if it's rarely rendered. Later if you want to render this mesh,
+     it'll automatically load the data from file again.
+
+     @param minState data store policy
      */
     public void setDataStorePolicy(@NotNull ResourceState minState){
         meta.setDataStorePolicy(minState);
@@ -466,9 +472,9 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Returns the time when the mesh last time used.
-     *
-     * @return the time when the mesh last time used (in miliseconds)
+     Returns the time when the mesh last time used.
+
+     @return the time when the mesh last time used (in miliseconds)
      */
     public long getLastActive(){
         return meta.getLastActive();
@@ -508,9 +514,9 @@ public class StaticMesh implements Mesh{
     //
 
     /**
-     * Returns the loaded model's path.
-     *
-     * @return the loaded model's path
+     Returns the loaded model's path.
+
+     @return the loaded model's path
      */
     @NotNull
     public File getPath(){
@@ -518,9 +524,9 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     * Returns the mesh's index in the loaded model.
-     *
-     * @return the mesh's index in the loaded model
+     Returns the mesh's index in the loaded model.
+
+     @return the mesh's index in the loaded model
      */
     public int getIndex(){
         return resourceId.getIndex();

@@ -51,6 +51,11 @@ public class StaticTexture2D extends Texture2D{
         meta.setDataSize(image.getData().capacity());
     }
 
+    @Override
+    protected int createTextureId(){
+        return getTexture2DPool().getResource();
+    }
+
     //
     //loading/saving------------------------------------------------------------
     //
@@ -76,7 +81,6 @@ public class StaticTexture2D extends Texture2D{
 
     protected void hddToRam(){
         image = new Image(meta.getPaths().get(0), true);
-        setSize(image.getSize());
 
         meta.setState(ResourceState.RAM);
     }

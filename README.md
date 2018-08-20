@@ -1,10 +1,9 @@
 # Engine
-My own OpenGL game engine. I write the code in Java, using the LWJGL.
+My OpenGL game engine. I write the code in Java, using the LWJGL.
 
 ## Features
 - GameObject based scene graph
 - Component system, including dependency handling
-- chance to store Components based on type
 - orthographic and perspective camera with frustum culling (sphere and AABB)
 - load various model and texture formats
 - Bezier and Catmull-Rom splines
@@ -13,8 +12,10 @@ My own OpenGL game engine. I write the code in Java, using the LWJGL.
 - Blinn-Phong shading
   - directional, point and spotlights
   - normal mapping and POM
+  - grid based lighting
 - shadow mapping with PCF (only for directional light)
 - post processing effects like tone mapping or FXAA
+- parallax corrected reflections and refractions
 - data caching mechanisms
 - keyboard, mouse and joystick input handling
 - logging and statistics
@@ -28,8 +29,8 @@ Schedule for new features: https://trello.com/b/Kt2S5Tz4/engine
 
 ## How to build
 The source code contains the IntelliJ project files, so IntelliJ can directly open it as a standard Java project. The following LWJGL components need to build the program:
-- LWJGL core 3.1.6
-- JOML 1.9.9
+- LWJGL core 3.2.0
+- JOML 1.9.10
 - Assimp bindings
 - GLFW bindings
 - OpenGL bindings

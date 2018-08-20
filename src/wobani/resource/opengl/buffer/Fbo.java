@@ -663,7 +663,7 @@ public class Fbo implements Resource{
         /**
          Stencil attachment.
          */
-        STENCIL(GL30.GL_STENCIL_ATTACHMENT, TextureInternalFormat.STENCIL8, TextureFormat.STENCILL, TextureDataType.FLOAT),
+        STENCIL(GL30.GL_STENCIL_ATTACHMENT, TextureInternalFormat.STENCIL8, TextureFormat.STENCIL, TextureDataType.FLOAT),
         /**
          Mixed depth and stencil attachment. Depth part get 24 bits and stencil part get 8 bits.
          */
@@ -910,7 +910,7 @@ public class Fbo implements Resource{
             int msaa = samples;
             if(type == FboAttachmentType.TEXTURE){
                 //TODO: mipmaps always false?
-                texture = new DynamicTexture2D(slot, size, floatingPoint, msaa, null, false);
+                texture = new DynamicTexture2D(size, slot.getInternalFormat(floatingPoint), slot.getFormat(), msaa, null, false);
                 if(multisampled){
                     GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot
                             .getAttachmet() + index, GL32.GL_TEXTURE_2D_MULTISAMPLE, texture.getId(), 0);

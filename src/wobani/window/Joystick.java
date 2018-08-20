@@ -229,16 +229,20 @@ public class Joystick{
         /**
          Left stick's horizontal direction.
          */
-        LEFT_STICK_HORIZONTAL(0), /**
+        LEFT_STICK_HORIZONTAL(0),
+        /**
          Left stick's vertical direction.
          */
-        LEFT_STICK_VERTICAL(1), /**
+        LEFT_STICK_VERTICAL(1),
+        /**
          Trigger buttons (LT and RT).
          */
-        TRIGGERS(2), /**
+        TRIGGERS(2),
+        /**
          Right stick's horizontal direction.
          */
-        RIGHT_STICK_HORIZONTAL(3), /**
+        RIGHT_STICK_HORIZONTAL(3),
+        /**
          Right stick's vertical direction.
          */
         RIGHT_STICK_VERTICAL(4);
@@ -274,43 +278,56 @@ public class Joystick{
         /**
          The down button (Xbox: A, Playstation: X).
          */
-        DOWN(0), /**
+        DOWN(0),
+        /**
          The right button (Xbox: B, Playstation: circle).
          */
-        RIGHT(1), /**
+        RIGHT(1),
+        /**
          The left button (Xbox: X, Playstation: square).
          */
-        LEFT(2), /**
+        LEFT(2),
+        /**
          The up button (Xbox: Y, Playstation: triangle).
          */
-        UP(3), /**
+        UP(3),
+        /**
          Left shoulder button (LB).
          */
-        LEFT_SHOULDER(4), /**
+        LEFT_SHOULDER(4),
+        /**
          Right shoulder button (RB).
          */
-        RIGHT_SHOULDER(5), /**
+        RIGHT_SHOULDER(5),
+        /**
          Back button.
          */
-        BACK(6), /**
+        BACK(6),
+        /**
          Start button.
          */
-        START(7), /**
+        START(7),
+        /**
          Left stick's button.
          */
-        LEFT_STICK(8), /**
+        LEFT_STICK(8),
+        /**
          Right stick's button.
          */
-        RIGHT_STICK(9), /**
+        RIGHT_STICK(9),
+        /**
          Up direction on the D-pad.
          */
-        UP_D_PAD(10), /**
+        UP_D_PAD(10),
+        /**
          Right direction on the D-pad.
          */
-        RIGHT_D_PAD(11), /**
+        RIGHT_D_PAD(11),
+        /**
          Down direction on the D-pad.
          */
-        DOWN_D_PAD(12), /**
+        DOWN_D_PAD(12),
+        /**
          Left direction on the D-pad.
          */
         LEFT_D_PAD(13);

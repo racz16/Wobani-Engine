@@ -58,7 +58,11 @@ public class OpenGlConstants{
     /**
      Determines whether the GPU be able to use anisotropic filtering.
      */
-    public static final boolean ANISOTROPIC_FILTERING_ENABLED;
+    public static final boolean ANISOTROPIC_FILTER_ENABLED;
+    /**
+     The anisotropic filter's max level.
+     */
+    public static final float ANISOTROPIC_FILTER_MAX_LEVEL;
 
     static{
         MAJOR_VERSION = GL11.glGetInteger(GL30.GL_MAJOR_VERSION);
@@ -73,6 +77,7 @@ public class OpenGlConstants{
         MAX_SHADER_STORAGE_BLOCK_SIZE = GL11.glGetInteger(GL43.GL_MAX_SHADER_STORAGE_BLOCK_SIZE);
         MAX_SAMPLES = GL11.glGetInteger(GL30.GL_MAX_SAMPLES);
         MAX_TEXTURE_SIZE = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE);
-        ANISOTROPIC_FILTERING_ENABLED = GL.getCapabilities().GL_EXT_texture_filter_anisotropic;
+        ANISOTROPIC_FILTER_ENABLED = GL.getCapabilities().GL_EXT_texture_filter_anisotropic;
+        ANISOTROPIC_FILTER_MAX_LEVEL = GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
     }
 }

@@ -11,107 +11,109 @@ import java.util.*;
 import java.util.logging.*;
 
 /**
- * Set of commonly used OpenGL functions.
+ Set of commonly used OpenGL functions.
  */
 public class OpenGl{
 
     /**
-     * Blend func factor.
+     Blend func factor.
      */
     public enum BlendFuncFactor{
         /**
-         * 0
+         0
          */
         ZERO(GL11.GL_ZERO),
         /**
-         * 1
+         1
          */
         ONE(GL11.GL_ONE),
         /**
-         * Source color
+         Source color
          */
         SRC_COLOR(GL11.GL_SRC_COLOR),
         /**
-         * 1 - source color
+         1 - source color
          */
         ONE_MINUS_SRC_COLOR(GL11.GL_ONE_MINUS_SRC_COLOR),
         /**
-         * Destination color
+         Destination color
          */
         DST_COLOR(GL11.GL_DST_COLOR),
         /**
-         * 1 - destination color
+         1 - destination color
          */
         ONE_MINUS_DST_COLOR(GL11.GL_ONE_MINUS_DST_COLOR),
         /**
-         * Source alpha
+         Source alpha
          */
         SRC_ALPHA(GL11.GL_SRC_ALPHA),
         /**
-         * 1 - source alpha
+         1 - source alpha
          */
         ONE_MINUS_SRC_ALPHA(GL11.GL_ONE_MINUS_SRC_ALPHA),
         /**
-         * Destination alpha
+         Destination alpha
          */
         DST_ALPHA(GL11.GL_DST_ALPHA),
         /**
-         * 1 - destination alpha
+         1 - destination alpha
          */
         ONE_MINUS_DST_ALPHA(GL11.GL_ONE_MINUS_DST_ALPHA),
         /**
-         * Constant color
+         Constant color
          */
         CONSTANT_COLOR(GL14.GL_CONSTANT_COLOR),
         /**
-         * 1 - constant color
+         1 - constant color
          */
         ONE_MINUS_CONSTANT_COLOR(GL14.GL_ONE_MINUS_CONSTANT_COLOR),
         /**
-         * Constant alpha
+         Constant alpha
          */
         CONSTANT_ALPHA(GL14.GL_CONSTANT_ALPHA),
         /**
-         * 1 - constant alpha
+         1 - constant alpha
          */
         ONE_MINUS_CONSTANT_ALPHA(GL14.GL_ONE_MINUS_CONSTANT_ALPHA),
         /**
-         * Source alpha saturate
+         Source alpha saturate
          */
         SRC_ALPHA_SATURATE(GL11.GL_SRC_ALPHA_SATURATE),
         /**
-         * Source 1 color
+         Source 1 color
          */
         SRC1_COLOR(GL33.GL_SRC1_COLOR),
         /**
-         * 1 - source 1 color
+         1 - source 1 color
          */
         ONE_MINUS_SRC1_COLOR(GL33.GL_ONE_MINUS_SRC1_COLOR),
         /**
-         * Source 1 alpha
+         Source 1 alpha
          */
         SRC1_ALPHA(GL33.GL_ONE_MINUS_SRC1_ALPHA);
 
         /**
-         * Blend func factor's OpenGL code.
+         Blend func factor's OpenGL code.
          */
         private final int code;
 
         /**
-         * Initializes a new BlendFuncFactor to the given value.
-         *
-         * @param code blend func factor's OpenGL code
+         Initializes a new BlendFuncFactor to the given value.
+
+         @param code blend func factor's OpenGL code
          */
         BlendFuncFactor(int code){
             this.code = code;
         }
 
         /**
-         * Returns the BlendFuncFactor of the given OpenGL code.
-         *
-         * @param code OpenGL blend func factor
-         * @return the BlendFuncFactor of the given OpenGL code
-         * @throws IllegalArgumentException the given parameter is not a blend func factor
+         Returns the BlendFuncFactor of the given OpenGL code.
+
+         @param code OpenGL blend func factor
+
+         @return the BlendFuncFactor of the given OpenGL code
+
+         @throws IllegalArgumentException the given parameter is not a blend func factor
          */
         @NotNull
         public static BlendFuncFactor valueOf(int code){
@@ -124,9 +126,9 @@ public class OpenGl{
         }
 
         /**
-         * Returns the blend func factor's OpenGL code.
-         *
-         * @return the blend func factor's OpenGL code
+         Returns the blend func factor's OpenGL code.
+
+         @return the blend func factor's OpenGL code
          */
         public int getCode(){
             return code;
@@ -134,50 +136,52 @@ public class OpenGl{
     }
 
     /**
-     * Blend equation.
+     Blend equation.
      */
     public enum BlendEquation{
         /**
-         * Add.
+         Add.
          */
         FUNC_ADD(GL14.GL_FUNC_ADD),
         /**
-         * Subtract.
+         Subtract.
          */
         FUNC_SUBTRACT(GL14.GL_FUNC_SUBTRACT),
         /**
-         * Reverse subtract.
+         Reverse subtract.
          */
         FUNC_REVERSE_SUBTRACT(GL14.GL_FUNC_REVERSE_SUBTRACT),
         /**
-         * Minimum.
+         Minimum.
          */
         MIN(GL14.GL_MIN),
         /**
-         * Maximum.
+         Maximum.
          */
         MAX(GL14.GL_MAX);
 
         /**
-         * Blend equation's OpenGL code.
+         Blend equation's OpenGL code.
          */
         private final int code;
 
         /**
-         * Initializes a new BlendEquation to the given value.
-         *
-         * @param code blend equation's OpenGL code
+         Initializes a new BlendEquation to the given value.
+
+         @param code blend equation's OpenGL code
          */
         BlendEquation(int code){
             this.code = code;
         }
 
         /**
-         * Returns the BlendEquation of the given OpenGL code.
-         *
-         * @param code OpenGL blend equation
-         * @return the BlendEquation of the given OpenGL code
-         * @throws IllegalArgumentException the given parameter is not a blend equation
+         Returns the BlendEquation of the given OpenGL code.
+
+         @param code OpenGL blend equation
+
+         @return the BlendEquation of the given OpenGL code
+
+         @throws IllegalArgumentException the given parameter is not a blend equation
          */
         @NotNull
         public static BlendEquation valueOf(int code){
@@ -190,9 +194,9 @@ public class OpenGl{
         }
 
         /**
-         * Returns the blend equation's OpenGL code.
-         *
-         * @return the blend equation's OpenGL code
+         Returns the blend equation's OpenGL code.
+
+         @return the blend equation's OpenGL code
          */
         public int getCode(){
             return code;
@@ -200,42 +204,44 @@ public class OpenGl{
     }
 
     /**
-     * Face culling mode.
+     Face culling mode.
      */
     public enum FaceCullingMode{
         /**
-         * Front.
+         Front.
          */
         FRONT(GL11.GL_FRONT),
         /**
-         * Back.
+         Back.
          */
         BACK(GL11.GL_BACK),
         /**
-         * Front and back.
+         Front and back.
          */
         FRONT_AND_BACK(GL11.GL_FRONT_AND_BACK);
 
         /**
-         * Face culling mode's OpenGL code.
+         Face culling mode's OpenGL code.
          */
         private final int code;
 
         /**
-         * Initializes a new FaceCullingMode to the given value.
-         *
-         * @param code face culling mode's OpenGL code
+         Initializes a new FaceCullingMode to the given value.
+
+         @param code face culling mode's OpenGL code
          */
         FaceCullingMode(int code){
             this.code = code;
         }
 
         /**
-         * Returns the FaceCullingMode of the given OpenGL code.
-         *
-         * @param code OpenGL face culling mode
-         * @return the FaceCullingMode of the given OpenGL code
-         * @throws IllegalArgumentException the given parameter is not a face culling mode
+         Returns the FaceCullingMode of the given OpenGL code.
+
+         @param code OpenGL face culling mode
+
+         @return the FaceCullingMode of the given OpenGL code
+
+         @throws IllegalArgumentException the given parameter is not a face culling mode
          */
         @NotNull
         public static FaceCullingMode valueOf(int code){
@@ -248,9 +254,9 @@ public class OpenGl{
         }
 
         /**
-         * Returns the face culling mode's OpenGL code.
-         *
-         * @return the face culling mode's OpenGL code
+         Returns the face culling mode's OpenGL code.
+
+         @return the face culling mode's OpenGL code
          */
         public int getCode(){
             return code;
@@ -258,62 +264,64 @@ public class OpenGl{
     }
 
     /**
-     * Depth test mode.
+     Depth test mode.
      */
     public enum DepthTestMode{
         /**
-         * Never pass the depth test.
+         Never pass the depth test.
          */
         NEVER(GL11.GL_NEVER),
         /**
-         * Pass the depth test if the new value is less.
+         Pass the depth test if the new value is less.
          */
         LESS(GL11.GL_LESS),
         /**
-         * Pass the depth test if the new value is equal.
+         Pass the depth test if the new value is equal.
          */
         EQUAL(GL11.GL_EQUAL),
         /**
-         * Pass the depth test if the new value is less or equal.
+         Pass the depth test if the new value is less or equal.
          */
         LESS_OR_EQUAL(GL11.GL_LEQUAL),
         /**
-         * Pass the depth test if the new value is greater.
+         Pass the depth test if the new value is greater.
          */
         GREATER(GL11.GL_GREATER),
         /**
-         * Pass the depth test if the new value isn't equal.
+         Pass the depth test if the new value isn't equal.
          */
         NOT_EQUAL(GL11.GL_NOTEQUAL),
         /**
-         * Pass the depth test if the new value is greater or equal.
+         Pass the depth test if the new value is greater or equal.
          */
         GREATER_OR_EQUAL(GL11.GL_GEQUAL),
         /**
-         * Always pass the depth test.
+         Always pass the depth test.
          */
         ALWAYS(GL11.GL_ALWAYS);
 
         /**
-         * Depth test mode's OpenGL code.
+         Depth test mode's OpenGL code.
          */
         private final int code;
 
         /**
-         * Initializes a new DepthTestMode to the given value.
-         *
-         * @param code depth test mode's OpenGL code
+         Initializes a new DepthTestMode to the given value.
+
+         @param code depth test mode's OpenGL code
          */
         DepthTestMode(int code){
             this.code = code;
         }
 
         /**
-         * Returns the DepthTestMode of the given OpenGL code.
-         *
-         * @param code OpenGL depth test mode
-         * @return the DepthTestMode of the given OpenGL code
-         * @throws IllegalArgumentException the given parameter is not a depth test mode
+         Returns the DepthTestMode of the given OpenGL code.
+
+         @param code OpenGL depth test mode
+
+         @return the DepthTestMode of the given OpenGL code
+
+         @throws IllegalArgumentException the given parameter is not a depth test mode
          */
         @NotNull
         public static DepthTestMode valueOf(int code){
@@ -326,9 +334,9 @@ public class OpenGl{
         }
 
         /**
-         * Returns the depth test mode's OpenGL code.
-         *
-         * @return the depth test mode's OpenGL code
+         Returns the depth test mode's OpenGL code.
+
+         @return the depth test mode's OpenGL code
          */
         public int getCode(){
             return code;
@@ -336,18 +344,18 @@ public class OpenGl{
     }
 
     /**
-     * List of the registered OpenGL error event handlers.
+     List of the registered OpenGL error event handlers.
      */
     private static final List<OpenGlDebugEventHandler> eventHandlers = new ArrayList<>();
 
     /**
-     * To can't create OpenGl instance.
+     To can't create OpenGl instance.
      */
     private OpenGl(){
     }
 
     /**
-     * Initializes the OpenGL settings to the Engine's default values like enabling depth testing.
+     Initializes the OpenGL settings to the Engine's default values like enabling depth testing.
      */
     public static void initializeToDefaults(){
         setMultisample(true);
@@ -360,7 +368,7 @@ public class OpenGl{
     }
 
     /**
-     * Initializes the OpenGL's error handling.
+     Initializes the OpenGL's error handling.
      */
     private static void initializeDebugEventHandling(){
         if(EngineInfo.isDebugMode()){
@@ -373,9 +381,9 @@ public class OpenGl{
     }
 
     /**
-     * Handles the given OpenGL error.
-     *
-     * @param event OpenGL error
+     Handles the given OpenGL error.
+
+     @param event OpenGL error
      */
     private static void handleDebugEvent(@NotNull OpenGlEvent event){
         logDebugEvent(event);
@@ -389,9 +397,9 @@ public class OpenGl{
     //
 
     /**
-     * Logs the given OpenGL event.
-     *
-     * @param event OpenGL debug event
+     Logs the given OpenGL event.
+
+     @param event OpenGL debug event
      */
     private static void logDebugEvent(@NotNull OpenGlEvent event){
         switch(event.getSeverity()){
@@ -411,11 +419,11 @@ public class OpenGl{
     }
 
     /**
-     * Enables the logging of the OpenGL debug events with the given parameters. The null parameter means don't care.
-     *
-     * @param source   event's source
-     * @param type     event's type
-     * @param severity event's severity
+     Enables the logging of the OpenGL debug events with the given parameters. The null parameter means don't care.
+
+     @param source   event's source
+     @param type     event's type
+     @param severity event's severity
      */
     public static void enableDebugEvents(@Nullable OpenGlEventSource source, @Nullable OpenGlEventType type, @Nullable OpenGlEventSeverity severity){
         int sou = source == null ? GL11.GL_DONT_CARE : source.getCode();
@@ -425,11 +433,11 @@ public class OpenGl{
     }
 
     /**
-     * Disables the logging of the OpenGL debug events with the given parameters. The null parameter means don't care.
-     *
-     * @param source   event's source
-     * @param type     event's type
-     * @param severity event's severity
+     Disables the logging of the OpenGL debug events with the given parameters. The null parameter means don't care.
+
+     @param source   event's source
+     @param type     event's type
+     @param severity event's severity
      */
     public static void disableDebugEvents(@Nullable OpenGlEventSource source, @Nullable OpenGlEventType type, @Nullable OpenGlEventSeverity severity){
         int sou = source == null ? GL11.GL_DONT_CARE : source.getCode();
@@ -439,10 +447,11 @@ public class OpenGl{
     }
 
     /**
-     * Adds the given OpenGL error event handler to the list of event handlers.
-     *
-     * @param eh OpenGL error event handler
-     * @throws NullPointerException parameter can't be null
+     Adds the given OpenGL error event handler to the list of event handlers.
+
+     @param eh OpenGL error event handler
+
+     @throws NullPointerException parameter can't be null
      */
     public static void addErrorEventHandler(@NotNull OpenGlDebugEventHandler eh){
         if(eh == null){
@@ -454,10 +463,11 @@ public class OpenGl{
     }
 
     /**
-     * Returns the specified event handler.
-     *
-     * @param index the event handler's index
-     * @return the specified event handler
+     Returns the specified event handler.
+
+     @param index the event handler's index
+
+     @return the specified event handler
      */
     @NotNull
     public static OpenGlDebugEventHandler getEventHandler(int index){
@@ -465,10 +475,11 @@ public class OpenGl{
     }
 
     /**
-     * Removes the given OpenGL error event handler from the list of event handlers.
-     *
-     * @param eh OpenGL error event handler
-     * @throws NullPointerException parameter can't be null
+     Removes the given OpenGL error event handler from the list of event handlers.
+
+     @param eh OpenGL error event handler
+
+     @throws NullPointerException parameter can't be null
      */
     public static void removeErrorEventHandler(@NotNull OpenGlDebugEventHandler eh){
         if(eh == null){
@@ -478,43 +489,43 @@ public class OpenGl{
     }
 
     /**
-     * Removes the specified OpenGL error event handler from the list of event handlers.
-     *
-     * @param index OpenGL error event handler's index
+     Removes the specified OpenGL error event handler from the list of event handlers.
+
+     @param index OpenGL error event handler's index
      */
     public static void removeErrorEventHandler(int index){
         eventHandlers.remove(index);
     }
 
     /**
-     * Removes all the OpenGL error event handlers.
+     Removes all the OpenGL error event handlers.
      */
     public static void removeAllErrorEventHandlers(){
         eventHandlers.clear();
     }
 
     /**
-     * Returns the number of registered OpenGL error event handlers.
-     *
-     * @return number of registered OpenGL error event handlers
+     Returns the number of registered OpenGL error event handlers.
+
+     @return number of registered OpenGL error event handlers
      */
     public static int getErrorEventHandlerCount(){
         return eventHandlers.size();
     }
 
     /**
-     * Determines whether multisampling is enabled.
-     *
-     * @return true if multisampling is enabled, false otherwise
+     Determines whether multisampling is enabled.
+
+     @return true if multisampling is enabled, false otherwise
      */
     public static boolean isMultisampling(){
         return GL11.glIsEnabled(GL13.GL_MULTISAMPLE);
     }
 
     /**
-     * Sets whether or not enable the multisampling.
-     *
-     * @param multisample true if you would like to enable multisampling, false otherwise
+     Sets whether or not enable the multisampling.
+
+     @param multisample true if you would like to enable multisampling, false otherwise
      */
     public static void setMultisample(boolean multisample){
         if(multisample){
@@ -529,18 +540,18 @@ public class OpenGl{
     //
 
     /**
-     * Returns whether the depth test is enabled.
-     *
-     * @return true if the depth test is enabled, false otherwise
+     Returns whether the depth test is enabled.
+
+     @return true if the depth test is enabled, false otherwise
      */
     public static boolean isDepthTest(){
         return GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
     }
 
     /**
-     * Sets whether or not enable the depth testing.
-     *
-     * @param depthTest true if you would like to enable depth testing, false otherwise
+     Sets whether or not enable the depth testing.
+
+     @param depthTest true if you would like to enable depth testing, false otherwise
      */
     public static void setDepthTest(boolean depthTest){
         if(depthTest){
@@ -551,9 +562,9 @@ public class OpenGl{
     }
 
     /**
-     * Returns whether the depth mask is enabled.
-     *
-     * @return true if the depth mask is enabled, false otherwise
+     Returns whether the depth mask is enabled.
+
+     @return true if the depth mask is enabled, false otherwise
      */
     public static boolean isDepthMask(){
         try(MemoryStack stack = MemoryStack.stackPush()){
@@ -564,18 +575,18 @@ public class OpenGl{
     }
 
     /**
-     * Sets whether or not enable the depth mask.
-     *
-     * @param depthMask true if you would like to enable the depth mask, false otherwise
+     Sets whether or not enable the depth mask.
+
+     @param depthMask true if you would like to enable the depth mask, false otherwise
      */
     public static void setDepthMask(boolean depthMask){
         GL11.glDepthMask(depthMask);
     }
 
     /**
-     * Returns the depth test mode.
-     *
-     * @return the depth test mode
+     Returns the depth test mode.
+
+     @return the depth test mode
      */
     @NotNull
     public static DepthTestMode getDepthTestMode(){
@@ -587,25 +598,25 @@ public class OpenGl{
     }
 
     /**
-     * Sets the depth test mode to the given value.
-     *
-     * @param depthMode depth test mode
+     Sets the depth test mode to the given value.
+
+     @param depthMode depth test mode
      */
     public static void setDepthTestMode(@NotNull DepthTestMode depthMode){
         GL11.glDepthFunc(depthMode.getCode());
     }
 
     /**
-     * Returns whether the alpha blending is enabled.
-     *
-     * @return true if the alpha blending is enabled, false otherwise
+     Returns whether the alpha blending is enabled.
+
+     @return true if the alpha blending is enabled, false otherwise
      */
     public static boolean isAlphaBlending(){
         return GL11.glIsEnabled(GL11.GL_BLEND);
     }
 
     /**
-     * Enables alpha blending and sets the blending function to (alpha - (1-alpha)).
+     Enables alpha blending and sets the blending function to (alpha - (1-alpha)).
      */
     public static void setAlphaBlendingToDefault(){
         setBlending(true);
@@ -613,9 +624,9 @@ public class OpenGl{
     }
 
     /**
-     * Returns the blending equation.
-     *
-     * @return the blending equation
+     Returns the blending equation.
+
+     @return the blending equation
      */
     @NotNull
     public static BlendEquation getBlendEquation(){
@@ -623,27 +634,27 @@ public class OpenGl{
     }
 
     /**
-     * Sets the blending equation to the given value.
-     *
-     * @param equation blending equation
+     Sets the blending equation to the given value.
+
+     @param equation blending equation
      */
     public static void setBlendingEquation(@NotNull BlendEquation equation){
         GL14.glBlendEquation(equation.getCode());
     }
 
     /**
-     * Returns whether the alpha blending is enabled.
-     *
-     * @return true if the alpha blending is enabled, false otherwise
+     Returns whether the alpha blending is enabled.
+
+     @return true if the alpha blending is enabled, false otherwise
      */
     public static boolean isBlending(){
         return GL11.glIsEnabled(GL11.GL_BLEND);
     }
 
     /**
-     * Sets whether or not enable the alpha blending.
-     *
-     * @param blending true if you would like to enable the alpha blending, false otherwise
+     Sets whether or not enable the alpha blending.
+
+     @param blending true if you would like to enable the alpha blending, false otherwise
      */
     public static void setBlending(boolean blending){
         if(blending){
@@ -654,9 +665,9 @@ public class OpenGl{
     }
 
     /**
-     * Returns the blending function's source factor.
-     *
-     * @return the blending function's source factor
+     Returns the blending function's source factor.
+
+     @return the blending function's source factor
      */
     @NotNull
     public static BlendFuncFactor getBlendingSourceFactor(){
@@ -664,9 +675,9 @@ public class OpenGl{
     }
 
     /**
-     * Returns the blending function's destination factor.
-     *
-     * @return the blending function's destination factor
+     Returns the blending function's destination factor.
+
+     @return the blending function's destination factor
      */
     @NotNull
     public static BlendFuncFactor getBlendingDestinationFactor(){
@@ -674,19 +685,19 @@ public class OpenGl{
     }
 
     /**
-     * Sets the blending function's parameters to the given values.
-     *
-     * @param sourceFactor      source factor
-     * @param destinationFactor destination factor
+     Sets the blending function's parameters to the given values.
+
+     @param sourceFactor      source factor
+     @param destinationFactor destination factor
      */
     public static void setBlendingFunction(@NotNull BlendFuncFactor sourceFactor, @NotNull BlendFuncFactor destinationFactor){
         GL11.glBlendFunc(sourceFactor.getCode(), destinationFactor.getCode());
     }
 
     /**
-     * Returns whether the wireframe mode is enabled.
-     *
-     * @return true if the wireframe mode is enabled, false otherwise
+     Returns whether the wireframe mode is enabled.
+
+     @return true if the wireframe mode is enabled, false otherwise
      */
     public static boolean isWireframe(){
         try(MemoryStack stack = MemoryStack.stackPush()){
@@ -697,9 +708,9 @@ public class OpenGl{
     }
 
     /**
-     * Sets whether or not enable the wireframe rendering mode.
-     *
-     * @param wireframeMode true if you would like to enable wireframe mode, false otherwise
+     Sets whether or not enable the wireframe rendering mode.
+
+     @param wireframeMode true if you would like to enable wireframe mode, false otherwise
      */
     public static void setWireframe(boolean wireframeMode){
         if(wireframeMode){
@@ -710,9 +721,9 @@ public class OpenGl{
     }
 
     /**
-     * Returns the rendering viewport size.
-     *
-     * @return the rendering viewport size
+     Returns the rendering viewport size.
+
+     @return the rendering viewport size
      */
     public static Vector2i getViewportSize(){
         try(MemoryStack stack = MemoryStack.stackPush()){
@@ -723,9 +734,9 @@ public class OpenGl{
     }
 
     /**
-     * Returns the rendering viewport offset.
-     *
-     * @return the rendering viewport offset
+     Returns the rendering viewport offset.
+
+     @return the rendering viewport offset
      */
     public static Vector2i getViewportOffset(){
         try(MemoryStack stack = MemoryStack.stackPush()){
@@ -736,11 +747,12 @@ public class OpenGl{
     }
 
     /**
-     * Sets the rendering viewport to the given values.
-     *
-     * @param size   rendering width and height
-     * @param offset rendering offset
-     * @throws IllegalArgumentException width and height must be positive
+     Sets the rendering viewport to the given values.
+
+     @param size   rendering width and height
+     @param offset rendering offset
+
+     @throws IllegalArgumentException width and height must be positive
      */
     public static void setViewport(@NotNull Vector2i size, @NotNull Vector2i offset){
         if(size.x <= 0 || size.y <= 0){
@@ -750,18 +762,18 @@ public class OpenGl{
     }
 
     /**
-     * Returns whether the face culling is enabled.
-     *
-     * @return true if the face culling is enabled, false otherwise
+     Returns whether the face culling is enabled.
+
+     @return true if the face culling is enabled, false otherwise
      */
     public static boolean isFaceCulling(){
         return GL11.glIsEnabled(GL11.GL_CULL_FACE);
     }
 
     /**
-     * Sets whether or not enable the face culling.
-     *
-     * @param faceCulling true if you would like to enable face culling, false otherwise
+     Sets whether or not enable the face culling.
+
+     @param faceCulling true if you would like to enable face culling, false otherwise
      */
     public static void setFaceCulling(boolean faceCulling){
         if(faceCulling){
@@ -772,9 +784,9 @@ public class OpenGl{
     }
 
     /**
-     * Returns the face culling mode.
-     *
-     * @return the face culling mode
+     Returns the face culling mode.
+
+     @return the face culling mode
      */
     @NotNull
     public static FaceCullingMode getFaceCullingMode(){
@@ -786,25 +798,25 @@ public class OpenGl{
     }
 
     /**
-     * Sets the face culling mode to the given value.
-     *
-     * @param faceCulling face culling mode
+     Sets the face culling mode to the given value.
+
+     @param faceCulling face culling mode
      */
     public static void setFaceCullingMode(@NotNull FaceCullingMode faceCulling){
         GL11.glCullFace(faceCulling.getCode());
     }
 
     /**
-     * Binds the default framebuffer.
+     Binds the default framebuffer.
      */
     public static void bindDefaultFrameBuffer(){
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
     }
 
     /**
-     * Returns the clear color.
-     *
-     * @return the clear color
+     Returns the clear color.
+
+     @return the clear color
      */
     @NotNull
     @ReadOnly
@@ -817,10 +829,11 @@ public class OpenGl{
     }
 
     /**
-     * Sets the clear color to the given value.
-     *
-     * @param clearColor clear color
-     * @throws IllegalArgumentException environment color can't be lower than 0
+     Sets the clear color to the given value.
+
+     @param clearColor clear color
+
+     @throws IllegalArgumentException environment color can't be lower than 0
      */
     public static void setClearColor(@NotNull Vector4f clearColor){
         if(!Utility.isHdrColor(new Vector3f(clearColor.x, clearColor.y, clearColor.z))){
@@ -830,11 +843,11 @@ public class OpenGl{
     }
 
     /**
-     * Clears the currently bound FBO's specified attachments.
-     *
-     * @param color   color attachments
-     * @param depth   depth attachment
-     * @param stencil stencil attachment
+     Clears the currently bound FBO's specified attachments.
+
+     @param color   color attachments
+     @param depth   depth attachment
+     @param stencil stencil attachment
      */
     public static void clear(boolean color, boolean depth, boolean stencil){
         int colorBit = color ? GL11.GL_COLOR_BUFFER_BIT : 0;
@@ -844,9 +857,9 @@ public class OpenGl{
     }
 
     /**
-     * Returns the company responsible for this GL implementation.
-     *
-     * @return name of the GPU's vendor
+     Returns the company responsible for this GL implementation.
+
+     @return name of the GPU's vendor
      */
     @NotNull
     public static String getVendor(){
@@ -854,10 +867,10 @@ public class OpenGl{
     }
 
     /**
-     * Returns the name of the renderer. This name is typically specific to a particular configuration of a hardware
-     * platform.
-     *
-     * @return name of the used GPU
+     Returns the name of the renderer. This name is typically specific to a particular configuration of a hardware
+     platform.
+
+     @return name of the used GPU
      */
     @NotNull
     public static String getRenderer(){
@@ -865,9 +878,9 @@ public class OpenGl{
     }
 
     /**
-     * The major version number of the OpenGL API supported by the current context.
-     *
-     * @return the major version of OpenGL
+     The major version number of the OpenGL API supported by the current context.
+
+     @return the major version of OpenGL
      */
     public static int getMajorVersion(){
         try(MemoryStack stack = MemoryStack.stackPush()){
@@ -878,9 +891,9 @@ public class OpenGl{
     }
 
     /**
-     * The minor version number of the OpenGL API supported by the current context.
-     *
-     * @return the minor version of OpenGL
+     The minor version number of the OpenGL API supported by the current context.
+
+     @return the minor version of OpenGL
      */
     public static int getMinorVersion(){
         try(MemoryStack stack = MemoryStack.stackPush()){
@@ -891,9 +904,9 @@ public class OpenGl{
     }
 
     /**
-     * Returns a version or release number for the shading language.
-     *
-     * @return a version or release number for the shading language
+     Returns a version or release number for the shading language.
+
+     @return a version or release number for the shading language
      */
     @NotNull
     public static String getGlslVersion(){

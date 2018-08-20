@@ -23,6 +23,7 @@ public class EngineInfo{
      Determines whether the engine is in debug mode.
      */
     private static final boolean DEBUG = true;
+
     /**
      To can't initialize a new EngineInfo.
      */
@@ -83,19 +84,24 @@ public class EngineInfo{
         /**
          The OpenGL library.
          */
-        OPENGL, /**
+        OPENGL,
+        /**
          The OpenAL library.
          */
-        OPENAL, /**
+        OPENAL,
+        /**
          The GLFW library.
          */
-        GLFW, /**
+        GLFW,
+        /**
          The STB library.
          */
-        STB, /**
+        STB,
+        /**
          The Assimp library.
          */
-        ASSIMP, /**
+        ASSIMP,
+        /**
          The JOML library.
          */
         JOML

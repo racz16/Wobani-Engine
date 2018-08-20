@@ -15,6 +15,7 @@ import java.nio.*;
  */
 public abstract class AbstractTexture extends OpenGlObject implements Texture{
 
+    //TODO: to openglobject? :D
     /**
      Texture's id.
      */
@@ -34,6 +35,7 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
     private boolean allocated;
 
     private TextureInternalFormat internalFormat;
+    private TextureFormat format;
 
     private int levels = 1;
     private float anisotropicLevel = 1;
@@ -53,11 +55,11 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
     /**
      Texture wrap along the U direction.
      */
-    private TextureWrap wrappingU = TextureWrap.REPEAT;
+    private TextureWrap wrapU = TextureWrap.REPEAT;
     /**
      Texture wrap along the V direction.
      */
-    private TextureWrap wrappingV = TextureWrap.REPEAT;
+    private TextureWrap wrapV = TextureWrap.REPEAT;
     /**
      Texture's magnification filter.
      */
@@ -74,20 +76,48 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
     protected void createTexture(int target, int samples){
         this.target = target;
         setSamples(samples);
-        this.id = GL45.glCreateTextures(target);
+        this.id = createTextureId();
+    }
+
+    protected abstract int createTextureId();
+
+    protected void checkCreation(){
+        if(id == -1){
+            throw new IllegalStateException();
+        }
     }
 
     protected void allocateImmutable(@NotNull TextureInternalFormat internalFormat, @NotNull Vector2i size, boolean mipmaps){
+        checkRelease();
+        checkCreation();
+        checkReallocation();
         setInternalFormat(internalFormat);
         setSize(size);
+        setMipmapCount(mipmaps);
         allocated = true;
+        allocateImmutableUnsafe();
+    }
+
+    private void allocateImmutableUnsafe(){
         if(isMultisampled()){
             GL45.glTextureStorage2DMultisample(id, samples, internalFormat.getCode(), size.x, size.y, true);
         }else{
-            levels = mipmaps ? computeMaxMipmapCount(size) : 1;
             GL45.glTextureStorage2D(id, levels, internalFormat.getCode(), size.x, size.y);
         }
-        //setFilterToNone();
+        setFilterToNone();
+    }
+
+    protected void checkReallocation(){
+        if(allocated){
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private void setMipmapCount(boolean mipmaps){
+        if(isMultisampled() && mipmaps){
+            throw new IllegalArgumentException();
+        }
+        levels = mipmaps ? computeMaxMipmapCount(size) : 1;
     }
 
     private int computeMaxMipmapCount(@NotNull Vector2i size){
@@ -116,26 +146,64 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
     }
 
     protected void store(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
-        if(!allocated){
-            throw new IllegalStateException();
-        }
-        //TODO: exceptions
+        checkRelease();
+        checkCreation();
+        checkAllocation();
+        checkSubImage(offset, size);
+        setFormat(format);
         GL45.glTextureSubImage2D(id, 0, offset.x, offset.y, size.x, size.y, format.getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
         GL45.glGenerateTextureMipmap(id);
+    }
+
+    protected void checkAllocation(){
+        if(!allocated){
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    protected void checkSubImage(@NotNull Vector2i offset, @NotNull Vector2i size){
+        if(offset.x < 0 || offset.y < 0 || size.x <= 0 || size.y <= 0 || offset.x + size.x > getSize().x || offset.y + size.y > getSize().y){
+            throw new IllegalArgumentException();
+        }
+    }
+
+    protected void setFormat(@NotNull TextureFormat format){
+        if(format.getComponentCount() != internalFormat.getComponentCount() ||
+                format.isDepth() && !internalFormat.isDepth() || format.isStencil() && !internalFormat.isStencil() ||
+                format.isDepthStencil() && !internalFormat.isDepthStencil() || format.isColor() && !internalFormat.isColor()){
+            throw new IllegalArgumentException();
+        }
+        this.format = format;
+    }
+
+    @Nullable
+    public TextureInternalFormat getInternalFormat(){
+        return internalFormat;
+    }
+
+    @Nullable
+    public TextureFormat getFormat(){
+        return format;
     }
 
     public float getAnisotropicLevel(){
         return anisotropicLevel;
     }
 
+    public boolean isAnisotropicFilterEnabled(){
+        return OpenGlConstants.ANISOTROPIC_FILTER_ENABLED;
+    }
+
     public void setAnisotropicLevel(int level){
-        if(OpenGlConstants.ANISOTROPIC_FILTERING_ENABLED){
-            anisotropicLevel = Math.min(16, GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
+        if(OpenGlConstants.ANISOTROPIC_FILTER_ENABLED){
+            anisotropicLevel = Math.min(level, OpenGlConstants.ANISOTROPIC_FILTER_MAX_LEVEL);
             GL45.glTextureParameterf(getId(), EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropicLevel);
         }else{
             throw new IllegalStateException();
         }
     }
+
+    //TODO: glCopyImageSubData
 
     public int getMipmapCount(){
         return levels;
@@ -168,6 +236,8 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
 
     @Override
     public int getActiveDataSize(){
+        //FIXME: multisapled?
+        //calculate based on internal format
         return dataSize;
     }
 
@@ -181,6 +251,7 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
      */
     @Override
     public void bind(){
+        //TODO: delete?
         GL11.glBindTexture(target, id);
     }
 
@@ -250,9 +321,9 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
     public TextureWrap getWrap(@NotNull TextureWrapDirection type){
         switch(type){
             case WRAP_U:
-                return wrappingU;
+                return wrapU;
             case WRAP_V:
-                return wrappingV;
+                return wrapV;
             default:
                 throw new IllegalArgumentException();
         }
@@ -272,10 +343,10 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
         }
         switch(type){
             case WRAP_U:
-                wrappingU = value;
+                wrapU = value;
                 break;
             case WRAP_V:
-                wrappingV = value;
+                wrapV = value;
                 break;
         }
         GL45.glTextureParameteri(id, type.getCode(), value.getCode());

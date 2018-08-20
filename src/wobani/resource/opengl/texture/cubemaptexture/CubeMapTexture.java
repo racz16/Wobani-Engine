@@ -5,7 +5,7 @@ import wobani.resource.*;
 import wobani.resource.opengl.texture.*;
 
 /**
- * Interface for the cubemap textures.
+ Interface for the cubemap textures.
  */
 public abstract class CubeMapTexture extends AbstractTexture{
 
