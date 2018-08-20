@@ -1,18 +1,15 @@
 package wobani.resource.opengl.buffer;
 
 import org.lwjgl.opengl.*;
-import org.lwjgl.system.MemoryStack;
-import wobani.resource.ResourceId;
-import wobani.resource.ResourcePool;
-import wobani.resource.opengl.OpenGlObject;
-import wobani.toolbox.Utility;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Nullable;
+import org.lwjgl.system.*;
+import wobani.resource.*;
+import wobani.resource.opengl.*;
+import wobani.toolbox.*;
+import wobani.toolbox.annotation.*;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import java.nio.*;
 
-import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryStack.*;
 
 /**
  * Object oriented wrapper class above the native OpenGL Buffer Object.
@@ -298,6 +295,7 @@ public abstract class BufferObject extends OpenGlObject {
     protected void storeGeneral(long offset, int size) {
         checkRelease();
         checkDataModification();
+        //FIXME: error if memory not allocated
         if (offset < 0) {
             throw new IllegalArgumentException("Offset can't be negative");
         }

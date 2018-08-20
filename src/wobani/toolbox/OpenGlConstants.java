@@ -47,7 +47,18 @@ public class OpenGlConstants{
      The maximum number of SSBO size.
      */
     public static final int MAX_SHADER_STORAGE_BLOCK_SIZE;
-
+    /**
+     The maximum number of samples in a texel.
+     */
+    public static final int MAX_SAMPLES;
+    /**
+     The maximum width and height for a texture.
+     */
+    public static final int MAX_TEXTURE_SIZE;
+    /**
+     Determines whether the GPU be able to use anisotropic filtering.
+     */
+    public static final boolean ANISOTROPIC_FILTERING_ENABLED;
 
     static{
         MAJOR_VERSION = GL11.glGetInteger(GL30.GL_MAJOR_VERSION);
@@ -60,5 +71,8 @@ public class OpenGlConstants{
         MAX_VERTEX_ATTRIBS = GL11.glGetInteger(GL20.GL_MAX_VERTEX_ATTRIBS);
         MAX_UNIFORM_BLOCK_SIZE = GL11.glGetInteger(GL31.GL_MAX_UNIFORM_BLOCK_SIZE);
         MAX_SHADER_STORAGE_BLOCK_SIZE = GL11.glGetInteger(GL43.GL_MAX_SHADER_STORAGE_BLOCK_SIZE);
+        MAX_SAMPLES = GL11.glGetInteger(GL30.GL_MAX_SAMPLES);
+        MAX_TEXTURE_SIZE = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE);
+        ANISOTROPIC_FILTERING_ENABLED = GL.getCapabilities().GL_EXT_texture_filter_anisotropic;
     }
 }

@@ -375,6 +375,7 @@ public class ShadowRenderer extends PrepareRenderer{
             fbo.setActiveDraw(false, 0);
             fbo.setActiveRead(false, 0);
             if(!fbo.isComplete()){
+                Utility.logError(fbo.getStatus().name());
                 throw new NativeException(OPENGL, "Incomplete FBO");
             }
             fbo.unbind();

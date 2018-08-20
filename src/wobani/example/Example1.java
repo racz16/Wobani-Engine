@@ -15,6 +15,7 @@ import wobani.resource.audio.*;
 import wobani.resource.environmentprobe.*;
 import wobani.resource.mesh.*;
 import wobani.resource.opengl.texture.cubemaptexture.*;
+import wobani.resource.opengl.texture.texture2d.*;
 import wobani.resource.spline.*;
 import wobani.toolbox.*;
 import wobani.toolbox.parameter.*;
@@ -59,6 +60,7 @@ public class Example1{
             createSpline();
             createLightSources();
             createMusic();
+            createBox();
             createMisc();
         }catch(Exception ex){
             Utility.logException(ex);
@@ -281,6 +283,18 @@ public class Example1{
     //
     //misc----------------------------------------------------------------------
     //
+    private static void createBox(){
+        GameObject box = new GameObject();
+        MeshComponent mc = new MeshComponent(StaticMesh.loadModel(new File("res/models/box.obj")).get(0));
+        StaticTexture2D tex = StaticTexture2D.loadTexture(new File("res/textures/diffuse1.png"), false);
+        mc.getMaterial().setSlot(Material.DIFFUSE, new MaterialSlot(tex));
+        //mc.getMaterial().setSlot(Material.NORMAL, new MaterialSlot(StaticTexture2D.loadTexture(new File("res/textures/normal6.png"), false)));
+        //mc.getMaterial().getParameters().set(MaterialSlot.USE_POM, new Parameter<>(1f));
+        box.getComponents().add(mc);
+        box.getTransform().setRelativePosition(new Vector3f(-60, -40, -30));
+        box.getTransform().setRelativeScale(new Vector3f(50));
+    }
+
     private static void createMisc(){
         GameObject stats = new GameObject();
         stats.getComponents().add(new Component(){

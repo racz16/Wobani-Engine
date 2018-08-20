@@ -8,7 +8,6 @@ import wobani.rendering.geometry.*;
 import wobani.rendering.postprocessing.*;
 import wobani.rendering.prepare.*;
 import wobani.rendering.stage.*;
-import wobani.resource.*;
 import wobani.resource.opengl.buffer.*;
 import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
@@ -104,17 +103,17 @@ public class RenderingPipeline{
                     throw new IllegalArgumentException("Gamma can't be lower than 1");
                 }
                 super.setValue(value);
-                ResourceManager.changeTextureColorSpace();
+                //ResourceManager.changeTextureColorSpace();
             }
 
             @Override
             protected void removedFromParameters(@Nullable Parameter<Float> added){
-                ResourceManager.changeTextureColorSpace();
+                //ResourceManager.changeTextureColorSpace();
             }
 
             @Override
             protected void addedToParameters(@Nullable Parameter<Float> removed){
-                ResourceManager.changeTextureColorSpace();
+                //ResourceManager.changeTextureColorSpace();
             }
 
         });

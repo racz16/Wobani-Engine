@@ -5,6 +5,7 @@
       <w>assimp</w>
       <w>attrib</w>
       <w>attribs</w>
+      <w>bilinear</w>
       <w>bindable</w>
       <w>blinn</w>
       <w>catmull</w>
@@ -31,6 +32,7 @@
       <w>mipmaps</w>
       <w>msaa</w>
       <w>multisample</w>
+      <w>multisampled</w>
       <w>multisampling</w>
       <w>netbeans</w>
       <w>nullable</w>
@@ -49,7 +51,9 @@
       <w>ssbo</w>
       <w>stbi</w>
       <w>struct</w>
+      <w>texel</w>
       <w>touchpad</w>
+      <w>trilinear</w>
       <w>vao</w>
       <w>vbos</w>
       <w>vram</w>

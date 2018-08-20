@@ -1,10 +1,12 @@
 package wobani.resource.opengl.texture.texture2d;
 
+import wobani.resource.*;
 import wobani.resource.opengl.texture.*;
 
-/**
- Interface for the standard 2D textures.
- */
-public interface Texture2D extends Texture{
+public abstract class Texture2D extends AbstractTexture{
+
+    public Texture2D(ResourceId resourceId){
+        super(resourceId);
+    }
 
 }

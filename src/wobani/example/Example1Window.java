@@ -8,8 +8,6 @@ import wobani.rendering.*;
 import wobani.rendering.geometry.*;
 import wobani.rendering.postprocessing.*;
 import wobani.rendering.stage.*;
-import wobani.resource.*;
-import wobani.resource.opengl.texture.EasyFiltering.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 import wobani.toolbox.parameter.*;
@@ -135,7 +133,6 @@ public class Example1Window extends javax.swing.JFrame{
         cbFullscreen.setSelected(Window.isFullscreen());
         int msaa = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.MSAA_LEVEL, 2);
         setSelectedItem(msaa, cbMsaa);
-        cbTextureFiltering.setSelectedIndex(ResourceManager.getTextureFiltering().getIndex());
         cbVSync.setSelectedIndex(Window.getVSync());
     }
 
@@ -170,8 +167,8 @@ public class Example1Window extends javax.swing.JFrame{
      */
     private void updateImportant(){
         lblFps.setText(Time.getFps() + " FPS");
-        float milisecs = 1.0f / Time.getFps();
-        lblMsec.setText(milisecs + " sec");
+        float millisecs = 1.0f / Time.getFps();
+        lblMsec.setText(millisecs + " sec");
 
         int triangles = 0;
         int meshes = 0;
@@ -193,34 +190,6 @@ public class Example1Window extends javax.swing.JFrame{
      Sets the OpenGL related settings changes.
      */
     private void changeOpenGLRelatedSettings(){
-        if(textureFilteringChanged){
-            switch(cbTextureFiltering.getSelectedIndex()){
-                case 0:
-                    ResourceManager.setTextureFiltering(TextureFiltering.NONE);
-                    break;
-                case 1:
-                    ResourceManager.setTextureFiltering(TextureFiltering.BILINEAR);
-                    break;
-                case 2:
-                    ResourceManager.setTextureFiltering(TextureFiltering.TRILINEAR);
-                    break;
-                case 3:
-                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_2X);
-                    break;
-                case 4:
-                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_4X);
-                    break;
-                case 5:
-                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_8X);
-                    break;
-                case 6:
-                    ResourceManager.setTextureFiltering(TextureFiltering.ANISOTROPIC_16X);
-                    break;
-                default:
-                    System.out.println("Undefined texture filtering");
-            }
-            textureFilteringChanged = false;
-        }
         if(vSyncChanged){
             Window.setVSync(cbVSync.getSelectedIndex());
             vSyncChanged = false;

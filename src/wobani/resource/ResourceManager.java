@@ -1,7 +1,6 @@
 package wobani.resource;
 
 import wobani.rendering.*;
-import wobani.resource.opengl.texture.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
@@ -149,42 +148,11 @@ public class ResourceManager{
      Resources' update time period (in milliseconds).
      */
     private static long resourceUpdatePeriod = 5000;
-    /**
-     Texture filtering mode.
-     */
-    private static EasyFiltering.TextureFiltering textureFiltering = EasyFiltering.TextureFiltering.ANISOTROPIC_2X;
 
     /**
      To can't initialize a new ResourceManager.
      */
     private ResourceManager(){
-    }
-
-    /**
-     Returns the texture filtering mode.
-
-     @return texture filtering mode
-     */
-    @NotNull
-    public static EasyFiltering.TextureFiltering getTextureFiltering(){
-        return textureFiltering;
-    }
-
-    /**
-     Sets the textures' filtering mode to the given value.
-
-     @param tf textures' filtering mode
-
-     @throws NullPointerException texture filtering can't be null
-     */
-    public static void setTextureFiltering(@NotNull EasyFiltering.TextureFiltering tf){
-        if(tf == null){
-            throw new NullPointerException();
-        }
-        if(textureFiltering != tf){
-            textureFiltering = tf;
-            changeTextureFiltering();
-        }
     }
 
     /**
@@ -227,43 +195,6 @@ public class ResourceManager{
         }
         resourceUpdatePeriod = updatePeriod;
     }
-
-    /**
-     Changes all texture's (that implements EasyFiltering) filtering based on what you set in Settings.
-
-     @see EasyFiltering
-     */
-    public static void changeTextureFiltering(){
-        Iterator<EasyFiltering> easyFilteringTextures = getResources(EasyFiltering.class);
-        if(easyFilteringTextures == null){
-            return;
-        }
-        while(easyFilteringTextures.hasNext()){
-            EasyFiltering texture = easyFilteringTextures.next();
-            texture.bind();
-            texture.setTextureFiltering(getTextureFiltering());
-            texture.unbind();
-        }
-    }
-
-    /**
-     Changes all texture's (that implements ChangableColorSpace) color space based on what you set in Settings.
-
-     @see ChangableColorSpace
-     */
-    public static void changeTextureColorSpace(){
-        float gamma = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.GAMMA, 1f);
-        boolean sRgb = gamma != 1;
-
-        Iterator<ChangableColorSpace> resources = getResources(ChangableColorSpace.class);
-        if(resources == null){
-            return;
-        }
-        while(resources.hasNext()){
-            resources.next().setsRgb(sRgb);
-        }
-    }
-
 
     /**
      Releases the textures, meshes, splines, FBOs and the window.

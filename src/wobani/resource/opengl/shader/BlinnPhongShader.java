@@ -13,39 +13,33 @@ import java.io.*;
 import java.util.*;
 
 /**
- This shader can draw meshes and splines by using the Blinn-Phong shading. You can fill the materials with diffuse color
- or diffuse map, specular color or specular map and normal map. If you set the appropirate parameters, the specular map's
- alpha channel used as the glossiness value and the normal map's alpha channel as a parallax map. If you don't fill the
- diffuse or specular slots, the shader uses default values (basically you can even use this Renderer with an empty
- material).
-
- @see Material#PARAM_POM_MAX_LAYERS_F
- @see Material#PARAM_POM_MIN_LAYERS_F
- @see Material#PARAM_POM_SCALE_F
- @see Material#PARAM_USE_POM_F
- @see Material#PARAM_REFRACTION_INDEX_F
- @see Material#PARAM_USE_GLOSSINESS_F */
+ * This shader can draw meshes and splines by using the Blinn-Phong shading. You can fill the materials with diffuse color
+ * or diffuse map, specular color or specular map and normal map. If you set the appropirate parameters, the specular map's
+ * alpha channel used as the glossiness value and the normal map's alpha channel as a parallax map. If you don't fill the
+ * diffuse or specular slots, the shader uses default values (basically you can even use this Renderer with an empty
+ * material).
+ */
 public class BlinnPhongShader extends Shader{
 
     /**
-     The vertex shader's path.
+     * The vertex shader's path.
      */
     private static final String vertexPath = "res/shaders/blinnPhong/vertexShader.glsl";
     /**
-     The fragment shader's path
+     * The fragment shader's path
      */
     private static final String fragmentPath = "res/shaders/blinnPhong/fragmentShader.glsl";
     /**
-     The only BlinnPhongShader instance.
+     * The only BlinnPhongShader instance.
      */
     private static BlinnPhongShader instance;
     /**
-     The resource's unique id.
+     * The resource's unique id.
      */
     private final ResourceId resourceId;
 
     /**
-     Inizializes a new Blinn-Phong shader.
+     * Inizializes a new Blinn-Phong shader.
      */
     public BlinnPhongShader(){
         super(vertexPath, fragmentPath, null, null, null);
@@ -112,7 +106,7 @@ public class BlinnPhongShader extends Shader{
     }
 
     /**
-     Loads various global data as uniform variables to the shader like view position, gamma value etc.
+     * Loads various global data as uniform variables to the shader like view position, gamma value etc.
      */
     public void loadGlobalUniforms(){
         Camera mainCamera = Scene.getParameters().getValue(Scene.MAIN_CAMERA);
@@ -129,11 +123,11 @@ public class BlinnPhongShader extends Shader{
     }
 
     /**
-     Loads per object data to the shader as uniform variables.
-
-     @param modelMatrix           model matrix
-     @param inverseModelMatrix3x3 the 3x3 inverse of the model matrix
-     @param receiveShadow         true if the Renderable is receive shadows, false otherwise
+     * Loads per object data to the shader as uniform variables.
+     *
+     * @param modelMatrix           model matrix
+     * @param inverseModelMatrix3x3 the 3x3 inverse of the model matrix
+     * @param receiveShadow         true if the Renderable is receive shadows, false otherwise
      */
     public void loadObjectUniforms(@NotNull Matrix4f modelMatrix, @NotNull Matrix3f inverseModelMatrix3x3, boolean receiveShadow){
         loadMatrix4("modelMatrix", modelMatrix);
@@ -142,9 +136,9 @@ public class BlinnPhongShader extends Shader{
     }
 
     /**
-     Loads the diffuse values from the given Material to the shader as uniform variables.
-
-     @param material renderable's material
+     * Loads the diffuse values from the given Material to the shader as uniform variables.
+     *
+     * @param material renderable's material
      */
     private void loadDiffuseSlot(@Nullable Material material){
         MaterialSlot slot = material.getSlot(Material.DIFFUSE);
@@ -177,9 +171,9 @@ public class BlinnPhongShader extends Shader{
     }
 
     /**
-     Loads the specular values from the given Material to the shader as uniform variables.
-
-     @param material renderable's material
+     * Loads the specular values from the given Material to the shader as uniform variables.
+     *
+     * @param material renderable's material
      */
     private void loadSpecularSlot(@Nullable Material material){
         MaterialSlot slot = material.getSlot(Material.SPECULAR);
@@ -224,9 +218,9 @@ public class BlinnPhongShader extends Shader{
     }
 
     /**
-     Loads the normal values from the given Material to the shader as uniform variables.
-
-     @param material renderable's material
+     * Loads the normal values from the given Material to the shader as uniform variables.
+     *
+     * @param material renderable's material
      */
     private void loadNormalSlot(@Nullable Material material){
         MaterialSlot slot = material.getSlot(Material.NORMAL);
@@ -274,9 +268,9 @@ public class BlinnPhongShader extends Shader{
     }
 
     /**
-     Loads the reflection and refraction values from the given Material to the shader as uniform variables.
-
-     @param material renderable's material
+     * Loads the reflection and refraction values from the given Material to the shader as uniform variables.
+     *
+     * @param material renderable's material
      */
     private void loadEnvironmentSlots(@Nullable Material material){
         //reflection
@@ -361,9 +355,9 @@ public class BlinnPhongShader extends Shader{
     }
 
     /**
-     Loads the given Material's data to the shader as uniform variables.
-
-     @param material material
+     * Loads the given Material's data to the shader as uniform variables.
+     *
+     * @param material material
      */
     public void loadMaterial(@NotNull Material material){
         //diffuse

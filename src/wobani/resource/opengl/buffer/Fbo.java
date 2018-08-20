@@ -1,107 +1,98 @@
 package wobani.resource.opengl.buffer;
 
-import org.joml.Vector2i;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL32;
-import org.lwjgl.system.MemoryStack;
-import wobani.rendering.RenderingPipeline;
-import wobani.resource.Resource;
-import wobani.resource.ResourceId;
-import wobani.resource.ResourceManager;
-import wobani.resource.opengl.texture.texture2d.DynamicTexture2D;
-import wobani.resource.opengl.texture.texture2d.Texture2D;
-import wobani.toolbox.annotation.Bind;
-import wobani.toolbox.annotation.NotNull;
-import wobani.toolbox.annotation.Nullable;
-import wobani.toolbox.annotation.ReadOnly;
+import org.joml.*;
+import org.lwjgl.opengl.*;
+import org.lwjgl.system.*;
+import wobani.resource.*;
+import wobani.resource.opengl.texture.Texture.*;
+import wobani.resource.opengl.texture.texture2d.*;
+import wobani.toolbox.annotation.*;
 
-import java.nio.IntBuffer;
-import java.util.Arrays;
-import java.util.Objects;
+import java.nio.*;
+import java.util.*;
 
-import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryStack.*;
 
 /**
- * Object oriented wrapper class above the native FBO. Supports 8 color attachments, the depth, the stencil and the
- * depth24-stencil8 attachment. You can add textures or Render Buffer Objects as attachments.
+ Object oriented wrapper class above the native FBO. Supports 8 color attachments, the depth, the stencil and the
+ depth24-stencil8 attachment. You can add textures or Render Buffer Objects as attachments.
  */
-public class Fbo implements Resource {
+public class Fbo implements Resource{
 
     /**
-     * FBO's color attachments.
+     FBO's color attachments.
      */
     private final AttachmentSlot[] color = new AttachmentSlot[8];
     /**
-     * FBO's depth attachment.
+     FBO's depth attachment.
      */
     private final AttachmentSlot depth = new AttachmentSlot(FboAttachmentSlot.DEPTH, 0);
     /**
-     * FBO's stencil attachment.
+     FBO's stencil attachment.
      */
     private final AttachmentSlot stencil = new AttachmentSlot(FboAttachmentSlot.STENCIL, 0);
     /**
-     * FBO's depth-stencil attachment.
+     FBO's depth-stencil attachment.
      */
     private final AttachmentSlot depthStencil = new AttachmentSlot(FboAttachmentSlot.DEPTH_STENCIL, 0);
     /**
-     * The FBO's width and height.
+     The FBO's width and height.
      */
     private final Vector2i size = new Vector2i();
     /**
-     * The resource's unique id.
+     The resource's unique id.
      */
     private final ResourceId resourceId;
     /**
-     * FBO's id.
+     FBO's id.
      */
     private int id = -1;
     /**
-     * The index of the attachment, which is active to read.
+     The index of the attachment, which is active to read.
      */
     private int activeRead;
     /**
-     * Determines whether the FBO is multisampled.
+     Determines whether the FBO is multisampled.
      */
     private boolean multisampled;
     /**
-     * Number of the FBO's samples.
+     Number of the FBO's samples.
      */
     private int samples;
     /**
-     * Determines whether the color attachments stored as floating point values.
+     Determines whether the color attachments stored as floating point values.
      */
     private boolean floatingPoint;
 
     //TODO: glClear
 
     /**
-     * Initializes a new FBO to the given value.
-     *
-     * @param size          FBO's width and height
-     * @param multisampled  multisampled
-     * @param samples       number of samples, if the FBO isn't multisampled, it can be anything
-     * @param floatingPoint FBO store color attachments as floating point values or not
-     * @throws IllegalArgumentException width and height must be positive
-     * @throws IllegalArgumentException samples can't be lower than 1
+     Initializes a new FBO to the given value.
+
+     @param size          FBO's width and height
+     @param multisampled  multisampled
+     @param samples       number of samples, if the FBO isn't multisampled, it can be anything
+     @param floatingPoint FBO store color attachments as floating point values or not
+
+     @throws IllegalArgumentException width and height must be positive
+     @throws IllegalArgumentException samples can't be lower than 1
      */
-    public Fbo(@NotNull Vector2i size, boolean multisampled, int samples, boolean floatingPoint) {
-        if (size.x <= 0 || size.y <= 0) {
+    public Fbo(@NotNull Vector2i size, boolean multisampled, int samples, boolean floatingPoint){
+        if(size.x <= 0 || size.y <= 0){
             throw new IllegalArgumentException("Width and height must be positive");
         }
-        if (multisampled && samples < 1) {
+        if(multisampled && samples < 1){
             throw new IllegalArgumentException("Samples can't be lower than 1");
         }
-        for (int i = 0; i < color.length; i++) {
+        for(int i = 0; i < color.length; i++){
             color[i] = new AttachmentSlot(FboAttachmentSlot.COLOR, i);
         }
         this.size.set(size);
         this.multisampled = multisampled;
         this.floatingPoint = floatingPoint;
-        if (multisampled) {
+        if(multisampled){
             this.samples = samples;
-        } else {
+        }else{
             this.samples = 1;
         }
         activeRead = 0;
@@ -111,43 +102,45 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Adds the specified attachment to the FBO. If there is already an attachment in the given slot, this method don't do
-     * anything. If you want to add both depth and stencil attachments, you should add a depth-stencil attachment.
-     *
-     * @param slot  attachment's slot
-     * @param type  attachment's type
-     * @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
-     * @return true if the attachment added successfully, false otherwise
-     * @throws NullPointerException     slot and type can't be null
-     * @throws IllegalArgumentException if the slot is color attachment, the index must be in the (0;7) interval
+     Adds the specified attachment to the FBO. If there is already an attachment in the given slot, this method don't do
+     anything. If you want to add both depth and stencil attachments, you should add a depth-stencil attachment.
+
+     @param slot  attachment's slot
+     @param type  attachment's type
+     @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
+
+     @return true if the attachment added successfully, false otherwise
+
+     @throws NullPointerException     slot and type can't be null
+     @throws IllegalArgumentException if the slot is color attachment, the index must be in the (0;7) interval
      */
     @Bind
-    public boolean addAttachment(@NotNull FboAttachmentSlot slot, @NotNull FboAttachmentType type, int index) {
-        if (slot == null || type == null) {
+    public boolean addAttachment(@NotNull FboAttachmentSlot slot, @NotNull FboAttachmentType type, int index){
+        if(slot == null || type == null){
             throw new NullPointerException();
         }
-        switch (slot) {
+        switch(slot){
             case COLOR:
-                if (index < 0 || index > 7) {
+                if(index < 0 || index > 7){
                     throw new IllegalArgumentException("If the slot is color, the index must be in the (0;7) interval");
                 }
                 return color[index].addAttachment(type);
             case DEPTH:
-                if (isThereAttachment(FboAttachmentSlot.STENCIL, 0) || isThereAttachment(FboAttachmentSlot.DEPTH_STENCIL, 0)) {
+                if(isThereAttachment(FboAttachmentSlot.STENCIL, 0) || isThereAttachment(FboAttachmentSlot.DEPTH_STENCIL, 0)){
                     return false;
-                } else {
+                }else{
                     return depth.addAttachment(type);
                 }
             case STENCIL:
-                if (isThereAttachment(FboAttachmentSlot.DEPTH, 0) || isThereAttachment(FboAttachmentSlot.DEPTH_STENCIL, 0)) {
+                if(isThereAttachment(FboAttachmentSlot.DEPTH, 0) || isThereAttachment(FboAttachmentSlot.DEPTH_STENCIL, 0)){
                     return false;
-                } else {
+                }else{
                     return stencil.addAttachment(type);
                 }
             case DEPTH_STENCIL:
-                if (isThereAttachment(FboAttachmentSlot.DEPTH, 0) || isThereAttachment(FboAttachmentSlot.STENCIL, 0)) {
+                if(isThereAttachment(FboAttachmentSlot.DEPTH, 0) || isThereAttachment(FboAttachmentSlot.STENCIL, 0)){
                     return false;
-                } else {
+                }else{
                     return depthStencil.addAttachment(type);
                 }
         }
@@ -155,34 +148,37 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Return true if there is a texture or a RBO attachment in the given slot, false otherwise.
-     *
-     * @param slot  attachment's slot
-     * @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
-     * @return true if there is a texture or a RBO attachment in the given slot, false otherwise
+     Return true if there is a texture or a RBO attachment in the given slot, false otherwise.
+
+     @param slot  attachment's slot
+     @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
+
+     @return true if there is a texture or a RBO attachment in the given slot, false otherwise
      */
-    public boolean isThereAttachment(@NotNull FboAttachmentSlot slot, int index) {
+    public boolean isThereAttachment(@NotNull FboAttachmentSlot slot, int index){
         return isThereAttachment(slot, FboAttachmentType.RBO, index) || isThereAttachment(slot, FboAttachmentType.TEXTURE, index);
     }
 
     /**
-     * Returns true if there is attachment in the given slot and it's type is the same as the given parameter.
-     *
-     * @param slot  attachment's slot
-     * @param type  attachment's type
-     * @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
-     * @return true if there is attachment in the given slot and it's type is the same as the given parameter, false
-     * otherwise
-     * @throws NullPointerException     slot and type can't be null
-     * @throws IllegalArgumentException if the slot is color attachment, the index must be in the (0;7) interval
+     Returns true if there is attachment in the given slot and it's type is the same as the given parameter.
+
+     @param slot  attachment's slot
+     @param type  attachment's type
+     @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
+
+     @return true if there is attachment in the given slot and it's type is the same as the given parameter, false
+     otherwise
+
+     @throws NullPointerException     slot and type can't be null
+     @throws IllegalArgumentException if the slot is color attachment, the index must be in the (0;7) interval
      */
-    public boolean isThereAttachment(@NotNull FboAttachmentSlot slot, @NotNull FboAttachmentType type, int index) {
-        if (slot == null || type == null) {
+    public boolean isThereAttachment(@NotNull FboAttachmentSlot slot, @NotNull FboAttachmentType type, int index){
+        if(slot == null || type == null){
             throw new NullPointerException();
         }
-        switch (slot) {
+        switch(slot){
             case COLOR:
-                if (index < 0 || index > 7) {
+                if(index < 0 || index > 7){
                     throw new IllegalArgumentException("If the slot is color, the index must be in the (0;7) interval");
                 }
                 return color[index].isThereAttachment(type);
@@ -197,22 +193,24 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Returns the specified slot's texture attachment. Returns null if there is no texture attachment.
-     *
-     * @param slot  attachment's slot
-     * @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
-     * @return the slot's texture attachment
-     * @throws NullPointerException     slot can't be null
-     * @throws IllegalArgumentException if the slot is color attachment, the index must be in the (0;7) interval
+     Returns the specified slot's texture attachment. Returns null if there is no texture attachment.
+
+     @param slot  attachment's slot
+     @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
+
+     @return the slot's texture attachment
+
+     @throws NullPointerException     slot can't be null
+     @throws IllegalArgumentException if the slot is color attachment, the index must be in the (0;7) interval
      */
     @Nullable
-    public Texture2D getTextureAttachment(@NotNull FboAttachmentSlot slot, int index) {
-        if (slot == null) {
+    public Texture2D getTextureAttachment(@NotNull FboAttachmentSlot slot, int index){
+        if(slot == null){
             throw new NullPointerException();
         }
-        switch (slot) {
+        switch(slot){
             case COLOR:
-                if (index < 0 || index > 7) {
+                if(index < 0 || index > 7){
                     throw new IllegalArgumentException("If the slot is color, the index must be in the (0;7) interval");
                 }
                 return color[index].getTextureAttachment();
@@ -227,20 +225,21 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Detaches the specified slot's attachment and releases the corresponding RBO or texture.
-     *
-     * @param slot  attachment's slot
-     * @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
-     * @throws NullPointerException     slot can't be null
-     * @throws IllegalArgumentException if the slot is attachment, the index must be in the (0;7) interval
+     Detaches the specified slot's attachment and releases the corresponding RBO or texture.
+
+     @param slot  attachment's slot
+     @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
+
+     @throws NullPointerException     slot can't be null
+     @throws IllegalArgumentException if the slot is attachment, the index must be in the (0;7) interval
      */
-    public void removeAttachment(@NotNull FboAttachmentSlot slot, int index) {
-        if (slot == null) {
+    public void removeAttachment(@NotNull FboAttachmentSlot slot, int index){
+        if(slot == null){
             throw new NullPointerException();
         }
-        switch (slot) {
+        switch(slot){
             case COLOR:
-                if (index < 0 || index > 7) {
+                if(index < 0 || index > 7){
                     throw new IllegalArgumentException("If the slot is color, the index must be in the (0;7) interval");
                 }
                 color[index].removeAttachment();
@@ -258,20 +257,21 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Detaches the specified slot's texture attachment but it doesn't release the texture.
-     *
-     * @param slot  attachment's slot
-     * @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
-     * @throws NullPointerException     slot can't be null
-     * @throws IllegalArgumentException if the slot is color attachment, the index must be in the (0;7) interval
+     Detaches the specified slot's texture attachment but it doesn't release the texture.
+
+     @param slot  attachment's slot
+     @param index attachment's index (0;7), if slot isn't color attachment, it can be anything
+
+     @throws NullPointerException     slot can't be null
+     @throws IllegalArgumentException if the slot is color attachment, the index must be in the (0;7) interval
      */
-    public void detachTexture(@NotNull FboAttachmentSlot slot, int index) {
-        if (slot == null) {
+    public void detachTexture(@NotNull FboAttachmentSlot slot, int index){
+        if(slot == null){
             throw new NullPointerException();
         }
-        switch (slot) {
+        switch(slot){
             case COLOR:
-                if (index < 0 || index > 7) {
+                if(index < 0 || index > 7){
                     throw new IllegalArgumentException("If the slot is color, the index must be in the (0;7) interval");
                 }
                 color[index].detachTexture();
@@ -289,43 +289,46 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Determines whether the specified attachment is active to draw.
-     *
-     * @param index attachment's index (0;7)
-     * @return true if the specified attachment is active to draw, false otherwise
-     * @throws IllegalArgumentException the index must be in the (0;7) interval
+     Determines whether the specified attachment is active to draw.
+
+     @param index attachment's index (0;7)
+
+     @return true if the specified attachment is active to draw, false otherwise
+
+     @throws IllegalArgumentException the index must be in the (0;7) interval
      */
-    public boolean isActiveDraw(int index) {
-        if (index < 0 || index > 7) {
+    public boolean isActiveDraw(int index){
+        if(index < 0 || index > 7){
             throw new IllegalArgumentException("The index must be in the (0;7) interval");
         }
-        if (color[index].isThereAttachment()) {
+        if(color[index].isThereAttachment()){
             return color[index].isActiveDraw();
-        } else {
+        }else{
             return false;
         }
     }
 
     /**
-     * Sets whether or not the specified attachment is active to draw.
-     *
-     * @param draw  true if the specified attachment should be active to draw, false otherwise
-     * @param index attachment's index (0;7)
-     * @throws IllegalArgumentException the index must be in the (0;7) interval
+     Sets whether or not the specified attachment is active to draw.
+
+     @param draw  true if the specified attachment should be active to draw, false otherwise
+     @param index attachment's index (0;7)
+
+     @throws IllegalArgumentException the index must be in the (0;7) interval
      */
     @Bind
-    public void setActiveDraw(boolean draw, int index) {
-        if (index < 0 || index > 7) {
+    public void setActiveDraw(boolean draw, int index){
+        if(index < 0 || index > 7){
             throw new IllegalArgumentException("The index must be in the (0;7) interval");
         }
 
-        if (color[index].isThereAttachment()) {
+        if(color[index].isThereAttachment()){
             color[index].setActiveDraw(draw);
 
-            try (MemoryStack stack = stackPush()) {
+            try(MemoryStack stack = stackPush()){
                 IntBuffer result = stack.mallocInt(8);
-                for (AttachmentSlot slot : color) {
-                    if (slot.isThereAttachment() && slot.isActiveDraw()) {
+                for(AttachmentSlot slot : color){
+                    if(slot.isThereAttachment() && slot.isActiveDraw()){
                         result.put(GL30.GL_COLOR_ATTACHMENT0 + slot.getIndex());
                     }
                 }
@@ -336,15 +339,17 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Determines whether the specified attachment is active to read. At the time only one attachment can be active to
-     * read.
-     *
-     * @param index attachment's index (0;7)
-     * @return true if the specified attachment is active to read, false otherwise
-     * @throws IllegalArgumentException the index must be in the (0;7) interval
+     Determines whether the specified attachment is active to read. At the time only one attachment can be active to
+     read.
+
+     @param index attachment's index (0;7)
+
+     @return true if the specified attachment is active to read, false otherwise
+
+     @throws IllegalArgumentException the index must be in the (0;7) interval
      */
-    public boolean isActiveRead(int index) {
-        if (index < 0 || index > 7) {
+    public boolean isActiveRead(int index){
+        if(index < 0 || index > 7){
             throw new IllegalArgumentException("If the slot is color, the index must be in the (0;7) interval");
         }
         return activeRead == index;
@@ -355,24 +360,25 @@ public class Fbo implements Resource {
     //
 
     /**
-     * Sets whether or not the specified attachment is active to read. At the time only one attachment can be active to
-     * read.
-     *
-     * @param read  true if the specified attachment should be active to read, false otherwise
-     * @param index attachment's index (0;7)
-     * @throws IllegalArgumentException the index must be in the (0;7) interval
+     Sets whether or not the specified attachment is active to read. At the time only one attachment can be active to
+     read.
+
+     @param read  true if the specified attachment should be active to read, false otherwise
+     @param index attachment's index (0;7)
+
+     @throws IllegalArgumentException the index must be in the (0;7) interval
      */
     @Bind
-    public void setActiveRead(boolean read, int index) {
-        if (index < 0 || index > 7) {
+    public void setActiveRead(boolean read, int index){
+        if(index < 0 || index > 7){
             throw new IllegalArgumentException("The index must be in the (0;7) interval");
         }
-        if (color[index].isThereAttachment()) {
-            if (read) {
+        if(color[index].isThereAttachment()){
+            if(read){
                 activeRead = index;
                 GL11.glReadBuffer(GL30.GL_COLOR_ATTACHMENT0 + index);
-            } else {
-                if (activeRead == index) {
+            }else{
+                if(activeRead == index){
                     GL11.glReadBuffer(GL11.GL_NONE);
                 }
             }
@@ -380,36 +386,36 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Determines whether the color attachments stored as floating point values.
-     *
-     * @return true if the color attachments stored as floating point values, false otherwise
+     Determines whether the color attachments stored as floating point values.
+
+     @return true if the color attachments stored as floating point values, false otherwise
      */
-    public boolean isFloatingPoint() {
+    public boolean isFloatingPoint(){
         return floatingPoint;
     }
 
     /**
-     * Returns true if the FBO is complete, false otherwise. If it returns false it's not a problem by itself, but you
-     * can't use the FBO until it returns true. The getStatus method may help you identifying what's wrong with your FBO.
-     *
-     * @return true if the FBO is complete, false otherwise
+     Returns true if the FBO is complete, false otherwise. If it returns false it's not a problem by itself, but you
+     can't use the FBO until it returns true. The getStatus method may help you identifying what's wrong with your FBO.
+
+     @return true if the FBO is complete, false otherwise
      */
     @Bind
-    public boolean isComplete() {
+    public boolean isComplete(){
         return getStatus() == FboCompleteness.COMPLETE;
     }
 
     /**
-     * Return the FBO's current status. It may help you to identify what is the problem with your FBO.
-     *
-     * @return the FBO's status
+     Return the FBO's current status. It may help you to identify what is the problem with your FBO.
+
+     @return the FBO's status
      */
     @Bind
     @NotNull
-    public FboCompleteness getStatus() {
+    public FboCompleteness getStatus(){
         int code = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
-        for (FboCompleteness fbc : FboCompleteness.values()) {
-            if (code == fbc.getCode()) {
+        for(FboCompleteness fbc : FboCompleteness.values()){
+            if(code == fbc.getCode()){
                 return fbc;
             }
         }
@@ -418,51 +424,51 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Return the FBO's id.
-     *
-     * @return FBO's id
+     Return the FBO's id.
+
+     @return FBO's id
      */
-    public int getId() {
+    public int getId(){
         return id;
     }
 
     /**
-     * Binds this FBO for both reading and drawing.
+     Binds this FBO for both reading and drawing.
      */
-    public void bind() {
+    public void bind(){
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
     }
 
     /**
-     * Binds this FBO for reading.
+     Binds this FBO for reading.
      */
-    public void bindRead() {
+    public void bindRead(){
         GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, id);
     }
 
     /**
-     * Binds this FBO for drawing.
+     Binds this FBO for drawing.
      */
-    public void bindDraw() {
+    public void bindDraw(){
         GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, id);
     }
 
     /**
-     * Unbinds this FBO (binds the default framebuffer).
+     Unbinds this FBO (binds the default framebuffer).
      */
-    public void unbind() {
+    public void unbind(){
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
     }
 
     /**
-     * Resolves this FBO and all of it's attachments to another (not multisampled) FBO.
-     *
-     * @return resolved FBO
+     Resolves this FBO and all of it's attachments to another (not multisampled) FBO.
+
+     @return resolved FBO
      */
     @NotNull
-    public Fbo resolveFbo() {
+    public Fbo resolveFbo(){
         Fbo resolved = new Fbo(getSize(), false, 1, floatingPoint);
-        for (AttachmentSlot slot : color) {
+        for(AttachmentSlot slot : color){
             resolveFbo(resolved, FboAttachmentSlot.COLOR, slot.getIndex(), slot.getIndex());
         }
         resolveFbo(resolved, FboAttachmentSlot.DEPTH, 0, 0);
@@ -472,49 +478,50 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Resolves this FBO's specified attachments to the given FBO's specified attachment slot. If the slot is color, this
-     * method resolves this FBO's fromIndexth color attachment to the given FBO's toIndexth attachment slot. If the slot
-     * isn't color, this method resolves this FBO's attachment to the given FBO's same slot.
-     *
-     * @param toResolve destonation FBO
-     * @param slot      attachment's slot
-     * @param fromIndex this FBO's attachment's index (0;7), if slot isn't color attachment, it can be anything
-     * @param toIndex   given FBO's attachment's index (0;7), if slot isn't color attachment, it can be anything
+     Resolves this FBO's specified attachments to the given FBO's specified attachment slot. If the slot is color, this
+     method resolves this FBO's fromIndexth color attachment to the given FBO's toIndexth attachment slot. If the slot
+     isn't color, this method resolves this FBO's attachment to the given FBO's same slot.
+
+     @param toResolve destonation FBO
+     @param slot      attachment's slot
+     @param fromIndex this FBO's attachment's index (0;7), if slot isn't color attachment, it can be anything
+     @param toIndex   given FBO's attachment's index (0;7), if slot isn't color attachment, it can be anything
      */
-    public void resolveFbo(@NotNull Fbo toResolve, @NotNull FboAttachmentSlot slot, int fromIndex, int toIndex) {
+    public void resolveFbo(@NotNull Fbo toResolve, @NotNull FboAttachmentSlot slot, int fromIndex, int toIndex){
         resolveFbo(toResolve, slot, FboAttachmentType.TEXTURE, fromIndex, toIndex);
         resolveFbo(toResolve, slot, FboAttachmentType.RBO, fromIndex, toIndex);
     }
 
     /**
-     * Resolves this FBO's specified attachments to the given FBO's specified attachment slot. If the slot is color, this
-     * method resolves this FBO's fromIndexth color attachment to the given FBO's toIndexth attachment slot. If the slot
-     * isn't color, this method resolves this FBO's attachment to the given FBO's same slot.
-     *
-     * @param toResolve destonation FBO
-     * @param slot      attachment's slot
-     * @param fromType  specifies the type of this FBO to resolve
-     * @param fromIndex this FBO's attachment's index (0;7), if slot isn't color attachment, it can be anything
-     * @param toIndex   given FBO's attachment's index (0;7), if slot isn't color attachment, it can be anything
-     * @throws NullPointerException     slot can't be null
-     * @throws IllegalArgumentException both FBOs have to be usable, the same size and the specified attachment have to be
-     *                                  exists
+     Resolves this FBO's specified attachments to the given FBO's specified attachment slot. If the slot is color, this
+     method resolves this FBO's fromIndexth color attachment to the given FBO's toIndexth attachment slot. If the slot
+     isn't color, this method resolves this FBO's attachment to the given FBO's same slot.
+
+     @param toResolve destonation FBO
+     @param slot      attachment's slot
+     @param fromType  specifies the type of this FBO to resolve
+     @param fromIndex this FBO's attachment's index (0;7), if slot isn't color attachment, it can be anything
+     @param toIndex   given FBO's attachment's index (0;7), if slot isn't color attachment, it can be anything
+
+     @throws NullPointerException     slot can't be null
+     @throws IllegalArgumentException both FBOs have to be usable, the same size and the specified attachment have to be
+     exists
      */
-    public void resolveFbo(@NotNull Fbo toResolve, @NotNull FboAttachmentSlot slot, @NotNull FboAttachmentType fromType, int fromIndex, int toIndex) {
-        if (slot == null) {
+    public void resolveFbo(@NotNull Fbo toResolve, @NotNull FboAttachmentSlot slot, @NotNull FboAttachmentType fromType, int fromIndex, int toIndex){
+        if(slot == null){
             throw new NullPointerException();
         }
-        if (this == toResolve || !size
-                .equals(toResolve.size) || !isThereAttachment(slot, fromIndex) || !isUsable() || !toResolve.isUsable()) {
+        if(this == toResolve || !size
+                .equals(toResolve.size) || !isThereAttachment(slot, fromIndex) || !isUsable() || !toResolve.isUsable()){
             throw new IllegalArgumentException("Both FBOs have to be usable, the same size and the specified attachment have to be exists");
         }
 
         toResolve.bindDraw();
         bindRead();
-        if (!toResolve.isThereAttachment(slot, toIndex)) {
+        if(!toResolve.isThereAttachment(slot, toIndex)){
             toResolve.addAttachment(slot, fromType, toIndex);
         }
-        switch (slot) {
+        switch(slot){
             case COLOR:
                 int read = activeRead;
                 setActiveRead(true, fromIndex);
@@ -537,26 +544,26 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Returns the FBO's width and height.
-     *
-     * @return the FBO's width and height
+     Returns the FBO's width and height.
+
+     @return the FBO's width and height
      */
     @ReadOnly
     @NotNull
-    public Vector2i getSize() {
+    public Vector2i getSize(){
         return new Vector2i(size);
     }
 
     @Override
-    public int getCachedDataSize() {
+    public int getCachedDataSize(){
         return 0;
     }
 
     @Override
-    public int getActiveDataSize() {
+    public int getActiveDataSize(){
         int attachmentSize = size.x * size.y * 4 * 4 * samples;
         int size = 0;
-        for (AttachmentSlot aColor : color) {
+        for(AttachmentSlot aColor : color){
             size += aColor.isThereAttachment() ? attachmentSize : 0;
         }
         size += depth.isThereAttachment() ? attachmentSize : 0;
@@ -567,17 +574,17 @@ public class Fbo implements Resource {
     }
 
     @Override
-    public void update() {
+    public void update(){
 
     }
 
     /**
-     * Releases the FBO and the FBO's attachments. After calling this method, you can't use the FBO and it's attachments
-     * for anything.
+     Releases the FBO and the FBO's attachments. After calling this method, you can't use the FBO and it's attachments
+     for anything.
      */
     @Override
-    public void release() {
-        for (int i = 0; i < color.length; i++) {
+    public void release(){
+        for(int i = 0; i < color.length; i++){
             color[i].removeAttachment();
         }
         depth.removeAttachment();
@@ -588,11 +595,11 @@ public class Fbo implements Resource {
     }
 
     /**
-     * Releases the FBO and it's RBOs, detaches the textures, but keeps alive the textures. You must have reference to all
-     * the FBO's textures, otherwise you cause memory leak. After calling this method, you can't use the FBO for anything.
+     Releases the FBO and it's RBOs, detaches the textures, but keeps alive the textures. You must have reference to all
+     the FBO's textures, otherwise you cause memory leak. After calling this method, you can't use the FBO for anything.
      */
-    public void releaseFboRbo() {
-        for (int i = 0; i < color.length; i++) {
+    public void releaseFboRbo(){
+        for(int i = 0; i < color.length; i++){
             color[i].detachTexture();
             color[i].removeRbo();
         }
@@ -608,90 +615,90 @@ public class Fbo implements Resource {
 
     @NotNull
     @Override
-    public ResourceId getResourceId() {
+    public ResourceId getResourceId(){
         return resourceId;
     }
 
     @Override
-    public boolean isUsable() {
+    public boolean isUsable(){
         return id != -1;
     }
 
     /**
-     * Determines whether the FBO is multisampled.
-     *
-     * @return true if the FBO is multisampled, false otherwise
+     Determines whether the FBO is multisampled.
+
+     @return true if the FBO is multisampled, false otherwise
      */
-    public boolean isMultisampled() {
+    public boolean isMultisampled(){
         return multisampled;
     }
 
     /**
-     * Returns the number of the FBO's samples.
-     *
-     * @return the number of the FBO's samples
+     Returns the number of the FBO's samples.
+
+     @return the number of the FBO's samples
      */
-    public int getNumberOfSamples() {
+    public int getNumberOfSamples(){
         return samples;
     }
 
     @Override
-    public String toString() {
+    public String toString(){
         return "Fbo{" + "fbo=" + id + ", activeRead=" + activeRead + ", color=" + Arrays
                 .toString(color) + ", depth=" + depth + ", stencil=" + stencil + ", depthStencil=" + depthStencil + ", size=" + size + ", multisampled=" + multisampled + ", samples=" + samples + ", floatingPoint=" + floatingPoint + '}';
     }
 
     /**
-     * Attachment slot.
+     Attachment slot.
      */
-    public enum FboAttachmentSlot {
+    public enum FboAttachmentSlot{
         /**
-         * Color attachment.
+         Color attachment.
          */
-        COLOR(GL30.GL_COLOR_ATTACHMENT0, GL11.GL_RGBA, GL11.GL_RGBA, GL11.GL_FLOAT),
+        COLOR(GL30.GL_COLOR_ATTACHMENT0, TextureInternalFormat.RGBA8, TextureFormat.RGBA, TextureDataType.FLOAT),
         /**
-         * Depth attachment.
+         Depth attachment.
          */
-        DEPTH(GL30.GL_DEPTH_ATTACHMENT, GL11.GL_DEPTH_COMPONENT, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT),
+        DEPTH(GL30.GL_DEPTH_ATTACHMENT, TextureInternalFormat.DEPTH32F, TextureFormat.DEPTH, TextureDataType.FLOAT),
         /**
-         * Stencil attachment.
+         Stencil attachment.
          */
-        STENCIL(GL30.GL_STENCIL_ATTACHMENT, GL11.GL_STENCIL_INDEX, GL11.GL_STENCIL_INDEX, GL11.GL_FLOAT),
+        STENCIL(GL30.GL_STENCIL_ATTACHMENT, TextureInternalFormat.STENCIL8, TextureFormat.STENCILL, TextureDataType.FLOAT),
         /**
-         * Mixed depth and stencil attachment. Depth part get 24 bits and stencil part get 8 bits.
+         Mixed depth and stencil attachment. Depth part get 24 bits and stencil part get 8 bits.
          */
-        DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL30.GL_DEPTH24_STENCIL8, GL30.GL_DEPTH_STENCIL, GL30.GL_UNSIGNED_INT_24_8);
+        DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL_ATTACHMENT, TextureInternalFormat.DEPTH24_STENCIL8, TextureFormat.DEPTH_STENCIL, TextureDataType.UNSIGNED_INT);//FIXME: GL30.GL_UNSIGNED_INT_24_8
 
         /**
-         * Floating point attachments's internal format.
+         Floating point attachments's internal format.
          */
         private static final int floatingPointInternalFormat = GL30.GL_RGBA16F;
         /**
-         * Attachment's OpenGL code.
+         Attachment's OpenGL code.
          */
         private final int attachment;
         /**
-         * Texture's OpenGL internal format.
+         Texture's OpenGL internal format.
          */
-        private final int internalFormat;
+        private final TextureInternalFormat internalFormat;
         /**
-         * Texture's OpenGL format.
+         Texture's OpenGL format.
          */
-        private final int format;
+        private final TextureFormat format;
         /**
-         * Texture's OpenGL type.
+         Texture's OpenGL type.
          */
-        private final int type;
+        private final TextureDataType type;
 
         /**
-         * Initializes a new FboAttachmentSlot to the given values.
-         *
-         * @param attachment     attachment's OpenGL code
-         * @param internalFormat texture's OpenGL internal format
-         * @param format         texture's OpenGL format
-         * @param type           texture's OpenGL type
+         Initializes a new FboAttachmentSlot to the given values.
+
+         @param attachment     attachment's OpenGL code
+         @param internalFormat texture's OpenGL internal format
+         @param format         texture's OpenGL format
+         @param type           texture's OpenGL type
          */
-        private FboAttachmentSlot(int attachment, int internalFormat, int format, int type) {
+        private FboAttachmentSlot(int attachment, TextureInternalFormat internalFormat, TextureFormat format, TextureDataType type){
             this.attachment = attachment;
             this.internalFormat = internalFormat;
             this.format = format;
@@ -699,164 +706,167 @@ public class Fbo implements Resource {
         }
 
         /**
-         * Returns the attachment's OpenGL code.
-         *
-         * @return the attachment's OpenGL code
+         Returns the attachment's OpenGL code.
+
+         @return the attachment's OpenGL code
          */
-        public int getAttachmet() {
+        public int getAttachmet(){
             return attachment;
         }
 
         /**
-         * Returns the texture's OpenGL internal format.
-         *
-         * @param floatingPoint is this attachment stored as floating point values or not
-         * @return the texture's OpenGL internal format
+         Returns the texture's OpenGL internal format.
+
+         @param floatingPoint is this attachment stored as floating point values or not
+
+         @return the texture's OpenGL internal format
          */
-        public int getInternalFormat(boolean floatingPoint) {
-            return floatingPoint && attachment == GL30.GL_COLOR_ATTACHMENT0 ? floatingPointInternalFormat : internalFormat;
+        public TextureInternalFormat getInternalFormat(boolean floatingPoint){
+            //return floatingPoint && attachment == GL30.GL_COLOR_ATTACHMENT0 ? floatingPointInternalFormat : internalFormat;
+            return floatingPoint && attachment == GL30.GL_COLOR_ATTACHMENT0 ? TextureInternalFormat.RGBA16F : internalFormat;
         }
 
         /**
-         * Returns the texture's OpenGL format.
-         *
-         * @return the texture's OpenGL format
+         Returns the texture's OpenGL format.
+
+         @return the texture's OpenGL format
          */
-        public int getFormat() {
+        public TextureFormat getFormat(){
             return format;
         }
 
         /**
-         * Returns the texture's OpenGL type.
-         *
-         * @return the texture's OpenGL type
+         Returns the texture's OpenGL type.
+
+         @return the texture's OpenGL type
          */
-        public int getType() {
+        public TextureDataType getType(){
             return type;
         }
     }
 
     /**
-     * Attachment's type.
+     Attachment's type.
      */
-    public enum FboAttachmentType {
+    public enum FboAttachmentType{
         /**
-         * Texture.
+         Texture.
          */
         TEXTURE,
         /**
-         * Render Buffer Object.
+         Render Buffer Object.
          */
         RBO
     }
 
     /**
-     * FBO's completeness.
+     FBO's completeness.
      */
-    public enum FboCompleteness {
+    public enum FboCompleteness{
         /**
-         * Complete.
+         Complete.
          */
         COMPLETE(GL30.GL_FRAMEBUFFER_COMPLETE),
         /**
-         * Incomplete attachment.
+         Incomplete attachment.
          */
         INCOMPLETE_ATTACHMENT(GL30.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT),
         /**
-         * Incomplete missing attachment.
+         Incomplete missing attachment.
          */
         INCOMPLETE_MISSING_ATTACHMENT(GL30.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT),
         /**
-         * Incomplete draw buffer.
+         Incomplete draw buffer.
          */
         INCOMPLETE_DRAW_BUFFER(GL30.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER),
         /**
-         * Incomplete read buffer.
+         Incomplete read buffer.
          */
         INCOMPLETE_READ_BUFFER(GL30.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER),
         /**
-         * Unsupported.
+         Unsupported.
          */
         UNSUPPORTED(GL30.GL_FRAMEBUFFER_UNSUPPORTED),
         /**
-         * Incomplete multisample.
+         Incomplete multisample.
          */
         INCOMPLETE_MULTISAMPLE(GL30.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE),
         /**
-         * Undefined.
+         Undefined.
          */
         UNDEFINED(GL30.GL_FRAMEBUFFER_UNDEFINED);
 
         /**
-         * Completeness's OpenGL code.
+         Completeness's OpenGL code.
          */
         private final int code;
 
         /**
-         * Initializes a new FboCompleteness to the given value.
-         *
-         * @param code completeness's OpenGL code
+         Initializes a new FboCompleteness to the given value.
+
+         @param code completeness's OpenGL code
          */
-        private FboCompleteness(int code) {
+        private FboCompleteness(int code){
             this.code = code;
         }
 
         /**
-         * Returns the completeness's OpenGL code.
-         *
-         * @return the completeness's OpenGL code
+         Returns the completeness's OpenGL code.
+
+         @return the completeness's OpenGL code
          */
-        public int getCode() {
+        public int getCode(){
             return code;
         }
     }
 
     /**
-     * Represents an attachment slot of a FBO. It can store a texture or a RBO.
+     Represents an attachment slot of a FBO. It can store a texture or a RBO.
      */
-    private class AttachmentSlot {
+    private class AttachmentSlot{
 
         /**
-         * Attachment slot's texture attachment.
+         Attachment slot's texture attachment.
          */
         private Texture2D texture;
         /**
-         * Render Buffer Object's id.
+         Render Buffer Object's id.
          */
         private int rbo = -1;
         /**
-         * Color attachment's index, if it isn't a color attachment, it's value is 0.
+         Color attachment's index, if it isn't a color attachment, it's value is 0.
          */
         private int index;
         /**
-         * Attachment's slot.
+         Attachment's slot.
          */
         private FboAttachmentSlot slot;
         /**
-         * Determines whether this attachment is active to draw.
+         Determines whether this attachment is active to draw.
          */
         private boolean draw;
 
         /**
-         * Initializes a new AttachmentSlot to the given values.
-         *
-         * @param slot  attachment's slot
-         * @param index color attachment's index, if it isn't a color attachment, it can be anything
-         * @throws NullPointerException     slot can't be null
-         * @throws IllegalArgumentException if the slot is color attachment, index have to be in the (0;7) interval
+         Initializes a new AttachmentSlot to the given values.
+
+         @param slot  attachment's slot
+         @param index color attachment's index, if it isn't a color attachment, it can be anything
+
+         @throws NullPointerException     slot can't be null
+         @throws IllegalArgumentException if the slot is color attachment, index have to be in the (0;7) interval
          */
-        public AttachmentSlot(@NotNull FboAttachmentSlot slot, int index) {
-            if (slot == null) {
+        public AttachmentSlot(@NotNull FboAttachmentSlot slot, int index){
+            if(slot == null){
                 throw new NullPointerException();
             }
-            if (slot == FboAttachmentSlot.COLOR) {
-                if (index < 0 || index > 7) {
+            if(slot == FboAttachmentSlot.COLOR){
+                if(index < 0 || index > 7){
                     throw new IllegalArgumentException("If the slot is color, the index must be in the (0;7) interval");
                 }
-                if (index == 0) {
+                if(index == 0){
                     draw = true;
                 }
-            } else {
+            }else{
                 index = 0;
             }
             this.slot = slot;
@@ -864,56 +874,59 @@ public class Fbo implements Resource {
         }
 
         /**
-         * Returns the attachment's index. If the attachment is a attachment attachment it's in the (0;7) interval, 0
-         * otherwise.
-         *
-         * @return the attachment's index
+         Returns the attachment's index. If the attachment is a attachment attachment it's in the (0;7) interval, 0
+         otherwise.
+
+         @return the attachment's index
          */
-        public int getIndex() {
+        public int getIndex(){
             return index;
         }
 
         /**
-         * Returns the attachment's slot.
-         *
-         * @return the attachment's slot
+         Returns the attachment's slot.
+
+         @return the attachment's slot
          */
         @NotNull
-        public FboAttachmentSlot getSlot() {
+        public FboAttachmentSlot getSlot(){
             return slot;
         }
 
         /**
-         * Adds the given type of attachment to the slot if there is no attachment currently in the slot.
-         *
-         * @param type attachment's type
-         * @return true if the attachment added successfully, false otherwise
+         Adds the given type of attachment to the slot if there is no attachment currently in the slot.
+
+         @param type attachment's type
+
+         @return true if the attachment added successfully, false otherwise
          */
         @Bind
-        public boolean addAttachment(@NotNull FboAttachmentType type) {
-            if (isThereAttachment()) {
+        public boolean addAttachment(@NotNull FboAttachmentType type){
+            if(isThereAttachment()){
                 return false;
             }
 
-            int msaa = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.MSAA_LEVEL, 2);
-            if (type == FboAttachmentType.TEXTURE) {
-                texture = new DynamicTexture2D(slot, size, floatingPoint, multisampled, msaa, null);
-                if (multisampled) {
+            //int msaa = RenderingPipeline.getParameters().getValueOrDefault(RenderingPipeline.MSAA_LEVEL, 2);
+            int msaa = samples;
+            if(type == FboAttachmentType.TEXTURE){
+                //TODO: mipmaps always false?
+                texture = new DynamicTexture2D(slot, size, floatingPoint, msaa, null, false);
+                if(multisampled){
                     GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot
                             .getAttachmet() + index, GL32.GL_TEXTURE_2D_MULTISAMPLE, texture.getId(), 0);
-                } else {
+                }else{
                     GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot
                             .getAttachmet() + index, GL11.GL_TEXTURE_2D, texture.getId(), 0);
                 }
-            } else {
+            }else{
                 rbo = GL30.glGenRenderbuffers();
                 GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, rbo);
-                if (multisampled) {
+                if(multisampled){
                     GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, msaa, slot
-                            .getInternalFormat(floatingPoint), size.x, size.y);
-                } else {
+                            .getInternalFormat(floatingPoint).getCode(), size.x, size.y);
+                }else{
                     GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, slot
-                            .getInternalFormat(floatingPoint), size.x, size.y);
+                            .getInternalFormat(floatingPoint).getCode(), size.x, size.y);
                 }
                 GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, slot
                         .getAttachmet() + index, GL30.GL_RENDERBUFFER, rbo);
@@ -922,96 +935,97 @@ public class Fbo implements Resource {
         }
 
         /**
-         * Returns the slot's texture attachment. Returns null if there is no texture attachment.
-         *
-         * @return the slot's texture attachment
+         Returns the slot's texture attachment. Returns null if there is no texture attachment.
+
+         @return the slot's texture attachment
          */
         @Nullable
-        public Texture2D getTextureAttachment() {
+        public Texture2D getTextureAttachment(){
             return texture;
         }
 
         /**
-         * Returns true if there is a texture or a RBO attachment, false otherwise.
-         *
-         * @return true if there is a texture or a RBO attachment, false otherwise
+         Returns true if there is a texture or a RBO attachment, false otherwise.
+
+         @return true if there is a texture or a RBO attachment, false otherwise
          */
-        public boolean isThereAttachment() {
+        public boolean isThereAttachment(){
             return isThereAttachment(FboAttachmentType.TEXTURE) || isThereAttachment(FboAttachmentType.RBO);
         }
 
         /**
-         * Returns true if there is attachment in this slot and it's type is the same as the given parameter.
-         *
-         * @param type attachment's type
-         * @return true if there is attachment in this slot and it's type is the same as the given parameter, false
-         * otherwise
+         Returns true if there is attachment in this slot and it's type is the same as the given parameter.
+
+         @param type attachment's type
+
+         @return true if there is attachment in this slot and it's type is the same as the given parameter, false
+         otherwise
          */
-        public boolean isThereAttachment(@NotNull FboAttachmentType type) {
-            if (type == FboAttachmentType.TEXTURE) {
+        public boolean isThereAttachment(@NotNull FboAttachmentType type){
+            if(type == FboAttachmentType.TEXTURE){
                 return texture != null && texture.isUsable();
-            } else {
+            }else{
                 return rbo != -1;
             }
         }
 
         /**
-         * Removes the slot's attachment.
+         Removes the slot's attachment.
          */
-        public void removeAttachment() {
+        public void removeAttachment(){
             removeTexture();
             removeRbo();
         }
 
         /**
-         * If this attachment is a texture, this method releases it.
+         If this attachment is a texture, this method releases it.
          */
-        public void removeTexture() {
-            if (isThereAttachment(FboAttachmentType.TEXTURE)) {
+        public void removeTexture(){
+            if(isThereAttachment(FboAttachmentType.TEXTURE)){
                 texture.release();
                 texture = null;
             }
         }
 
         /**
-         * If this attachment is a RBO, this method releases it.
+         If this attachment is a RBO, this method releases it.
          */
-        public void removeRbo() {
-            if (isThereAttachment(FboAttachmentType.RBO)) {
+        public void removeRbo(){
+            if(isThereAttachment(FboAttachmentType.RBO)){
                 GL30.glDeleteRenderbuffers(rbo);
                 rbo = -1;
             }
         }
 
         /**
-         * If this attachment is a texture, this method detaches it but doesn't release.
+         If this attachment is a texture, this method detaches it but doesn't release.
          */
-        public void detachTexture() {
-            if (isThereAttachment(FboAttachmentType.TEXTURE)) {
+        public void detachTexture(){
+            if(isThereAttachment(FboAttachmentType.TEXTURE)){
                 texture = null;
             }
         }
 
         /**
-         * Determines whether this attachment is active to draw.
-         *
-         * @return true if this attachment is active to draw, false otherwise
+         Determines whether this attachment is active to draw.
+
+         @return true if this attachment is active to draw, false otherwise
          */
-        public boolean isActiveDraw() {
+        public boolean isActiveDraw(){
             return draw;
         }
 
         /**
-         * Sets whether or not this attachment is active to draw.
-         *
-         * @param draw true if this attachment should be active to draw, false otherwise
+         Sets whether or not this attachment is active to draw.
+
+         @param draw true if this attachment should be active to draw, false otherwise
          */
-        public void setActiveDraw(boolean draw) {
+        public void setActiveDraw(boolean draw){
             this.draw = draw;
         }
 
         @Override
-        public int hashCode() {
+        public int hashCode(){
             int hash = 7;
             hash = 23 * hash + Objects.hashCode(this.texture);
             hash = 23 * hash + this.rbo;
@@ -1022,37 +1036,37 @@ public class Fbo implements Resource {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
+        public boolean equals(Object obj){
+            if(this == obj){
                 return true;
             }
-            if (obj == null) {
+            if(obj == null){
                 return false;
             }
-            if (getClass() != obj.getClass()) {
+            if(getClass() != obj.getClass()){
                 return false;
             }
             final AttachmentSlot other = (AttachmentSlot) obj;
-            if (this.rbo != other.rbo) {
+            if(this.rbo != other.rbo){
                 return false;
             }
-            if (this.index != other.index) {
+            if(this.index != other.index){
                 return false;
             }
-            if (this.draw != other.draw) {
+            if(this.draw != other.draw){
                 return false;
             }
-            if (!Objects.equals(this.texture, other.texture)) {
+            if(!Objects.equals(this.texture, other.texture)){
                 return false;
             }
-            if (this.slot != other.slot) {
+            if(this.slot != other.slot){
                 return false;
             }
             return true;
         }
 
         @Override
-        public String toString() {
+        public String toString(){
             return "AttachmentSlot{" + "texture=" + texture + ", rbo=" + rbo + ", index=" + index + ", slot=" + slot + ", draw=" + draw + '}';
         }
 
