@@ -67,7 +67,6 @@ public class EnvironmentMapRenderer extends PrepareRenderer{
             probe.refresh();
             OpenGl.setViewport(probe.getSize(), new Vector2i());
 
-            probe.bindCubeMap();
             probe.bindFbo();
             for(int faceIndex = 0; faceIndex < 6; faceIndex++){
                 shader.loadViewMatrix(probe.getViewMatrix(faceIndex));
@@ -121,7 +120,6 @@ public class EnvironmentMapRenderer extends PrepareRenderer{
                 //                skyboxRenderer.render();
             }
             probe.unbindFbo();
-            probe.unbindCubeMap();
         }
         shader.stop();
         OpenGl.setFaceCulling(true);

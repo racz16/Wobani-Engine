@@ -5,7 +5,7 @@ import wobani.resource.*;
 import wobani.resource.opengl.texture.*;
 import wobani.toolbox.annotation.*;
 
-public abstract class Texture2D extends AbstractTexture{
+public abstract class Texture2D extends TextureBase{
 
     private static final Texture2DPool TEXTURE_2D_POOL = new Texture2DPool();
     private static final Texture2DMultisampledPool TEXTURE_2D_MULTISAMPLED_POOL = new Texture2DMultisampledPool();

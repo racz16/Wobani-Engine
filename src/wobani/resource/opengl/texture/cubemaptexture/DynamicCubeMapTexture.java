@@ -10,39 +10,21 @@ public class DynamicCubeMapTexture extends CubeMapTexture{
 
     public DynamicCubeMapTexture(@NotNull Vector2i size){
         super(new ResourceId());
-        if(size.x <= 0 || size.y <= 0){
-            throw new IllegalArgumentException("Width and height must be positive");
-        }
-        createTexture(getTarget(), getSampleCount());
-        setSize(size);
-        setDataSize(size.x * size.y * 4 * 4 * 6);
-
-        bind();
-
-        setFilter(TextureFilterType.MINIFICATION, getFilter(TextureFilterType.MINIFICATION));
-        setFilter(TextureFilterType.MAGNIFICATION, getFilter(TextureFilterType.MAGNIFICATION));
+        createTexture(GL13.GL_TEXTURE_CUBE_MAP, getSampleCount());
+        //TODO: datasize now incorrect
+        allocateImmutable2D(TextureInternalFormat.RGBA8, size, false);
         setWrap(TextureWrapDirection.WRAP_U, TextureWrap.CLAMP_TO_EDGE);
         setWrap(TextureWrapDirection.WRAP_V, TextureWrap.CLAMP_TO_EDGE);
-        setBorderColor(getBorderColor());
-
-        for(int i = 0; i < 6; i++){
-            GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL11.GL_RGB, size.x, size.y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (float[]) null);
-        }
-    }
-
-    @Override
-    protected int createTextureId(){
-        //TODO instead of this, create pool
-        return GL45.glCreateTextures(getTarget());
+        //TODO: default wrap to abstract method, override in texture2d and cubemaptexture
+        setWrap(TextureWrapDirection.WRAP_U, TextureWrap.CLAMP_TO_EDGE);
+        setWrap(TextureWrapDirection.WRAP_V, TextureWrap.CLAMP_TO_EDGE);
     }
 
     public void setSide(@NotNull CubeMapSide side, @NotNull DynamicTexture2D texture){
         //        GL11.glTexImage2D(side.getCode(), 0, GL11.GL_RGB, size.x, size.y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data[i]);
     }
 
-    private int getTarget(){
-        return GL13.GL_TEXTURE_CUBE_MAP;
-    }
+    //TODO: copy texture2d to one side?
 
     @Override
     protected String getTypeName(){
@@ -50,17 +32,18 @@ public class DynamicCubeMapTexture extends CubeMapTexture{
     }
 
     @Override
-    public int getCachedDataSize(){
+    public boolean isUsable(){
+        return isIdValid();
+    }
+
+    @Override
+    public int getCacheDataSize(){
         return 0;
     }
 
     @Override
-    public void release(){
-        super.release();
-    }
-
-    @Override
-    public boolean isUsable(){
-        return getId() != -1;
+    public String toString(){
+        return super.toString() + "\n" +
+                DynamicCubeMapTexture.class.getSimpleName() + "(" + ")";
     }
 }

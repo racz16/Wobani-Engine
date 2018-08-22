@@ -52,7 +52,7 @@ public class Vbo extends BufferObject{
     /**
      Allocates memory for the Buffer Object and fills it with the given data.
 
-     @param data  data to store
+     @param data  data to store2D
      @param usage data usage
      */
     public void allocateAndStore(@NotNull AIVector3D.Buffer data, @NotNull BufferObjectUsage usage){
@@ -65,7 +65,7 @@ public class Vbo extends BufferObject{
      Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
      reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
 
-     @param data                  data to store
+     @param data                  data to store2D
      @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
      */
     public void allocateAndStoreImmutable(@NotNull AIVector3D.Buffer data, boolean allowDataModification){
@@ -81,7 +81,7 @@ public class Vbo extends BufferObject{
      Stores the given data on the specified position. You should only call this method if the Buffer Object is not
      immutable or if it allows data modification.
 
-     @param data data to store
+     @param data data to store2D
      */
     public void store(@NotNull AIVector3D.Buffer data){
         store(data, 0);
@@ -91,7 +91,7 @@ public class Vbo extends BufferObject{
      Stores the given data on the specified position. You should only call this method if the Buffer Object is not
      immutable or if it allows data modification.
 
-     @param data   data to store
+     @param data   data to store2D
      @param offset data's offset (in bytes)
      */
     public void store(@NotNull AIVector3D.Buffer data, long offset){

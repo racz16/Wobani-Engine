@@ -54,7 +54,7 @@ public class CubeMesh implements Mesh{
     }
 
     /**
-     Loads the cube's data to the VAO (if the VAO doesn't store it already).
+     Loads the cube's data to the VAO (if the VAO doesn't store2D it already).
      */
     private void loadData(){
         if(vao == null || !vao.isUsable()){
@@ -118,7 +118,7 @@ public class CubeMesh implements Mesh{
     }
 
     @Override
-    public int getCachedDataSize(){
+    public int getCacheDataSize(){
         return positions.length * 4;
     }
 

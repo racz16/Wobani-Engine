@@ -8,7 +8,7 @@ import java.util.logging.*;
 
 /**
  Represents an entity which has it's own position, Mesh or any other properties, you should create a new GameObject. A
- GameObject can store any number of Components, including Cameras, Meshes, Splines, Materials, light sources etc. Of
+ GameObject can store2D any number of Components, including Cameras, Meshes, Splines, Materials, light sources etc. Of
  course you can create your own Component. It also offers parent-child relations between GameObjectContainer.
 
  @see Component */

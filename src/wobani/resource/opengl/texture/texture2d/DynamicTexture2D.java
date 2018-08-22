@@ -17,31 +17,30 @@ public class DynamicTexture2D extends Texture2D{
 
      @param size    texture's width and height
      @param samples number of samples, if the texture isn't multisampled, it can be anything
-     @param image   texture's image data, if the texture is multisampled, it doesn't used
 
      @throws NullPointerException     attachmentType and size can't be null
      @throws IllegalArgumentException width and height must be positive
      @throws IllegalArgumentException samples can't be lower than 1
      */
-    public DynamicTexture2D(@NotNull Vector2i size, @NotNull TextureInternalFormat internalFormat, @NotNull TextureFormat format, int samples, @Nullable ByteBuffer image, boolean mipmaps){
+    public DynamicTexture2D(@NotNull Vector2i size, @NotNull TextureInternalFormat internalFormat, int samples, boolean mipmaps){
         super(new ResourceId());
-        if(internalFormat == null || format == null || size == null){
-            throw new NullPointerException();
-        }
         createTexture(getTarget(samples), samples);
+        allocateImmutable2D(internalFormat, size, mipmaps);
+    }
 
-        bind();
-        allocateImmutable(internalFormat, size, mipmaps);
-        if(image != null){
-            store(new Vector2i(0), size, format, image);
-        }
+    @Override
+    public void store2D(@NotNull TextureFormat format, @NotNull ByteBuffer data){
+        super.store2D(format, data);
+    }
 
-        //FIXME: filter, texture wrap és border color nem állítható, ha multisampled a textura (???)
-        setFilter(TextureFilterType.MINIFICATION, getFilter(TextureFilterType.MINIFICATION));
-        setFilter(TextureFilterType.MAGNIFICATION, getFilter(TextureFilterType.MAGNIFICATION));
-        setWrap(TextureWrapDirection.WRAP_U, getWrap(TextureWrapDirection.WRAP_U));
-        setWrap(TextureWrapDirection.WRAP_V, getWrap(TextureWrapDirection.WRAP_V));
-        setBorderColor(getBorderColor());
+    @Override
+    public void store2D(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
+        super.store2D(offset, size, format, data);
+    }
+
+    @Override
+    public void clear(@NotNull Vector3f clearColor){
+        super.clear(clearColor);
     }
 
     @Override
@@ -54,21 +53,8 @@ public class DynamicTexture2D extends Texture2D{
     }
 
     @Override
-    public int getCachedDataSize(){
-        return 0;
-    }
-
-    /**
-     Releases the texture's data. After calling this method, you can't use this texture for anything.
-     */
-    @Override
-    public void release(){
-        super.release();
-    }
-
-    @Override
     public boolean isUsable(){
-        return getId() != -1;
+        return isIdValid();
     }
 
     private int getTarget(int samples){
@@ -80,5 +66,14 @@ public class DynamicTexture2D extends Texture2D{
         return "Dynamic Texture2D";
     }
 
+    @Override
+    public int getCacheDataSize(){
+        return 0;
+    }
 
+    @Override
+    public String toString(){
+        return super.toString() + "\n" +
+                DynamicTexture2D.class.getSimpleName() + "(" + ")";
+    }
 }

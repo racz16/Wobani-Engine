@@ -1,13 +1,12 @@
 package wobani.resource.opengl.texture.cubemaptexture;
 
+import org.joml.*;
 import org.lwjgl.opengl.*;
-import org.lwjgl.stb.*;
 import wobani.resource.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
 import java.io.*;
-import java.nio.*;
 import java.util.*;
 
 /**
@@ -20,16 +19,11 @@ public class StaticCubeMapTexture extends CubeMapTexture{
     /**
      Stores meta data about this texture.
      */
-    protected final DataStoreManager meta = new DataStoreManager();
-    /**
-     The texture's default color space.
-     */
-    protected boolean basesRgb;
-
+    private final DataStoreManager meta = new DataStoreManager();
     /**
      Texture's pixel data.
      */
-    private final ByteBuffer[] data = new ByteBuffer[6];
+    private final Image[] images = new Image[6];
 
     /**
      Initializes a new StaticCubeMapTexture to the given parameters.
@@ -39,27 +33,19 @@ public class StaticCubeMapTexture extends CubeMapTexture{
      */
     public StaticCubeMapTexture(@NotNull List<File> paths, boolean sRgb){
         super(new ResourceId(paths));
-        basesRgb = sRgb;
         meta.setPaths(paths);
         meta.setLastActiveToNow();
-        meta.setDataStorePolicy(ResourceManager.ResourceState.ACTION);
+        meta.setDataStorePolicy(ResourceManager.ResourceState.ACTIVE);
         setsRgb(sRgb);
-        //filtering = ResourceManager.getTextureFiltering();
 
         hddToRam();
         ramToVram();
 
         int size = 0;
         for(int i = 0; i < 6; i++){
-            size += data[i].capacity();
+            size += images[i].getData().capacity();
         }
         meta.setDataSize(size);
-    }
-
-    @Override
-    protected int createTextureId(){
-        //TODO instead of this, create pool
-        return GL45.glCreateTextures(getTarget());
     }
 
     //
@@ -78,7 +64,6 @@ public class StaticCubeMapTexture extends CubeMapTexture{
     @NotNull
     public static StaticCubeMapTexture loadTexture(@NotNull List<File> paths, boolean sRgb){
         StaticCubeMapTexture tex = ResourceManager.getResource(new ResourceId(paths), StaticCubeMapTexture.class);
-        //StaticCubeMapTexture tex = (StaticCubeMapTexture) ResourceManager.getTexture(new ResourceId(paths));
         if(tex != null){
             return tex;
         }
@@ -86,62 +71,52 @@ public class StaticCubeMapTexture extends CubeMapTexture{
     }
 
     /**
-     Loads the texture's data from file to the RAM.
+     Loads the texture's data from file to the CACHE.
 
      @throws IllegalStateException each image have to be the same size
      */
 
-    protected void hddToRam(){
+    private void hddToRam(){
         for(int i = 0; i < 6; i++){
-            Image image = new Image(getPath(i), false);
+            images[i] = new Image(getPath(i), false);
             if(i == 0){
-                setSize(image.getSize());
+                setSize(images[i].getSize());
             }else{
-                if(!getSize().equals(image.getSize())){
+                if(!getSize().equals(images[i].getSize())){
                     throw new IllegalStateException("Each image have to be the same size");
                 }
             }
-            data[i] = image.getData();
         }
-
-        meta.setState(ResourceManager.ResourceState.RAM);
+        //TODO compute data size
+        //setCachedDataSize(-1);
+        meta.setState(ResourceManager.ResourceState.CACHE);
     }
 
-    protected void ramToVram(){
-        createTexture(getTarget(), getSampleCount());
-        bind();
-
-        for(int i = 0; i < 6; i++){
-            if(issRgb()){
-                GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL21.GL_SRGB, getSize().x, getSize().y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data[i]);
-            }else{
-                GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL11.GL_RGB, getSize().x, getSize().y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data[i]);
-            }
-        }
-
+    private void ramToVram(){
+        createTexture(GL13.GL_TEXTURE_CUBE_MAP, getSampleCount());
+        TextureInternalFormat internalFormat = issRgb() ? TextureInternalFormat.SRGB8_A8 : TextureInternalFormat.RGBA8;
+        allocateImmutable2D(internalFormat, getSize(), false);
         setWrap(TextureWrapDirection.WRAP_U, TextureWrap.CLAMP_TO_EDGE);
         setWrap(TextureWrapDirection.WRAP_V, TextureWrap.CLAMP_TO_EDGE);
-        setBorderColor(getBorderColor());
-        //changeFiltering();
-        setFilter(TextureFilterType.MINIFICATION, getFilter(TextureFilterType.MINIFICATION));
-        setFilter(TextureFilterType.MAGNIFICATION, getFilter(TextureFilterType.MAGNIFICATION));
-
-        meta.setState(ResourceManager.ResourceState.ACTION);
-    }
-
-    protected void vramToRam(){
-        super.release();
-
-        meta.setState(ResourceManager.ResourceState.RAM);
-    }
-
-    protected void ramToHdd(){
-        for(int i = 0; i < 6; i++){
-            STBImage.stbi_image_free(data[i]);
-            data[i] = null;
+        for(int face = 0; face < 6; face++){
+            store3D(new Vector3i(0, 0, face), getSize(), 1, TextureFormat.RGBA, images[face].getData());
         }
+        meta.setState(ResourceManager.ResourceState.ACTIVE);
+        meta.setLastActiveToNow();
+    }
 
-        meta.setState(ResourceManager.ResourceState.HDD);
+    private void vramToRam(){
+        super.release();
+        meta.setState(ResourceManager.ResourceState.CACHE);
+    }
+
+    private void ramToHdd(){
+        for(int i = 0; i < 6; i++){
+            images[i].release();
+            images[i] = null;
+        }
+        //setCachedDataSize(0);
+        meta.setState(ResourceManager.ResourceState.STORAGE);
     }
 
     //
@@ -160,50 +135,38 @@ public class StaticCubeMapTexture extends CubeMapTexture{
         return meta.getPaths().get(index);
     }
 
-    private int getTarget(){
-        return GL13.GL_TEXTURE_CUBE_MAP;
-    }
-
     @Override
     protected String getTypeName(){
         return "Static CubeMap Texture";
     }
 
-    //
-    //
-    //
-    //
-
-
     @Override
     public void bindToTextureUnit(int textureUnit){
-        if(meta.getState() != ResourceManager.ResourceState.ACTION){
-            if(meta.getState() == ResourceManager.ResourceState.HDD){
+        if(meta.getState() != ResourceManager.ResourceState.ACTIVE){
+            if(meta.getState() == ResourceManager.ResourceState.STORAGE){
                 hddToRam();
             }
             ramToVram();
-            bind();
         }
         super.bindToTextureUnit(textureUnit);
         meta.setLastActiveToNow();
     }
 
-
     /**
-     Sets the texture's data store policy to the given value. ACTION means that the texture's data will be stored in
-     ACTION. RAM means that the texture's data may be removed from ACTION to RAM if it's rarely used. HDD means that the
-     texture's data may be removed from ACTION or even from RAM if it's rarely used. Later if you want to use this
-     texture, it'll automatically load the data from file again.
+     Sets the texture's data store2D policy to the given value. ACTIVE means that the texture's data will be stored in
+     ACTIVE. CACHE means that the texture's data may be removed from ACTIVE to CACHE if it's rarely used. STORAGE means
+     that the texture's data may be removed from ACTIVE or even from CACHE if it's rarely used. Later if you want to use
+     this texture, it'll automatically load the data from file again.
 
-     @param minState data store policy
+     @param minState data store2D policy
      */
     public void setDataStorePolicy(@NotNull ResourceManager.ResourceState minState){
         meta.setDataStorePolicy(minState);
 
-        if(minState != ResourceManager.ResourceState.HDD && meta.getState() == ResourceManager.ResourceState.HDD){
+        if(minState != ResourceManager.ResourceState.STORAGE && meta.getState() == ResourceManager.ResourceState.STORAGE){
             hddToRam();
         }
-        if(minState == ResourceManager.ResourceState.ACTION && meta.getState() != ResourceManager.ResourceState.ACTION){
+        if(minState == ResourceManager.ResourceState.ACTIVE && meta.getState() != ResourceManager.ResourceState.ACTIVE){
             ramToVram();
         }
     }
@@ -211,76 +174,22 @@ public class StaticCubeMapTexture extends CubeMapTexture{
     @Override
     public void update(){
         long elapsedTime = System.currentTimeMillis() - meta.getLastActive();
-        if(elapsedTime > meta.getActionTimeLimit() && meta.getDataStorePolicy() != ResourceManager.ResourceState.ACTION && meta.getState() != ResourceManager.ResourceState.HDD){
-            if(meta.getState() == ResourceManager.ResourceState.ACTION){
+        if(meta.getDataStorePolicy() != ResourceManager.ResourceState.ACTIVE && meta.getState() != ResourceManager.ResourceState.STORAGE){
+            if(elapsedTime > meta.getActiveTimeLimit() && meta.getState() == ResourceManager.ResourceState.ACTIVE){
                 vramToRam();
             }
-            if(elapsedTime > meta.getCacheTimeLimit() && meta.getDataStorePolicy() == ResourceManager.ResourceState.HDD){
+            if(elapsedTime > meta.getCacheTimeLimit() && meta.getDataStorePolicy() == ResourceManager.ResourceState.STORAGE){
                 ramToHdd();
             }
         }
-    }
-
-
-    /**
-     Sets whether or not the texture is in sRGB color space. You can load sRGB color space textures in linear space if
-     you want (eg. if you don't want to use gamma correction). But you can't change a default linear color space texture
-     to sRGB color space because it's always used in linear color space. Note that this method reloads the texture from
-     file if the color space changes.
-
-     @param sRgb sRGB
-     */
-    public void setsRgb(boolean sRgb){
-        if(!basesRgb && sRgb){
-            return;
-        }
-        if(issRgb() != sRgb){
-            super.setsRgb(sRgb);
-            ResourceManager.ResourceState oldState = meta.getState();
-            if(meta.getState() == ResourceManager.ResourceState.ACTION){
-                vramToRam();
-            }
-            if(meta.getState() == ResourceManager.ResourceState.RAM){
-                ramToHdd();
-            }
-            if(oldState != ResourceManager.ResourceState.HDD){
-                hddToRam();
-            }
-            if(oldState == ResourceManager.ResourceState.ACTION){
-                ramToVram();
-            }
-        }
-    }
-
-    /**
-     Returns the texture's default color space. It doesn't have to be the same as the texture's current color space. You
-     can load sRGB color space textures in linear space if you want (eg. if you don't want to use gamma correction).
-
-     @return the texture's default color space
-
-     @see #issRgb()
-     @see #setsRgb(boolean sRgb)
-     */
-    public boolean isDefaultsRgb(){
-        return basesRgb;
-    }
-
-    @Override
-    public int getCachedDataSize(){
-        return meta.getState() == ResourceManager.ResourceState.HDD ? 0 : meta.getDataSize();
-    }
-
-    @Override
-    public int getActiveDataSize(){
-        return meta.getState() == ResourceManager.ResourceState.ACTION ? meta.getDataSize() : 0;
     }
 
     @Override
     public void release(){
-        if(meta.getState() == ResourceManager.ResourceState.ACTION){
+        if(meta.getState() == ResourceManager.ResourceState.ACTIVE){
             vramToRam();
         }
-        if(meta.getState() == ResourceManager.ResourceState.RAM){
+        if(meta.getState() == ResourceManager.ResourceState.CACHE){
             ramToHdd();
         }
     }
@@ -288,5 +197,18 @@ public class StaticCubeMapTexture extends CubeMapTexture{
     @Override
     public boolean isUsable(){
         return true;
+    }
+
+    @Override
+    public int getCacheDataSize(){
+        return meta.getDataSize();
+    }
+
+    @Override
+    public String toString(){
+        return super.toString() + "\n" +
+                StaticCubeMapTexture.class.getSimpleName() + "(" +
+                "meta: " + meta + ", " +
+                "images: " + Utility.toString(images) + ")";
     }
 }

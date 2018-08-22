@@ -13,45 +13,51 @@ import java.nio.*;
 /**
  Basic data and methods for implementing a texture.
  */
-public abstract class AbstractTexture extends OpenGlObject implements Texture{
-
-    //TODO: to openglobject? :D
+public abstract class TextureBase extends OpenGlObject implements Texture{
     /**
-     Texture's id.
+     The texture's native OpenGL target.
      */
-    private int id = -1;
-
     private int target;
-
-    /**
-     The texture data size (in bytes).
-     */
-    private int dataSize;
-    /**
-     Number of the texture's samples.
-     */
-    private int samples = 1;
-
-    private boolean allocated;
-
-    private TextureInternalFormat internalFormat;
-    private TextureFormat format;
-
-    private int levels = 1;
-    private float anisotropicLevel = 1;
-
     /**
      Texture's width and height.
      */
-    private final Vector2i size = new Vector2i(-1);
+    private final Vector2i size = new Vector2i(0);
     /**
-     Texture's border color.
+     Determines whether the texture's data is allocated.
      */
-    private final Vector4f borderColor = new Vector4f(0);
+    private boolean allocated;
+    /**
+     The texture's internal format.
+     */
+    private TextureInternalFormat internalFormat;
+    /**
+     The texture's format.
+     */
+    private TextureFormat format;
+    /**
+     Number of the texture's samples. Used for multisampling.
+     */
+    private int sampleCount = 1;
+    /**
+     Number of the texture's mipmap levels.
+     */
+    private int mipmapLevelCount = 1;
+    /**
+     The level of the texture's anisotropic filter.
+     */
+    private float anisotropicLevel = 1;
     /**
      Determines whether the texture is in sRGB color space.
      */
     private boolean sRgb;
+    /**
+     Texture's magnification filter.
+     */
+    private TextureFilter magnification = TextureFilter.NEAREST;
+    /**
+     Texture's minification filter.
+     */
+    private TextureFilter minification = TextureFilter.NEAREST;
     /**
      Texture wrap along the U direction.
      */
@@ -61,50 +67,52 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
      */
     private TextureWrap wrapV = TextureWrap.REPEAT;
     /**
-     Texture's magnification filter.
+     Texture's border color.
      */
-    private TextureFilter magnification = TextureFilter.NEAREST;
-    /**
-     Texture's minification filter.
-     */
-    private TextureFilter minification = TextureFilter.NEAREST;
+    private final Vector4f borderColor = new Vector4f(0);
 
-    public AbstractTexture(@NotNull ResourceId resourceId){
+    /**
+     Initializes a new TextureBase to the given value.
+
+     @param resourceId texture's unique id
+     */
+    public TextureBase(@NotNull ResourceId resourceId){
         super(resourceId);
     }
 
     protected void createTexture(int target, int samples){
         this.target = target;
         setSamples(samples);
-        this.id = createTextureId();
+        setId(createTextureId());
     }
 
     protected abstract int createTextureId();
 
     protected void checkCreation(){
-        if(id == -1){
+        if(!isIdValid()){
             throw new IllegalStateException();
         }
     }
 
-    protected void allocateImmutable(@NotNull TextureInternalFormat internalFormat, @NotNull Vector2i size, boolean mipmaps){
+    protected void allocateImmutable2D(@NotNull TextureInternalFormat internalFormat, @NotNull Vector2i size, boolean mipmaps){
         checkRelease();
         checkCreation();
         checkReallocation();
         setInternalFormat(internalFormat);
         setSize(size);
         setMipmapCount(mipmaps);
+        setActiveDataSize(computeActiveDataSize());
         allocated = true;
-        allocateImmutableUnsafe();
+        allocateImmutable2DUnsafe();
     }
 
-    private void allocateImmutableUnsafe(){
+    private void allocateImmutable2DUnsafe(){
         if(isMultisampled()){
-            GL45.glTextureStorage2DMultisample(id, samples, internalFormat.getCode(), size.x, size.y, true);
+            GL45.glTextureStorage2DMultisample(getId(), sampleCount, internalFormat.getCode(), size.x, size.y, true);
         }else{
-            GL45.glTextureStorage2D(id, levels, internalFormat.getCode(), size.x, size.y);
+            GL45.glTextureStorage2D(getId(), mipmapLevelCount, internalFormat.getCode(), size.x, size.y);
         }
-        setFilterToNone();
+        setWrapAndFilterToDefault();
     }
 
     protected void checkReallocation(){
@@ -117,7 +125,7 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
         if(isMultisampled() && mipmaps){
             throw new IllegalArgumentException();
         }
-        levels = mipmaps ? computeMaxMipmapCount(size) : 1;
+        mipmapLevelCount = mipmaps ? computeMaxMipmapCount(size) : 1;
     }
 
     private int computeMaxMipmapCount(@NotNull Vector2i size){
@@ -128,7 +136,7 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
         if(samples < 1 || samples > OpenGlConstants.MAX_SAMPLES){
             throw new IllegalArgumentException();
         }
-        this.samples = samples;
+        this.sampleCount = samples;
     }
 
     private void setInternalFormat(@NotNull TextureInternalFormat internalFormat){
@@ -145,14 +153,50 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
         this.size.set(size);
     }
 
-    protected void store(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
+    protected void store2D(@NotNull TextureFormat format, @NotNull ByteBuffer data){
+        store2D(new Vector2i(0), getSize(), format, data);
+    }
+
+    protected void store2D(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
         checkRelease();
         checkCreation();
         checkAllocation();
         checkSubImage(offset, size);
         setFormat(format);
-        GL45.glTextureSubImage2D(id, 0, offset.x, offset.y, size.x, size.y, format.getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
-        GL45.glGenerateTextureMipmap(id);
+        store2DUnsafe(offset, data);
+    }
+
+    private void store2DUnsafe(@NotNull Vector2i offset, @NotNull ByteBuffer data){
+        GL45.glTextureSubImage2D(getId(), 0, offset.x, offset.y, size.x, size.y, format.getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
+        GL45.glGenerateTextureMipmap(getId());
+    }
+
+    protected void store3D(@NotNull Vector3i offset, @NotNull Vector2i size, int depth, @NotNull TextureFormat format, @NotNull ByteBuffer data){
+        checkRelease();
+        checkCreation();
+        checkAllocation();
+        checkSubImage(new Vector2i(offset.x, offset.y), size);
+        setFormat(format);
+        store3DUnsafe(offset, depth, data);
+    }
+
+
+    private void store3DUnsafe(@NotNull Vector3i offset, int depth, @NotNull ByteBuffer data){
+        GL45.glTextureSubImage3D(getId(), 0, offset.x, offset.y, offset.z, size.x, size.y, depth, format.getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
+        GL45.glGenerateTextureMipmap(getId());
+    }
+
+
+    private void setWrapAndFilterToDefault(){
+        setWrap(TextureWrapDirection.WRAP_U, TextureWrap.REPEAT);
+        setWrap(TextureWrapDirection.WRAP_V, TextureWrap.REPEAT);
+        if(isMipmapped()){
+            //setFilterToNone();
+            setFilterToBilinear();
+        }else{
+            setFilter(TextureFilterType.MINIFICATION, TextureFilter.NEAREST);
+            setFilter(TextureFilterType.MAGNIFICATION, TextureFilter.NEAREST);
+        }
     }
 
     protected void checkAllocation(){
@@ -168,9 +212,7 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
     }
 
     protected void setFormat(@NotNull TextureFormat format){
-        if(format.getComponentCount() != internalFormat.getComponentCount() ||
-                format.isDepth() && !internalFormat.isDepth() || format.isStencil() && !internalFormat.isStencil() ||
-                format.isDepthStencil() && !internalFormat.isDepthStencil() || format.isColor() && !internalFormat.isColor()){
+        if(format.getColorChannelCount() != internalFormat.getColorChannelCount() || format.getAttachmentSlot() != internalFormat.getAttachmentSlot()){
             throw new IllegalArgumentException();
         }
         this.format = format;
@@ -206,39 +248,44 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
     //TODO: glCopyImageSubData
 
     public int getMipmapCount(){
-        return levels;
+        return mipmapLevelCount;
     }
 
-    protected void clear(@NotNull TextureFormat format){
-        if(!allocated){
-            throw new IllegalStateException();
+    public boolean isMipmapped(){
+        return mipmapLevelCount > 1;
+    }
+
+    protected void clear(@NotNull Vector3f clearColor){
+        checkRelease();
+        checkCreation();
+        checkAllocation();
+        if(!Utility.isHdrColor(clearColor)){
+            throw new IllegalArgumentException();
         }
-        //FIXME: not working now
-        GL45.glClearTexImage(id, 0, format.getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), new int[]{255, 0, 0, 255});
+        float[] clear = {clearColor.x, clearColor.y, clearColor.z, 1};
+        GL45.glClearTexImage(getId(), 0, format.getCode(), TextureDataType.FLOAT.getCode(), clear);
     }
 
     public boolean isMultisampled(){
-        return samples > 1;
+        return sampleCount > 1;
     }
 
     public int getSampleCount(){
-        return samples;
+        return sampleCount;
     }
 
     @Override
     public void bindToTextureUnit(int textureUnit){
-        GL45.glBindTextureUnit(textureUnit, id);
+        GL45.glBindTextureUnit(textureUnit, getId());
     }
 
-    protected void setDataSize(int dataSize){
-        this.dataSize = dataSize;
-    }
-
-    @Override
-    public int getActiveDataSize(){
-        //FIXME: multisapled?
-        //calculate based on internal format
-        return dataSize;
+    protected int computeActiveDataSize(){
+        int pixelSizeInBits = getInternalFormat().getBitDepth() * sampleCount;
+        int numberOfPixels = size.x * size.y;
+        double mipmapMultiplier = isMipmapped() ? 1d / 3d : 1;
+        double dataSizeInBits = pixelSizeInBits * numberOfPixels * mipmapMultiplier;
+        double dataSizeInBytes = dataSizeInBits / 8;
+        return (int) (dataSizeInBytes);
     }
 
     @Override
@@ -247,30 +294,14 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
     }
 
     /**
-     Binds the texture.
-     */
-    @Override
-    public void bind(){
-        //TODO: delete?
-        GL11.glBindTexture(target, id);
-    }
-
-    /**
-     Unbinds the texture.
-     */
-    @Override
-    public void unbind(){
-        GL11.glBindTexture(target, 0);
-    }
-
-    /**
      Returns the texture's border color.
 
      @return the texture's border color
      */
+    @ReadOnly
     @NotNull
     public Vector4f getBorderColor(){
-        return borderColor;
+        return new Vector4f(borderColor);
     }
 
     /**
@@ -290,7 +321,7 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
         }
         this.borderColor.set(borderColor);
         float bc[] = {borderColor.x, borderColor.y, borderColor.z, borderColor.w};
-        GL45.glTextureParameterfv(id, GL11.GL_TEXTURE_BORDER_COLOR, bc);
+        GL45.glTextureParameterfv(getId(), GL11.GL_TEXTURE_BORDER_COLOR, bc);
     }
 
     public void setFilterToNone(){
@@ -349,7 +380,7 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
                 wrapV = value;
                 break;
         }
-        GL45.glTextureParameteri(id, type.getCode(), value.getCode());
+        GL45.glTextureParameteri(getId(), type.getCode(), value.getCode());
     }
 
     /**
@@ -385,12 +416,19 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
         if(type == null || value == null){
             throw new NullPointerException();
         }
+        if((type == TextureFilterType.MAGNIFICATION || !isMipmapped()) && value != TextureFilter.NEAREST && value != TextureFilter.LINEAR){
+            throw new IllegalArgumentException();
+        }
+        setFilterUnsafe(type, value);
+    }
+
+    private void setFilterUnsafe(@NotNull TextureFilterType type, @NotNull TextureFilter value){
         if(type == TextureFilterType.MAGNIFICATION){
             magnification = value;
         }else{
             minification = value;
         }
-        GL45.glTextureParameteri(id, type.getCode(), value.getCode());
+        GL45.glTextureParameteri(getId(), type.getCode(), value.getCode());
     }
 
     @NotNull
@@ -411,21 +449,35 @@ public abstract class AbstractTexture extends OpenGlObject implements Texture{
 
     @Override
     public int getId(){
-        return id;
-    }
-
-    protected void setId(int id){
-        //FIXME: NO NO
-        this.id = id;
+        return super.getId();
     }
 
     /**
      Releases the texture's data.
      */
     public void release(){
-        GL11.glDeleteTextures(id);
-        id = -1;
-        dataSize = 0;
+        GL11.glDeleteTextures(getId());
+        setIdToInvalid();
+        setActiveDataSize(0);
     }
 
+    @Override
+    public String toString(){
+        return super.toString() + "\n" +
+                TextureBase.class.getSimpleName() + "(" +
+                "target: " + target + ", " +
+                "sampleCount: " + sampleCount + ", " +
+                "allocated: " + allocated + ", " +
+                "internalFormat: " + internalFormat + ", " +
+                "format: " + format + ", " +
+                "mipmapLevelCount: " + mipmapLevelCount + ", " +
+                "anisotropicLevel: " + anisotropicLevel + ", " +
+                "size: " + size + ", " +
+                "borderColor: " + borderColor + ", " +
+                "sRgb: " + sRgb + ", " +
+                "wrapU: " + wrapU + ", " +
+                "wrapV: " + wrapV + ", " +
+                "magnification: " + magnification + ", " +
+                "minification: " + minification + ")";
+    }
 }

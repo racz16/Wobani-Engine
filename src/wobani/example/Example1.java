@@ -83,6 +83,7 @@ public class Example1{
 
     private static Material createSphereMaterial(){
         DynamicEnvironmentProbe probe = createReflectionProbe();
+        //probe.setRenderingFrequency(10);
         Material sphereMaterial = new Material(BlinnPhongRenderer.class);
         sphereMaterial.setSlot(Material.SPECULAR, new MaterialSlot(new Vector4f(0.3f, 0.3f, 0.3f, 0.75f)));
         sphereMaterial.setSlot(Material.REFLECTION, new MaterialSlot(probe));

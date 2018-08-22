@@ -6,11 +6,11 @@ package wobani.resource;
 public interface Resource{
 
     /**
-     Returns the resource's data size in RAM.
+     Returns the resource's data size in CACHE.
 
-     @return the resource's data size in RAM (in bytes)
+     @return the resource's data size in CACHE (in bytes)
      */
-    int getCachedDataSize();
+    int getCacheDataSize();
 
     /**
      Returns the resource's data size in action (this usually means the VRAM).

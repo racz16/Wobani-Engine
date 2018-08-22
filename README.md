@@ -27,8 +27,8 @@ Schedule for new features: https://trello.com/b/Kt2S5Tz4/engine
 - POM distortion using orthographic camera
 - works only on Windows
 
-## How to build
-The source code contains the IntelliJ project files, so IntelliJ can directly open it as a standard Java project. The following LWJGL components need to build the program:
+## Build
+The source code contains the IntelliJ project files, so IntelliJ can directly open it as a standard Java project. The code contains Java 8 features, so you need JDK 8+ installed in your computer and the following LWJGL components:
 - LWJGL core 3.2.0
 - JOML 1.9.10
 - Assimp bindings
@@ -37,4 +37,7 @@ The source code contains the IntelliJ project files, so IntelliJ can directly op
 - OpenAL bindings
 - stb bindings
 
-You can download LWJGL components from here: https://www.lwjgl.org/customize
+You can download LWJGL components from here: https://www.lwjgl.org/customize (minimal OpenGL preset can be a good start)
+
+## Run
+You need an OpenGL 4.5+ compatible GPU and JRE 8+ installed in your computer. I also recommend you to update your drivers. For example my integrated GPU's initial driver did not handle all OpenGL 4.5 features well, but after a driver update it works well.

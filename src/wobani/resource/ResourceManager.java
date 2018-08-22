@@ -134,7 +134,7 @@ public class ResourceManager{
         int size = 0;
         for(Resource resource : typedResourceMap.values()){
             if(resource.isUsable()){
-                size += resource.getCachedDataSize();
+                size += resource.getCacheDataSize();
             }
         }
         return size;
@@ -221,17 +221,17 @@ public class ResourceManager{
      */
     public enum ResourceState{
         /**
-         ACTION (means that the resource ready to use, stored like in VRAM or in the sound system).
+         ACTIVE (means that the resource ready to use, stored like in VRAM or in the sound system).
          */
-        ACTION,
+        ACTIVE,
         /**
-         RAM.
+         CACHE.
          */
-        RAM,
+        CACHE,
         /**
-         HDD.
+         STORAGE.
          */
-        HDD
+        STORAGE
     }
 
 }

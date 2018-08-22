@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Class-Path: lib/joml-1.9.9.jar lib/lwjgl-assimp.jar lib/lwjgl-glfw.jar
-  lib/lwjgl-openal.jar lib/lwjgl-opengl.jar lib/lwjgl-stb.jar lib/lwjg
- l.jar lib/lwjgl-assimp-natives-windows.jar lib/lwjgl-glfw-natives-win
- dows.jar lib/lwjgl-natives-windows.jar lib/lwjgl-openal-natives-windo
- ws.jar lib/lwjgl-opengl-natives-windows.jar lib/lwjgl-stb-natives-win
- dows.jar
+Class-Path: lib/joml-1.9.10.jar lib/lwjgl-assimp.jar lib/lwjgl-glfw.ja
+ r lib/lwjgl-openal.jar lib/lwjgl-opengl.jar lib/lwjgl-stb.jar lib/lwj
+ gl.jar lib/lwjgl-assimp-natives-windows.jar lib/lwjgl-glfw-natives-wi
+ ndows.jar lib/lwjgl-natives-windows.jar lib/lwjgl-openal-natives-wind
+ ows.jar lib/lwjgl-opengl-natives-windows.jar lib/lwjgl-stb-natives-wi
+ ndows.jar
 Main-Class: wobani.example.Example1
 

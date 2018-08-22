@@ -95,16 +95,8 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe{
         fbo.bind();
     }
 
-    public void bindCubeMap(){
-        cubeMap.bind();
-    }
-
     public void unbindFbo(){
         fbo.unbind();
-    }
-
-    public void unbindCubeMap(){
-        cubeMap.unbind();
     }
 
     private void refresshViewMatrices(){

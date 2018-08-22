@@ -14,10 +14,6 @@ import java.util.*;
  */
 public class Vao extends OpenGlObject{
     /**
-     Native, OpenGL id.
-     */
-    private int id;
-    /**
      The connected vertex attrib arrays.
      */
     private final Map<Integer, VertexAttribArray> vertexAttribArrays = new HashMap<>();
@@ -39,7 +35,7 @@ public class Vao extends OpenGlObject{
      */
     public Vao(){
         super(new ResourceId());
-        id = createId();
+        setId(createId());
     }
 
     /**
@@ -56,8 +52,9 @@ public class Vao extends OpenGlObject{
         return VAO_POOL.getResource();
     }
 
+    @Override
     protected int getId(){
-        return id;
+        return super.getId();
     }
 
     /**
@@ -89,6 +86,7 @@ public class Vao extends OpenGlObject{
      @param vap vertex attrib pointer
      */
     public void connectVbo(@NotNull Vbo vbo, @NotNull VertexAttribPointer vap){
+        //FIXME: interleaved data may not work, try it with QuadMesh
         checkRelease();
         vbo.checkRelease();
         removeVertexAttribArray(vap.getIndex());
@@ -260,7 +258,12 @@ public class Vao extends OpenGlObject{
      */
     @Override
     public boolean isUsable(){
-        return getId() != -1;
+        return isIdValid();
+    }
+
+    @Override
+    public int getCacheDataSize(){
+        return 0;
     }
 
     @Override
@@ -295,27 +298,16 @@ public class Vao extends OpenGlObject{
      */
     private void releaseVao(){
         GL30.glDeleteVertexArrays(getId());
-        id = -1;
+        setIdToInvalid();
         if(isBound()){
             boundVao = null;
         }
     }
 
     @Override
-    public int getCachedDataSize(){
-        return 0;
-    }
-
-    @Override
-    public int getActiveDataSize(){
-        return 0;
-    }
-
-    @Override
     public String toString(){
         return super.toString() + "\n" +
                 Vao.class.getSimpleName() + "(" +
-                "id: " + id + ", " +
                 "vertexAttribArrays: " + vertexAttribArrays + ", " +
                 "ebo: " + ebo + ")";
     }

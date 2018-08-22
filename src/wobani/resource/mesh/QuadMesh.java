@@ -49,7 +49,7 @@ public class QuadMesh implements Mesh{
     }
 
     /**
-     Loads the quad's data to the VAO (if the VAO doesn't store it already).
+     Loads the quad's data to the VAO (if the VAO doesn't store2D it already).
      */
     private void loadData(){
         if(vao == null || !vao.isUsable()){
@@ -145,7 +145,7 @@ public class QuadMesh implements Mesh{
     }
 
     @Override
-    public int getCachedDataSize(){
+    public int getCacheDataSize(){
         return 0;
     }
 

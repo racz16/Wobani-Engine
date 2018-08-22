@@ -72,7 +72,7 @@ public class Fbo implements Resource{
      @param size          FBO's width and height
      @param multisampled  multisampled
      @param samples       number of samples, if the FBO isn't multisampled, it can be anything
-     @param floatingPoint FBO store color attachments as floating point values or not
+     @param floatingPoint FBO store2D color attachments as floating point values or not
 
      @throws IllegalArgumentException width and height must be positive
      @throws IllegalArgumentException samples can't be lower than 1
@@ -555,7 +555,7 @@ public class Fbo implements Resource{
     }
 
     @Override
-    public int getCachedDataSize(){
+    public int getCacheDataSize(){
         return 0;
     }
 
@@ -648,6 +648,13 @@ public class Fbo implements Resource{
                 .toString(color) + ", depth=" + depth + ", stencil=" + stencil + ", depthStencil=" + depthStencil + ", size=" + size + ", multisampled=" + multisampled + ", samples=" + samples + ", floatingPoint=" + floatingPoint + '}';
     }
 
+    public enum FboAttachment{
+        COLOR(),
+        DEPTH(),
+        STENCIL,
+        DEPTH_STENCIL()
+    }
+
     /**
      Attachment slot.
      */
@@ -698,7 +705,7 @@ public class Fbo implements Resource{
          @param format         texture's OpenGL format
          @param type           texture's OpenGL type
          */
-        private FboAttachmentSlot(int attachment, TextureInternalFormat internalFormat, TextureFormat format, TextureDataType type){
+        FboAttachmentSlot(int attachment, TextureInternalFormat internalFormat, TextureFormat format, TextureDataType type){
             this.attachment = attachment;
             this.internalFormat = internalFormat;
             this.format = format;
@@ -806,7 +813,7 @@ public class Fbo implements Resource{
 
          @param code completeness's OpenGL code
          */
-        private FboCompleteness(int code){
+        FboCompleteness(int code){
             this.code = code;
         }
 
@@ -821,7 +828,7 @@ public class Fbo implements Resource{
     }
 
     /**
-     Represents an attachment slot of a FBO. It can store a texture or a RBO.
+     Represents an attachment slot of a FBO. It can store2D a texture or a RBO.
      */
     private class AttachmentSlot{
 
@@ -910,7 +917,7 @@ public class Fbo implements Resource{
             int msaa = samples;
             if(type == FboAttachmentType.TEXTURE){
                 //TODO: mipmaps always false?
-                texture = new DynamicTexture2D(size, slot.getInternalFormat(floatingPoint), slot.getFormat(), msaa, null, false);
+                texture = new DynamicTexture2D(size, slot.getInternalFormat(floatingPoint), msaa, false);
                 if(multisampled){
                     GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot
                             .getAttachmet() + index, GL32.GL_TEXTURE_2D_MULTISAMPLE, texture.getId(), 0);
@@ -1059,10 +1066,7 @@ public class Fbo implements Resource{
             if(!Objects.equals(this.texture, other.texture)){
                 return false;
             }
-            if(this.slot != other.slot){
-                return false;
-            }
-            return true;
+            return this.slot == other.slot;
         }
 
         @Override

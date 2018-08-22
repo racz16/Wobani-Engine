@@ -16,11 +16,11 @@ public class DataStoreManager{
      */
     private final List<File> paths = new ArrayList<>();
     /**
-     The resource's data store policy. ACTION means that the resource's data will be stored in VRAM the VRAM or in the
-     sound system, ready to use. RAM means that the resource's data may be removed from ACTION to RAM if it's rarely
-     used. HDD means that the resource's data may be removed from ACTION or even from RAM if it's rarely used.
+     The resource's data store2D policy. ACTIVE means that the resource's data will be stored in VRAM the VRAM or in the
+     sound system, ready to use. CACHE means that the resource's data may be removed from ACTIVE to CACHE if it's rarely
+     used. STORAGE means that the resource's data may be removed from ACTIVE or even from CACHE if it's rarely used.
      */
-    protected ResourceState dataStorePolicy;
+    private ResourceState dataStorePolicy;
     /**
      Determines where the resource is currently stored.
      */
@@ -30,13 +30,13 @@ public class DataStoreManager{
      */
     private long lastActive;
     /**
-     If the elapsed time since this resource's last use is higher than this value and the resource's data store policy is
-     RAM or HDD, the resource's data may be removed from ACTION.
+     If the elapsed time since this resource's last use is higher than this value and the resource's data store2D policy is
+     CACHE or STORAGE, the resource's data may be removed from ACTIVE.
      */
     private long actionTimeLimit = 30000;
     /**
-     If the elapsed time since this resource's last use is higher than this value and the resource's data store policy is
-     HDD, the resource's data may be removed from ACTION or even from RAM.
+     If the elapsed time since this resource's last use is higher than this value and the resource's data store2D policy is
+     STORAGE, the resource's data may be removed from ACTIVE or even from CACHE.
      */
     private long cacheTimeLimit = 120000;
     /**
@@ -92,11 +92,11 @@ public class DataStoreManager{
     }
 
     /**
-     Returns the resource's data store policy. ACTION means that the resource's data will be stored in VRAM or in the
-     sound system, ready to use. RAM means that the resource's data may be removed from ACTION to RAM if it's rarely
-     used. HDD means that the resource's data may be removed from ACTION or even from RAM if it's rarely used.
+     Returns the resource's data store2D policy. ACTIVE means that the resource's data will be stored in VRAM or in the
+     sound system, ready to use. CACHE means that the resource's data may be removed from ACTIVE to CACHE if it's rarely
+     used. STORAGE means that the resource's data may be removed from ACTIVE or even from CACHE if it's rarely used.
 
-     @return the resource's data store policy
+     @return the resource's data store2D policy
      */
     @Nullable
     public ResourceState getDataStorePolicy(){
@@ -104,9 +104,9 @@ public class DataStoreManager{
     }
 
     /**
-     Sets the resource's data store policy to the given value.
+     Sets the resource's data store2D policy to the given value.
 
-     @param rs data store policy
+     @param rs data store2D policy
 
      @throws NullPointerException parameter can't be null
      */
@@ -118,51 +118,53 @@ public class DataStoreManager{
     }
 
     /**
-     Returns the ACTION time limit. If the elapsed time since this resource's last use is higher than this value and the
-     resource's data store policy is RAM or HDD, the resource's data may be removed from ACTION.
+     Returns the ACTIVE time limit. If the elapsed time since this resource's last use is higher than this value and the
+     resource's data store2D policy is CACHE or STORAGE, the resource's data may be removed from ACTIVE.
 
      @return VRAM time limit (in miliseconds)
      */
-    public long getActionTimeLimit(){
+    public long getActiveTimeLimit(){
         return actionTimeLimit;
     }
 
     /**
-     Sets the ACTION time limit to the given value. If the elapsed time since this resource's last use is higher than
-     this value and the resource's data store policy is RAM or HDD, the resource's data may be removed from ACTION.
+     Sets the ACTIVE time limit to the given value. If the elapsed time since this resource's last use is higher than
+     this value and the resource's data store2D policy is CACHE or STORAGE, the resource's data may be removed from
+     ACTIVE.
 
-     @param actionTimeLimit ACTION time limit (in miliseconds)
+     @param actionTimeLimit ACTIVE time limit (in miliseconds)
 
-     @throws IllegalArgumentException ACTION time limit have to be higher than 0 and lower than RAM time limit
+     @throws IllegalArgumentException ACTIVE time limit have to be higher than 0 and lower than CACHE time limit
      */
     public void setActionTimeLimit(long actionTimeLimit){
         if(actionTimeLimit <= 0 || actionTimeLimit >= cacheTimeLimit){
-            throw new IllegalArgumentException("VRAM time limit have to be higher than 0 and lower than RAM time limit");
+            throw new IllegalArgumentException("VRAM time limit have to be higher than 0 and lower than CACHE time limit");
         }
         this.actionTimeLimit = actionTimeLimit;
     }
 
     /**
-     Returns the RAM time limit. If the elapsed time since this resource's last use is higher than this value and the
-     resource's data store policy is HDD, the resource's data may be removed from ACTION or even from RAM.
+     Returns the CACHE time limit. If the elapsed time since this resource's last use is higher than this value and the
+     resource's data store2D policy is STORAGE, the resource's data may be removed from ACTIVE or even from CACHE.
 
-     @return RAM time limit (in miliseconds)
+     @return CACHE time limit (in miliseconds)
      */
     public long getCacheTimeLimit(){
         return cacheTimeLimit;
     }
 
     /**
-     Sets the RAM time limit to the given value. If the elapsed time since this resource's last use is higher than this
-     value and the resource's data store policy is HDD, the resource's data may be removed from ACTION or even from RAM.
+     Sets the CACHE time limit to the given value. If the elapsed time since this resource's last use is higher than this
+     value and the resource's data store2D policy is STORAGE, the resource's data may be removed from ACTIVE or even from
+     CACHE.
 
-     @param cacheTimeLimit RAM time limit (in miliseconds)
+     @param cacheTimeLimit CACHE time limit (in miliseconds)
 
-     @throws IllegalArgumentException RAM time limit have to be higher than ACTION time limit
+     @throws IllegalArgumentException CACHE time limit have to be higher than ACTIVE time limit
      */
     public void setCacheTimeLimit(long cacheTimeLimit){
         if(actionTimeLimit >= cacheTimeLimit){
-            throw new IllegalArgumentException("RAM time limit have to be higher than VRAM time limit");
+            throw new IllegalArgumentException("CACHE time limit have to be higher than VRAM time limit");
         }
         this.cacheTimeLimit = cacheTimeLimit;
     }
@@ -251,11 +253,6 @@ public class DataStoreManager{
             return false;
         }
         return true;
-    }
-
-    @Override
-    public String toString(){
-        return "DataStoreManager{" + "dataStorePolicy=" + dataStorePolicy + ", state=" + state + ", path=" + paths + ", lastActive=" + lastActive + ", actionTimeLimit=" + actionTimeLimit + ", cacheTimeLimit=" + cacheTimeLimit + ", dataSize=" + dataSize + '}';
     }
 
 }

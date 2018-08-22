@@ -25,7 +25,7 @@ public class Parameter<T>{
     /**
      Initializes a new Parameter to the given value.
 
-     @param value data you want to store
+     @param value data you want to store2D
      */
     public Parameter(@NotNull T value){
         setValue(value);
@@ -44,7 +44,7 @@ public class Parameter<T>{
     /**
      Sets the stored data to the given value.
 
-     @param value data you want to store
+     @param value data you want to store2D
 
      @throws NullPointerException value can't be null
      */

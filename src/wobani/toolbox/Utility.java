@@ -169,10 +169,22 @@ public class Utility{
      @param collection collection
      @param <T>        element's type stored in the collection
 
-     @return "[length]" if the collection is not null, "null" otherwise
+     @return "[size]" if the collection is not null, "null" otherwise
      */
     public static <T> String toString(@Nullable Collection<T> collection){
         return collection == null ? "null" : "[" + collection.size() + "]";
+    }
+
+    /**
+     Returns "[length]" if the array is not null, "null" otherwise.
+
+     @param array array
+     @param <T>   element's type stored in the array
+
+     @return "[length]" if the array is not null, "null" otherwise
+     */
+    public static <T> String toString(@Nullable T[] array){
+        return array == null ? "null" : "[" + array.length + "]";
     }
 
     //
@@ -422,7 +434,7 @@ public class Utility{
     /**
      Creates an int buffer and stores the given data in it.
 
-     @param data data to store
+     @param data data to store2D
 
      @return int buffer containing the given data
      */
@@ -437,7 +449,7 @@ public class Utility{
     /**
      Creates a float buffer and stores the given data in it.
 
-     @param data data to store
+     @param data data to store2D
 
      @return float buffer containing the given data
      */
@@ -453,7 +465,7 @@ public class Utility{
      Creates a float buffer with the given memory stack and stores the data in it.
 
      @param stack memory stack
-     @param data  data to store
+     @param data  data to store2D
 
      @return float buffer containing the given data
      */
@@ -469,7 +481,7 @@ public class Utility{
      Creates a int buffer with the given memory stack and stores the data in it.
 
      @param stack memory stack
-     @param data  data to store
+     @param data  data to store2D
 
      @return float buffer containing the given data
      */

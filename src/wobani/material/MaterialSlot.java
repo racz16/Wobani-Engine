@@ -10,7 +10,7 @@ import wobani.toolbox.parameter.*;
 import java.util.*;
 
 /**
- The Material's slot. It can store a color, parameters, a 2D and a CubeMapTexture, the texture's tiling and offset. All
+ The Material's slot. It can store2D a color, parameters, a 2D and a CubeMapTexture, the texture's tiling and offset. All
  of them are optional but in some cases you should fill some values. For example if you use the MaterialSlot as a normal
  map, you should set a texture, shaders can't do anything with a single color as a normal map.
  */

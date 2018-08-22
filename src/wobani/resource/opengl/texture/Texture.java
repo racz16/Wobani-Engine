@@ -3,7 +3,10 @@ package wobani.resource.opengl.texture;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.resource.*;
+import wobani.resource.opengl.buffer.*;
 import wobani.toolbox.annotation.*;
+
+import static wobani.resource.opengl.buffer.Fbo.FboAttachment.*;
 
 /**
  Base interface for all types of textures.
@@ -11,17 +14,7 @@ import wobani.toolbox.annotation.*;
 public interface Texture extends Resource{
 
     /**
-     Binds the texture.
-     */
-    void bind();
-
-    /**
-     Unbinds the texture.
-     */
-    void unbind();
-
-    /**
-     Returns the texture's width and height.
+     Returns the texture's width and height. If it's a Cube Map Texture, it returns one face's width and height.
 
      @return the texture's width and height
      */
@@ -41,6 +34,7 @@ public interface Texture extends Resource{
      */
     boolean issRgb();
 
+    //TODO: remove it
     int getId();
 
     /**
@@ -75,7 +69,7 @@ public interface Texture extends Resource{
         /**
          Texture filter's OpenGL code.
          */
-        private final int openGlCode;
+        private final int code;
 
         /**
          Initializes a new TextureFilter to the given value.
@@ -83,7 +77,7 @@ public interface Texture extends Resource{
          @param code filter's OpenGL code
          */
         TextureFilter(int code){
-            openGlCode = code;
+            this.code = code;
         }
 
         /**
@@ -92,7 +86,7 @@ public interface Texture extends Resource{
          @return the filter's OpenGL code
          */
         public int getCode(){
-            return openGlCode;
+            return code;
         }
     }
 
@@ -112,7 +106,7 @@ public interface Texture extends Resource{
         /**
          Texture filter type's OpenGL code.
          */
-        private final int openGlCode;
+        private final int code;
 
         /**
          Initializes a new TextureFilterType to the given value.
@@ -120,7 +114,7 @@ public interface Texture extends Resource{
          @param code texture filter type's OpenGL code
          */
         TextureFilterType(int code){
-            openGlCode = code;
+            this.code = code;
         }
 
         /**
@@ -129,7 +123,7 @@ public interface Texture extends Resource{
          @return the texture filter type's OpenGL code
          */
         public int getCode(){
-            return openGlCode;
+            return code;
         }
     }
 
@@ -154,31 +148,31 @@ public interface Texture extends Resource{
          */
         CLAMP_TO_BORDER(GL13.GL_CLAMP_TO_BORDER),
         /**
-         Mirrors the image once each direction than clams to the edge.
+         Mirrors the image once each direction, then clamps to the edge.
          */
         MIRROR_CLAMP_TO_EDGE(GL44.GL_MIRROR_CLAMP_TO_EDGE);
 
         /**
-         Texture wrap mode's OpenGL code.
+         Texture wrap's OpenGL code.
          */
-        private final int openGlCode;
+        private final int code;
 
         /**
          Initializes a new TextureWrap to the given value.
 
-         @param code texture wrap mode's OpenGL code
+         @param code texture wrap's OpenGL code
          */
         TextureWrap(int code){
-            openGlCode = code;
+            this.code = code;
         }
 
         /**
-         Return the texture wrap mode's OpenGL code.
+         Return the texture wrap's OpenGL code.
 
-         @return the texture wrap mode's OpenGL code
+         @return the texture wrap's OpenGL code
          */
         public int getCode(){
-            return openGlCode;
+            return code;
         }
     }
 
@@ -196,115 +190,302 @@ public interface Texture extends Resource{
         WRAP_V(GL11.GL_TEXTURE_WRAP_T);
 
         /**
-         Texture wrap type's OpenGL code.
+         Texture wrap direction's OpenGL code.
          */
-        private final int openGlCode;
+        private final int code;
 
         /**
          Initializes a new TextureWrapDirection to the given value.
 
-         @param code texture wrap type's OpenGL code
+         @param code texture wrap direction's OpenGL code
          */
         TextureWrapDirection(int code){
-            openGlCode = code;
+            this.code = code;
         }
 
         /**
-         Returns the texture wrap type's OpenGL code.
+         Returns the texture wrap direction's OpenGL code.
 
-         @return the texture wrap type's OpenGL code
+         @return the texture wrap direction's OpenGL code
          */
         public int getCode(){
-            return openGlCode;
+            return code;
         }
     }
 
+    /**
+     Internal format.
+     */
     enum TextureInternalFormat{
-        //TODO add bit depth parameter
-        //and FBO attachment type enum instead of isDepth, isColor etc methods
-        R8(GL30.GL_R8, 1),
-        R16(GL30.GL_R16, 1),
-        RG8(GL30.GL_RG8, 2),
-        RG16(GL30.GL_RG16, 2),
-        RGB4(GL30.GL_RGB4, 3),
-        RGB5(GL30.GL_RGB5, 3),
-        RGB8(GL30.GL_RGB8, 3),
-        RGB10(GL30.GL_RGB10, 3),
-        RGB12(GL30.GL_RGB12, 3),
-        RGB16(GL30.GL_RGB16, 3),
-        RGBA2(GL30.GL_RGBA2, 4),
-        RGBA4(GL30.GL_RGBA4, 4),
-        RGB5_A1(GL30.GL_RGB5_A1, 4),
-        RGBA8(GL30.GL_RGBA8, 4),
-        RGB10_A2(GL30.GL_RGB10_A2, 4),
-        RGBA12(GL30.GL_RGBA12, 4),
-        RGBA16(GL30.GL_RGBA16, 4),
-        SRGB8(GL30.GL_SRGB8, 3),
-        SRGB8_A8(GL30.GL_SRGB8_ALPHA8, 4),
-        R16F(GL30.GL_R16F, 1),
-        RG16F(GL30.GL_RG16F, 2),
-        RGB16F(GL30.GL_RGB16F, 3),
-        RGBA16F(GL30.GL_RGBA16F, 4),
-        R32F(GL30.GL_R32F, 1),
-        RG32F(GL30.GL_RG32F, 2),
-        RGB32F(GL30.GL_RGB32F, 3),
-        RGBA32F(GL30.GL_RGBA32F, 4),
-        R8I(GL30.GL_R8I, 1),
-        R8UI(GL30.GL_R8UI, 1),
-        R16I(GL30.GL_R16I, 1),
-        R16UI(GL30.GL_R16UI, 1),
-        R32I(GL30.GL_R32I, 1),
-        R32UI(GL30.GL_R32UI, 1),
-        RG8I(GL30.GL_RG8I, 2),
-        RG8UI(GL30.GL_RG8UI, 2),
-        RG16I(GL30.GL_RG16I, 2),
-        RG16UI(GL30.GL_RG16UI, 2),
-        RG32I(GL30.GL_RG32I, 2),
-        RG32UI(GL30.GL_RG32UI, 2),
-        RGB8I(GL30.GL_RGB8I, 3),
-        RGB8UI(GL30.GL_RGB8UI, 3),
-        RGB16I(GL30.GL_RGB16I, 3),
-        RGB16UI(GL30.GL_RGB16UI, 3),
-        RGB32I(GL30.GL_RGB32I, 3),
-        RGB32UI(GL30.GL_RGB32UI, 3),
-        RGBA8I(GL30.GL_RGBA8I, 4),
-        RGBA8UI(GL30.GL_RGBA8UI, 4),
-        RGBA16I(GL30.GL_RGBA16I, 4),
-        RGBA16UI(GL30.GL_RGBA16UI, 4),
-        RGBA32I(GL30.GL_RGBA32I, 4),
-        RGBA32UI(GL30.GL_RGBA32UI, 4),
-        DEPTH32F(GL30.GL_DEPTH_COMPONENT32F, 1),
-        DEPTH24(GL14.GL_DEPTH_COMPONENT24, 1),
-        DEPTH16(GL14.GL_DEPTH_COMPONENT16, 1),
-        DEPTH32F_STENCIL8(GL30.GL_DEPTH32F_STENCIL8, 2),
-        DEPTH24_STENCIL8(GL30.GL_DEPTH24_STENCIL8, 2),
-        STENCIL8(GL30.GL_STENCIL_INDEX8, 1);
+        /**
+         R8.
+         */
+        R8(GL30.GL_R8, 1, 8, COLOR),
+        /**
+         R16.
+         */
+        R16(GL30.GL_R16, 1, 16, COLOR),
+        /**
+         RG8.
+         */
+        RG8(GL30.GL_RG8, 2, 16, COLOR),
+        /**
+         RG16.
+         */
+        RG16(GL30.GL_RG16, 2, 32, COLOR),
+        /**
+         RGB4.
+         */
+        RGB4(GL30.GL_RGB4, 3, 12, COLOR),
+        /**
+         RGB5.
+         */
+        RGB5(GL30.GL_RGB5, 3, 15, COLOR),
+        /**
+         RGB8.
+         */
+        RGB8(GL30.GL_RGB8, 3, 24, COLOR),
+        /**
+         RGB10.
+         */
+        RGB10(GL30.GL_RGB10, 3, 30, COLOR),
+        /**
+         RGB12.
+         */
+        RGB12(GL30.GL_RGB12, 3, 36, COLOR),
+        /**
+         RGB16.
+         */
+        RGB16(GL30.GL_RGB16, 3, 48, COLOR),
+        /**
+         RGBA2.
+         */
+        RGBA2(GL30.GL_RGBA2, 4, 8, COLOR),
+        /**
+         RGBA4.
+         */
+        RGBA4(GL30.GL_RGBA4, 4, 16, COLOR),
+        /**
+         RGB5_A1.
+         */
+        RGB5_A1(GL30.GL_RGB5_A1, 4, 16, COLOR),
+        /**
+         RGBA8.
+         */
+        RGBA8(GL30.GL_RGBA8, 4, 32, COLOR),
+        /**
+         RGB10 A2.
+         */
+        RGB10_A2(GL30.GL_RGB10_A2, 4, 32, COLOR),
+        /**
+         RGBA12.
+         */
+        RGBA12(GL30.GL_RGBA12, 4, 48, COLOR),
+        /**
+         RGBA16.
+         */
+        RGBA16(GL30.GL_RGBA16, 4, 64, COLOR),
+        /**
+         SRGB8.
+         */
+        SRGB8(GL30.GL_SRGB8, 3, 24, COLOR),
+        /**
+         SRGB8 A8.
+         */
+        SRGB8_A8(GL30.GL_SRGB8_ALPHA8, 4, 32, COLOR),
+        /**
+         R16F.
+         */
+        R16F(GL30.GL_R16F, 1, 16, COLOR),
+        /**
+         RG16F.
+         */
+        RG16F(GL30.GL_RG16F, 2, 32, COLOR),
+        /**
+         RGB16F.
+         */
+        RGB16F(GL30.GL_RGB16F, 3, 48, COLOR),
+        /**
+         RGBA16F.
+         */
+        RGBA16F(GL30.GL_RGBA16F, 4, 64, COLOR),
+        /**
+         R32F.
+         */
+        R32F(GL30.GL_R32F, 1, 32, COLOR),
+        /**
+         RG32F.
+         */
+        RG32F(GL30.GL_RG32F, 2, 64, COLOR),
+        /**
+         RGB32F.
+         */
+        RGB32F(GL30.GL_RGB32F, 3, 96, COLOR),
+        /**
+         RGBA32F.
+         */
+        RGBA32F(GL30.GL_RGBA32F, 4, 128, COLOR),
+        /**
+         R8I.
+         */
+        R8I(GL30.GL_R8I, 1, 8, COLOR),
+        /**
+         R8UI.
+         */
+        R8UI(GL30.GL_R8UI, 1, 8, COLOR),
+        /**
+         R16I.
+         */
+        R16I(GL30.GL_R16I, 1, 16, COLOR),
+        /**
+         R16UI.
+         */
+        R16UI(GL30.GL_R16UI, 1, 16, COLOR),
+        /**
+         R32I.
+         */
+        R32I(GL30.GL_R32I, 1, 32, COLOR),
+        /**
+         R32UI.
+         */
+        R32UI(GL30.GL_R32UI, 1, 32, COLOR),
+        /**
+         RG8I.
+         */
+        RG8I(GL30.GL_RG8I, 2, 16, COLOR),
+        /**
+         RG8UI.
+         */
+        RG8UI(GL30.GL_RG8UI, 2, 16, COLOR),
+        /**
+         RG16I.
+         */
+        RG16I(GL30.GL_RG16I, 2, 32, COLOR),
+        /**
+         RG16UI.
+         */
+        RG16UI(GL30.GL_RG16UI, 2, 32, COLOR),
+        /**
+         RG32I.
+         */
+        RG32I(GL30.GL_RG32I, 2, 64, COLOR),
+        /**
+         RG32UI.
+         */
+        RG32UI(GL30.GL_RG32UI, 2, 64, COLOR),
+        /**
+         RGB8I.
+         */
+        RGB8I(GL30.GL_RGB8I, 3, 24, COLOR),
+        /**
+         RGB8UI.
+         */
+        RGB8UI(GL30.GL_RGB8UI, 3, 24, COLOR),
+        /**
+         RGB16I.
+         */
+        RGB16I(GL30.GL_RGB16I, 3, 48, COLOR),
+        /**
+         RGB16UI.
+         */
+        RGB16UI(GL30.GL_RGB16UI, 3, 48, COLOR),
+        /**
+         RGB32I.
+         */
+        RGB32I(GL30.GL_RGB32I, 3, 96, COLOR),
+        /**
+         RGB32UI.
+         */
+        RGB32UI(GL30.GL_RGB32UI, 3, 96, COLOR),
+        /**
+         RGBA8I.
+         */
+        RGBA8I(GL30.GL_RGBA8I, 4, 32, COLOR),
+        /**
+         RGBA8UI.
+         */
+        RGBA8UI(GL30.GL_RGBA8UI, 4, 32, COLOR),
+        /**
+         RGBA16I.
+         */
+        RGBA16I(GL30.GL_RGBA16I, 4, 64, COLOR),
+        /**
+         RGBA16UI.
+         */
+        RGBA16UI(GL30.GL_RGBA16UI, 4, 64, COLOR),
+        /**
+         RGBA32I.
+         */
+        RGBA32I(GL30.GL_RGBA32I, 4, 128, COLOR),
+        /**
+         RGBA32UI.
+         */
+        RGBA32UI(GL30.GL_RGBA32UI, 4, 128, COLOR),
+        /**
+         DEPTH32F.
+         */
+        DEPTH32F(GL30.GL_DEPTH_COMPONENT32F, 1, 32, DEPTH),
+        /**
+         DEPTH24.
+         */
+        DEPTH24(GL14.GL_DEPTH_COMPONENT24, 1, 24, DEPTH),
+        /**
+         DEPTH16.
+         */
+        DEPTH16(GL14.GL_DEPTH_COMPONENT16, 1, 16, DEPTH),
+        /**
+         DEPTH32F STENCIL8.
+         */
+        DEPTH32F_STENCIL8(GL30.GL_DEPTH32F_STENCIL8, 2, 40, DEPTH_STENCIL),
+        /**
+         DEPTH24 STENCIL8.
+         */
+        DEPTH24_STENCIL8(GL30.GL_DEPTH24_STENCIL8, 2, 32, DEPTH_STENCIL),
+        /**
+         STENCIL8.
+         */
+        STENCIL8(GL30.GL_STENCIL_INDEX8, 1, 8, STENCIL);
 
         /**
-         Buffer Object usage's OpenGL code.
+         Internal format's OpenGL code.
          */
         private final int code;
-
-        private final int componentCount;
+        /**
+         Number of used color channels.
+         */
+        private final int colorChannelCount;
+        /**
+         The internal format's bit depth.
+         */
+        private final int bitDepth;
+        /**
+         The internal format's FBO attachment.
+         */
+        private final Fbo.FboAttachment attachmentSlot;
 
         /**
-         Initializes a new BufferObjectUsage to the given value.
+         Initializes a new TextureInternalFormat to the given values.
 
-         @param code Buffer Object usage's OpenGL code
+         @param code              internal format's OpenGL code
+         @param colorChannelCount number of used color channels
+         @param bitDepth          internal format's bit depth
+         @param attachmentSlot    the internal format's FBO attachment
          */
-        TextureInternalFormat(int code, int componentCount){
+        TextureInternalFormat(int code, int colorChannelCount, int bitDepth, Fbo.FboAttachment attachmentSlot){
             this.code = code;
-            this.componentCount = componentCount;
+            this.colorChannelCount = colorChannelCount;
+            this.bitDepth = bitDepth;
+            this.attachmentSlot = attachmentSlot;
         }
 
         /**
-         Returns the BufferObjectUsage of the given OpenGL code.
+         Returns the TextureInternalFormat of the given OpenGL code.
 
-         @param code OpenGL Buffer Object usage
+         @param code internal format's OpenGL code
 
-         @return the BufferObjectUsage of the given OpenGL code
+         @return the TextureInternalFormat of the given OpenGL code
 
-         @throws IllegalArgumentException if the given parameter is not a Buffer Object usage
+         @throws IllegalArgumentException if the given parameter is not an internal format
          */
         @NotNull
         public static TextureInternalFormat valueOf(int code){
@@ -313,127 +494,122 @@ public interface Texture extends Resource{
                     return mode;
                 }
             }
-            throw new IllegalArgumentException("The given parameter is not a Buffer Object usage");
+            throw new IllegalArgumentException("The given parameter is not an internal format");
         }
 
         /**
-         Returns the Buffer Object usage's OpenGL code.
+         Returns the internal format's OpenGL code.
 
-         @return the Buffer Object usage's OpenGL code
+         @return the internal format's OpenGL code
          */
         public int getCode(){
             return code;
         }
 
-        public int getComponentCount(){
-            return componentCount;
-        }
-
-        public boolean isColor(){
-            return !isDepth() && !isStencil() && !isDepthStencil();
-        }
-
-        public boolean isDepth(){
-            return this == DEPTH32F || this == DEPTH24 || this == DEPTH16;
-        }
-
-        public boolean isStencil(){
-            return this == TextureInternalFormat.STENCIL8;
-        }
-
-        public boolean isDepthStencil(){
-            return this == DEPTH24_STENCIL8 || this == DEPTH32F_STENCIL8;
-        }
-    }
-
-    enum TextureDataType{
-        UNSIGNED_BYTE(GL11.GL_UNSIGNED_BYTE),
-        BYTE(GL11.GL_BYTE),
-        UNSIGNED_SHORT(GL11.GL_UNSIGNED_SHORT),
-        SHORT(GL11.GL_SHORT),
-        UNSIGNED_INT(GL11.GL_UNSIGNED_INT),
-        INT(GL11.GL_INT),
-        FLOAT(GL11.GL_FLOAT);
-
         /**
-         Buffer Object usage's OpenGL code.
+         Returns the number of used color channels in the internal format.
+
+         @return the number of used color channels in the internal format.
          */
-        private final int code;
-
-        /**
-         Initializes a new BufferObjectUsage to the given value.
-
-         @param code Buffer Object usage's OpenGL code
-         */
-        TextureDataType(int code){
-            this.code = code;
+        public int getColorChannelCount(){
+            return colorChannelCount;
         }
 
         /**
-         Returns the BufferObjectUsage of the given OpenGL code.
+         Returns the internal format's bit depth.
 
-         @param code OpenGL Buffer Object usage
+         @return the internal format's bit depth
+         */
+        public int getBitDepth(){
+            return bitDepth;
+        }
 
-         @return the BufferObjectUsage of the given OpenGL code
+        /**
+         Returns the internal format's FBO attachment.
 
-         @throws IllegalArgumentException if the given parameter is not a Buffer Object usage
+         @return the internal format's FBO attachment
          */
         @NotNull
-        public static TextureDataType valueOf(int code){
-            for(TextureDataType mode : TextureDataType.values()){
-                if(mode.getCode() == code){
-                    return mode;
-                }
-            }
-            throw new IllegalArgumentException("The given parameter is not a Buffer Object usage");
-        }
-
-        /**
-         Returns the Buffer Object usage's OpenGL code.
-
-         @return the Buffer Object usage's OpenGL code
-         */
-        public int getCode(){
-            return code;
+        public Fbo.FboAttachment getAttachmentSlot(){
+            return attachmentSlot;
         }
     }
 
+    /**
+     Texture format.
+     */
     enum TextureFormat{
-        RED(GL11.GL_RED, 1),
-        RG(GL30.GL_RG, 2),
-        RGB(GL11.GL_RGB, 3),
-        BGR(GL12.GL_BGR, 3),
-        RGBA(GL11.GL_RGBA, 4),
-        BGRA(GL12.GL_BGRA, 4),
-        DEPTH(GL11.GL_DEPTH_COMPONENT, 1),
-        STENCIL(GL11.GL_STENCIL_INDEX, 1),
-        DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL, 2);
+        /**
+         Red.
+         */
+        RED(GL11.GL_RED, 1, COLOR),
+        /**
+         RG.
+         */
+        RG(GL30.GL_RG, 2, COLOR),
+        /**
+         RGB.
+         */
+        RGB(GL11.GL_RGB, 3, COLOR),
+        /**
+         BGR.
+         */
+        BGR(GL12.GL_BGR, 3, COLOR),
+        /**
+         RGBA.
+         */
+        RGBA(GL11.GL_RGBA, 4, COLOR),
+        /**
+         BGRA.
+         */
+        BGRA(GL12.GL_BGRA, 4, COLOR),
+        /**
+         Depth.
+         */
+        DEPTH(GL11.GL_DEPTH_COMPONENT, 1, Fbo.FboAttachment.DEPTH),
+        /**
+         Stencil.
+         */
+        STENCIL(GL11.GL_STENCIL_INDEX, 1, Fbo.FboAttachment.STENCIL),
+        /**
+         Depth-stencil.
+         */
+        DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL, 2, Fbo.FboAttachment.DEPTH_STENCIL);
 
         /**
-         Buffer Object usage's OpenGL code.
+         Texture format's OpenGL code.
          */
         private final int code;
-
-        private final int componentCount;
+        /**
+         Number of used color channels.
+         */
+        private final int colorChannelCount;
+        /**
+         The texture format's FBO attachment.
+         */
+        private final Fbo.FboAttachment attachmentSlot;
 
         /**
-         Initializes a new BufferObjectUsage to the given value.
+         Initializes a new TextureFormat to the given values.
 
-         @param code Buffer Object usage's OpenGL code
+         @param code              texture format's OpenGL code
+         @param colorChannelCount number of used color channels
+         @param attachmentSlot    the texture format's FBO attachment
          */
-        TextureFormat(int code, int componentCount){
+        TextureFormat(int code, int colorChannelCount, Fbo.FboAttachment attachmentSlot){
             this.code = code;
-            this.componentCount = componentCount;
+            this.colorChannelCount = colorChannelCount;
+            this.attachmentSlot = attachmentSlot;
         }
 
         /**
-         Returns the BufferObjectUsage of the given OpenGL code.
+         Returns the TextureFormat of the given OpenGL code.
 
-         @param code OpenGL Buffer Object usage
+         @param code texture format's OpenGL code
 
-         @return the BufferObjectUsage of the given OpenGL code
+         @return the TextureFormat of the given OpenGL code
 
-         @throws IllegalArgumentException if the given parameter is not a Buffer Object usage
+         @throws IllegalArgumentException if the given parameter is not a texture format
          */
         @NotNull
         public static TextureFormat valueOf(int code){
@@ -442,36 +618,111 @@ public interface Texture extends Resource{
                     return mode;
                 }
             }
-            throw new IllegalArgumentException("The given parameter is not a Buffer Object usage");
+            throw new IllegalArgumentException("The given parameter is not a texture format");
         }
 
         /**
-         Returns the Buffer Object usage's OpenGL code.
+         Returns the texture format's OpenGL code.
 
-         @return the Buffer Object usage's OpenGL code
+         @return the texture format's OpenGL code
          */
         public int getCode(){
             return code;
         }
 
-        public int getComponentCount(){
-            return componentCount;
+        /**
+         Returns the number of used color channels in the texture format.
+
+         @return the number of used color channels in the texture format.
+         */
+        public int getColorChannelCount(){
+            return colorChannelCount;
         }
 
-        public boolean isColor(){
-            return !isDepth() && !isStencil() && !isDepthStencil();
+        /**
+         Returns the texture format's FBO attachment.
+
+         @return the texture format's FBO attachment
+         */
+        @NotNull
+        public Fbo.FboAttachment getAttachmentSlot(){
+            return attachmentSlot;
+        }
+    }
+
+    /**
+     Texture data type.
+     */
+    enum TextureDataType{
+        /**
+         Unsigned byte.
+         */
+        UNSIGNED_BYTE(GL11.GL_UNSIGNED_BYTE),
+        /**
+         Byte.
+         */
+        BYTE(GL11.GL_BYTE),
+        /**
+         Unsigned short.
+         */
+        UNSIGNED_SHORT(GL11.GL_UNSIGNED_SHORT),
+        /**
+         Short.
+         */
+        SHORT(GL11.GL_SHORT),
+        /**
+         Unsigned int.
+         */
+        UNSIGNED_INT(GL11.GL_UNSIGNED_INT),
+        /**
+         Int.
+         */
+        INT(GL11.GL_INT),
+        /**
+         Float.
+         */
+        FLOAT(GL11.GL_FLOAT);
+
+        /**
+         Texture data type's OpenGL code.
+         */
+        private final int code;
+
+        /**
+         Initializes a new TextureDataType to the given value.
+
+         @param code texture data type's OpenGL code
+         */
+        TextureDataType(int code){
+            this.code = code;
         }
 
-        public boolean isDepth(){
-            return this == DEPTH;
+        /**
+         Returns the TextureDataType of the given OpenGL code.
+
+         @param code texture data type's OpenGL code
+
+         @return the TextureDataType of the given OpenGL code
+
+         @throws IllegalArgumentException if the given parameter is not a texture data type
+         */
+        @NotNull
+        public static TextureDataType valueOf(int code){
+            for(TextureDataType mode : TextureDataType.values()){
+                if(mode.getCode() == code){
+                    return mode;
+                }
+            }
+            throw new IllegalArgumentException("The given parameter is not a texture data type");
         }
 
-        public boolean isStencil(){
-            return this == STENCIL;
-        }
+        /**
+         Returns the texture data type's OpenGL code.
 
-        public boolean isDepthStencil(){
-            return this == DEPTH_STENCIL;
+         @return the texture data type's OpenGL code
+         */
+        public int getCode(){
+            return code;
         }
     }
 }

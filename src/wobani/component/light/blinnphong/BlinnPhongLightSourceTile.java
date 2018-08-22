@@ -295,9 +295,9 @@ public class BlinnPhongLightSourceTile{
     }
 
     /**
-     Changes the SSBO's size based on how many light sources you would like to store in it.
+     Changes the SSBO's size based on how many light sources you would like to store2D in it.
 
-     @param lightCount number of light to store in the SSBO
+     @param lightCount number of light to store2D in the SSBO
      */
     private void changeSsboSizeTo(int lightCount){
         refreshAllLights = true;

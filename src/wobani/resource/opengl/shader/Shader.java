@@ -297,7 +297,7 @@ public abstract class Shader implements Resource{
     }
 
     @Override
-    public int getCachedDataSize(){
+    public int getCacheDataSize(){
         return 0;
     }
 

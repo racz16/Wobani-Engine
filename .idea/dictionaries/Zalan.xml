@@ -5,6 +5,7 @@
       <w>assimp</w>
       <w>attrib</w>
       <w>attribs</w>
+      <w>bgra</w>
       <w>bilinear</w>
       <w>bindable</w>
       <w>blinn</w>
@@ -29,6 +30,7 @@
       <w>lwjgl</w>
       <w>minification</w>
       <w>mipmap</w>
+      <w>mipmapped</w>
       <w>mipmaps</w>
       <w>msaa</w>
       <w>multisample</w>
@@ -46,8 +48,10 @@
       <w>renderables</w>
       <w>renderers</w>
       <w>resized</w>
+      <w>rgba</w>
       <w>shaders</w>
       <w>skybox</w>
+      <w>srgb</w>
       <w>ssbo</w>
       <w>stbi</w>
       <w>struct</w>

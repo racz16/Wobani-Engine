@@ -16,17 +16,13 @@ import static org.lwjgl.system.MemoryStack.*;
  */
 public abstract class BufferObject extends OpenGlObject{
     /**
-     Native, OpenGL id.
-     */
-    private int id;
-    /**
      The buffer's target.
      */
     private final int target;
     /**
-     The allocated memory size (in bytes).
+     Determines whether the Buffer Object is allocated. If it isn't, you cannot store2D data in it.
      */
-    private int dataSize;
+    private boolean allocated;
     /**
      Determines whether the Buffer Object is immutable. If it is, you cannot reallocate the data and if {@link
     #allowDataModification} is false you cannot even modify the data.
@@ -53,12 +49,12 @@ public abstract class BufferObject extends OpenGlObject{
     public BufferObject(int target){
         super(new ResourceId());
         this.target = target;
-        id = createId();
+        setId(createId());
     }
 
     @Override
     protected int getId(){
-        return id;
+        return super.getId();
     }
 
     @Override
@@ -120,8 +116,18 @@ public abstract class BufferObject extends OpenGlObject{
         if(size < 0 || size > getMaxDataSize()){
             throw new IllegalArgumentException("Size is negative or higher than the maximum");
         }
-        dataSize = size;
+        setActiveDataSize(size);
         this.usage = usage;
+        allocated = true;
+    }
+
+    /**
+     Determines whether the Buffer Object is allocated. If it isn't, you cannot store2D data in it.
+
+     @return true if the Buffer Object is allocated, false otherwise
+     */
+    public boolean isAllocated(){
+        return allocated;
     }
 
     /**
@@ -171,7 +177,7 @@ public abstract class BufferObject extends OpenGlObject{
     /**
      Allocates memory for the Buffer Object and fills it with the given data.
 
-     @param data  data to store
+     @param data  data to store2D
      @param usage data usage
      */
     public void allocateAndStore(@NotNull float[] data, @NotNull BufferObjectUsage usage){
@@ -183,7 +189,7 @@ public abstract class BufferObject extends OpenGlObject{
     /**
      Allocates memory for the Buffer Object and fills it with the given data.
 
-     @param data  data to store
+     @param data  data to store2D
      @param usage data usage
      */
     public void allocateAndStore(@NotNull FloatBuffer data, @NotNull BufferObjectUsage usage){
@@ -194,7 +200,7 @@ public abstract class BufferObject extends OpenGlObject{
     /**
      Allocates memory for the Buffer Object and fills it with the given data.
 
-     @param data  data to store
+     @param data  data to store2D
      @param usage data usage
      */
     public void allocateAndStore(@NotNull int[] data, @NotNull BufferObjectUsage usage){
@@ -206,7 +212,7 @@ public abstract class BufferObject extends OpenGlObject{
     /**
      Allocates memory for the Buffer Object and fills it with the given data.
 
-     @param data  data to store
+     @param data  data to store2D
      @param usage data usage
      */
     public void allocateAndStore(@NotNull IntBuffer data, @NotNull BufferObjectUsage usage){
@@ -218,7 +224,7 @@ public abstract class BufferObject extends OpenGlObject{
      Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
      reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
 
-     @param data                  data to store
+     @param data                  data to store2D
      @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
      */
     public void allocateAndStoreImmutable(@NotNull float[] data, boolean allowDataModification){
@@ -231,7 +237,7 @@ public abstract class BufferObject extends OpenGlObject{
      Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
      reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
 
-     @param data                  data to store
+     @param data                  data to store2D
      @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
      */
     public void allocateAndStoreImmutable(@NotNull FloatBuffer data, boolean allowDataModification){
@@ -245,7 +251,7 @@ public abstract class BufferObject extends OpenGlObject{
      Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
      reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
 
-     @param data                  data to store
+     @param data                  data to store2D
      @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
      */
     public void allocateAndStoreImmutable(@NotNull int[] data, boolean allowDataModification){
@@ -258,7 +264,7 @@ public abstract class BufferObject extends OpenGlObject{
      Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
      reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
 
-     @param data                  data to store
+     @param data                  data to store2D
      @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
      */
     public void allocateAndStoreImmutable(@NotNull IntBuffer data, boolean allowDataModification){
@@ -269,7 +275,7 @@ public abstract class BufferObject extends OpenGlObject{
     }
 
     //
-    //data store--------------------------------------------------------------------------------------------------------
+    //data store2D--------------------------------------------------------------------------------------------------------
     //
 
     /**
@@ -283,8 +289,8 @@ public abstract class BufferObject extends OpenGlObject{
      */
     protected void storeGeneral(long offset, int size){
         checkRelease();
+        checkAllocation();
         checkDataModification();
-        //FIXME: error if memory not allocated
         if(offset < 0){
             throw new IllegalArgumentException("Offset can't be negative");
         }
@@ -305,10 +311,21 @@ public abstract class BufferObject extends OpenGlObject{
     }
 
     /**
+     If the Buffer Object is not yet allocated, it throws an UnsupportedOperationException.
+
+     @throws UnsupportedOperationException if the Buffer Object is not yet allocated
+     */
+    protected void checkAllocation(){
+        if(!isAllocated()){
+            throw new UnsupportedOperationException("The Buffer Object is not yet allocated");
+        }
+    }
+
+    /**
      Stores the given data in the Buffer Object. You should only call this method if the Buffer Object is not immutable
      or if it allows data modification.
 
-     @param data data to store
+     @param data data to store2D
      */
     public void store(@NotNull float[] data){
         store(data, 0);
@@ -318,7 +335,7 @@ public abstract class BufferObject extends OpenGlObject{
      Stores the given data on the specified position. You should only call this method if the Buffer Object is not
      immutable or if it allows data modification.
 
-     @param data   data to store
+     @param data   data to store2D
      @param offset data's offset (in bytes)
      */
     public void store(@NotNull float[] data, long offset){
@@ -331,7 +348,7 @@ public abstract class BufferObject extends OpenGlObject{
      Stores the given data on the specified position. You should only call this method if the Buffer Object is not
      immutable or if it allows data modification.
 
-     @param data   data to store
+     @param data   data to store2D
      @param offset data's offset (in bytes)
      */
     public void store(@NotNull FloatBuffer data, long offset){
@@ -343,7 +360,7 @@ public abstract class BufferObject extends OpenGlObject{
      Stores the given data in the Buffer Object. You should only call this method if the Buffer Object is not immutable
      or if it allows data modification.
 
-     @param data data to store
+     @param data data to store2D
      */
     public void store(@NotNull int[] data){
         store(data, 0);
@@ -353,7 +370,7 @@ public abstract class BufferObject extends OpenGlObject{
      Stores the given data on the specified position. You should only call this method if the Buffer Object is not
      immutable or if it allows data modification.
 
-     @param data   data to store
+     @param data   data to store2D
      @param offset data's offset (in bytes)
      */
     public void store(@NotNull int[] data, long offset){
@@ -366,7 +383,7 @@ public abstract class BufferObject extends OpenGlObject{
      Stores the given data on the specified position. You should only call this method if the Buffer Object is not
      immutable or if it allows data modification.
 
-     @param data   data to store
+     @param data   data to store2D
      @param offset data's offset (in bytes)
      */
     public void store(@NotNull IntBuffer data, long offset){
@@ -391,10 +408,24 @@ public abstract class BufferObject extends OpenGlObject{
         writeTarget.checkRelease();
         checkDataModification();
         writeTarget.checkDataModification();
+        checkAllocation();
+        writeTarget.checkAllocation();
+        checkCopyOffsetsAndSize(writeTarget, readOffset, writeOffset, size);
+        GL45.glCopyNamedBufferSubData(getId(), writeTarget.getId(), readOffset, writeOffset, size);
+    }
+
+    /**
+     Checks whether the copy parameters are valid.
+
+     @param writeTarget data's destination
+     @param readOffset  read offset (in bytes)
+     @param writeOffset write offset (in bytes)
+     @param size        size of the data (in bytes)
+     */
+    private void checkCopyOffsetsAndSize(@NotNull BufferObject writeTarget, int readOffset, int writeOffset, int size){
         checkOffsetAndSize(readOffset, writeOffset, size);
         checkDataExceed(writeTarget, readOffset, writeOffset, size);
         checkRangeOverlapItself(writeTarget, readOffset, writeOffset, size);
-        GL45.glCopyNamedBufferSubData(getId(), writeTarget.getId(), readOffset, writeOffset, size);
     }
 
     /**
@@ -415,7 +446,7 @@ public abstract class BufferObject extends OpenGlObject{
      offset)
      */
     private void checkDataExceed(@NotNull BufferObject writeTarget, int readOffset, int writeOffset, int size){
-        if(readOffset + size > dataSize || writeOffset + size > writeTarget.dataSize){
+        if(readOffset + size > getActiveDataSize() || writeOffset + size > writeTarget.getActiveDataSize()){
             throw new IllegalArgumentException("The data exceeds from the write Buffer Object");
         }
     }
@@ -488,45 +519,30 @@ public abstract class BufferObject extends OpenGlObject{
         return GL43.GL_BUFFER;
     }
 
-    /**
-     Sets the data size to the given value.
-
-     @param size size
-     */
-    protected void setDataSize(int size){
-        this.dataSize = size;
-    }
-
-    @Override
-    public int getCachedDataSize(){
-        return 0;
-    }
-
-    @Override
-    public int getActiveDataSize(){
-        return dataSize;
-    }
-
     @Override
     public boolean isUsable(){
-        return getId() != -1;
+        return isIdValid();
+    }
+
+    @Override
+    public int getCacheDataSize(){
+        return 0;
     }
 
     @Override
     public void release(){
         GL15.glDeleteBuffers(getId());
-        id = -1;
-        dataSize = 0;
+        setIdToInvalid();
+        setActiveDataSize(0);
     }
 
     @Override
     public String toString(){
         return super.toString() + "\n" +
                 BufferObject.class.getSimpleName() + "(" +
-                "id: " + id + ", " +
                 "target: " + target + ", " +
-                "dataSize: " + dataSize + ", " +
                 "immutable: " + immutable + ", " +
+                "allocated: " + allocated + ", " +
                 "allowDataModification: " + allowDataModification + ", " +
                 "usage: " + usage + ")";
     }

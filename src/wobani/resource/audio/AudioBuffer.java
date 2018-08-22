@@ -55,7 +55,7 @@ public class AudioBuffer implements Resource{
     private AudioBuffer(@NotNull File path){
         meta.setPaths(Utility.wrapObjectByList(path));
         meta.setLastActiveToNow();
-        meta.setDataStorePolicy(ResourceManager.ResourceState.ACTION);
+        meta.setDataStorePolicy(ResourceManager.ResourceState.ACTIVE);
 
         hddToRam();
         ramToAction();
@@ -102,16 +102,16 @@ public class AudioBuffer implements Resource{
      Loads the sound effect to the sound system.
      */
     public void refreshStore(){
-        if(getState() == ResourceState.HDD){
+        if(getState() == ResourceState.STORAGE){
             hddToRam();
         }
-        if(getState() == ResourceState.RAM){
+        if(getState() == ResourceState.CACHE){
             ramToAction();
         }
     }
 
     /**
-     Loads the audio buffer's data from file to the RAM.
+     Loads the audio buffer's data from file to the CACHE.
 
      @throws NativeException failed to load the sound effect
      */
@@ -145,17 +145,17 @@ public class AudioBuffer implements Resource{
             MemoryUtil.memFree(error);
         }
 
-        meta.setState(ResourceState.RAM);
+        meta.setState(ResourceState.CACHE);
     }
 
     /**
-     Loads the audio buffer's data from the RAM to the sound system. It may cause errors if the data isn't in the RAM.
+     Loads the audio buffer's data from the CACHE to the sound system. It may cause errors if the data isn't in the CACHE.
      */
     private void ramToAction(){
         id = AL10.alGenBuffers();
         AL10.alBufferData(id, channels == 1 ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16, data, frequency);
 
-        meta.setState(ResourceState.ACTION);
+        meta.setState(ResourceState.ACTIVE);
     }
 
     /**
@@ -165,17 +165,17 @@ public class AudioBuffer implements Resource{
         AL10.alDeleteBuffers(id);
         id = -1;
 
-        meta.setState(ResourceState.RAM);
+        meta.setState(ResourceState.CACHE);
     }
 
     /**
-     Removes the audio buffer's data from the RAM. It may cause errors if the data isn't in the RAM.
+     Removes the audio buffer's data from the CACHE. It may cause errors if the data isn't in the CACHE.
      */
     private void ramToHdd(){
         MemoryUtil.memFree(data);
         data = null;
 
-        meta.setState(ResourceState.HDD);
+        meta.setState(ResourceState.STORAGE);
     }
 
     /**
@@ -197,30 +197,30 @@ public class AudioBuffer implements Resource{
     }
 
     //
-    //data store----------------------------------------------------------------
+    //data store2D----------------------------------------------------------------
     //
 
     /**
-     Returns the ACTION time limit. If the elapsed time since this audio buffer's last use is higher than this value and
-     the audio buffer's data store policy is RAM or HDD, the audio buffer's data may be removed from the sound system.
+     Returns the ACTIVE time limit. If the elapsed time since this audio buffer's last use is higher than this value and
+     the audio buffer's data store2D policy is CACHE or STORAGE, the audio buffer's data may be removed from the sound system.
      Later if you want to use this audio buffer, you should call the refreshStore method to load the data from file
      again.
 
-     @return ACTION time limit (in milliseconds)
+     @return ACTIVE time limit (in milliseconds)
 
      @see #refreshStore()
      */
     public long getActionTimeLimit(){
-        return meta.getActionTimeLimit();
+        return meta.getActiveTimeLimit();
     }
 
     /**
-     Sets the ACTION time limit to the given value. If the elapsed time since this audio buffer's last use is higher than
-     this value and the audio buffer's data store policy is RAM or HDD, the audio buffer's data may be removed from the
+     Sets the ACTIVE time limit to the given value. If the elapsed time since this audio buffer's last use is higher than
+     this value and the audio buffer's data store2D policy is CACHE or STORAGE, the audio buffer's data may be removed from the
      sound system. Later if you want to use this audio buffer, you should call the refreshStore method to load the data
      from file again.
 
-     @param actionTimeLimit ACTION time limit (in milliseconds)
+     @param actionTimeLimit ACTIVE time limit (in milliseconds)
 
      @see #refreshStore()
      */
@@ -229,12 +229,12 @@ public class AudioBuffer implements Resource{
     }
 
     /**
-     Returns the RAM time limit. If the elapsed time since this audio buffer's last use is higher than this value and the
-     audio buffer's data store policy is HDD, the audio buffer's data may be removed from the sound system or even from
-     RAM. Later if you want to use this texture, you should call the refreshStore method to load the data from file
+     Returns the CACHE time limit. If the elapsed time since this audio buffer's last use is higher than this value and the
+     audio buffer's data store2D policy is STORAGE, the audio buffer's data may be removed from the sound system or even from
+     CACHE. Later if you want to use this texture, you should call the refreshStore method to load the data from file
      again.
 
-     @return RAM time limit (in milliseconds)
+     @return CACHE time limit (in milliseconds)
 
      @see #refreshStore()
      */
@@ -243,12 +243,12 @@ public class AudioBuffer implements Resource{
     }
 
     /**
-     Sets the RAM time limit to the given value. If the elapsed time since this audio buffer's last use is higher than
-     this value and the audio buffer's data store policy is HDD, the audio buffer's data may be removed from the sounds
-     system or even from RAM. Later if you want to use this audio buffer, you should call the refreshStore method to load
+     Sets the CACHE time limit to the given value. If the elapsed time since this audio buffer's last use is higher than
+     this value and the audio buffer's data store2D policy is STORAGE, the audio buffer's data may be removed from the sounds
+     system or even from CACHE. Later if you want to use this audio buffer, you should call the refreshStore method to load
      the data from file again.
 
-     @param ramTimeLimit RAM time limit (in milliseconds)
+     @param ramTimeLimit CACHE time limit (in milliseconds)
 
      @see #refreshStore()
      */
@@ -276,12 +276,12 @@ public class AudioBuffer implements Resource{
     }
 
     /**
-     Returns the audio buffer's data store policy. ACTION means that the audio buffer's data will be stored in the sound
-     system. RAM means that the audio buffer's data may be removed from the sound system to RAM if it's rarely used. HDD
-     means that the audio buffer's data may be removed from the sound system or even from RAM if it's rarely used. Later
+     Returns the audio buffer's data store2D policy. ACTIVE means that the audio buffer's data will be stored in the sound
+     system. CACHE means that the audio buffer's data may be removed from the sound system to CACHE if it's rarely used. STORAGE
+     means that the audio buffer's data may be removed from the sound system or even from CACHE if it's rarely used. Later
      if you want to use this audio buffer, you should call the refreshStore method to load the data from file again.
 
-     @return the texture's data store policy
+     @return the texture's data store2D policy
 
      @see #refreshStore()
      */
@@ -291,23 +291,23 @@ public class AudioBuffer implements Resource{
     }
 
     /**
-     Sets the audio buffer's data store policy to the given value. ACTION means that the sound's data will be stored in
-     the sound system. RAM means that the audio buffer's data may be removed from the sound system to RAM if it's rarely
-     used. HDD means that the audio buffer's data may be removed from the sound system or even from RAM if it's rarely
+     Sets the audio buffer's data store2D policy to the given value. ACTIVE means that the sound's data will be stored in
+     the sound system. CACHE means that the audio buffer's data may be removed from the sound system to CACHE if it's rarely
+     used. STORAGE means that the audio buffer's data may be removed from the sound system or even from CACHE if it's rarely
      used. Later if you want to use this audio buffer, you should call the refreshStore method to load the data from file
      again.
 
-     @param minState data store policy
+     @param minState data store2D policy
 
      @see #refreshStore()
      */
     public void setDataStorePolicy(@NotNull ResourceState minState){
         meta.setDataStorePolicy(minState);
 
-        if(minState != ResourceState.HDD && getState() == ResourceState.HDD){
+        if(minState != ResourceState.STORAGE && getState() == ResourceState.STORAGE){
             hddToRam();
         }
-        if(minState == ResourceState.ACTION && getState() != ResourceState.ACTION){
+        if(minState == ResourceState.ACTIVE && getState() != ResourceState.ACTIVE){
             ramToAction();
         }
     }
@@ -315,11 +315,11 @@ public class AudioBuffer implements Resource{
     @Override
     public void update(){
         long elapsedTime = System.currentTimeMillis() - getLastActive();
-        if(elapsedTime > getActionTimeLimit() && getDataStorePolicy() != ResourceState.ACTION && getState() != ResourceState.HDD){
-            if(getState() == ResourceState.ACTION){
+        if(elapsedTime > getActionTimeLimit() && getDataStorePolicy() != ResourceState.ACTIVE && getState() != ResourceState.STORAGE){
+            if(getState() == ResourceState.ACTIVE){
                 actionToRam();
             }
-            if(elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceState.HDD){
+            if(elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceState.STORAGE){
                 ramToHdd();
             }
         }
@@ -340,21 +340,21 @@ public class AudioBuffer implements Resource{
     }
 
     @Override
-    public int getCachedDataSize(){
-        return getState() == ResourceState.HDD ? 0 : meta.getDataSize();
+    public int getCacheDataSize(){
+        return getState() == ResourceState.STORAGE ? 0 : meta.getDataSize();
     }
 
     @Override
     public int getActiveDataSize(){
-        return getState() == ResourceState.ACTION ? meta.getDataSize() : 0;
+        return getState() == ResourceState.ACTIVE ? meta.getDataSize() : 0;
     }
 
     @Override
     public void release(){
-        if(getState() == ResourceState.ACTION){
+        if(getState() == ResourceState.ACTIVE){
             actionToRam();
         }
-        if(getState() == ResourceState.RAM){
+        if(getState() == ResourceState.CACHE){
             ramToHdd();
         }
     }

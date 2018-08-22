@@ -486,7 +486,7 @@ public class SimpleSpline implements Spline{
     //misc----------------------------------------------------------------------
     //
     @Override
-    public int getCachedDataSize(){
+    public int getCacheDataSize(){
         return dataSize;
     }
 

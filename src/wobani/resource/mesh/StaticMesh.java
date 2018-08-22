@@ -21,7 +21,7 @@ import static org.lwjgl.assimp.Assimp.*;
 
 /**
  Stores a mesh's data. You can load a mesh only once, if you try to load it twice, you get reference to the already
- loaded one. You can specify the StaticMesh's data store policy including when and where the data should be stored.
+ loaded one. You can specify the StaticMesh's data store2D policy including when and where the data should be stored.
 
  @see #loadModel(File path) */
 public class StaticMesh implements Mesh{
@@ -92,7 +92,7 @@ public class StaticMesh implements Mesh{
         computeFrustumCullingData(mesh);
         meta.setPaths(Utility.wrapObjectByList(path));
         meta.setLastActiveToNow();
-        meta.setDataStorePolicy(ResourceState.ACTION);
+        meta.setDataStorePolicy(ResourceState.ACTIVE);
 
         hddToRam(mesh);
         ramToVram();
@@ -261,7 +261,7 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     Loads the mesh's data from file to the RAM. It doesn't compute AABB and furthest vertex distance again.
+     Loads the mesh's data from file to the CACHE. It doesn't compute AABB and furthest vertex distance again.
      */
     private void hddToRam(){
         AIMesh mesh = AIMesh.create(getSceneAssimp(getPath()).mMeshes().get(resourceId.getIndex()));
@@ -269,7 +269,7 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     Loads the mesh's data from the given parameter to the RAM. It doesn't compute AABB and furthest vertex distance
+     Loads the mesh's data from the given parameter to the CACHE. It doesn't compute AABB and furthest vertex distance
      again.
 
      @param mesh mesh
@@ -281,11 +281,11 @@ public class StaticMesh implements Mesh{
         normal = mesh.mNormals();
         tangent = mesh.mTangents();
 
-        meta.setState(ResourceState.RAM);
+        meta.setState(ResourceState.CACHE);
     }
 
     /**
-     Loads the mesh's data from the RAM to the ACTION. It may cause errors if the data isn't in the RAM.
+     Loads the mesh's data from the CACHE to the ACTIVE. It may cause errors if the data isn't in the CACHE.
      */
     private void ramToVram(){
         vao = new Vao(getClass().getSimpleName() + " " + getPath());
@@ -324,21 +324,21 @@ public class StaticMesh implements Mesh{
         ebo.allocateAndStoreImmutable(indices, false);
         vao.connectEbo(ebo);
 
-        meta.setState(ResourceState.ACTION);
+        meta.setState(ResourceState.ACTIVE);
     }
 
     /**
-     Removes the mesh's data from the ACTION. It may cause errors if the data isn't in the ACTION.
+     Removes the mesh's data from the ACTIVE. It may cause errors if the data isn't in the ACTIVE.
      */
     private void vramToRam(){
         vao.release();
         vao = null;
 
-        meta.setState(ResourceState.RAM);
+        meta.setState(ResourceState.CACHE);
     }
 
     /**
-     Removes the mesh's data from the RAM. It may cause errors if the data isn't in the RAM.
+     Removes the mesh's data from the CACHE. It may cause errors if the data isn't in the CACHE.
      */
     private void ramToHdd(){
         position = null;
@@ -348,7 +348,7 @@ public class StaticMesh implements Mesh{
         MemoryUtil.memFree(indices);
         indices = null;
 
-        meta.setState(ResourceState.HDD);
+        meta.setState(ResourceState.STORAGE);
     }
 
     //
@@ -356,15 +356,15 @@ public class StaticMesh implements Mesh{
     //
     @Override
     public void beforeDraw(){
-        if(getState() == ResourceState.ACTION){
+        if(getState() == ResourceState.ACTIVE){
             vao.bind();
         }
     }
 
     @Override
     public void draw(){
-        if(getState() != ResourceState.ACTION){
-            if(getState() == ResourceState.HDD){
+        if(getState() != ResourceState.ACTIVE){
+            if(getState() == ResourceState.STORAGE){
                 hddToRam();
             }
             ramToVram();
@@ -376,54 +376,54 @@ public class StaticMesh implements Mesh{
 
     @Override
     public void afterDraw(){
-        if(getState() == ResourceState.ACTION){
+        if(getState() == ResourceState.ACTIVE){
             vao.unbind();
         }
     }
 
     //
-    //data store----------------------------------------------------------------
+    //data store2D----------------------------------------------------------------
     //
 
     /**
-     Returns the ACTION time limit. If the elapsed time since this mesh's last use is higher than this value and the
-     mesh's data store policy is RAM or HDD, the mesh's data may be removed from ACTION. Later if you want to render this
+     Returns the ACTIVE time limit. If the elapsed time since this mesh's last use is higher than this value and the
+     mesh's data store2D policy is CACHE or STORAGE, the mesh's data may be removed from ACTIVE. Later if you want to render this
      mesh, it'll automatically load the data from file again.
 
-     @return ACTION time limit (in miliseconds)
+     @return ACTIVE time limit (in miliseconds)
      */
     public long getVramTimeLimit(){
-        return meta.getActionTimeLimit();
+        return meta.getActiveTimeLimit();
     }
 
     /**
-     Sets the ACTION time limit to the given value. If the elapsed time since this mesh's last use is higher than this
-     value and the mesh's data store policy is RAM or HDD, the mesh's data may be removed from ACTION. Later if you want
+     Sets the ACTIVE time limit to the given value. If the elapsed time since this mesh's last use is higher than this
+     value and the mesh's data store2D policy is CACHE or STORAGE, the mesh's data may be removed from ACTIVE. Later if you want
      to render this mesh, it'll automatically load the data from file again.
 
-     @param vramTimeLimit ACTION time limit (in miliseconds)
+     @param vramTimeLimit ACTIVE time limit (in miliseconds)
      */
     public void setVramTimeLimit(long vramTimeLimit){
         meta.setActionTimeLimit(vramTimeLimit);
     }
 
     /**
-     Returns the RAM time limit. If the elapsed time since this mesh's last use is higher than this value and the mesh's
-     data store policy is HDD, the mesh's data may be removed from ACTION or even from RAM. Later if you want to render
+     Returns the CACHE time limit. If the elapsed time since this mesh's last use is higher than this value and the mesh's
+     data store2D policy is STORAGE, the mesh's data may be removed from ACTIVE or even from CACHE. Later if you want to render
      this mesh, it'll automatically load the data from file again.
 
-     @return RAM time limit (in miliseconds)
+     @return CACHE time limit (in miliseconds)
      */
     public long getRamTimeLimit(){
         return meta.getCacheTimeLimit();
     }
 
     /**
-     Sets the RAM time limit to the given value. If the elapsed time since this mesh's last use is higher than this value
-     and the mesh's data store policy is HDD, the mesh's data may be removed from ACTION or even from RAM. Later if you
+     Sets the CACHE time limit to the given value. If the elapsed time since this mesh's last use is higher than this value
+     and the mesh's data store2D policy is STORAGE, the mesh's data may be removed from ACTIVE or even from CACHE. Later if you
      want to render this mesh, it'll automatically load the data from file again.
 
-     @param ramTimeLimit RAM time limit (in miliseconds)
+     @param ramTimeLimit CACHE time limit (in miliseconds)
      */
     public void setRamTimeLimit(long ramTimeLimit){
         meta.setCacheTimeLimit(ramTimeLimit);
@@ -440,12 +440,12 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     Returns the mesh's data store policy. ACTION means that the mesh's data will be stored in ACTION. RAM means that the
-     mesh's data may be removed from ACTION to RAM if it's rarely used. HDD means that the mesh's data may be removed
-     from ACTION or even from RAM if it's rarely used. Later if you want to render this mesh, it'll automatically load
+     Returns the mesh's data store2D policy. ACTIVE means that the mesh's data will be stored in ACTIVE. CACHE means that the
+     mesh's data may be removed from ACTIVE to CACHE if it's rarely used. STORAGE means that the mesh's data may be removed
+     from ACTIVE or even from CACHE if it's rarely used. Later if you want to render this mesh, it'll automatically load
      the data from file again.
 
-     @return the mesh's data store policy
+     @return the mesh's data store2D policy
      */
     @NotNull
     public ResourceState getDataStorePolicy(){
@@ -453,20 +453,20 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     Sets the mesh's data store policy to the given value. ACTION means that the mesh's data will be stored in ACTION.
-     RAM means that the mesh's data may be removed from ACTION to RAM if it's rarely rendered. HDD means that the mesh's
-     data may be removed from ACTION or even from RAM if it's rarely rendered. Later if you want to render this mesh,
+     Sets the mesh's data store2D policy to the given value. ACTIVE means that the mesh's data will be stored in ACTIVE.
+     CACHE means that the mesh's data may be removed from ACTIVE to CACHE if it's rarely rendered. STORAGE means that the mesh's
+     data may be removed from ACTIVE or even from CACHE if it's rarely rendered. Later if you want to render this mesh,
      it'll automatically load the data from file again.
 
-     @param minState data store policy
+     @param minState data store2D policy
      */
     public void setDataStorePolicy(@NotNull ResourceState minState){
         meta.setDataStorePolicy(minState);
 
-        if(minState != ResourceState.HDD && getState() == ResourceState.HDD){
+        if(minState != ResourceState.STORAGE && getState() == ResourceState.STORAGE){
             hddToRam();
         }
-        if(minState == ResourceState.ACTION && getState() != ResourceState.ACTION){
+        if(minState == ResourceState.ACTIVE && getState() != ResourceState.ACTIVE){
             ramToVram();
         }
     }
@@ -483,11 +483,11 @@ public class StaticMesh implements Mesh{
     @Override
     public void update(){
         long elapsedTime = System.currentTimeMillis() - getLastActive();
-        if(elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceState.ACTION && getState() != ResourceState.HDD){
-            if(getState() == ResourceState.ACTION){
+        if(elapsedTime > getVramTimeLimit() && getDataStorePolicy() != ResourceState.ACTIVE && getState() != ResourceState.STORAGE){
+            if(getState() == ResourceState.ACTIVE){
                 vramToRam();
             }
-            if(elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceState.HDD){
+            if(elapsedTime > getRamTimeLimit() && getDataStorePolicy() == ResourceState.STORAGE){
                 ramToHdd();
             }
         }
@@ -495,10 +495,10 @@ public class StaticMesh implements Mesh{
 
     @Override
     public void release(){
-        if(getState() == ResourceState.ACTION){
+        if(getState() == ResourceState.ACTIVE){
             vramToRam();
         }
-        if(getState() == ResourceState.RAM){
+        if(getState() == ResourceState.CACHE){
             ramToHdd();
         }
     }
@@ -533,13 +533,13 @@ public class StaticMesh implements Mesh{
     }
 
     @Override
-    public int getCachedDataSize(){
-        return getState() == ResourceState.HDD ? 0 : meta.getDataSize();
+    public int getCacheDataSize(){
+        return getState() == ResourceState.STORAGE ? 0 : meta.getDataSize();
     }
 
     @Override
     public int getActiveDataSize(){
-        return getState() == ResourceState.ACTION ? meta.getDataSize() : 0;
+        return getState() == ResourceState.ACTIVE ? meta.getDataSize() : 0;
     }
 
     @Override

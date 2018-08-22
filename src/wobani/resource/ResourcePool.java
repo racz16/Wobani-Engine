@@ -45,7 +45,7 @@ public abstract class ResourcePool{
     /**
      Fills the given array with new resources.
 
-     @param resources array to store new resource ids
+     @param resources array to store2D new resource ids
      */
     protected abstract void createResources(@NotNull int[] resources);
 

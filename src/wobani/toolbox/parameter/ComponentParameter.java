@@ -14,7 +14,7 @@ public class ComponentParameter<T extends ComponentBase> extends Parameter<T>{
     /**
      Initializes a new ComponentParameter to the given value.
 
-     @param value data you want to store
+     @param value data you want to store2D
      */
     public ComponentParameter(T value){
         super(value);

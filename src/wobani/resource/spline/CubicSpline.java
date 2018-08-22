@@ -4,7 +4,7 @@ import org.joml.*;
 import wobani.toolbox.annotation.*;
 
 /**
- This class extends SimpleSpline to it can store a cubic spline based on a 4x4 basis matrix.
+ This class extends SimpleSpline to it can store2D a cubic spline based on a 4x4 basis matrix.
  <p>
  */
 public abstract class CubicSpline extends SimpleSpline{
