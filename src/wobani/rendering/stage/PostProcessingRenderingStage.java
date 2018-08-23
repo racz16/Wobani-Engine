@@ -49,11 +49,13 @@ public class PostProcessingRenderingStage{
             postProcessingFbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 1);
             DynamicTexture2D texture = (DynamicTexture2D) postProcessingFbo
                     .getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 0);
-            texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
-            texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
+            texture.setFilter(Texture.TextureFilter.BILINEAR);
+            //texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
+            //texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
             texture = (DynamicTexture2D) postProcessingFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 1);
-            texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
-            texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
+            texture.setFilter(Texture.TextureFilter.BILINEAR);
+            //texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
+            //texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
             if(!postProcessingFbo.isComplete()){
                 Utility.logError(postProcessingFbo.getStatus().name());
                 throw new NativeException(OPENGL, "Incomplete FBO");

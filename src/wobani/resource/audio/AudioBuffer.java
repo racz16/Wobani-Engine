@@ -197,12 +197,12 @@ public class AudioBuffer implements Resource{
     }
 
     //
-    //data store2D----------------------------------------------------------------
+    //data store----------------------------------------------------------------
     //
 
     /**
      Returns the ACTIVE time limit. If the elapsed time since this audio buffer's last use is higher than this value and
-     the audio buffer's data store2D policy is CACHE or STORAGE, the audio buffer's data may be removed from the sound system.
+     the audio buffer's data store policy is CACHE or STORAGE, the audio buffer's data may be removed from the sound system.
      Later if you want to use this audio buffer, you should call the refreshStore method to load the data from file
      again.
 
@@ -216,7 +216,7 @@ public class AudioBuffer implements Resource{
 
     /**
      Sets the ACTIVE time limit to the given value. If the elapsed time since this audio buffer's last use is higher than
-     this value and the audio buffer's data store2D policy is CACHE or STORAGE, the audio buffer's data may be removed from the
+     this value and the audio buffer's data store policy is CACHE or STORAGE, the audio buffer's data may be removed from the
      sound system. Later if you want to use this audio buffer, you should call the refreshStore method to load the data
      from file again.
 
@@ -230,7 +230,7 @@ public class AudioBuffer implements Resource{
 
     /**
      Returns the CACHE time limit. If the elapsed time since this audio buffer's last use is higher than this value and the
-     audio buffer's data store2D policy is STORAGE, the audio buffer's data may be removed from the sound system or even from
+     audio buffer's data store policy is STORAGE, the audio buffer's data may be removed from the sound system or even from
      CACHE. Later if you want to use this texture, you should call the refreshStore method to load the data from file
      again.
 
@@ -244,7 +244,7 @@ public class AudioBuffer implements Resource{
 
     /**
      Sets the CACHE time limit to the given value. If the elapsed time since this audio buffer's last use is higher than
-     this value and the audio buffer's data store2D policy is STORAGE, the audio buffer's data may be removed from the sounds
+     this value and the audio buffer's data store policy is STORAGE, the audio buffer's data may be removed from the sounds
      system or even from CACHE. Later if you want to use this audio buffer, you should call the refreshStore method to load
      the data from file again.
 
@@ -276,12 +276,12 @@ public class AudioBuffer implements Resource{
     }
 
     /**
-     Returns the audio buffer's data store2D policy. ACTIVE means that the audio buffer's data will be stored in the sound
+     Returns the audio buffer's data store policy. ACTIVE means that the audio buffer's data will be stored in the sound
      system. CACHE means that the audio buffer's data may be removed from the sound system to CACHE if it's rarely used. STORAGE
      means that the audio buffer's data may be removed from the sound system or even from CACHE if it's rarely used. Later
      if you want to use this audio buffer, you should call the refreshStore method to load the data from file again.
 
-     @return the texture's data store2D policy
+     @return the texture's data store policy
 
      @see #refreshStore()
      */
@@ -291,13 +291,13 @@ public class AudioBuffer implements Resource{
     }
 
     /**
-     Sets the audio buffer's data store2D policy to the given value. ACTIVE means that the sound's data will be stored in
+     Sets the audio buffer's data store policy to the given value. ACTIVE means that the sound's data will be stored in
      the sound system. CACHE means that the audio buffer's data may be removed from the sound system to CACHE if it's rarely
      used. STORAGE means that the audio buffer's data may be removed from the sound system or even from CACHE if it's rarely
      used. Later if you want to use this audio buffer, you should call the refreshStore method to load the data from file
      again.
 
-     @param minState data store2D policy
+     @param minState data store policy
 
      @see #refreshStore()
      */

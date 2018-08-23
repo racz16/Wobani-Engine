@@ -6,36 +6,26 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6d58700-f594-48e4-9558-88bc52d959c1" name="Default" comment="textures refactoring, code formatting, readme updating">
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/WobaniEngine.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/WobaniEngine.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/Zalan.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/Zalan.xml" afterDir="false" />
+    <list default="true" id="d6d58700-f594-48e4-9558-88bc52d959c1" name="Default" comment="textures refactor, readme update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/wobani/component/camera/CameraComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/component/camera/CameraComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/component/light/blinnphong/BlinnPhongLightSourceTile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/component/light/blinnphong/BlinnPhongLightSourceTile.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/core/GameObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/core/GameObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/example/Example1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/example/Example1.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/material/Material.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/material/Material.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/material/MaterialSlot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/material/MaterialSlot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/rendering/prepare/EnvironmentMapRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/rendering/prepare/EnvironmentMapRenderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/wobani/rendering/stage/PostProcessingRenderingStage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/rendering/stage/PostProcessingRenderingStage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/DataStoreManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/DataStoreManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/Resource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/Resource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/ResourceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/ResourceManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/ResourcePool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/ResourcePool.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/audio/AudioBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/audio/AudioBuffer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/audio/AudioSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/audio/AudioSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/environmentprobe/DynamicEnvironmentProbe.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/environmentprobe/DynamicEnvironmentProbe.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/mesh/CubeMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/mesh/CubeMesh.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/mesh/QuadMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/mesh/QuadMesh.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/mesh/StaticMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/mesh/StaticMesh.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/OpenGlObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/OpenGlObject.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/BufferObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/BufferObject.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Vao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Vao.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Vbo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Vbo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/shader/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/shader/Shader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/AbstractTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/TextureBase.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/Texture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/TextureBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/TextureBase.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/CubeMapTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/CubeMapTexture.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/DynamicCubeMapTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/DynamicCubeMapTexture.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/StaticCubeMapTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/StaticCubeMapTexture.java" afterDir="false" />
@@ -43,7 +33,6 @@
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/StaticTexture2D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/StaticTexture2D.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/Texture2D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/Texture2D.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/resource/spline/CubicSpline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/spline/CubicSpline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wobani/resource/spline/SimpleSpline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/resource/spline/SimpleSpline.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/toolbox/Utility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/toolbox/Utility.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/toolbox/invalidatable/InvalidatableContainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/toolbox/invalidatable/InvalidatableContainer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/wobani/toolbox/parameter/ComponentParameter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/wobani/toolbox/parameter/ComponentParameter.java" afterDir="false" />
@@ -60,7 +49,7 @@
     <session id="28258903">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="42" />
+          <entry key="project.closed" value="44" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.11" value="2" />
@@ -78,7 +67,7 @@
           <entry key="project.open.time.23" value="1" />
           <entry key="project.open.time.25" value="1" />
           <entry key="project.open.time.26" value="3" />
-          <entry key="project.open.time.27" value="1" />
+          <entry key="project.open.time.27" value="2" />
           <entry key="project.open.time.29" value="2" />
           <entry key="project.open.time.30" value="1" />
           <entry key="project.open.time.31" value="2" />
@@ -89,8 +78,8 @@
           <entry key="project.open.time.6" value="1" />
           <entry key="project.open.time.65" value="1" />
           <entry key="project.open.time.70" value="1" />
-          <entry key="project.open.time.8" value="1" />
-          <entry key="project.opened" value="43" />
+          <entry key="project.open.time.8" value="2" />
+          <entry key="project.opened" value="45" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -98,7 +87,7 @@
           <entry key="form" value="1" />
           <entry key="glsl" value="10" />
           <entry key="iml" value="1" />
-          <entry key="java" value="1011" />
+          <entry key="java" value="1078" />
           <entry key="md" value="4" />
           <entry key="obj" value="1" />
           <entry key="png" value="1" />
@@ -111,7 +100,7 @@
           <entry key="GUI_DESIGNER_FORM" value="1" />
           <entry key="IDEA_MODULE" value="1" />
           <entry key="Image" value="1" />
-          <entry key="JAVA" value="1011" />
+          <entry key="JAVA" value="1078" />
           <entry key="Markdown" value="3" />
           <entry key="PLAIN_TEXT" value="3" />
           <entry key="XML" value="14" />
@@ -122,17 +111,17 @@
           <entry key="Wobani" value="339" />
           <entry key="WobaniToString" value="480" />
           <entry key="glsl" value="218" />
-          <entry key="java" value="52865" />
+          <entry key="java" value="62219" />
           <entry key="md" value="566" />
-          <entry key="txt" value="182" />
+          <entry key="txt" value="183" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="GLSL shader file" value="218" />
-          <entry key="JAVA" value="52865" />
+          <entry key="JAVA" value="62219" />
           <entry key="Markdown" value="566" />
-          <entry key="PLAIN_TEXT" value="1001" />
+          <entry key="PLAIN_TEXT" value="1002" />
         </counts>
       </usages-collector>
     </session>
@@ -142,127 +131,42 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/TextureBase.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
-              <caret line="176" column="26" selection-start-line="176" selection-start-column="26" selection-end-line="176" selection-end-column="26" />
+            <state relative-caret-position="140">
+              <caret line="246" column="5" selection-start-line="246" selection-start-column="5" selection-end-line="246" selection-end-column="5" />
               <folding>
-                <element signature="e#6335#6336#0" expanded="true" />
-                <element signature="e#6372#6373#0" expanded="true" />
-                <element signature="e#6425#6426#0" expanded="true" />
-                <element signature="e#6454#6455#0" expanded="true" />
-                <element signature="e#6495#6496#0" expanded="true" />
-                <element signature="e#6534#6535#0" expanded="true" />
-                <element signature="e#6584#6585#0" expanded="true" />
-                <element signature="e#6649#6650#0" expanded="true" />
-                <element signature="e#7116#7117#0" expanded="true" />
-                <element signature="e#7155#7156#0" expanded="true" />
-                <element signature="e#7190#7191#0" expanded="true" />
-                <element signature="e#7233#7234#0" expanded="true" />
-                <element signature="e#7686#7687#0" expanded="true" />
-                <element signature="e#7724#7725#0" expanded="true" />
-                <element signature="e#7758#7759#0" expanded="true" />
-                <element signature="e#7792#7793#0" expanded="true" />
-                <element signature="e#7859#7860#0" expanded="true" />
-                <element signature="e#7919#7920#0" expanded="true" />
-                <element signature="e#8379#8380#0" expanded="true" />
-                <element signature="e#8417#8418#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/wobani/resource/audio/AudioBuffer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/wobani/resource/audio/AudioSource.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="78">
-              <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.idea/codeStyles/Project.xml">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Vao.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="88" column="10" selection-start-line="88" selection-start-column="10" selection-end-line="88" selection-end-column="10" />
-              <folding>
-                <element signature="method#Vao#0;class#Vao#0" />
-                <element signature="method#Vao#1;class#Vao#0" />
-                <element signature="e#1871#1873#0" />
-                <element signature="method#connectVboUnsafe#0;class#Vao#0" />
-                <element signature="method#removeVertexAttribArray#0;class#Vao#0" />
-                <element signature="e#4108#4116#0" />
-                <element signature="method#getVertexAttribArrayIndices#0;class#Vao#0" />
-                <element signature="e#4284#4286#0" />
-                <element signature="method#connectEbo#0;class#Vao#0" />
-                <element signature="method#bind#0;class#Vao#0" />
-                <element signature="method#unbind#0;class#Vao#0" />
-                <element signature="method#checkBind#0;class#Vao#0" />
-                <element signature="e#6267#6275#0" />
-                <element signature="method#release#0;class#Vao#0" />
-                <element signature="method#removeVertexAttribArrays#0;class#Vao#0" />
-                <element signature="method#releaseEbo#0;class#Vao#0" />
-                <element signature="method#releaseVao#0;class#Vao#0" />
-                <element signature="method#toString#0;class#Vao#0" />
-                <element signature="class#VaoPool#0;class#Vao#0" />
-                <element signature="method#toString#0;class#VaoPool#0;class#Vao#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Vbo.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="44" selection-start-line="44" selection-end-line="44" />
-              <folding>
-                <element signature="method#Vbo#1;class#Vbo#0" />
-                <element signature="method#setVertexAttribArray#0;class#Vbo#0" />
-                <element signature="e#930#938#0" />
-                <element signature="method#allocateAndStore#0;class#Vbo#0" />
-                <element signature="method#allocateAndStoreImmutable#0;class#Vbo#0" />
-                <element signature="method#store#1;class#Vbo#0" />
-                <element signature="method#checkConnection#0;class#Vbo#0" />
-                <element signature="method#release#0;class#Vbo#0" />
-                <element signature="method#toString#0;class#Vbo#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/VertexAttribArray.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="95" column="22" selection-start-line="95" selection-start-column="22" selection-end-line="95" selection-end-column="22" />
-              <folding>
-                <element signature="method#VertexAttribArray#0;class#VertexAttribArray#0" />
-                <element signature="method#setVao#0;class#VertexAttribArray#0" />
-                <element signature="method#setVbo#0;class#VertexAttribArray#0" />
-                <element signature="method#setPointer#0;class#VertexAttribArray#0" />
-                <element signature="method#enable#0;class#VertexAttribArray#0" />
-                <element signature="method#disable#0;class#VertexAttribArray#0" />
-                <element signature="method#checkRelease#0;class#VertexAttribArray#0" />
-                <element signature="method#equals#0;class#VertexAttribArray#0" />
-                <element signature="method#hashCode#0;class#VertexAttribArray#0" />
-                <element signature="method#toString#0;class#VertexAttribArray#0" />
+                <element signature="e#1839#2133#0" />
+                <element signature="e#2428#2708#0" />
+                <element signature="e#2714#3415#0" />
+                <element signature="e#3421#3721#0" />
+                <element signature="e#3727#4145#0" />
+                <element signature="e#4354#4628#0" />
+                <element signature="e#4634#4931#0" />
+                <element signature="e#5592#6188#0" />
+                <element signature="e#6274#6581#0" />
+                <element signature="e#5634#5947#0" />
+                <element signature="e#7112#7541#0" />
+                <element signature="e#6915#7203#0" />
+                <element signature="e#7209#7496#0" />
+                <element signature="e#8551#8896#0" />
+                <element signature="e#8135#8576#0" />
+                <element signature="e#10189#10717#0" />
+                <element signature="e#11274#11763#0" />
+                <element signature="e#11769#12043#0" />
+                <element signature="e#12659#13115#0" />
+                <element signature="e#13424#13818#0" />
+                <element signature="e#14027#14392#0" />
+                <element signature="e#14534#15033#0" />
+                <element signature="e#15039#15477#0" />
+                <element signature="e#15483#15999#0" />
+                <element signature="e#16217#16833#0" />
+                <element signature="e#17327#17731#0" />
+                <element signature="e#17851#18433#0" />
+                <element signature="e#19074#19349#0" />
+                <element signature="e#18032#18170#0" />
+                <element signature="e#18958#19767#0" />
               </folding>
             </state>
           </provider>
@@ -279,11 +183,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>setwra</find>
-      <find>getid</find>
-      <find>bindT</find>
-      <find>bindToTe</find>
-      <find>upda</find>
       <find>update</find>
       <find>bindto</find>
       <find>getTexture()</find>
@@ -309,6 +208,11 @@
       <find>bind()</find>
       <find>getborder</find>
       <find>openglco</find>
+      <find>general</find>
+      <find>gettar</find>
+      <find>gettarget</find>
+      <find>getin</find>
+      <find>setid</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -330,14 +234,12 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/wobani/component/ComponentBase.java" />
         <option value="$PROJECT_DIR$/src/wobani/core/ComponentLists.java" />
         <option value="$PROJECT_DIR$/src/wobani/core/RenderableContainer.java" />
         <option value="$PROJECT_DIR$/src/wobani/window/Window.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/spline/SimpleSpline.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/mesh/CubeMesh.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/mesh/QuadMesh.java" />
-        <option value="$PROJECT_DIR$/src/wobani/component/camera/CameraComponent.java" />
         <option value="$PROJECT_DIR$/src/wobani/component/light/blinnphong/BlinnPhongLightSourceTile.java" />
         <option value="$PROJECT_DIR$/src/wobani/window/Input.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Ebo.java" />
@@ -359,28 +261,30 @@
         <option value="$PROJECT_DIR$/src/wobani/rendering/RenderingPipeline.java" />
         <option value="$PROJECT_DIR$/src/wobani/example/Example1Window.java" />
         <option value="$PROJECT_DIR$/src/wobani/rendering/prepare/ShadowRenderer.java" />
-        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/Texture2D.java" />
         <option value="$PROJECT_DIR$/src/wobani/toolbox/OpenGlConstants.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/Resource.java" />
-        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java" />
         <option value="$PROJECT_DIR$/res/shaders/blinnPhong/fragmentShader.glsl" />
         <option value="$PROJECT_DIR$/src/wobani/toolbox/Utility.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/environmentprobe/DynamicEnvironmentProbe.java" />
         <option value="$PROJECT_DIR$/src/wobani/rendering/prepare/EnvironmentMapRenderer.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/DataStoreManager.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/AbstractTexture.java" />
-        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/DynamicTexture2D.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/opengl/OpenGlObject.java" />
-        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Vao.java" />
-        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/CubeMapTexture.java" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/BufferObject.java" />
-        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/StaticTexture2D.java" />
-        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/Texture.java" />
-        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/TextureBase.java" />
-        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/StaticCubeMapTexture.java" />
         <option value="$PROJECT_DIR$/src/wobani/example/Example1.java" />
+        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Vao.java" />
+        <option value="$PROJECT_DIR$/src/wobani/component/camera/CameraComponent.java" />
+        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/Texture.java" />
+        <option value="$PROJECT_DIR$/src/wobani/rendering/stage/PostProcessingRenderingStage.java" />
+        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/StaticTexture2D.java" />
+        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/Texture2D.java" />
+        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/StaticCubeMapTexture.java" />
+        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/CubeMapTexture.java" />
+        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java" />
+        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/DynamicTexture2D.java" />
         <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/DynamicCubeMapTexture.java" />
+        <option value="$PROJECT_DIR$/src/wobani/resource/opengl/texture/TextureBase.java" />
       </list>
     </option>
   </component>
@@ -444,59 +348,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
-              <item name=".idea" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
-              <item name=".idea" type="462c0819:PsiDirectoryNode" />
-              <item name="codeStyles" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
-              <item name="res" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="wobani" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="wobani" type="462c0819:PsiDirectoryNode" />
-              <item name="resource" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="wobani" type="462c0819:PsiDirectoryNode" />
-              <item name="resource" type="462c0819:PsiDirectoryNode" />
-              <item name="audio" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
+      <pane id="Scope" />
       <pane id="PackagesPane">
         <subPane>
           <expand>
@@ -508,7 +360,72 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="wobani" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="wobani" type="462c0819:PsiDirectoryNode" />
+              <item name="resource" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="wobani" type="462c0819:PsiDirectoryNode" />
+              <item name="resource" type="462c0819:PsiDirectoryNode" />
+              <item name="opengl" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="wobani" type="462c0819:PsiDirectoryNode" />
+              <item name="resource" type="462c0819:PsiDirectoryNode" />
+              <item name="opengl" type="462c0819:PsiDirectoryNode" />
+              <item name="texture" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="wobani" type="462c0819:PsiDirectoryNode" />
+              <item name="resource" type="462c0819:PsiDirectoryNode" />
+              <item name="opengl" type="462c0819:PsiDirectoryNode" />
+              <item name="texture" type="462c0819:PsiDirectoryNode" />
+              <item name="cubemaptexture" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Wobani-Engine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Wobani-Engine" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="wobani" type="462c0819:PsiDirectoryNode" />
+              <item name="resource" type="462c0819:PsiDirectoryNode" />
+              <item name="opengl" type="462c0819:PsiDirectoryNode" />
+              <item name="texture" type="462c0819:PsiDirectoryNode" />
+              <item name="texture2d" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -525,7 +442,7 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.20441459" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.completion" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -651,7 +568,14 @@
       <option name="project" value="LOCAL" />
       <updated>1534809403347</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="textures refactor, readme update">
+      <created>1534978192854</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1534978192854</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -684,27 +608,27 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4989605" visible="true" weight="0.20092532" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4989605" visible="true" weight="0.3291474" />
       <window_info id="Structure" order="1" show_stripe_button="false" sideWeight="0.5010395" side_tool="true" weight="0.22080536" />
       <window_info id="Designer" order="2" />
       <window_info id="UI Designer" order="3" />
       <window_info id="Favorites" order="4" show_stripe_button="false" sideWeight="0.5020161" side_tool="true" weight="0.22080536" />
       <window_info id="DB Browser" order="5" show_stripe_button="false" weight="0.32980832" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.4348442" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.16713881" />
       <window_info anchor="bottom" id="Cvs" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="4" show_stripe_button="false" sideWeight="0.49798658" weight="0.26694915" />
-      <window_info anchor="bottom" id="Run" order="5" sideWeight="0.48843357" visible="true" weight="0.17705382" />
-      <window_info anchor="bottom" x="0" y="291" width="1536" height="241" id="TODO" order="6" sideWeight="0.49966952" weight="0.35977337" />
+      <window_info anchor="bottom" id="Run" order="5" sideWeight="0.48777264" visible="true" weight="0.21388102" />
+      <window_info anchor="bottom" x="0" y="291" width="1536" height="241" id="TODO" order="6" sideWeight="0.49966952" weight="0.5750708" />
       <window_info anchor="bottom" x="128" y="250" width="1316" height="340" id="Version Control" order="7" sideWeight="0.49966952" weight="0.27053824" />
-      <window_info anchor="bottom" id="Messages" order="8" sideWeight="0.5115664" side_tool="true" weight="0.22804533" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50826174" side_tool="true" weight="0.31161472" />
+      <window_info anchor="bottom" id="Messages" order="8" sideWeight="0.51222736" side_tool="true" weight="0.21388102" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.51222736" side_tool="true" weight="0.21388102" />
       <window_info anchor="bottom" id="Inspection Results" order="10" sideWeight="0.6173166" weight="0.39093485" />
-      <window_info anchor="bottom" id="Statistic" order="11" weight="0.4490085" />
+      <window_info anchor="bottom" id="Statistic" order="11" weight="0.7875354" />
       <window_info anchor="bottom" id="Tool Output" order="12" show_stripe_button="false" weight="0.3286119" />
       <window_info anchor="bottom" id="ANTLR Preview" order="13" show_stripe_button="false" weight="0.3286119" />
-      <window_info anchor="bottom" id="Debug" order="14" sideWeight="0.58456373" weight="0.19971672" />
+      <window_info anchor="bottom" id="Debug" order="14" sideWeight="0.58456373" weight="0.28611898" />
       <window_info anchor="bottom" id="DB Execution Console" order="15" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" show_stripe_button="false" weight="0.24966443" />
@@ -787,7 +711,8 @@
     <MESSAGE value="refactoring textures, solving texture coordinate problem" />
     <MESSAGE value="import fix" />
     <MESSAGE value="textures refactoring, code formatting, readme updating" />
-    <option name="LAST_COMMIT_MESSAGE" value="textures refactoring, code formatting, readme updating" />
+    <MESSAGE value="textures refactor, readme update" />
+    <option name="LAST_COMMIT_MESSAGE" value="textures refactor, readme update" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -820,33 +745,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/wobani/core/Time.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="121" column="25" selection-start-line="121" selection-start-column="25" selection-end-line="121" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/StaticTexture.java" />
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/EasyFiltering.java" />
-    <entry file="file://$PROJECT_DIR$/src/wobani/example/Example1Window.form">
-      <provider selected="true" editor-type-id="ui-designer" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/ChangableColorSpace.java" />
-    <entry file="file://$PROJECT_DIR$/src/wobani/example/Example1Window.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="171" column="28" selection-start-line="171" selection-start-column="28" selection-end-line="171" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/rendering/stage/PrepareRenderingStage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="107">
-          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/wobani/rendering/RenderingPipeline.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="83">
@@ -941,18 +839,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/toolbox/Utility.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="235">
-          <caret line="183" selection-start-line="183" selection-end-line="183" />
-          <folding>
-            <element signature="e#4291#4544#0" expanded="true" />
-            <element signature="e#4765#4766#0" expanded="true" />
-            <element signature="e#4814#4815#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/wobani/rendering/prepare/EnvironmentMapRenderer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
@@ -1003,26 +889,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="48" column="21" selection-start-line="48" selection-start-column="21" selection-end-line="48" selection-end-column="21" />
-          <folding>
-            <element signature="e#15357#15358#0" expanded="true" />
-            <element signature="e#15420#15421#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Ssbo.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-          <folding>
-            <element signature="method#Ssbo#1;class#Ssbo#0" />
-            <element signature="e#567#575#0" />
-            <element signature="method#toString#0;class#Ssbo#0" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1030,56 +900,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-89">
           <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-          <folding>
-            <element signature="method#Ubo#1;class#Ubo#0" />
-            <element signature="e#548#556#0" />
-            <element signature="method#toString#0;class#Ubo#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/BufferObject.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1938">
-          <caret line="396" lean-forward="true" selection-start-line="396" selection-end-line="396" />
-          <folding>
-            <element signature="e#1288#1506#0" />
-            <element signature="e#2802#2804#0" />
-            <element signature="e#2938#3581#0" />
-            <element signature="e#4043#4391#0" />
-            <element signature="e#4397#4744#0" />
-            <element signature="e#4750#5173#0" />
-            <element signature="e#5179#5556#0" />
-            <element signature="e#5562#5947#0" />
-            <element signature="e#5953#6328#0" />
-            <element signature="e#6334#6715#0" />
-            <element signature="e#6721#7363#0" />
-            <element signature="e#7369#8133#0" />
-            <element signature="e#8139#8779#0" />
-            <element signature="e#8785#9545#0" />
-            <element signature="e#9551#9553#0" />
-            <element signature="e#9687#10452#0" />
-            <element signature="e#10458#10851#0" />
-            <element signature="e#10857#11223#0" />
-            <element signature="e#11514#11952#0" />
-            <element signature="e#11958#12404#0" />
-            <element signature="e#12693#13129#0" />
-            <element signature="e#13135#13577#0" />
-            <element signature="e#13583#13585#0" />
-            <element signature="e#13719#14481#0" />
-            <element signature="e#14487#15071#0" />
-            <element signature="e#15077#15564#0" />
-            <element signature="e#15570#16139#0" />
-            <element signature="e#16145#16851#0" />
-            <element signature="e#16857#16859#0" />
-            <element signature="e#18076#18410#0" />
-            <element signature="e#18651#18788#0" />
-            <element signature="e#18794#19202#0" />
-            <element signature="e#19208#21277#0" />
-            <element signature="e#20415#21069#0" />
-            <element signature="e#21283#21721#0" />
-            <element signature="e#21545#21715#0" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1087,13 +907,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
-          <folding>
-            <element signature="method#bindingGeneral#0;class#IndexBindableBufferObject#0" />
-            <element signature="method#bindToBindingPoint#0;class#IndexBindableBufferObject#0" />
-            <element signature="method#unbindFromBindingPoint#0;class#IndexBindableBufferObject#0" />
-            <element signature="e#2174#2182#0" />
-            <element signature="method#toString#0;class#IndexBindableBufferObject#0" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1101,102 +914,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-          <folding>
-            <element signature="class#VertexAttribPointerType#0;class#VertexAttribPointer#0" />
-            <element signature="method#valueOf#0;class#VertexAttribPointerType#0;class#VertexAttribPointer#0" />
-            <element signature="method#VertexAttribPointer#1;class#VertexAttribPointer#0" />
-            <element signature="method#VertexAttribPointer#2;class#VertexAttribPointer#0" />
-            <element signature="method#setIndex#0;class#VertexAttribPointer#0" />
-            <element signature="method#setSize#0;class#VertexAttribPointer#0" />
-            <element signature="method#setType#0;class#VertexAttribPointer#0" />
-            <element signature="method#setOffset#0;class#VertexAttribPointer#0" />
-            <element signature="method#setRelativeOffset#0;class#VertexAttribPointer#0" />
-            <element signature="method#equals#0;class#VertexAttribPointer#0" />
-            <element signature="method#hashCode#0;class#VertexAttribPointer#0" />
-            <element signature="method#toString#0;class#VertexAttribPointer#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Vbo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="44" selection-start-line="44" selection-end-line="44" />
-          <folding>
-            <element signature="method#Vbo#1;class#Vbo#0" />
-            <element signature="method#setVertexAttribArray#0;class#Vbo#0" />
-            <element signature="e#930#938#0" />
-            <element signature="method#allocateAndStore#0;class#Vbo#0" />
-            <element signature="method#allocateAndStoreImmutable#0;class#Vbo#0" />
-            <element signature="method#store#1;class#Vbo#0" />
-            <element signature="method#checkConnection#0;class#Vbo#0" />
-            <element signature="method#release#0;class#Vbo#0" />
-            <element signature="method#toString#0;class#Vbo#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/Texture2D.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="7" column="22" selection-start-line="7" selection-start-column="22" selection-end-line="7" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/Texture.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="127" column="5" selection-start-line="127" selection-start-column="5" selection-end-line="127" selection-end-column="5" />
-          <folding>
-            <element signature="class#TextureFilter#0;class#Texture#0" />
-            <element signature="docComment;method#TextureFilter#0;class#TextureFilter#0;class#Texture#0" expanded="true" />
-            <element signature="class#TextureFilterType#0;class#Texture#0" />
-            <element signature="class#TextureWrap#0;class#Texture#0" />
-            <element signature="class#TextureWrapDirection#0;class#Texture#0" />
-            <element signature="class#TextureInternalFormat#0;class#Texture#0" />
-            <element signature="e#7780#8203#0" />
-            <element signature="e#8213#8879#0" />
-            <element signature="class#TextureFormat#0;class#Texture#0" />
-            <element signature="method#TextureFormat#0;class#TextureFormat#0;class#Texture#0" />
-            <element signature="method#valueOf#0;class#TextureFormat#0;class#Texture#0" />
-            <element signature="class#TextureDataType#0;class#Texture#0" />
-            <element signature="method#valueOf#0;class#TextureDataType#0;class#Texture#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/OpenGlObject.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1071">
-          <caret line="181" lean-forward="true" selection-start-line="181" selection-end-line="181" />
-          <folding>
-            <element signature="method#OpenGlObject#0;class#OpenGlObject#0" />
-            <element signature="e#1236#1244#0" />
-            <element signature="method#setId#0;class#OpenGlObject#0" />
-            <element signature="method#setActiveDataSize#0;class#OpenGlObject#0" />
-            <element signature="method#setLabel#0;class#OpenGlObject#0" />
-            <element signature="method#setLabelUnsafe#0;class#OpenGlObject#0" />
-            <element signature="method#checkRelease#0;class#OpenGlObject#0" />
-            <element signature="method#update#0;class#OpenGlObject#0" />
-            <element signature="method#equals#0;class#OpenGlObject#0" />
-            <element signature="method#toString#0;class#OpenGlObject#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/environmentprobe/DynamicEnvironmentProbe.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-530">
-          <caret line="95" column="5" selection-start-line="95" selection-start-column="5" selection-end-line="95" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1149#1150#0" expanded="true" />
-            <element signature="e#1202#1203#0" expanded="true" />
-            <element signature="e#2800#2801#0" expanded="true" />
-            <element signature="e#2826#2827#0" expanded="true" />
-            <element signature="e#6391#6392#0" expanded="true" />
-            <element signature="e#6451#6452#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1207,20 +924,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/CubeMapTexture.java">
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/audio/AudioBuffer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-17">
-          <caret line="7" column="24" selection-start-line="7" selection-start-column="24" selection-end-line="7" selection-end-column="24" />
-          <folding>
-            <element signature="method#toString#0;class#CubeMapTexturePool#0;class#CubeMapTexture#0" />
-          </folding>
+        <state relative-caret-position="85">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/codeStyles/Project.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/audio/AudioSource.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="78">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Vao.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="88" column="10" selection-start-line="88" selection-start-column="10" selection-end-line="88" selection-end-column="10" />
+        <state relative-caret-position="2040">
+          <caret line="308" column="30" selection-start-line="308" selection-start-column="30" selection-end-line="308" selection-end-column="30" />
           <folding>
             <element signature="method#Vao#0;class#Vao#0" />
             <element signature="method#Vao#1;class#Vao#0" />
@@ -1239,19 +963,26 @@
             <element signature="method#removeVertexAttribArrays#0;class#Vao#0" />
             <element signature="method#releaseEbo#0;class#Vao#0" />
             <element signature="method#releaseVao#0;class#Vao#0" />
-            <element signature="method#toString#0;class#Vao#0" />
             <element signature="class#VaoPool#0;class#Vao#0" />
             <element signature="method#toString#0;class#VaoPool#0;class#Vao#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/DynamicCubeMapTexture.java">
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Vbo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="26" column="39" selection-start-line="26" selection-start-column="39" selection-end-line="26" selection-end-column="39" />
+        <state relative-caret-position="323">
+          <caret line="44" selection-start-line="44" selection-end-line="44" />
           <folding>
-            <element signature="method#toString#0;class#DynamicCubeMapTexture#0" />
+            <element signature="method#Vbo#1;class#Vbo#0" />
+            <element signature="method#setVertexAttribArray#0;class#Vbo#0" />
+            <element signature="e#930#938#0" />
+            <element signature="method#allocateAndStore#0;class#Vbo#0" />
+            <element signature="method#allocateAndStoreImmutable#0;class#Vbo#0" />
+            <element signature="method#store#1;class#Vbo#0" />
+            <element signature="method#checkConnection#0;class#Vbo#0" />
+            <element signature="method#release#0;class#Vbo#0" />
+            <element signature="method#toString#0;class#Vbo#0" />
           </folding>
         </state>
       </provider>
@@ -1275,10 +1006,190 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/window/Input.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-7738">
+          <folding>
+            <element signature="e#22043#22814#0" />
+            <element signature="e#22820#33127#0" />
+            <element signature="e#33229#34321#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/toolbox/OpenGl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1073">
+          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="344" />
+          <folding>
+            <element signature="e#314#3300#0" />
+            <element signature="e#3306#4911#0" />
+            <element signature="e#4917#6384#0" />
+            <element signature="e#6390#8487#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/component/camera/CameraComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3842">
+          <caret line="27" column="7" selection-start-line="27" selection-start-column="7" selection-end-line="27" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/core/Transform.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/toolbox/Utility.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1115">
+          <caret line="183" selection-start-line="183" selection-end-line="183" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/component/ComponentBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="84">
+          <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
+          <folding>
+            <element signature="docComment;method#setActive#0;class#ComponentBase#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/environmentprobe/DynamicEnvironmentProbe.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="208" column="112" lean-forward="true" selection-start-line="208" selection-start-column="112" selection-end-line="208" selection-end-column="112" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1149#1150#0" expanded="true" />
+            <element signature="e#1202#1203#0" expanded="true" />
+            <element signature="e#2800#2801#0" expanded="true" />
+            <element signature="e#2826#2827#0" expanded="true" />
+            <element signature="e#2856#2857#0" expanded="true" />
+            <element signature="e#2884#2885#0" expanded="true" />
+            <element signature="e#3902#3903#0" expanded="true" />
+            <element signature="e#3936#3937#0" expanded="true" />
+            <element signature="e#4191#4192#0" expanded="true" />
+            <element signature="e#4221#4222#0" expanded="true" />
+            <element signature="e#4449#4450#0" expanded="true" />
+            <element signature="e#4482#4483#0" expanded="true" />
+            <element signature="e#4789#4790#0" expanded="true" />
+            <element signature="e#4836#4837#0" expanded="true" />
+            <element signature="e#4877#4878#0" expanded="true" />
+            <element signature="e#4918#4919#0" expanded="true" />
+            <element signature="e#5255#5256#0" expanded="true" />
+            <element signature="e#5311#5312#0" expanded="true" />
+            <element signature="e#5374#5375#0" expanded="true" />
+            <element signature="e#5405#5406#0" expanded="true" />
+            <element signature="e#5957#5958#0" expanded="true" />
+            <element signature="e#6011#6012#0" expanded="true" />
+            <element signature="e#6282#6283#0" expanded="true" />
+            <element signature="e#6323#6324#0" expanded="true" />
+            <element signature="e#6391#6392#0" expanded="true" />
+            <element signature="e#6451#6452#0" expanded="true" />
+            <element signature="e#6513#6514#0" expanded="true" />
+            <element signature="e#6559#6560#0" expanded="true" />
+            <element signature="e#6617#6618#0" expanded="true" />
+            <element signature="e#6664#6665#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/rendering/stage/PostProcessingRenderingStage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-867">
+          <caret line="55" column="62" selection-start-line="55" selection-start-column="62" selection-end-line="55" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/StaticTexture2D.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="77" column="26" selection-start-line="77" selection-start-column="26" selection-end-line="77" selection-end-column="26" />
+          <folding>
+            <element signature="method#loadTexture#0;class#StaticTexture2D#0" />
+            <element signature="method#vramToRam#0;class#StaticTexture2D#0" />
+            <element signature="method#bindToTextureUnit#0;class#StaticTexture2D#0" />
+            <element signature="method#setDataStorePolicy#0;class#StaticTexture2D#0" />
+            <element signature="method#update#0;class#StaticTexture2D#0" />
+            <element signature="method#release#0;class#StaticTexture2D#0" />
+            <element signature="method#toString#0;class#StaticTexture2D#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/OpenGlObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="997">
+          <caret line="171" column="19" selection-start-line="171" selection-start-column="19" selection-end-line="171" selection-end-column="19" />
+          <folding>
+            <element signature="method#OpenGlObject#0;class#OpenGlObject#0" />
+            <element signature="e#1236#1244#0" />
+            <element signature="method#setId#0;class#OpenGlObject#0" />
+            <element signature="method#setActiveDataSize#0;class#OpenGlObject#0" />
+            <element signature="method#setLabel#0;class#OpenGlObject#0" />
+            <element signature="method#setLabelUnsafe#0;class#OpenGlObject#0" />
+            <element signature="method#update#0;class#OpenGlObject#0" />
+            <element signature="method#equals#0;class#OpenGlObject#0" />
+            <element signature="method#toString#0;class#OpenGlObject#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/Texture.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="267">
+          <caret line="42" column="22" selection-start-line="42" selection-start-column="22" selection-end-line="42" selection-end-column="22" />
+          <folding>
+            <element signature="class#TextureFilter#0;class#Texture#0" />
+            <element signature="method#TextureFilter#0;class#TextureFilter#0;class#Texture#0" />
+            <element signature="class#TextureWrap#0;class#Texture#0" />
+            <element signature="class#TextureWrapDirection#0;class#Texture#0" />
+            <element signature="class#TextureInternalFormat#0;class#Texture#0" />
+            <element signature="class#TextureFormat#0;class#Texture#0" />
+            <element signature="method#TextureFormat#0;class#TextureFormat#0;class#Texture#0" />
+            <element signature="method#valueOf#0;class#TextureFormat#0;class#Texture#0" />
+            <element signature="class#TextureDataType#0;class#Texture#0" />
+            <element signature="method#valueOf#0;class#TextureDataType#0;class#Texture#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/Texture2D.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="85" lean-forward="true" selection-start-line="85" selection-end-line="85" />
+          <folding>
+            <element signature="method#toString#0;class#Texture2D#0" />
+            <element signature="class#Texture2DPool#0;class#Texture2D#0" />
+            <element signature="method#toString#0;class#Texture2DPool#0;class#Texture2D#0" />
+            <element signature="class#Texture2DMultisampledPool#0;class#Texture2D#0" />
+            <element signature="method#createResources#0;class#Texture2DMultisampledPool#0;class#Texture2D#0" />
+            <element signature="method#toString#0;class#Texture2DMultisampledPool#0;class#Texture2D#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/BufferObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1642">
+          <caret line="104" column="4" lean-forward="true" selection-start-line="104" selection-start-column="4" selection-end-line="111" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/spline/CubicSpline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="6" column="43" selection-start-line="6" selection-start-column="43" selection-end-line="6" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/StaticCubeMapTexture.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="833">
-          <caret line="101" column="104" selection-start-line="101" selection-start-column="104" selection-end-line="101" selection-end-column="104" />
+        <state relative-caret-position="297">
+          <caret line="98" column="64" selection-start-line="98" selection-start-column="64" selection-end-line="98" selection-end-column="64" />
           <folding>
             <element signature="method#loadTexture#0;class#StaticCubeMapTexture#0" />
             <element signature="method#hddToRam#0;class#StaticCubeMapTexture#0" />
@@ -1292,74 +1203,94 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/DynamicTexture2D.java">
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/CubeMapTexture.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="68" column="4" selection-start-line="68" selection-start-column="4" selection-end-line="71" selection-end-column="5" />
+        <state relative-caret-position="119">
+          <caret line="17" column="7" selection-start-line="17" selection-start-column="7" selection-end-line="17" selection-end-column="7" />
+          <folding>
+            <element signature="class#CubeMapSide#0;class#CubeMapTexture#0" />
+            <element signature="method#initializeAfterAllocation#0;class#CubeMapTexture#0" />
+            <element signature="method#storeCubeMapSide#0;class#CubeMapTexture#0" />
+            <element signature="method#store3DUnsafe#0;class#CubeMapTexture#0" />
+            <element signature="method#createTextureId#0;class#CubeMapTexture#0" />
+            <element signature="class#CubeMapTexturePool#0;class#CubeMapTexture#0" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/StaticTexture2D.java">
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/buffer/Fbo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-799">
-          <caret line="25" selection-start-line="25" selection-end-line="25" />
+        <state relative-caret-position="162">
+          <caret line="919" column="96" selection-start-line="919" selection-start-column="96" selection-end-line="919" selection-end-column="96" />
           <folding>
-            <element signature="method#loadTexture#0;class#StaticTexture2D#0" />
-            <element signature="method#vramToRam#0;class#StaticTexture2D#0" />
-            <element signature="method#bindToTextureUnit#0;class#StaticTexture2D#0" />
-            <element signature="method#setDataStorePolicy#0;class#StaticTexture2D#0" />
-            <element signature="method#update#0;class#StaticTexture2D#0" />
-            <element signature="method#release#0;class#StaticTexture2D#0" />
-            <element signature="method#toString#0;class#StaticTexture2D#0" />
+            <element signature="e#15357#15358#0" expanded="true" />
+            <element signature="e#15420#15421#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/cubemaptexture/DynamicCubeMapTexture.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="16" column="73" selection-start-line="16" selection-start-column="73" selection-end-line="16" selection-end-column="73" />
+          <folding>
+            <element signature="method#toString#0;class#DynamicCubeMapTexture#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/texture2d/DynamicTexture2D.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="258">
+          <caret line="67" lean-forward="true" selection-start-line="67" selection-end-line="67" />
+          <folding>
+            <element signature="method#DynamicTexture2D#0;class#DynamicTexture2D#0" />
+            <element signature="method#DynamicTexture2D#1;class#DynamicTexture2D#0" />
+            <element signature="method#store#1;class#DynamicTexture2D#0" />
+            <element signature="method#createTextureId#0;class#DynamicTexture2D#0" />
+            <element signature="method#toString#0;class#DynamicTexture2D#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/wobani/resource/opengl/texture/TextureBase.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="176" column="26" selection-start-line="176" selection-start-column="26" selection-end-line="176" selection-end-column="26" />
+        <state relative-caret-position="140">
+          <caret line="246" column="5" selection-start-line="246" selection-start-column="5" selection-end-line="246" selection-end-column="5" />
           <folding>
-            <element signature="e#6335#6336#0" expanded="true" />
-            <element signature="e#6372#6373#0" expanded="true" />
-            <element signature="e#6425#6426#0" expanded="true" />
-            <element signature="e#6454#6455#0" expanded="true" />
-            <element signature="e#6495#6496#0" expanded="true" />
-            <element signature="e#6534#6535#0" expanded="true" />
-            <element signature="e#6584#6585#0" expanded="true" />
-            <element signature="e#6649#6650#0" expanded="true" />
-            <element signature="e#7116#7117#0" expanded="true" />
-            <element signature="e#7155#7156#0" expanded="true" />
-            <element signature="e#7190#7191#0" expanded="true" />
-            <element signature="e#7233#7234#0" expanded="true" />
-            <element signature="e#7686#7687#0" expanded="true" />
-            <element signature="e#7724#7725#0" expanded="true" />
-            <element signature="e#7758#7759#0" expanded="true" />
-            <element signature="e#7792#7793#0" expanded="true" />
-            <element signature="e#7859#7860#0" expanded="true" />
-            <element signature="e#7919#7920#0" expanded="true" />
-            <element signature="e#8379#8380#0" expanded="true" />
-            <element signature="e#8417#8418#0" expanded="true" />
+            <element signature="e#1839#2133#0" />
+            <element signature="e#2428#2708#0" />
+            <element signature="e#2714#3415#0" />
+            <element signature="e#3421#3721#0" />
+            <element signature="e#3727#4145#0" />
+            <element signature="e#4354#4628#0" />
+            <element signature="e#4634#4931#0" />
+            <element signature="e#5592#6188#0" />
+            <element signature="e#6274#6581#0" />
+            <element signature="e#5634#5947#0" />
+            <element signature="e#7112#7541#0" />
+            <element signature="e#6915#7203#0" />
+            <element signature="e#7209#7496#0" />
+            <element signature="e#8551#8896#0" />
+            <element signature="e#8135#8576#0" />
+            <element signature="e#10189#10717#0" />
+            <element signature="e#11274#11763#0" />
+            <element signature="e#11769#12043#0" />
+            <element signature="e#12659#13115#0" />
+            <element signature="e#13424#13818#0" />
+            <element signature="e#14027#14392#0" />
+            <element signature="e#14534#15033#0" />
+            <element signature="e#15039#15477#0" />
+            <element signature="e#15483#15999#0" />
+            <element signature="e#16217#16833#0" />
+            <element signature="e#17327#17731#0" />
+            <element signature="e#17851#18433#0" />
+            <element signature="e#19074#19349#0" />
+            <element signature="e#18032#18170#0" />
+            <element signature="e#18958#19767#0" />
           </folding>
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/audio/AudioBuffer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/wobani/resource/audio/AudioSource.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="78">
-          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/codeStyles/Project.xml">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
   <component name="masterDetails">

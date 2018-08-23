@@ -72,7 +72,7 @@ public class Fbo implements Resource{
      @param size          FBO's width and height
      @param multisampled  multisampled
      @param samples       number of samples, if the FBO isn't multisampled, it can be anything
-     @param floatingPoint FBO store2D color attachments as floating point values or not
+     @param floatingPoint FBO store color attachments as floating point values or not
 
      @throws IllegalArgumentException width and height must be positive
      @throws IllegalArgumentException samples can't be lower than 1
@@ -828,7 +828,7 @@ public class Fbo implements Resource{
     }
 
     /**
-     Represents an attachment slot of a FBO. It can store2D a texture or a RBO.
+     Represents an attachment slot of a FBO. It can store a texture or a RBO.
      */
     private class AttachmentSlot{
 
@@ -917,7 +917,7 @@ public class Fbo implements Resource{
             int msaa = samples;
             if(type == FboAttachmentType.TEXTURE){
                 //TODO: mipmaps always false?
-                texture = new DynamicTexture2D(size, slot.getInternalFormat(floatingPoint), msaa, false);
+                texture = new DynamicTexture2D(size, slot.getInternalFormat(floatingPoint), msaa);
                 if(multisampled){
                     GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, slot
                             .getAttachmet() + index, GL32.GL_TEXTURE_2D_MULTISAMPLE, texture.getId(), 0);

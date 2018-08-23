@@ -42,88 +42,54 @@ public interface Texture extends Resource{
      */
     enum TextureFilter{
         /**
-         Nearest filter.
+         No filter.
          */
-        NEAREST(GL11.GL_NEAREST),
+        NONE(GL11.GL_NEAREST, GL11.GL_NEAREST_MIPMAP_NEAREST),
         /**
-         Linear filter.
+         Bilinear filter.
          */
-        LINEAR(GL11.GL_LINEAR),
+        BILINEAR(GL11.GL_LINEAR, GL11.GL_LINEAR_MIPMAP_NEAREST),
         /**
-         Nearest mipmap nearest filter.
+         Trilinear filter.
          */
-        NEAREST_MIPMAP_NEAREST(GL11.GL_NEAREST_MIPMAP_NEAREST),
-        /**
-         Linear mipmap linear filter.
-         */
-        LINEAR_MIPMAP_LINEAR(GL11.GL_LINEAR_MIPMAP_LINEAR),
-        /**
-         Nearest mipmap linear filter.
-         */
-        NEAREST_MIPMAP_LINEAR(GL11.GL_NEAREST_MIPMAP_LINEAR),
-        /**
-         Linear mipmap nearest filter.
-         */
-        LINEAR_MIPMAP_NEAREST(GL11.GL_LINEAR_MIPMAP_NEAREST);
+        TRILINEAR(GL11.GL_LINEAR, GL11.GL_LINEAR_MIPMAP_LINEAR);
 
         /**
-         Texture filter's OpenGL code.
+         The magnification filter's OpenGL code.
          */
-        private final int code;
+        private final int magnificationCode;
+        /**
+         The minification filter's OpenGL code.
+         */
+        private final int minificationCode;
 
         /**
-         Initializes a new TextureFilter to the given value.
+         Initializes a new TextureFilter to the given values.
 
-         @param code filter's OpenGL code
+         @param magnificationCode magnification filter's OpenGL code
+         @param minificationCode  minification filter's OpenGL code
          */
-        TextureFilter(int code){
-            this.code = code;
+        TextureFilter(int magnificationCode, int minificationCode){
+            this.magnificationCode = magnificationCode;
+            this.minificationCode = minificationCode;
         }
 
         /**
-         Returns the filter's OpenGL code.
+         Returns the magnification filter's OpenGL code.
 
-         @return the filter's OpenGL code
+         @return the magnification filter's OpenGL code
          */
-        public int getCode(){
-            return code;
-        }
-    }
-
-    /**
-     Texture filter type.
-     */
-    enum TextureFilterType{
-        /**
-         Magnification.
-         */
-        MAGNIFICATION(GL11.GL_TEXTURE_MAG_FILTER),
-        /**
-         Minification.
-         */
-        MINIFICATION(GL11.GL_TEXTURE_MIN_FILTER);
-
-        /**
-         Texture filter type's OpenGL code.
-         */
-        private final int code;
-
-        /**
-         Initializes a new TextureFilterType to the given value.
-
-         @param code texture filter type's OpenGL code
-         */
-        TextureFilterType(int code){
-            this.code = code;
+        public int getMagnificationCode(){
+            return magnificationCode;
         }
 
         /**
-         Returns the texture filter type's OpenGL code.
+         Returns the minification filter's OpenGL code.
 
-         @return the texture filter type's OpenGL code
+         @return the minification filter's OpenGL code
          */
-        public int getCode(){
-            return code;
+        public int getMinificationCode(){
+            return minificationCode;
         }
     }
 

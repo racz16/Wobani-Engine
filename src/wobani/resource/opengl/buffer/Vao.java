@@ -306,6 +306,7 @@ public class Vao extends OpenGlObject{
 
     @Override
     public String toString(){
+        //FIXME: stackoverflow
         return super.toString() + "\n" +
                 Vao.class.getSimpleName() + "(" +
                 "vertexAttribArrays: " + vertexAttribArrays + ", " +

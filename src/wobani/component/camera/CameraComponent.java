@@ -19,11 +19,6 @@ import java.util.logging.*;
 
  @see GameObject */
 public class CameraComponent extends Component implements Camera{
-
-    /**
-     The class's logger.
-     */
-    private static final Logger LOG = Logger.getLogger(CameraComponent.class.getName());
     /**
      The Matrices UBO.
      */
@@ -36,12 +31,6 @@ public class CameraComponent extends Component implements Camera{
      Reference for the main camera if it's a CameraComponent and needs to refresh it in the Matrices UBO.
      */
     private static CameraComponent camera;
-
-    static{
-        createUbo();
-        temp = BufferUtils.createFloatBuffer(32);
-    }
-
     /**
      Performs the frustum intersection tests.
      */
@@ -90,6 +79,15 @@ public class CameraComponent extends Component implements Camera{
      Determines whether the frustum culling is enabled.
      */
     private boolean frustumCulling = true;
+    /**
+     The class's logger.
+     */
+    private static final Logger LOG = Logger.getLogger(CameraComponent.class.getName());
+
+    static{
+        createUbo();
+        temp = BufferUtils.createFloatBuffer(32);
+    }
 
     /**
      Initializes a new CameraComponent in perspective mode.

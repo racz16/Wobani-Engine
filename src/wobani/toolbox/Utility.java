@@ -434,7 +434,7 @@ public class Utility{
     /**
      Creates an int buffer and stores the given data in it.
 
-     @param data data to store2D
+     @param data data to store
 
      @return int buffer containing the given data
      */
@@ -449,7 +449,7 @@ public class Utility{
     /**
      Creates a float buffer and stores the given data in it.
 
-     @param data data to store2D
+     @param data data to store
 
      @return float buffer containing the given data
      */
@@ -465,7 +465,7 @@ public class Utility{
      Creates a float buffer with the given memory stack and stores the data in it.
 
      @param stack memory stack
-     @param data  data to store2D
+     @param data  data to store
 
      @return float buffer containing the given data
      */
@@ -481,7 +481,7 @@ public class Utility{
      Creates a int buffer with the given memory stack and stores the data in it.
 
      @param stack memory stack
-     @param data  data to store2D
+     @param data  data to store
 
      @return float buffer containing the given data
      */

@@ -21,7 +21,7 @@ import static org.lwjgl.assimp.Assimp.*;
 
 /**
  Stores a mesh's data. You can load a mesh only once, if you try to load it twice, you get reference to the already
- loaded one. You can specify the StaticMesh's data store2D policy including when and where the data should be stored.
+ loaded one. You can specify the StaticMesh's data store policy including when and where the data should be stored.
 
  @see #loadModel(File path) */
 public class StaticMesh implements Mesh{
@@ -382,12 +382,12 @@ public class StaticMesh implements Mesh{
     }
 
     //
-    //data store2D----------------------------------------------------------------
+    //data store----------------------------------------------------------------
     //
 
     /**
      Returns the ACTIVE time limit. If the elapsed time since this mesh's last use is higher than this value and the
-     mesh's data store2D policy is CACHE or STORAGE, the mesh's data may be removed from ACTIVE. Later if you want to render this
+     mesh's data store policy is CACHE or STORAGE, the mesh's data may be removed from ACTIVE. Later if you want to render this
      mesh, it'll automatically load the data from file again.
 
      @return ACTIVE time limit (in miliseconds)
@@ -398,7 +398,7 @@ public class StaticMesh implements Mesh{
 
     /**
      Sets the ACTIVE time limit to the given value. If the elapsed time since this mesh's last use is higher than this
-     value and the mesh's data store2D policy is CACHE or STORAGE, the mesh's data may be removed from ACTIVE. Later if you want
+     value and the mesh's data store policy is CACHE or STORAGE, the mesh's data may be removed from ACTIVE. Later if you want
      to render this mesh, it'll automatically load the data from file again.
 
      @param vramTimeLimit ACTIVE time limit (in miliseconds)
@@ -409,7 +409,7 @@ public class StaticMesh implements Mesh{
 
     /**
      Returns the CACHE time limit. If the elapsed time since this mesh's last use is higher than this value and the mesh's
-     data store2D policy is STORAGE, the mesh's data may be removed from ACTIVE or even from CACHE. Later if you want to render
+     data store policy is STORAGE, the mesh's data may be removed from ACTIVE or even from CACHE. Later if you want to render
      this mesh, it'll automatically load the data from file again.
 
      @return CACHE time limit (in miliseconds)
@@ -420,7 +420,7 @@ public class StaticMesh implements Mesh{
 
     /**
      Sets the CACHE time limit to the given value. If the elapsed time since this mesh's last use is higher than this value
-     and the mesh's data store2D policy is STORAGE, the mesh's data may be removed from ACTIVE or even from CACHE. Later if you
+     and the mesh's data store policy is STORAGE, the mesh's data may be removed from ACTIVE or even from CACHE. Later if you
      want to render this mesh, it'll automatically load the data from file again.
 
      @param ramTimeLimit CACHE time limit (in miliseconds)
@@ -440,12 +440,12 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     Returns the mesh's data store2D policy. ACTIVE means that the mesh's data will be stored in ACTIVE. CACHE means that the
+     Returns the mesh's data store policy. ACTIVE means that the mesh's data will be stored in ACTIVE. CACHE means that the
      mesh's data may be removed from ACTIVE to CACHE if it's rarely used. STORAGE means that the mesh's data may be removed
      from ACTIVE or even from CACHE if it's rarely used. Later if you want to render this mesh, it'll automatically load
      the data from file again.
 
-     @return the mesh's data store2D policy
+     @return the mesh's data store policy
      */
     @NotNull
     public ResourceState getDataStorePolicy(){
@@ -453,12 +453,12 @@ public class StaticMesh implements Mesh{
     }
 
     /**
-     Sets the mesh's data store2D policy to the given value. ACTIVE means that the mesh's data will be stored in ACTIVE.
+     Sets the mesh's data store policy to the given value. ACTIVE means that the mesh's data will be stored in ACTIVE.
      CACHE means that the mesh's data may be removed from ACTIVE to CACHE if it's rarely rendered. STORAGE means that the mesh's
      data may be removed from ACTIVE or even from CACHE if it's rarely rendered. Later if you want to render this mesh,
      it'll automatically load the data from file again.
 
-     @param minState data store2D policy
+     @param minState data store policy
      */
     public void setDataStorePolicy(@NotNull ResourceState minState){
         meta.setDataStorePolicy(minState);

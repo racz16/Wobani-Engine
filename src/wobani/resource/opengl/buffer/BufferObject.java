@@ -20,7 +20,7 @@ public abstract class BufferObject extends OpenGlObject{
      */
     private final int target;
     /**
-     Determines whether the Buffer Object is allocated. If it isn't, you cannot store2D data in it.
+     Determines whether the Buffer Object is allocated. If it isn't, you cannot store data in it.
      */
     private boolean allocated;
     /**
@@ -122,7 +122,7 @@ public abstract class BufferObject extends OpenGlObject{
     }
 
     /**
-     Determines whether the Buffer Object is allocated. If it isn't, you cannot store2D data in it.
+     Determines whether the Buffer Object is allocated. If it isn't, you cannot store data in it.
 
      @return true if the Buffer Object is allocated, false otherwise
      */
@@ -177,7 +177,7 @@ public abstract class BufferObject extends OpenGlObject{
     /**
      Allocates memory for the Buffer Object and fills it with the given data.
 
-     @param data  data to store2D
+     @param data  data to store
      @param usage data usage
      */
     public void allocateAndStore(@NotNull float[] data, @NotNull BufferObjectUsage usage){
@@ -189,7 +189,7 @@ public abstract class BufferObject extends OpenGlObject{
     /**
      Allocates memory for the Buffer Object and fills it with the given data.
 
-     @param data  data to store2D
+     @param data  data to store
      @param usage data usage
      */
     public void allocateAndStore(@NotNull FloatBuffer data, @NotNull BufferObjectUsage usage){
@@ -200,7 +200,7 @@ public abstract class BufferObject extends OpenGlObject{
     /**
      Allocates memory for the Buffer Object and fills it with the given data.
 
-     @param data  data to store2D
+     @param data  data to store
      @param usage data usage
      */
     public void allocateAndStore(@NotNull int[] data, @NotNull BufferObjectUsage usage){
@@ -212,7 +212,7 @@ public abstract class BufferObject extends OpenGlObject{
     /**
      Allocates memory for the Buffer Object and fills it with the given data.
 
-     @param data  data to store2D
+     @param data  data to store
      @param usage data usage
      */
     public void allocateAndStore(@NotNull IntBuffer data, @NotNull BufferObjectUsage usage){
@@ -224,7 +224,7 @@ public abstract class BufferObject extends OpenGlObject{
      Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
      reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
 
-     @param data                  data to store2D
+     @param data                  data to store
      @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
      */
     public void allocateAndStoreImmutable(@NotNull float[] data, boolean allowDataModification){
@@ -237,7 +237,7 @@ public abstract class BufferObject extends OpenGlObject{
      Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
      reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
 
-     @param data                  data to store2D
+     @param data                  data to store
      @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
      */
     public void allocateAndStoreImmutable(@NotNull FloatBuffer data, boolean allowDataModification){
@@ -251,7 +251,7 @@ public abstract class BufferObject extends OpenGlObject{
      Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
      reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
 
-     @param data                  data to store2D
+     @param data                  data to store
      @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
      */
     public void allocateAndStoreImmutable(@NotNull int[] data, boolean allowDataModification){
@@ -264,7 +264,7 @@ public abstract class BufferObject extends OpenGlObject{
      Allocates memory for the Buffer Object and fills it with the given data. After calling this method you can't
      reallocate the buffer. However if allowDataModification is true, you can modify the stored data.
 
-     @param data                  data to store2D
+     @param data                  data to store
      @param allowDataModification true if you want to later modify the Buffer Object's data, false otherwise
      */
     public void allocateAndStoreImmutable(@NotNull IntBuffer data, boolean allowDataModification){
@@ -275,7 +275,7 @@ public abstract class BufferObject extends OpenGlObject{
     }
 
     //
-    //data store2D--------------------------------------------------------------------------------------------------------
+    //data store--------------------------------------------------------------------------------------------------------
     //
 
     /**
@@ -325,7 +325,7 @@ public abstract class BufferObject extends OpenGlObject{
      Stores the given data in the Buffer Object. You should only call this method if the Buffer Object is not immutable
      or if it allows data modification.
 
-     @param data data to store2D
+     @param data data to store
      */
     public void store(@NotNull float[] data){
         store(data, 0);
@@ -335,7 +335,7 @@ public abstract class BufferObject extends OpenGlObject{
      Stores the given data on the specified position. You should only call this method if the Buffer Object is not
      immutable or if it allows data modification.
 
-     @param data   data to store2D
+     @param data   data to store
      @param offset data's offset (in bytes)
      */
     public void store(@NotNull float[] data, long offset){
@@ -348,7 +348,7 @@ public abstract class BufferObject extends OpenGlObject{
      Stores the given data on the specified position. You should only call this method if the Buffer Object is not
      immutable or if it allows data modification.
 
-     @param data   data to store2D
+     @param data   data to store
      @param offset data's offset (in bytes)
      */
     public void store(@NotNull FloatBuffer data, long offset){
@@ -360,7 +360,7 @@ public abstract class BufferObject extends OpenGlObject{
      Stores the given data in the Buffer Object. You should only call this method if the Buffer Object is not immutable
      or if it allows data modification.
 
-     @param data data to store2D
+     @param data data to store
      */
     public void store(@NotNull int[] data){
         store(data, 0);
@@ -370,7 +370,7 @@ public abstract class BufferObject extends OpenGlObject{
      Stores the given data on the specified position. You should only call this method if the Buffer Object is not
      immutable or if it allows data modification.
 
-     @param data   data to store2D
+     @param data   data to store
      @param offset data's offset (in bytes)
      */
     public void store(@NotNull int[] data, long offset){
@@ -383,7 +383,7 @@ public abstract class BufferObject extends OpenGlObject{
      Stores the given data on the specified position. You should only call this method if the Buffer Object is not
      immutable or if it allows data modification.
 
-     @param data   data to store2D
+     @param data   data to store
      @param offset data's offset (in bytes)
      */
     public void store(@NotNull IntBuffer data, long offset){

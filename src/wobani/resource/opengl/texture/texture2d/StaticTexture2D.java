@@ -1,7 +1,6 @@
 package wobani.resource.opengl.texture.texture2d;
 
 import org.joml.*;
-import org.lwjgl.opengl.*;
 import wobani.resource.*;
 import wobani.resource.ResourceManager.*;
 import wobani.toolbox.*;
@@ -31,7 +30,7 @@ public class StaticTexture2D extends Texture2D{
      @param sRgb determines whether the texture is in sRgb color space
      */
     private StaticTexture2D(@NotNull File path, boolean sRgb){
-        super(new ResourceId(path));
+        super(new ResourceId(path), false);
         setsRgb(sRgb);
         meta.setPaths(Utility.wrapObjectByList(path));
         meta.setDataStorePolicy(ResourceState.ACTIVE);
@@ -43,8 +42,8 @@ public class StaticTexture2D extends Texture2D{
     }
 
     @Override
-    protected int createTextureId(){
-        return getTexture2DPool().getResource();
+    protected void createTextureId(){
+        setId(getTexture2DPool().getResource());
     }
 
     //
@@ -76,10 +75,10 @@ public class StaticTexture2D extends Texture2D{
     }
 
     private void ramToVram(){
-        createTexture(GL11.GL_TEXTURE_2D, getSampleCount());
+        createTextureId();
         TextureInternalFormat internalFormat = issRgb() ? TextureInternalFormat.SRGB8_A8 : TextureInternalFormat.RGBA8;
         allocateImmutable2D(internalFormat, image.getSize(), true);
-        store2D(new Vector2i(0), image.getSize(), TextureFormat.RGBA, image.getData());
+        store(new Vector2i(0), image.getSize(), TextureFormat.RGBA, image.getData());
         meta.setState(ResourceState.ACTIVE);
         meta.setLastActiveToNow();
     }
@@ -128,12 +127,12 @@ public class StaticTexture2D extends Texture2D{
     }
 
     /**
-     Sets the texture's data store2D policy to the given value. ACTIVE means that the texture's data will be stored in
+     Sets the texture's data store policy to the given value. ACTIVE means that the texture's data will be stored in
      ACTIVE. CACHE means that the texture's data may be removed from ACTIVE to CACHE if it's rarely used. STORAGE means
      that the texture's data may be removed from ACTIVE or even from CACHE if it's rarely used. Later if you want to use
      this texture, it'll automatically load the data from file again.
 
-     @param minState data store2D policy
+     @param minState data store policy
      */
     public void setDataStorePolicy(@NotNull ResourceManager.ResourceState minState){
         meta.setDataStorePolicy(minState);

@@ -1,7 +1,6 @@
 package wobani.resource.opengl.texture.cubemaptexture;
 
 import org.joml.*;
-import org.lwjgl.opengl.*;
 import wobani.resource.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
@@ -32,7 +31,7 @@ public class StaticCubeMapTexture extends CubeMapTexture{
      @param sRgb  determines whether the texture is in sRgb color space
      */
     public StaticCubeMapTexture(@NotNull List<File> paths, boolean sRgb){
-        super(new ResourceId(paths));
+        super(new ResourceId(paths), false);
         meta.setPaths(paths);
         meta.setLastActiveToNow();
         meta.setDataStorePolicy(ResourceManager.ResourceState.ACTIVE);
@@ -93,13 +92,11 @@ public class StaticCubeMapTexture extends CubeMapTexture{
     }
 
     private void ramToVram(){
-        createTexture(GL13.GL_TEXTURE_CUBE_MAP, getSampleCount());
+        createTextureId();
         TextureInternalFormat internalFormat = issRgb() ? TextureInternalFormat.SRGB8_A8 : TextureInternalFormat.RGBA8;
         allocateImmutable2D(internalFormat, getSize(), false);
-        setWrap(TextureWrapDirection.WRAP_U, TextureWrap.CLAMP_TO_EDGE);
-        setWrap(TextureWrapDirection.WRAP_V, TextureWrap.CLAMP_TO_EDGE);
-        for(int face = 0; face < 6; face++){
-            store3D(new Vector3i(0, 0, face), getSize(), 1, TextureFormat.RGBA, images[face].getData());
+        for(CubeMapSide side : CubeMapSide.values()){
+            storeCubeMapSide(new Vector2i(0, 0), side, getSize(), TextureFormat.RGBA, images[side.getIndex()].getData());
         }
         meta.setState(ResourceManager.ResourceState.ACTIVE);
         meta.setLastActiveToNow();
@@ -153,12 +150,12 @@ public class StaticCubeMapTexture extends CubeMapTexture{
     }
 
     /**
-     Sets the texture's data store2D policy to the given value. ACTIVE means that the texture's data will be stored in
+     Sets the texture's data store policy to the given value. ACTIVE means that the texture's data will be stored in
      ACTIVE. CACHE means that the texture's data may be removed from ACTIVE to CACHE if it's rarely used. STORAGE means
      that the texture's data may be removed from ACTIVE or even from CACHE if it's rarely used. Later if you want to use
      this texture, it'll automatically load the data from file again.
 
-     @param minState data store2D policy
+     @param minState data store policy
      */
     public void setDataStorePolicy(@NotNull ResourceManager.ResourceState minState){
         meta.setDataStorePolicy(minState);

@@ -1,41 +1,48 @@
 package wobani.resource.opengl.texture.texture2d;
 
 import org.joml.*;
-import org.lwjgl.opengl.*;
 import wobani.resource.*;
 import wobani.toolbox.annotation.*;
 
 import java.nio.*;
 
 /**
- Dynamic texture for FBO attachments.
+ Dynamic texture, usually for FBO attachments.
  */
 public class DynamicTexture2D extends Texture2D{
 
     /**
-     Initializes a new DynamicTexture to the given parameter.
+     Initializes a new DynamicTexture to the given values.
 
-     @param size    texture's width and height
-     @param samples number of samples, if the texture isn't multisampled, it can be anything
-
-     @throws NullPointerException     attachmentType and size can't be null
-     @throws IllegalArgumentException width and height must be positive
-     @throws IllegalArgumentException samples can't be lower than 1
+     @param size           texture's width and height
+     @param internalFormat texture's internal format
+     @param samples        number of samples
      */
-    public DynamicTexture2D(@NotNull Vector2i size, @NotNull TextureInternalFormat internalFormat, int samples, boolean mipmaps){
-        super(new ResourceId());
-        createTexture(getTarget(samples), samples);
+    public DynamicTexture2D(@NotNull Vector2i size, @NotNull TextureInternalFormat internalFormat, int samples){
+        super(new ResourceId(), samples > 1);
+        allocateImmutable2D(internalFormat, size, samples);
+    }
+
+    /**
+     Initializes a new DynamicTexture to the given values.
+
+     @param size           texture's width and height
+     @param internalFormat texture's internal format
+     @param mipmaps        true if this texture should use mipmaps, false otherwise
+     */
+    public DynamicTexture2D(@NotNull Vector2i size, @NotNull TextureInternalFormat internalFormat, boolean mipmaps){
+        super(new ResourceId(), false);
         allocateImmutable2D(internalFormat, size, mipmaps);
     }
 
     @Override
-    public void store2D(@NotNull TextureFormat format, @NotNull ByteBuffer data){
-        super.store2D(format, data);
+    public void store(@NotNull TextureFormat format, @NotNull ByteBuffer data){
+        super.store(format, data);
     }
 
     @Override
-    public void store2D(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
-        super.store2D(offset, size, format, data);
+    public void store(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
+        super.store(offset, size, format, data);
     }
 
     @Override
@@ -44,21 +51,19 @@ public class DynamicTexture2D extends Texture2D{
     }
 
     @Override
-    protected int createTextureId(){
-        if(getSampleCount() > 1){
-            return getTexture2DMultisampledPool().getResource();
-        }else{
-            return getTexture2DPool().getResource();
+    protected void createTextureId(){
+        if(!isIdValid()){
+            if(isMultisampled()){
+                setId(getTexture2DMultisampledPool().getResource());
+            }else{
+                setId(getTexture2DPool().getResource());
+            }
         }
     }
 
     @Override
     public boolean isUsable(){
         return isIdValid();
-    }
-
-    private int getTarget(int samples){
-        return samples > 1 ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D;
     }
 
     @Override

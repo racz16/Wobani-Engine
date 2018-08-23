@@ -7,7 +7,7 @@ import wobani.toolbox.parameter.*;
 import java.util.*;
 
 /**
- Material for Splines and Meshes. It can work together with any kind of Renderers, you should only store2D the required
+ Material for Splines and Meshes. It can work together with any kind of Renderers, you should only store the required
  slots in it. Note that not all Renderers support all types of slots.
  */
 public class Material{

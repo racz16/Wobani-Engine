@@ -17,7 +17,7 @@ public class InvalidatableContainer<T>{
      */
     private final List<Invalidatable> invalidatables = new ArrayList<>();
     /**
-     Prevents the InvalidatableContainer to store2D this object.
+     Prevents the InvalidatableContainer to store this object.
      */
     private final T container;
     /**
@@ -28,7 +28,7 @@ public class InvalidatableContainer<T>{
     /**
      Initializes a new InvalidatableContainer to the given value.
 
-     @param container prevents the InvalidatableContainer to store2D this object
+     @param container prevents the InvalidatableContainer to store this object
      */
     public InvalidatableContainer(@Nullable T container){
         this.container = container;

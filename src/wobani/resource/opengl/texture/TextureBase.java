@@ -15,10 +15,6 @@ import java.nio.*;
  */
 public abstract class TextureBase extends OpenGlObject implements Texture{
     /**
-     The texture's native OpenGL target.
-     */
-    private int target;
-    /**
      Texture's width and height.
      */
     private final Vector2i size = new Vector2i(0);
@@ -31,9 +27,13 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      */
     private TextureInternalFormat internalFormat;
     /**
-     The texture's format.
+     The given data's format.
      */
     private TextureFormat format;
+    /**
+     Determines whether the texture is multisampled.
+     */
+    private boolean multisampled;
     /**
      Number of the texture's samples. Used for multisampling.
      */
@@ -51,13 +51,13 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      */
     private boolean sRgb;
     /**
-     Texture's magnification filter.
+     Texture's filter.
      */
-    private TextureFilter magnification = TextureFilter.NEAREST;
+    private TextureFilter filter = TextureFilter.NONE;
     /**
-     Texture's minification filter.
+     Textures' default filter.
      */
-    private TextureFilter minification = TextureFilter.NEAREST;
+    private static TextureFilter defaultFilter = TextureFilter.NONE;
     /**
      Texture wrap along the U direction.
      */
@@ -72,213 +72,119 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
     private final Vector4f borderColor = new Vector4f(0);
 
     /**
-     Initializes a new TextureBase to the given value.
+     Initializes a new TextureBase to the given values.
 
-     @param resourceId texture's unique id
+     @param resourceId   texture's unique id
+     @param multisampled true if the texture should be multisampled, false otherwise
      */
-    public TextureBase(@NotNull ResourceId resourceId){
+    public TextureBase(@NotNull ResourceId resourceId, boolean multisampled){
         super(resourceId);
+        setMultisampled(multisampled);
+        createTextureId();
     }
 
-    protected void createTexture(int target, int samples){
-        this.target = target;
-        setSamples(samples);
-        setId(createTextureId());
-    }
+    /**
+     Creates a new native OpenGL texture id to the texture.
+     */
+    protected abstract void createTextureId();
 
-    protected abstract int createTextureId();
+    //
+    //allocate----------------------------------------------------------------------------------------------------------
+    //
 
-    protected void checkCreation(){
-        if(!isIdValid()){
-            throw new IllegalStateException();
-        }
-    }
+    /**
+     Checks whether the allocation is possible and stores the given parameters.
 
-    protected void allocateImmutable2D(@NotNull TextureInternalFormat internalFormat, @NotNull Vector2i size, boolean mipmaps){
-        checkRelease();
+     @param internalFormat the texture's internal foramt
+     @param size           the texture's width and height
+     */
+    protected void allocationGeneral(@NotNull TextureInternalFormat internalFormat, @NotNull Vector2i size){
         checkCreation();
         checkReallocation();
         setInternalFormat(internalFormat);
         setSize(size);
-        setMipmapCount(mipmaps);
-        setActiveDataSize(computeActiveDataSize());
         allocated = true;
+    }
+
+    /**
+     Allocates memory for the texture based on the given parameters. Note that after calling this method, you can't
+     allocate the texture again.
+
+     @param internalFormat texture's internal format
+     @param size           texture's width, and height
+     @param mipmaps        true if texture should use mipmaps, false otherwise (must be false if multisample the
+     texture)
+
+     @see #isMultisampled()
+     */
+    protected void allocateImmutable2D(@NotNull TextureInternalFormat internalFormat, @NotNull Vector2i size, boolean mipmaps){
+        allocationGeneral(internalFormat, size);
+        setMipmapCount(mipmaps);
         allocateImmutable2DUnsafe();
     }
 
+    /**
+     Allocates memory for the texture based on the given parameters. Note that after calling this method, you can't
+     allocate the texture again.
+
+     @param internalFormat texture's internal format
+     @param size           texture's width, and height
+     @param sampleCount    number of samples (must be 1, if not multisample the texture)
+
+     @see #isMultisampled()
+     */
+    protected void allocateImmutable2D(@NotNull TextureInternalFormat internalFormat, @NotNull Vector2i size, int sampleCount){
+        allocationGeneral(internalFormat, size);
+        setSamples(sampleCount);
+        allocateImmutable2DUnsafe();
+    }
+
+    /**
+     Allocates memory for the texture.
+     */
     private void allocateImmutable2DUnsafe(){
+        setActiveDataSize(computeActiveDataSize());
         if(isMultisampled()){
             GL45.glTextureStorage2DMultisample(getId(), sampleCount, internalFormat.getCode(), size.x, size.y, true);
         }else{
             GL45.glTextureStorage2D(getId(), mipmapLevelCount, internalFormat.getCode(), size.x, size.y);
         }
-        setWrapAndFilterToDefault();
+        initializeAfterAllocation();
     }
 
+    /**
+     Called after you allocate memory for the texture. It initializes some specific parts of the texture like wrap or
+     filter.
+     */
+    protected abstract void initializeAfterAllocation();
+
+    /**
+     Checks whether the texture is created.
+
+     @throws IllegalStateException if texture is not yet created
+     */
+    protected void checkCreation(){
+        if(!isIdValid()){
+            throw new IllegalStateException("Texture is not yet created");
+        }
+    }
+
+    /**
+     Checks whether the texture is already allocated.
+
+     @throws IllegalStateException if the texture is already allocated
+     */
     protected void checkReallocation(){
         if(allocated){
-            throw new UnsupportedOperationException();
+            throw new IllegalStateException("The texture is already allocated");
         }
     }
 
-    private void setMipmapCount(boolean mipmaps){
-        if(isMultisampled() && mipmaps){
-            throw new IllegalArgumentException();
-        }
-        mipmapLevelCount = mipmaps ? computeMaxMipmapCount(size) : 1;
-    }
+    /**
+     Returns the texture's data size based on it's size, internal format, number of mipmap levels and number of samples.
 
-    private int computeMaxMipmapCount(@NotNull Vector2i size){
-        return (int) Math.floor(Math.log(Math.max(size.x, size.y)) / Math.log(2)) + 1;
-    }
-
-    private void setSamples(int samples){
-        if(samples < 1 || samples > OpenGlConstants.MAX_SAMPLES){
-            throw new IllegalArgumentException();
-        }
-        this.sampleCount = samples;
-    }
-
-    private void setInternalFormat(@NotNull TextureInternalFormat internalFormat){
-        if(internalFormat == null){
-            throw new NullPointerException();
-        }
-        this.internalFormat = internalFormat;
-    }
-
-    protected void setSize(@NotNull Vector2i size){
-        if(size.x <= 0 || size.y <= 0 || size.x > OpenGlConstants.MAX_TEXTURE_SIZE || size.y > OpenGlConstants.MAX_TEXTURE_SIZE){
-            throw new IllegalArgumentException();
-        }
-        this.size.set(size);
-    }
-
-    protected void store2D(@NotNull TextureFormat format, @NotNull ByteBuffer data){
-        store2D(new Vector2i(0), getSize(), format, data);
-    }
-
-    protected void store2D(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
-        checkRelease();
-        checkCreation();
-        checkAllocation();
-        checkSubImage(offset, size);
-        setFormat(format);
-        store2DUnsafe(offset, data);
-    }
-
-    private void store2DUnsafe(@NotNull Vector2i offset, @NotNull ByteBuffer data){
-        GL45.glTextureSubImage2D(getId(), 0, offset.x, offset.y, size.x, size.y, format.getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
-        GL45.glGenerateTextureMipmap(getId());
-    }
-
-    protected void store3D(@NotNull Vector3i offset, @NotNull Vector2i size, int depth, @NotNull TextureFormat format, @NotNull ByteBuffer data){
-        checkRelease();
-        checkCreation();
-        checkAllocation();
-        checkSubImage(new Vector2i(offset.x, offset.y), size);
-        setFormat(format);
-        store3DUnsafe(offset, depth, data);
-    }
-
-
-    private void store3DUnsafe(@NotNull Vector3i offset, int depth, @NotNull ByteBuffer data){
-        GL45.glTextureSubImage3D(getId(), 0, offset.x, offset.y, offset.z, size.x, size.y, depth, format.getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
-        GL45.glGenerateTextureMipmap(getId());
-    }
-
-
-    private void setWrapAndFilterToDefault(){
-        setWrap(TextureWrapDirection.WRAP_U, TextureWrap.REPEAT);
-        setWrap(TextureWrapDirection.WRAP_V, TextureWrap.REPEAT);
-        if(isMipmapped()){
-            //setFilterToNone();
-            setFilterToBilinear();
-        }else{
-            setFilter(TextureFilterType.MINIFICATION, TextureFilter.NEAREST);
-            setFilter(TextureFilterType.MAGNIFICATION, TextureFilter.NEAREST);
-        }
-    }
-
-    protected void checkAllocation(){
-        if(!allocated){
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    protected void checkSubImage(@NotNull Vector2i offset, @NotNull Vector2i size){
-        if(offset.x < 0 || offset.y < 0 || size.x <= 0 || size.y <= 0 || offset.x + size.x > getSize().x || offset.y + size.y > getSize().y){
-            throw new IllegalArgumentException();
-        }
-    }
-
-    protected void setFormat(@NotNull TextureFormat format){
-        if(format.getColorChannelCount() != internalFormat.getColorChannelCount() || format.getAttachmentSlot() != internalFormat.getAttachmentSlot()){
-            throw new IllegalArgumentException();
-        }
-        this.format = format;
-    }
-
-    @Nullable
-    public TextureInternalFormat getInternalFormat(){
-        return internalFormat;
-    }
-
-    @Nullable
-    public TextureFormat getFormat(){
-        return format;
-    }
-
-    public float getAnisotropicLevel(){
-        return anisotropicLevel;
-    }
-
-    public boolean isAnisotropicFilterEnabled(){
-        return OpenGlConstants.ANISOTROPIC_FILTER_ENABLED;
-    }
-
-    public void setAnisotropicLevel(int level){
-        if(OpenGlConstants.ANISOTROPIC_FILTER_ENABLED){
-            anisotropicLevel = Math.min(level, OpenGlConstants.ANISOTROPIC_FILTER_MAX_LEVEL);
-            GL45.glTextureParameterf(getId(), EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropicLevel);
-        }else{
-            throw new IllegalStateException();
-        }
-    }
-
-    //TODO: glCopyImageSubData
-
-    public int getMipmapCount(){
-        return mipmapLevelCount;
-    }
-
-    public boolean isMipmapped(){
-        return mipmapLevelCount > 1;
-    }
-
-    protected void clear(@NotNull Vector3f clearColor){
-        checkRelease();
-        checkCreation();
-        checkAllocation();
-        if(!Utility.isHdrColor(clearColor)){
-            throw new IllegalArgumentException();
-        }
-        float[] clear = {clearColor.x, clearColor.y, clearColor.z, 1};
-        GL45.glClearTexImage(getId(), 0, format.getCode(), TextureDataType.FLOAT.getCode(), clear);
-    }
-
-    public boolean isMultisampled(){
-        return sampleCount > 1;
-    }
-
-    public int getSampleCount(){
-        return sampleCount;
-    }
-
-    @Override
-    public void bindToTextureUnit(int textureUnit){
-        GL45.glBindTextureUnit(textureUnit, getId());
-    }
-
+     @return the texture's data size (in bytes)
+     */
     protected int computeActiveDataSize(){
         int pixelSizeInBits = getInternalFormat().getBitDepth() * sampleCount;
         int numberOfPixels = size.x * size.y;
@@ -288,9 +194,345 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
         return (int) (dataSizeInBytes);
     }
 
-    @Override
-    protected int getType(){
-        return GL11.GL_TEXTURE;
+    //
+    //store-------------------------------------------------------------------------------------------------------------
+    //
+
+    /**
+     Stores the given data in the texture and generates the mipmaps.
+
+     @param format the given data's format
+     @param data   data to store
+     */
+    protected void store(@NotNull TextureFormat format, @NotNull ByteBuffer data){
+        store(new Vector2i(0), getSize(), format, data);
+    }
+
+    /**
+     Stores the given data in the texture and generates the mipmaps.
+
+     @param offset data's offset
+     @param size   data's width and height
+     @param format the given data's format
+     @param data   data to store
+     */
+    protected void store(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
+        checkCreation();
+        checkAllocation();
+        checkSubImage(offset, size);
+        setFormat(format);
+        storeUnsafe(offset, data);
+    }
+
+    /**
+     Stores the given data in the texture and generates the mipmaps.
+
+     @param offset data's offset
+     @param data   data to store
+     */
+    private void storeUnsafe(@NotNull Vector2i offset, @NotNull ByteBuffer data){
+        GL45.glTextureSubImage2D(getId(), 0, offset.x, offset.y, size.x, size.y, format.getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
+        GL45.glGenerateTextureMipmap(getId());
+    }
+
+    /**
+     Checks whether the texture is allocated.
+
+     @throws IllegalStateException if the texture is not yet allocated
+     */
+    protected void checkAllocation(){
+        if(!allocated){
+            throw new IllegalStateException("The texture is not yet allocated");
+        }
+    }
+
+    /**
+     Checks whether the data with the given size and offset exceeds from the texture's allocated memory.
+
+     @param offset data's offset
+     @param size   data's width and height
+
+     @throws IllegalArgumentException if the data with the given offset and size exceeds from the texture's allocated
+     memory
+     */
+    protected void checkSubImage(@NotNull Vector2i offset, @NotNull Vector2i size){
+        if(offset.x < 0 || offset.y < 0 || size.x <= 0 || size.y <= 0 || offset.x + size.x > getSize().x || offset.y + size.y > getSize().y){
+            throw new IllegalArgumentException("The data with the given offset and size exceeds from the texture's allocated memory");
+        }
+    }
+
+    /**
+     Saves the given data's format.
+
+     @param format the given data's format
+
+     @throws IllegalArgumentException if the format isn't compatible with the internal format
+     */
+    protected void setFormat(@NotNull TextureFormat format){
+        if(format.getColorChannelCount() != internalFormat.getColorChannelCount() ||
+                format.getAttachmentSlot() != internalFormat.getAttachmentSlot()){
+            throw new IllegalArgumentException("The format isn't compatible with the internal format");
+        }
+        this.format = format;
+    }
+
+    /***
+     Fills the entire texture with the given color.
+
+     @param clearColor clean color
+
+     @throws IllegalArgumentException if the parameter is not a color
+     */
+    protected void clear(@NotNull Vector3f clearColor){
+        checkCreation();
+        checkAllocation();
+        if(!Utility.isHdrColor(clearColor)){
+            throw new IllegalArgumentException("The parameter clearColor is not a color");
+        }
+        float[] clear = {clearColor.x, clearColor.y, clearColor.z, 1};
+        GL45.glClearTexImage(getId(), 0, format.getCode(), TextureDataType.FLOAT.getCode(), clear);
+    }
+
+    //
+    //multisample-------------------------------------------------------------------------------------------------------
+    //
+
+    /**
+     Determines whether this texture is multisampled.
+
+     @return true if this texture is multisampled, false otherwise
+     */
+    public boolean isMultisampled(){
+        return multisampled;
+    }
+
+    /**
+     Sets whether or not the texture is multisampled.
+
+     @param multisampled true if the texture should be multisampled, false otherwise
+     */
+    private void setMultisampled(boolean multisampled){
+        this.multisampled = multisampled;
+    }
+
+    /**
+     Returns the number of samples in this texture.
+
+     @return the number of samples in this texture
+     */
+    public int getSampleCount(){
+        return sampleCount;
+    }
+
+    /**
+     Sets this texture's sample count.
+
+     @param samples number of samples in a single pixel
+
+     @throws IllegalArgumentException if samples are lower than 1 or higher than the maximum sample count, or if samples
+     are higher than 1 but this texture isn't multisampled
+     @see OpenGlConstants#MAX_SAMPLES
+     @see #isMultisampled()
+     */
+    private void setSamples(int samples){
+        if(samples < 1 || samples > OpenGlConstants.MAX_SAMPLES){
+            throw new IllegalArgumentException("Samples are lower than 1 or higher than the maximum sample count");
+        }
+        if(samples > 1 && !isMultisampled()){
+            throw new IllegalArgumentException("Samples are higher than 1 but this texture isn't multisampled");
+        }
+        this.sampleCount = samples;
+    }
+
+    //
+    //mipmap------------------------------------------------------------------------------------------------------------
+    //
+
+    /**
+     Determines whether this texture is mipmapped.
+
+     @return true if this texture is mipmapped, false otherwise
+     */
+    public boolean isMipmapped(){
+        return mipmapLevelCount > 1;
+    }
+
+    /**
+     Returns the number of mipmap levels in this texture.
+
+     @return the number of mipmap levels in this texture
+     */
+    public int getMipmapCount(){
+        return mipmapLevelCount;
+    }
+
+    /**
+     Sets whether or not the texture use mipmaps.
+
+     @param mipmaps true if this texture should use mipmaps, false otherwise
+
+     @throws IllegalArgumentException if you try to use mipmaps with multisampling
+     */
+    private void setMipmapCount(boolean mipmaps){
+        if(isMultisampled() && mipmaps){
+            throw new IllegalArgumentException("You try to use mipmaps with multisampling");
+        }
+        mipmapLevelCount = mipmaps ? computeMaxMipmapCount() : 1;
+    }
+
+    /**
+     Computes the maximum number of mipmap levels based on the texture's size.
+
+     @return the maximum number of mipmap levels
+     */
+    private int computeMaxMipmapCount(){
+        return (int) Math.floor(Math.log(Math.max(size.x, size.y)) / Math.log(2)) + 1;
+    }
+
+    /**
+     Returns the texture's anisotropic filter level.
+
+     @return the texture's anisotropic filter level
+     */
+    public float getAnisotropicLevel(){
+        return anisotropicLevel;
+    }
+
+    /**
+     Determines whether the anisotropic filter is enabled in your GPU. If it's not, you shouldn't try to use {@link
+    #setAnisotropicLevel(int)} method, because you get an exception.
+
+     @return true if the anisotropic filter is enabled in your GPU, false otherwise
+     */
+    public static boolean isAnisotropicFilterEnabled(){
+        return OpenGlConstants.ANISOTROPIC_FILTER_ENABLED;
+    }
+
+    /**
+     Sets the anisotropic filter's level to the given value. Typical values are 2, 4, 8 and 16. By passing 1 to this
+     method, you basically switch off the effect.
+
+     @param level anisotropic filter's level
+
+     @throws IllegalArgumentException if anisotropic filter is not enabled in your GPU or if the parameter is lower than
+     1
+     */
+    public void setAnisotropicLevel(int level){
+        if(!isAnisotropicFilterEnabled()){
+            throw new IllegalStateException("Anisotropic filter is not enabled in your GPU");
+        }
+        if(level < 1){
+            throw new IllegalArgumentException("Anisotropic filter's level is lower than 1");
+        }
+        anisotropicLevel = Math.min(level, OpenGlConstants.ANISOTROPIC_FILTER_MAX_LEVEL);
+        GL45.glTextureParameterf(getId(), EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropicLevel);
+    }
+
+    //
+    //filter------------------------------------------------------------------------------------------------------------
+    //
+
+    /**
+     Returns the texture's filter.
+
+     @return the texture's filter
+     */
+    @NotNull
+    public TextureFilter getFilter(){
+        return filter;
+    }
+
+    /**
+     Sets the texture's filter to the given value.
+
+     @param filter texture filter
+     */
+    public void setFilter(@NotNull TextureFilter filter){
+        GL45.glTextureParameteri(getId(), GL11.GL_TEXTURE_MAG_FILTER, filter.getMagnificationCode());
+        GL45.glTextureParameteri(getId(), GL11.GL_TEXTURE_MIN_FILTER, filter.getMinificationCode());
+        this.filter = filter;
+    }
+
+    /**
+     Returns the textures' default filter
+
+     @return the textures' default filter
+     */
+    @NotNull
+    public static TextureFilter getDefaultFilter(){
+        return defaultFilter;
+    }
+
+    /**
+     Sets the textures' default filter to the give value.
+
+     @param filter the textures' default filter
+
+     @throws NullPointerException if filter is null
+     */
+    public static void setDefaultFilter(@NotNull TextureFilter filter){
+        if(filter == null){
+            throw new NullPointerException();
+        }
+        defaultFilter = filter;
+    }
+
+    //
+    //wrap--------------------------------------------------------------------------------------------------------------
+    //
+
+    /**
+     Returns the texture's specified wrap mode.
+
+     @param type texture wrap direction
+
+     @return the texture's specified wrap mode
+
+     @throws NullPointerException if type is null
+     */
+    @NotNull
+    public TextureWrap getWrap(@NotNull TextureWrapDirection type){
+        switch(type){
+            case WRAP_U:
+                return wrapU;
+            case WRAP_V:
+                return wrapV;
+            default:
+                throw new NullPointerException();
+        }
+    }
+
+    /**
+     Sets the texture's specified wrap mode to the given value.
+
+     @param type  texture wrap direction
+     @param value texture wrap
+
+     @throws NullPointerException if type or value is null
+     */
+    public void setWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap value){
+        if(type == null || value == null){
+            throw new NullPointerException();
+        }
+        setWrapUnsafe(type, value);
+    }
+
+    /**
+     Sets the texture's specified wrap mode to the given value.
+
+     @param type  texture wrap direction
+     @param value texture wrap
+     */
+    private void setWrapUnsafe(@NotNull TextureWrapDirection type, @NotNull TextureWrap value){
+        switch(type){
+            case WRAP_U:
+                wrapU = value;
+                break;
+            case WRAP_V:
+                wrapV = value;
+                break;
+        }
+        GL45.glTextureParameteri(getId(), type.getCode(), value.getCode());
     }
 
     /**
@@ -309,126 +551,42 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
 
      @param borderColor border color
 
-     @throws NullPointerException     borderColor can't be null
-     @throws IllegalArgumentException border color can't be lower than 0
+     @throws IllegalArgumentException if border color is not a color
      */
     public void setBorderColor(@NotNull Vector4f borderColor){
-        if(borderColor == null){
-            throw new NullPointerException();
-        }
         if(!Utility.isHdrColor(new Vector3f(borderColor.x, borderColor.y, borderColor.z))){
-            throw new IllegalArgumentException("Border color can't be lower than 0");
+            throw new IllegalArgumentException("Border color is not a color");
         }
         this.borderColor.set(borderColor);
-        float bc[] = {borderColor.x, borderColor.y, borderColor.z, borderColor.w};
-        GL45.glTextureParameterfv(getId(), GL11.GL_TEXTURE_BORDER_COLOR, bc);
+        GL45.glTextureParameterfv(getId(), GL11.GL_TEXTURE_BORDER_COLOR, new float[]{borderColor.x, borderColor.y, borderColor.z, borderColor.w});
     }
 
-    public void setFilterToNone(){
-        setFilter(TextureFilterType.MAGNIFICATION, TextureFilter.NEAREST);
-        setFilter(TextureFilterType.MINIFICATION, TextureFilter.NEAREST_MIPMAP_NEAREST);
-    }
+    //
+    //misc--------------------------------------------------------------------------------------------------------------
+    //
 
-    public void setFilterToBilinear(){
-        setFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
-        setFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_NEAREST);
-    }
+    /**
+     Returns the texture's internal format.
 
-    public void setFilterToTrilinear(){
-        setFilter(TextureFilterType.MAGNIFICATION, TextureFilter.LINEAR);
-        setFilter(TextureFilterType.MINIFICATION, TextureFilter.LINEAR_MIPMAP_LINEAR);
+     @return the texture's internal format
+     */
+    @Nullable
+    public TextureInternalFormat getInternalFormat(){
+        return internalFormat;
     }
 
     /**
-     Returns the texture's specified wrap mode.
+     Sets the texture's internal format to the given value.
 
-     @param type texture wrap direction
+     @param internalFormat internal format
 
-     @return the texture's specified wrap mode
-
-     @throws NullPointerException parameter can't be null
+     @throws NullPointerException if internal format is null
      */
-    @NotNull
-    public TextureWrap getWrap(@NotNull TextureWrapDirection type){
-        switch(type){
-            case WRAP_U:
-                return wrapU;
-            case WRAP_V:
-                return wrapV;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
-
-    /**
-     Sets the texture's specified wrap mode to the given value.
-
-     @param type  texture wrap direction
-     @param value texture wrap
-
-     @throws NullPointerException type and value can't be null
-     */
-    public void setWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap value){
-        if(type == null || value == null){
+    private void setInternalFormat(@NotNull TextureInternalFormat internalFormat){
+        if(internalFormat == null){
             throw new NullPointerException();
         }
-        switch(type){
-            case WRAP_U:
-                wrapU = value;
-                break;
-            case WRAP_V:
-                wrapV = value;
-                break;
-        }
-        GL45.glTextureParameteri(getId(), type.getCode(), value.getCode());
-    }
-
-    /**
-     Returns the texture's specified filter mode.
-
-     @param type texture filter type
-
-     @return the texture's specified filter mode
-
-     @throws NullPointerException parameter can't be null
-     */
-    @NotNull
-    public TextureFilter getFilter(@NotNull TextureFilterType type){
-        if(type == null){
-            throw new NullPointerException();
-        }
-        if(type == TextureFilterType.MAGNIFICATION){
-            return magnification;
-        }else{
-            return minification;
-        }
-    }
-
-    /**
-     Sets the texture's specified filter to the given value.
-
-     @param type  texture filter type
-     @param value texture filter
-
-     @throws NullPointerException type and value can't be null
-     */
-    public void setFilter(@NotNull TextureFilterType type, @NotNull TextureFilter value){
-        if(type == null || value == null){
-            throw new NullPointerException();
-        }
-        if((type == TextureFilterType.MAGNIFICATION || !isMipmapped()) && value != TextureFilter.NEAREST && value != TextureFilter.LINEAR){
-            throw new IllegalArgumentException();
-        }
-        setFilterUnsafe(type, value);
-    }
-
-    private void setFilterUnsafe(@NotNull TextureFilterType type, @NotNull TextureFilter value){
-        if(type == TextureFilterType.MAGNIFICATION){
-            magnification = value;
-        }else{
-            minification = value;
-        }
-        GL45.glTextureParameteri(getId(), type.getCode(), value.getCode());
+        this.internalFormat = internalFormat;
     }
 
     @NotNull
@@ -438,13 +596,46 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
         return new Vector2i(size);
     }
 
+    /**
+     Sets the texture's size to the given value.
+
+     @param size texture's width and height
+
+     @throws IllegalArgumentException if texture size is negative or higher than the maximum size
+     @see OpenGlConstants#MAX_TEXTURE_SIZE
+     */
+    protected void setSize(@NotNull Vector2i size){
+        if(size.x <= 0 || size.y <= 0 || size.x > OpenGlConstants.MAX_TEXTURE_SIZE || size.y > OpenGlConstants.MAX_TEXTURE_SIZE){
+            throw new IllegalArgumentException("Texture size is negative or higher than the maximum size");
+        }
+        this.size.set(size);
+    }
+
     @Override
     public boolean issRgb(){
         return sRgb;
     }
 
+    /**
+     Sets whether or not the texture's color space is sRGB.
+
+     @param sRgb true is the texture is in sRGB color space, false otherwise
+     */
     protected void setsRgb(boolean sRgb){
         this.sRgb = sRgb;
+    }
+
+    @Override
+    public void bindToTextureUnit(int textureUnit){
+        if(textureUnit < 0 || textureUnit > 31){
+            throw new IllegalArgumentException("Texture unit is outside the (0;31) interval");
+        }
+        GL45.glBindTextureUnit(textureUnit, getId());
+    }
+
+    @Override
+    protected int getType(){
+        return GL11.GL_TEXTURE;
     }
 
     @Override
@@ -452,32 +643,30 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
         return super.getId();
     }
 
-    /**
-     Releases the texture's data.
-     */
+    @Override
     public void release(){
         GL11.glDeleteTextures(getId());
         setIdToInvalid();
         setActiveDataSize(0);
+        allocated = false;
     }
 
     @Override
     public String toString(){
         return super.toString() + "\n" +
                 TextureBase.class.getSimpleName() + "(" +
-                "target: " + target + ", " +
-                "sampleCount: " + sampleCount + ", " +
+                "size: " + size + ", " +
                 "allocated: " + allocated + ", " +
                 "internalFormat: " + internalFormat + ", " +
                 "format: " + format + ", " +
+                "multisampled: " + multisampled + ", " +
+                "sampleCount: " + sampleCount + ", " +
                 "mipmapLevelCount: " + mipmapLevelCount + ", " +
                 "anisotropicLevel: " + anisotropicLevel + ", " +
-                "size: " + size + ", " +
-                "borderColor: " + borderColor + ", " +
                 "sRgb: " + sRgb + ", " +
+                "filter: " + filter + ", " +
                 "wrapU: " + wrapU + ", " +
                 "wrapV: " + wrapV + ", " +
-                "magnification: " + magnification + ", " +
-                "minification: " + minification + ")";
+                "borderColor: " + borderColor + ")";
     }
 }

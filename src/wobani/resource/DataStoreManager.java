@@ -16,7 +16,7 @@ public class DataStoreManager{
      */
     private final List<File> paths = new ArrayList<>();
     /**
-     The resource's data store2D policy. ACTIVE means that the resource's data will be stored in VRAM the VRAM or in the
+     The resource's data store policy. ACTIVE means that the resource's data will be stored in VRAM the VRAM or in the
      sound system, ready to use. CACHE means that the resource's data may be removed from ACTIVE to CACHE if it's rarely
      used. STORAGE means that the resource's data may be removed from ACTIVE or even from CACHE if it's rarely used.
      */
@@ -30,12 +30,12 @@ public class DataStoreManager{
      */
     private long lastActive;
     /**
-     If the elapsed time since this resource's last use is higher than this value and the resource's data store2D policy is
+     If the elapsed time since this resource's last use is higher than this value and the resource's data store policy is
      CACHE or STORAGE, the resource's data may be removed from ACTIVE.
      */
     private long actionTimeLimit = 30000;
     /**
-     If the elapsed time since this resource's last use is higher than this value and the resource's data store2D policy is
+     If the elapsed time since this resource's last use is higher than this value and the resource's data store policy is
      STORAGE, the resource's data may be removed from ACTIVE or even from CACHE.
      */
     private long cacheTimeLimit = 120000;
@@ -92,11 +92,11 @@ public class DataStoreManager{
     }
 
     /**
-     Returns the resource's data store2D policy. ACTIVE means that the resource's data will be stored in VRAM or in the
+     Returns the resource's data store policy. ACTIVE means that the resource's data will be stored in VRAM or in the
      sound system, ready to use. CACHE means that the resource's data may be removed from ACTIVE to CACHE if it's rarely
      used. STORAGE means that the resource's data may be removed from ACTIVE or even from CACHE if it's rarely used.
 
-     @return the resource's data store2D policy
+     @return the resource's data store policy
      */
     @Nullable
     public ResourceState getDataStorePolicy(){
@@ -104,9 +104,9 @@ public class DataStoreManager{
     }
 
     /**
-     Sets the resource's data store2D policy to the given value.
+     Sets the resource's data store policy to the given value.
 
-     @param rs data store2D policy
+     @param rs data store policy
 
      @throws NullPointerException parameter can't be null
      */
@@ -119,7 +119,7 @@ public class DataStoreManager{
 
     /**
      Returns the ACTIVE time limit. If the elapsed time since this resource's last use is higher than this value and the
-     resource's data store2D policy is CACHE or STORAGE, the resource's data may be removed from ACTIVE.
+     resource's data store policy is CACHE or STORAGE, the resource's data may be removed from ACTIVE.
 
      @return VRAM time limit (in miliseconds)
      */
@@ -129,7 +129,7 @@ public class DataStoreManager{
 
     /**
      Sets the ACTIVE time limit to the given value. If the elapsed time since this resource's last use is higher than
-     this value and the resource's data store2D policy is CACHE or STORAGE, the resource's data may be removed from
+     this value and the resource's data store policy is CACHE or STORAGE, the resource's data may be removed from
      ACTIVE.
 
      @param actionTimeLimit ACTIVE time limit (in miliseconds)
@@ -145,9 +145,9 @@ public class DataStoreManager{
 
     /**
      Returns the CACHE time limit. If the elapsed time since this resource's last use is higher than this value and the
-     resource's data store2D policy is STORAGE, the resource's data may be removed from ACTIVE or even from CACHE.
+     resource's data store policy is STORAGE, the resource's data may be removed from ACTIVE or even from CACHE.
 
-     @return CACHE time limit (in miliseconds)
+     @return CACHE time limit (in milliseconds)
      */
     public long getCacheTimeLimit(){
         return cacheTimeLimit;
@@ -155,10 +155,10 @@ public class DataStoreManager{
 
     /**
      Sets the CACHE time limit to the given value. If the elapsed time since this resource's last use is higher than this
-     value and the resource's data store2D policy is STORAGE, the resource's data may be removed from ACTIVE or even from
+     value and the resource's data store policy is STORAGE, the resource's data may be removed from ACTIVE or even from
      CACHE.
 
-     @param cacheTimeLimit CACHE time limit (in miliseconds)
+     @param cacheTimeLimit CACHE time limit (in milliseconds)
 
      @throws IllegalArgumentException CACHE time limit have to be higher than ACTIVE time limit
      */
