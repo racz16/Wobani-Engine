@@ -2,8 +2,10 @@ package wobani.resource.opengl.texture.texture2d;
 
 import org.joml.*;
 import wobani.resource.*;
+import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
+import java.io.*;
 import java.nio.*;
 
 /**
@@ -35,6 +37,40 @@ public class DynamicTexture2D extends Texture2D{
         allocateImmutable2D(internalFormat, size, mipmaps);
     }
 
+    /**
+     Initializes a new DynamicTexture to the given values.
+
+     @param path    texture's relative path (with extension like "res/textures/myTexture.png")
+     @param sRgb    determines whether the texture is in sRGB color space
+     @param samples number of samples
+     */
+    public DynamicTexture2D(@NotNull File path, boolean sRgb, int samples){
+        super(new ResourceId(), samples > 1);
+        Image image = new Image(path, true);
+        TextureInternalFormat internalFormat = sRgb ? TextureInternalFormat.SRGB8_A8 : TextureInternalFormat.RGBA8;
+        allocateImmutable2D(internalFormat, image.getSize(), samples);
+        store(TextureFormat.RGBA, image.getData());
+        generateMipmaps();
+        image.release();
+    }
+
+    /**
+     Initializes a new DynamicTexture to the given values.
+
+     @param path    texture's relative path (with extension like "res/textures/myTexture.png")
+     @param sRgb    determines whether the texture is in sRGB color space
+     @param mipmaps true if this texture should use mipmaps, false otherwise
+     */
+    public DynamicTexture2D(@NotNull File path, boolean sRgb, boolean mipmaps){
+        super(new ResourceId(), false);
+        Image image = new Image(path, true);
+        TextureInternalFormat internalFormat = sRgb ? TextureInternalFormat.SRGB8_A8 : TextureInternalFormat.RGBA8;
+        allocateImmutable2D(internalFormat, image.getSize(), mipmaps);
+        store(TextureFormat.RGBA, image.getData());
+        generateMipmaps();
+        image.release();
+    }
+
     @Override
     public void store(@NotNull TextureFormat format, @NotNull ByteBuffer data){
         super.store(format, data);
@@ -46,13 +82,8 @@ public class DynamicTexture2D extends Texture2D{
     }
 
     @Override
-    public void clear(@NotNull Vector3f clearColor){
-        super.clear(clearColor);
-    }
-
-    @Override
     protected void createTextureId(){
-        if(!isIdValid()){
+        if(!isAvailable()){
             if(isMultisampled()){
                 setId(getTexture2DMultisampledPool().getResource());
             }else{
@@ -63,7 +94,7 @@ public class DynamicTexture2D extends Texture2D{
 
     @Override
     public boolean isUsable(){
-        return isIdValid();
+        return isAvailable();
     }
 
     @Override

@@ -4,9 +4,12 @@ import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.resource.*;
 import wobani.resource.opengl.texture.*;
+import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.annotation.*;
 
 import java.nio.*;
+
+import static wobani.resource.opengl.OpenGlHelper.*;
 
 /**
  Abstract class for the cube map textures.
@@ -72,7 +75,7 @@ public abstract class CubeMapTexture extends TextureBase{
     private static final CubeMapTexturePool CUBE_MAP_TEXTURE_POOL = new CubeMapTexturePool();
 
     /**
-     Initializes a new CubeMapTexture to the given value.
+     Initializes a new CubeMapTexture to the given values.
 
      @param resourceId   texture's unique id
      @param multisampled true if this texture should be multisampled, false otherwise
@@ -83,13 +86,119 @@ public abstract class CubeMapTexture extends TextureBase{
 
     @Override
     protected void initializeAfterAllocation(){
-        setWrap(TextureWrapDirection.WRAP_U, TextureWrap.CLAMP_TO_EDGE);
-        setWrap(TextureWrapDirection.WRAP_V, TextureWrap.CLAMP_TO_EDGE);
+        setWrapU(TextureWrap.MIRROR_CLAMP_TO_EDGE);
+        setWrapV(TextureWrap.MIRROR_CLAMP_TO_EDGE);
+        setWrapW(TextureWrap.MIRROR_CLAMP_TO_EDGE);
         setFilter(getDefaultFilter());
     }
 
+    //
+    //copy--------------------------------------------------------------------------------------------------------------
+    //
+
     /**
-     Stores the given data in the specified side of the texture and generates the mipmaps.
+     Copies data from this texture's specified side to the given texture.
+
+     @param destination copy data to this texture
+     @param side        copy data from this side of the texture
+     @param size        copied data's width and height
+     */
+    public void copyTo(@NotNull DynamicTexture2D destination, @NotNull CubeMapSide side, @NotNull Vector2i size){
+        copyTo(destination, new Vector2i(0), side, new Vector2i(0), size);
+    }
+
+    /**
+     Copies data from this texture's specified side to the given texture.
+
+     @param destination       copy data to this texture
+     @param destinationOffset offset in the destination texture
+     @param side              copy data from this side of the texture
+     @param sourceOffset      offset in the source texture's side
+     @param size              copied data's width and height
+     */
+    public void copyTo(@NotNull DynamicTexture2D destination, @NotNull Vector2i destinationOffset, @NotNull CubeMapSide side, @NotNull Vector2i sourceOffset, @NotNull Vector2i size){
+        exceptionIfNull(destination, sourceOffset, side, destinationOffset, size);
+        exceptionIfNotAvailable(this);
+        exceptionIfNotAvailable(destination);
+        exceptionIfNotAllocated(this);
+        exceptionIfNotAllocated(destination);
+        exceptionIfAreaExceedsFromSize(size, destinationOffset, getSize());
+        exceptionIfAreaExceedsFromSize(size, sourceOffset, destination.getSize());
+        copyToUnsafe(destination, destinationOffset, side, sourceOffset, size);
+    }
+
+    /**
+     Copies data from this texture's specified side to the given texture.
+
+     @param destination       copy data to this texture
+     @param destinationOffset offset in the destination texture
+     @param side              copy data from this side of the texture
+     @param sourceOffset      offset in the source texture's side
+     @param size              copied data's width and height
+     */
+    private void copyToUnsafe(@NotNull DynamicTexture2D destination, @NotNull Vector2i destinationOffset, @NotNull CubeMapSide side, @NotNull Vector2i sourceOffset, @NotNull Vector2i size){
+        int destinationTarget = destination.isMultisampled() ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D;
+        GL43.glCopyImageSubData(getId(), GL13.GL_TEXTURE_CUBE_MAP, 0, sourceOffset.x, sourceOffset.y, side.getIndex(),
+                destination.getId(), destinationTarget, 0, destinationOffset.x, destinationOffset.y, 0,
+                size.x, size.y, 1);
+    }
+
+    /**
+     Copies data from this texture's side to the given texture's side.
+
+     @param destination     copy data to this texture'side
+     @param destinationSide destination texture's side
+     @param sourceSide      source texture's side
+     @param size            copied data's width and height
+     */
+    public void copyTo(@NotNull CubeMapTexture destination, @NotNull CubeMapSide destinationSide, @NotNull CubeMapSide sourceSide, @NotNull Vector2i size){
+        copyTo(destination, new Vector2i(0), sourceSide, new Vector2i(0), destinationSide, size);
+    }
+
+    /**
+     Copies data from this texture's side to the given texture's side.
+
+     @param destination       copy data to this texture'side
+     @param destinationOffset offset in the destination texture's side
+     @param destinationSide   destination texture's side
+     @param sourceOffset      offset in the source texture's side
+     @param sourceSide        source texture's side
+     @param size              copied data's width and height
+     */
+    public void copyTo(@NotNull CubeMapTexture destination, @NotNull Vector2i destinationOffset, @NotNull CubeMapSide destinationSide, @NotNull Vector2i sourceOffset, @NotNull CubeMapSide sourceSide, @NotNull Vector2i size){
+        exceptionIfNull(destination, sourceOffset, sourceSide, destinationOffset, destinationSide, size);
+        exceptionIfNotAvailable(this);
+        exceptionIfNotAvailable(destination);
+        exceptionIfNotAllocated(this);
+        exceptionIfNotAllocated(destination);
+        exceptionIfAreaExceedsFromSize(size, destinationOffset, getSize());
+        exceptionIfAreaExceedsFromSize(size, sourceOffset, destination.getSize());
+        GL43.glCopyImageSubData(getId(), GL13.GL_TEXTURE_CUBE_MAP, 0, sourceOffset.x, sourceOffset.y, sourceSide.getIndex(),
+                destination.getId(), GL13.GL_TEXTURE_CUBE_MAP, 0, destinationOffset.x, destinationOffset.y, destinationSide.getIndex(),
+                size.x, size.y, 1);
+    }
+
+    //
+    //wrap--------------------------------------------------------------------------------------------------------------
+    //
+
+    @NotNull
+    @Override
+    public TextureWrap getWrapW(){
+        return super.getWrapW();
+    }
+
+    @Override
+    public void setWrapW(@NotNull TextureWrap wrap){
+        super.setWrapW(wrap);
+    }
+
+    //
+    //store-------------------------------------------------------------------------------------------------------------
+    //
+
+    /**
+     Stores the given data in the specified side of the texture.
 
      @param offset data's offset
      @param side   cube map texture's side
@@ -98,24 +207,17 @@ public abstract class CubeMapTexture extends TextureBase{
      @param data   data to store
      */
     protected void storeCubeMapSide(@NotNull Vector2i offset, @NotNull CubeMapTexture.CubeMapSide side, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
-        checkCreation();
-        checkAllocation();
-        checkSubImage(new Vector2i(offset.x, offset.y), size);
-        setFormat(format);
-        storeCubeMapSideUnsafe(offset, side, data);
+        exceptionIfNotAvailable(this);
+        exceptionIfNotAllocated(this);
+        exceptionIfNull(offset, side, size, format, data);
+        exceptionIfAreaExceedsFromSize(size, offset, getSize());
+        exceptionIfFormatAndInternalFormatNotCompatible(getInternalFormat(), format);
+        GL45.glTextureSubImage3D(getId(), 0, offset.x, offset.y, side.getIndex(), getSize().x, getSize().y, 1, format.getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
     }
 
-    /**
-     Stores the given data in the specified side of the texture and generates the mipmaps.
-
-     @param offset data's offset
-     @param side   cube map texture's side
-     @param data   data to store
-     */
-    private void storeCubeMapSideUnsafe(@NotNull Vector2i offset, @NotNull CubeMapTexture.CubeMapSide side, @NotNull ByteBuffer data){
-        GL45.glTextureSubImage3D(getId(), 0, offset.x, offset.y, side.getIndex(), getSize().x, getSize().y, 1, getFormat().getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
-        GL45.glGenerateTextureMipmap(getId());
-    }
+    //
+    //resource pool-----------------------------------------------------------------------------------------------------
+    //
 
     /**
      Returns the CubeMap Texture Pool's maximum size. When you create a new CubeMap Texture, the system first tries to
@@ -141,9 +243,21 @@ public abstract class CubeMapTexture extends TextureBase{
 
     @Override
     protected void createTextureId(){
-        if(!isIdValid()){
+        if(!isAvailable()){
             setId(CUBE_MAP_TEXTURE_POOL.getResource());
         }
+    }
+
+    @Override
+    public int getActiveDataSize(){
+        return super.getActiveDataSize() * CubeMapSide.values().length;
+    }
+
+    @Override
+    public String toString(){
+        return super.toString() + "\n" +
+                CubeMapTexture.class.getSimpleName() + "(" +
+                ")";
     }
 
     /**

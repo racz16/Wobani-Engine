@@ -8,7 +8,8 @@ import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
 import java.lang.Math;
-import java.nio.*;
+
+import static wobani.resource.opengl.OpenGlHelper.*;
 
 /**
  Basic data and methods for implementing a texture.
@@ -27,10 +28,6 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      */
     private TextureInternalFormat internalFormat;
     /**
-     The given data's format.
-     */
-    private TextureFormat format;
-    /**
      Determines whether the texture is multisampled.
      */
     private boolean multisampled;
@@ -47,10 +44,6 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      */
     private float anisotropicLevel = 1;
     /**
-     Determines whether the texture is in sRGB color space.
-     */
-    private boolean sRgb;
-    /**
      Texture's filter.
      */
     private TextureFilter filter = TextureFilter.NONE;
@@ -66,6 +59,10 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      Texture wrap along the V direction.
      */
     private TextureWrap wrapV = TextureWrap.REPEAT;
+    /**
+     Texture wrap along the W direction.
+     */
+    private TextureWrap wrapW = TextureWrap.REPEAT;
     /**
      Texture's border color.
      */
@@ -84,7 +81,7 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
     }
 
     /**
-     Creates a new native OpenGL texture id to the texture.
+     Creates a new native OpenGL texture id for the texture.
      */
     protected abstract void createTextureId();
 
@@ -95,12 +92,13 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
     /**
      Checks whether the allocation is possible and stores the given parameters.
 
-     @param internalFormat the texture's internal foramt
+     @param internalFormat the texture's internal format
      @param size           the texture's width and height
      */
     protected void allocationGeneral(@NotNull TextureInternalFormat internalFormat, @NotNull Vector2i size){
-        checkCreation();
-        checkReallocation();
+        exceptionIfNotAvailable(this);
+        exceptionIfAllocated(this);
+        exceptionIfNull(internalFormat, size);
         setInternalFormat(internalFormat);
         setSize(size);
         allocated = true;
@@ -159,29 +157,8 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
     protected abstract void initializeAfterAllocation();
 
     /**
-     Checks whether the texture is created.
-
-     @throws IllegalStateException if texture is not yet created
-     */
-    protected void checkCreation(){
-        if(!isIdValid()){
-            throw new IllegalStateException("Texture is not yet created");
-        }
-    }
-
-    /**
-     Checks whether the texture is already allocated.
-
-     @throws IllegalStateException if the texture is already allocated
-     */
-    protected void checkReallocation(){
-        if(allocated){
-            throw new IllegalStateException("The texture is already allocated");
-        }
-    }
-
-    /**
-     Returns the texture's data size based on it's size, internal format, number of mipmap levels and number of samples.
+     Returns the texture's data size (if it's a cube map texture, it returns one side's size) based on it's size,
+     internal format, number of mipmap levels and number of samples.
 
      @return the texture's data size (in bytes)
      */
@@ -194,103 +171,13 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
         return (int) (dataSizeInBytes);
     }
 
-    //
-    //store-------------------------------------------------------------------------------------------------------------
-    //
-
     /**
-     Stores the given data in the texture and generates the mipmaps.
+     Determines whether the texture is allocated.
 
-     @param format the given data's format
-     @param data   data to store
+     @return true if the texture is allocated, false otherwise
      */
-    protected void store(@NotNull TextureFormat format, @NotNull ByteBuffer data){
-        store(new Vector2i(0), getSize(), format, data);
-    }
-
-    /**
-     Stores the given data in the texture and generates the mipmaps.
-
-     @param offset data's offset
-     @param size   data's width and height
-     @param format the given data's format
-     @param data   data to store
-     */
-    protected void store(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
-        checkCreation();
-        checkAllocation();
-        checkSubImage(offset, size);
-        setFormat(format);
-        storeUnsafe(offset, data);
-    }
-
-    /**
-     Stores the given data in the texture and generates the mipmaps.
-
-     @param offset data's offset
-     @param data   data to store
-     */
-    private void storeUnsafe(@NotNull Vector2i offset, @NotNull ByteBuffer data){
-        GL45.glTextureSubImage2D(getId(), 0, offset.x, offset.y, size.x, size.y, format.getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
-        GL45.glGenerateTextureMipmap(getId());
-    }
-
-    /**
-     Checks whether the texture is allocated.
-
-     @throws IllegalStateException if the texture is not yet allocated
-     */
-    protected void checkAllocation(){
-        if(!allocated){
-            throw new IllegalStateException("The texture is not yet allocated");
-        }
-    }
-
-    /**
-     Checks whether the data with the given size and offset exceeds from the texture's allocated memory.
-
-     @param offset data's offset
-     @param size   data's width and height
-
-     @throws IllegalArgumentException if the data with the given offset and size exceeds from the texture's allocated
-     memory
-     */
-    protected void checkSubImage(@NotNull Vector2i offset, @NotNull Vector2i size){
-        if(offset.x < 0 || offset.y < 0 || size.x <= 0 || size.y <= 0 || offset.x + size.x > getSize().x || offset.y + size.y > getSize().y){
-            throw new IllegalArgumentException("The data with the given offset and size exceeds from the texture's allocated memory");
-        }
-    }
-
-    /**
-     Saves the given data's format.
-
-     @param format the given data's format
-
-     @throws IllegalArgumentException if the format isn't compatible with the internal format
-     */
-    protected void setFormat(@NotNull TextureFormat format){
-        if(format.getColorChannelCount() != internalFormat.getColorChannelCount() ||
-                format.getAttachmentSlot() != internalFormat.getAttachmentSlot()){
-            throw new IllegalArgumentException("The format isn't compatible with the internal format");
-        }
-        this.format = format;
-    }
-
-    /***
-     Fills the entire texture with the given color.
-
-     @param clearColor clean color
-
-     @throws IllegalArgumentException if the parameter is not a color
-     */
-    protected void clear(@NotNull Vector3f clearColor){
-        checkCreation();
-        checkAllocation();
-        if(!Utility.isHdrColor(clearColor)){
-            throw new IllegalArgumentException("The parameter clearColor is not a color");
-        }
-        float[] clear = {clearColor.x, clearColor.y, clearColor.z, 1};
-        GL45.glClearTexImage(getId(), 0, format.getCode(), TextureDataType.FLOAT.getCode(), clear);
+    public boolean isAllocated(){
+        return allocated;
     }
 
     //
@@ -394,8 +281,8 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
 
      @return the texture's anisotropic filter level
      */
-    public float getAnisotropicLevel(){
-        return anisotropicLevel;
+    public int getAnisotropicLevel(){
+        return (int) anisotropicLevel;
     }
 
     /**
@@ -416,8 +303,10 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
 
      @throws IllegalArgumentException if anisotropic filter is not enabled in your GPU or if the parameter is lower than
      1
+     @see #isAnisotropicFilterEnabled()
      */
     public void setAnisotropicLevel(int level){
+        exceptionIfNotAvailable(this);
         if(!isAnisotropicFilterEnabled()){
             throw new IllegalStateException("Anisotropic filter is not enabled in your GPU");
         }
@@ -448,6 +337,8 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      @param filter texture filter
      */
     public void setFilter(@NotNull TextureFilter filter){
+        exceptionIfNotAvailable(this);
+        exceptionIfNull(filter);
         GL45.glTextureParameteri(getId(), GL11.GL_TEXTURE_MAG_FILTER, filter.getMagnificationCode());
         GL45.glTextureParameteri(getId(), GL11.GL_TEXTURE_MIN_FILTER, filter.getMinificationCode());
         this.filter = filter;
@@ -467,13 +358,9 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      Sets the textures' default filter to the give value.
 
      @param filter the textures' default filter
-
-     @throws NullPointerException if filter is null
      */
     public static void setDefaultFilter(@NotNull TextureFilter filter){
-        if(filter == null){
-            throw new NullPointerException();
-        }
+        exceptionIfNull(filter);
         defaultFilter = filter;
     }
 
@@ -482,57 +369,69 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
     //
 
     /**
-     Returns the texture's specified wrap mode.
+     Returns the texture's wrap along the U direction.
 
-     @param type texture wrap direction
-
-     @return the texture's specified wrap mode
-
-     @throws NullPointerException if type is null
+     @return the texture's wrap along the U direction
      */
     @NotNull
-    public TextureWrap getWrap(@NotNull TextureWrapDirection type){
-        switch(type){
-            case WRAP_U:
-                return wrapU;
-            case WRAP_V:
-                return wrapV;
-            default:
-                throw new NullPointerException();
-        }
+    public TextureWrap getWrapU(){
+        return wrapU;
     }
 
     /**
-     Sets the texture's specified wrap mode to the given value.
+     Returns the texture's wrap along the V direction.
 
-     @param type  texture wrap direction
-     @param value texture wrap
-
-     @throws NullPointerException if type or value is null
+     @return the texture's wrap along the V direction
      */
-    public void setWrap(@NotNull TextureWrapDirection type, @NotNull TextureWrap value){
-        if(type == null || value == null){
-            throw new NullPointerException();
-        }
-        setWrapUnsafe(type, value);
+    @NotNull
+    public TextureWrap getWrapV(){
+        return wrapV;
     }
 
     /**
-     Sets the texture's specified wrap mode to the given value.
+     Returns the texture's wrap along the W direction.
 
-     @param type  texture wrap direction
-     @param value texture wrap
+     @return the texture's wrap along the W direction
      */
-    private void setWrapUnsafe(@NotNull TextureWrapDirection type, @NotNull TextureWrap value){
-        switch(type){
-            case WRAP_U:
-                wrapU = value;
-                break;
-            case WRAP_V:
-                wrapV = value;
-                break;
-        }
-        GL45.glTextureParameteri(getId(), type.getCode(), value.getCode());
+    @NotNull
+    protected TextureWrap getWrapW(){
+        return wrapW;
+    }
+
+    /**
+     Sets the texture's wrap along the U direction.
+
+     @param wrap wrap
+     */
+    public void setWrapU(@NotNull TextureWrap wrap){
+        exceptionIfNotAvailable(this);
+        exceptionIfNull(wrap);
+        wrapU = wrap;
+        GL45.glTextureParameteri(getId(), GL11.GL_TEXTURE_WRAP_S, wrap.getCode());
+    }
+
+    /**
+     Sets the texture's wrap along the V direction.
+
+     @param wrap wrap
+     */
+    public void setWrapV(@NotNull TextureWrap wrap){
+        exceptionIfNotAvailable(this);
+        exceptionIfNull(wrap);
+        wrapV = wrap;
+        GL45.glTextureParameteri(getId(), GL11.GL_TEXTURE_WRAP_T, wrap.getCode());
+    }
+
+    /**
+     Sets the texture's wrap along the W direction.
+
+     @param wrap wrap
+     */
+    protected void setWrapW(@NotNull TextureWrap wrap){
+        exceptionIfNotAvailable(this);
+        exceptionIfNull(wrap);
+        wrapW = wrap;
+        GL45.glTextureParameteri(getId(), GL12.GL_TEXTURE_WRAP_R, wrap.getCode());
     }
 
     /**
@@ -554,6 +453,8 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      @throws IllegalArgumentException if border color is not a color
      */
     public void setBorderColor(@NotNull Vector4f borderColor){
+        exceptionIfNotAvailable(this);
+        exceptionIfNull(borderColor);
         if(!Utility.isHdrColor(new Vector3f(borderColor.x, borderColor.y, borderColor.z))){
             throw new IllegalArgumentException("Border color is not a color");
         }
@@ -564,6 +465,15 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
     //
     //misc--------------------------------------------------------------------------------------------------------------
     //
+
+    /**
+     Generates the mipmap levels for the texture.
+     */
+    public void generateMipmaps(){
+        exceptionIfNotAvailable(this);
+        exceptionIfNotAllocated(this);
+        GL45.glGenerateTextureMipmap(getId());
+    }
 
     /**
      Returns the texture's internal format.
@@ -579,13 +489,9 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      Sets the texture's internal format to the given value.
 
      @param internalFormat internal format
-
-     @throws NullPointerException if internal format is null
      */
-    private void setInternalFormat(@NotNull TextureInternalFormat internalFormat){
-        if(internalFormat == null){
-            throw new NullPointerException();
-        }
+    protected void setInternalFormat(@NotNull TextureInternalFormat internalFormat){
+        exceptionIfNull(internalFormat);
         this.internalFormat = internalFormat;
     }
 
@@ -605,6 +511,7 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      @see OpenGlConstants#MAX_TEXTURE_SIZE
      */
     protected void setSize(@NotNull Vector2i size){
+        exceptionIfNull(size);
         if(size.x <= 0 || size.y <= 0 || size.x > OpenGlConstants.MAX_TEXTURE_SIZE || size.y > OpenGlConstants.MAX_TEXTURE_SIZE){
             throw new IllegalArgumentException("Texture size is negative or higher than the maximum size");
         }
@@ -613,21 +520,14 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
 
     @Override
     public boolean issRgb(){
-        return sRgb;
-    }
-
-    /**
-     Sets whether or not the texture's color space is sRGB.
-
-     @param sRgb true is the texture is in sRGB color space, false otherwise
-     */
-    protected void setsRgb(boolean sRgb){
-        this.sRgb = sRgb;
+        return internalFormat == TextureInternalFormat.SRGB8_A8 || internalFormat == TextureInternalFormat.SRGB8;
     }
 
     @Override
     public void bindToTextureUnit(int textureUnit){
+        exceptionIfNotAvailable(this);
         if(textureUnit < 0 || textureUnit > 31){
+            //FIXME: OpenGlConstraintException
             throw new IllegalArgumentException("Texture unit is outside the (0;31) interval");
         }
         GL45.glBindTextureUnit(textureUnit, getId());
@@ -636,11 +536,6 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
     @Override
     protected int getType(){
         return GL11.GL_TEXTURE;
-    }
-
-    @Override
-    public int getId(){
-        return super.getId();
     }
 
     @Override
@@ -658,15 +553,14 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
                 "size: " + size + ", " +
                 "allocated: " + allocated + ", " +
                 "internalFormat: " + internalFormat + ", " +
-                "format: " + format + ", " +
                 "multisampled: " + multisampled + ", " +
                 "sampleCount: " + sampleCount + ", " +
                 "mipmapLevelCount: " + mipmapLevelCount + ", " +
                 "anisotropicLevel: " + anisotropicLevel + ", " +
-                "sRgb: " + sRgb + ", " +
                 "filter: " + filter + ", " +
                 "wrapU: " + wrapU + ", " +
                 "wrapV: " + wrapV + ", " +
+                "wrapW: " + wrapW + ", " +
                 "borderColor: " + borderColor + ")";
     }
 }

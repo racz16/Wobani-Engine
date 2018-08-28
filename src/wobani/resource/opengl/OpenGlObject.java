@@ -4,7 +4,8 @@ import org.lwjgl.opengl.*;
 import wobani.resource.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
-import wobani.toolbox.exceptions.*;
+
+import static wobani.resource.opengl.OpenGlHelper.*;
 
 /**
  Super class of all OpenGL Objects.
@@ -26,10 +27,6 @@ public abstract class OpenGlObject implements Resource{
      The OpenGL Object's label.
      */
     private String label = "";
-    /**
-     Invalid id signs that the OpenGL Object is not available.
-     */
-    private static final int INVALID_ID = -1;
 
     /**
      Initializes a new OpenGlObject to the given value.
@@ -39,9 +36,7 @@ public abstract class OpenGlObject implements Resource{
      @throws NullPointerException the resourceId parameter can't be null
      */
     public OpenGlObject(@NotNull ResourceId resourceId){
-        if(resourceId == null){
-            throw new NullPointerException("The resourceId parameter can't be null");
-        }
+        exceptionIfNull(resourceId);
         id = INVALID_ID;
         this.resourceId = resourceId;
         ResourceManager.addResource(this);
@@ -58,7 +53,8 @@ public abstract class OpenGlObject implements Resource{
 
      @return the native OpenGL id
      */
-    protected int getId(){
+    @Internal
+    public int getId(){
         return id;
     }
 
@@ -108,8 +104,17 @@ public abstract class OpenGlObject implements Resource{
 
      @return true if the OpenGL Objects exists, false otherwise
      */
-    protected boolean isIdValid(){
+    public boolean isAvailable(){
         return this.id != INVALID_ID;
+    }
+
+    /**
+     Returns the maximal allowed length of a label in the current GPU.
+
+     @return the maximal allowed length of a label
+     */
+    public static int getMaxLabelLength(){
+        return OpenGlConstants.MAX_LABEL_LENGTH;
     }
 
     /**
@@ -128,18 +133,20 @@ public abstract class OpenGlObject implements Resource{
      @param label label
 
      @throws IllegalArgumentException if the parameter is longer than the maximum length
-     @see OpenGlConstants#MAX_LABEL_LENGTH
+     @see #getMaxLabelLength()
      */
     public void setLabel(@NotNull String label){
-        checkRelease();
-        if(OpenGlConstants.MAX_LABEL_LENGTH < label.length()){
+        exceptionIfNotAvailable(this);
+        exceptionIfNull(label);
+        if(getMaxLabelLength() < label.length()){
+            //FIXME: OpenGlConstraintException
             throw new IllegalArgumentException("The parameter is longer than the maximum length");
         }
         setLabelUnsafe(label);
     }
 
     /**
-     Sets the OpenGL Object's label to the given value without inspections.
+     Sets the OpenGL Object's label to the given value.
 
      @param label label
      */
@@ -163,17 +170,6 @@ public abstract class OpenGlObject implements Resource{
      */
     @NotNull
     protected abstract String getTypeName();
-
-    /**
-     If the OpenGL Object is released it throws a ReleasedException.
-
-     @throws ReleasedException if the OpenGL Object is released
-     */
-    protected void checkRelease(){
-        if(!isUsable()){
-            throw new ReleasedException(this);
-        }
-    }
 
     @Override
     public void update(){
@@ -207,6 +203,5 @@ public abstract class OpenGlObject implements Resource{
                 "dataSize: " + dataSize + ", " +
                 "label: " + label + ")";
     }
-
 
 }

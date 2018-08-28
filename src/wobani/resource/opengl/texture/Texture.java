@@ -27,6 +27,7 @@ public interface Texture extends Resource{
      */
     void bindToTextureUnit(int textureUnit);
 
+    //FIXME: sRGB gamma correction problem
     /**
      Determines whether the texture is in sRGB color space.
 
@@ -34,7 +35,11 @@ public interface Texture extends Resource{
      */
     boolean issRgb();
 
-    //TODO: remove it
+    /**
+     Returns the texture's native OpenGL id.
+
+     @return the texture's native OpenGL id
+     */
     int getId();
 
     /**
@@ -136,43 +141,6 @@ public interface Texture extends Resource{
          Return the texture wrap's OpenGL code.
 
          @return the texture wrap's OpenGL code
-         */
-        public int getCode(){
-            return code;
-        }
-    }
-
-    /**
-     Texture wrap direction.
-     */
-    enum TextureWrapDirection{
-        /**
-         U direction in texture space.
-         */
-        WRAP_U(GL11.GL_TEXTURE_WRAP_S),
-        /**
-         V direction in texture space.
-         */
-        WRAP_V(GL11.GL_TEXTURE_WRAP_T);
-
-        /**
-         Texture wrap direction's OpenGL code.
-         */
-        private final int code;
-
-        /**
-         Initializes a new TextureWrapDirection to the given value.
-
-         @param code texture wrap direction's OpenGL code
-         */
-        TextureWrapDirection(int code){
-            this.code = code;
-        }
-
-        /**
-         Returns the texture wrap direction's OpenGL code.
-
-         @return the texture wrap direction's OpenGL code
          */
         public int getCode(){
             return code;

@@ -9,6 +9,8 @@ import wobani.toolbox.exceptions.*;
 
 import java.util.*;
 
+import static wobani.resource.opengl.OpenGlHelper.*;
+
 /**
  Object oriented wrapper class above the native Vertex Array Object.
  */
@@ -52,11 +54,6 @@ public class Vao extends OpenGlObject{
         return VAO_POOL.getResource();
     }
 
-    @Override
-    protected int getId(){
-        return super.getId();
-    }
-
     /**
      Returns the VAO Pool's maximum size. When you create a new VAO the system first tries to get one from the VAO Pool.
      If it's empty it fills the pool with max pool size number of VAOs.
@@ -87,8 +84,8 @@ public class Vao extends OpenGlObject{
      */
     public void connectVbo(@NotNull Vbo vbo, @NotNull VertexAttribPointer vap){
         //FIXME: interleaved data may not work, try it with QuadMesh
-        checkRelease();
-        vbo.checkRelease();
+        exceptionIfNotAvailable(this);
+        exceptionIfNotAvailable(vbo);
         removeVertexAttribArray(vap.getIndex());
         VertexAttribArray vaa = new VertexAttribArray(this, vbo, vap);
         vertexAttribArrays.put(vap.getIndex(), vaa);
@@ -158,8 +155,8 @@ public class Vao extends OpenGlObject{
      @param ebo EBO
      */
     public void connectEbo(@NotNull Ebo ebo){
-        checkRelease();
-        ebo.checkRelease();
+        exceptionIfNotAvailable(this);
+        exceptionIfNotAvailable(ebo);
         if(Utility.isUsable(this.ebo)){
             this.ebo.setVao(null);
         }
@@ -200,7 +197,7 @@ public class Vao extends OpenGlObject{
      Binds the VAO.
      */
     public void bind(){
-        checkRelease();
+        exceptionIfNotAvailable(this);
         GL30.glBindVertexArray(getId());
         boundVao = this;
     }
@@ -209,7 +206,7 @@ public class Vao extends OpenGlObject{
      Unbinds the VAO.
      */
     public void unbind(){
-        checkRelease();
+        exceptionIfNotAvailable(this);
         checkBind();
         GL30.glBindVertexArray(0);
         boundVao = null;
@@ -258,7 +255,7 @@ public class Vao extends OpenGlObject{
      */
     @Override
     public boolean isUsable(){
-        return isIdValid();
+        return isAvailable();
     }
 
     @Override

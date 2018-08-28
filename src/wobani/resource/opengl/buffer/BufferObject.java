@@ -10,6 +10,7 @@ import wobani.toolbox.annotation.*;
 import java.nio.*;
 
 import static org.lwjgl.system.MemoryStack.*;
+import static wobani.resource.opengl.OpenGlHelper.*;
 
 /**
  Object oriented wrapper class above the native OpenGL Buffer Object.
@@ -50,16 +51,6 @@ public abstract class BufferObject extends OpenGlObject{
         super(new ResourceId());
         this.target = target;
         setId(createId());
-    }
-
-    @Override
-    protected int getId(){
-        return super.getId();
-    }
-
-    @Override
-    protected void checkRelease(){
-        super.checkRelease();
     }
 
     /**
@@ -111,8 +102,8 @@ public abstract class BufferObject extends OpenGlObject{
      @throws IllegalArgumentException if size is negative or higher than the maximum
      */
     protected void allocationGeneral(int size, @Nullable BufferObjectUsage usage){
-        checkRelease();
-        checkReallocation();
+        exceptionIfNotAvailable(this);
+        exceptionIfAllocatedAndImmutable(this);
         if(size < 0 || size > getMaxDataSize()){
             throw new IllegalArgumentException("Size is negative or higher than the maximum");
         }
@@ -137,17 +128,6 @@ public abstract class BufferObject extends OpenGlObject{
      */
     protected int getMaxDataSize(){
         return Integer.MAX_VALUE;
-    }
-
-    /**
-     If the Buffer Object is immutable it throws an UnsupportedOperationException.
-
-     @throws UnsupportedOperationException if the Buffer Object is immutable
-     */
-    protected void checkReallocation(){
-        if(isImmutable()){
-            throw new UnsupportedOperationException("You cannot reallocate immutable data");
-        }
     }
 
     /**
@@ -288,8 +268,8 @@ public abstract class BufferObject extends OpenGlObject{
      it's size or the offset)
      */
     protected void storeGeneral(long offset, int size){
-        checkRelease();
-        checkAllocation();
+        exceptionIfNotAvailable(this);
+        exceptionIfNotAllocated(this);
         checkDataModification();
         if(offset < 0){
             throw new IllegalArgumentException("Offset can't be negative");
@@ -307,17 +287,6 @@ public abstract class BufferObject extends OpenGlObject{
     protected void checkDataModification(){
         if(!isAllowDataModification()){
             throw new UnsupportedOperationException("You cannot modify immutable data");
-        }
-    }
-
-    /**
-     If the Buffer Object is not yet allocated, it throws an UnsupportedOperationException.
-
-     @throws UnsupportedOperationException if the Buffer Object is not yet allocated
-     */
-    protected void checkAllocation(){
-        if(!isAllocated()){
-            throw new UnsupportedOperationException("The Buffer Object is not yet allocated");
         }
     }
 
@@ -404,12 +373,12 @@ public abstract class BufferObject extends OpenGlObject{
      @param size        size of the data (in bytes)
      */
     public void copyDataTo(@NotNull BufferObject writeTarget, int readOffset, int writeOffset, int size){
-        checkRelease();
-        writeTarget.checkRelease();
+        exceptionIfNotAvailable(this);
+        exceptionIfNotAvailable(writeTarget);
         checkDataModification();
         writeTarget.checkDataModification();
-        checkAllocation();
-        writeTarget.checkAllocation();
+        exceptionIfNotAllocated(this);
+        exceptionIfNotAllocated(writeTarget);
         checkCopyOffsetsAndSize(writeTarget, readOffset, writeOffset, size);
         GL45.glCopyNamedBufferSubData(getId(), writeTarget.getId(), readOffset, writeOffset, size);
     }
@@ -521,7 +490,7 @@ public abstract class BufferObject extends OpenGlObject{
 
     @Override
     public boolean isUsable(){
-        return isIdValid();
+        return isAvailable();
     }
 
     @Override

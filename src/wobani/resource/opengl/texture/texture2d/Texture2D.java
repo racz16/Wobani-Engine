@@ -1,9 +1,15 @@
 package wobani.resource.opengl.texture.texture2d;
 
+import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.resource.*;
 import wobani.resource.opengl.texture.*;
+import wobani.resource.opengl.texture.cubemaptexture.*;
 import wobani.toolbox.annotation.*;
+
+import java.nio.*;
+
+import static wobani.resource.opengl.OpenGlHelper.*;
 
 /**
  Abstract class for 2D textures.
@@ -19,7 +25,7 @@ public abstract class Texture2D extends TextureBase{
     private static final Texture2DMultisampledPool TEXTURE_2D_MULTISAMPLED_POOL = new Texture2DMultisampledPool();
 
     /**
-     Initializes a new Texture2D to the given value.
+     Initializes a new Texture2D to the given values.
 
      @param resourceId   texture's unique id
      @param multisampled true if this texture should be multisampled, false otherwise
@@ -28,10 +34,147 @@ public abstract class Texture2D extends TextureBase{
         super(resourceId, multisampled);
     }
 
-    @Override
-    protected void initializeAfterAllocation(){
-        setFilter(getDefaultFilter());
+    //
+    //store-------------------------------------------------------------------------------------------------------------
+    //
+
+    /**
+     Stores the given data in the texture.
+
+     @param format the given data's format
+     @param data   data to store
+     */
+    protected void store(@NotNull TextureFormat format, @NotNull ByteBuffer data){
+        store(new Vector2i(0), getSize(), format, data);
     }
+
+    /**
+     Stores the given data in the texture.
+
+     @param offset data's offset
+     @param size   data's width and height
+     @param format the given data's format
+     @param data   data to store
+     */
+    protected void store(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
+        exceptionIfNotAvailable(this);
+        exceptionIfNotAllocated(this);
+        exceptionIfNull(offset, size, format, data);
+        exceptionIfAreaExceedsFromSize(size, offset, getSize());
+        exceptionIfFormatAndInternalFormatNotCompatible(getInternalFormat(), format);
+        storeUnsafe(offset, format, data);
+    }
+
+    /**
+     Stores the given data in the texture.
+
+     @param offset data's offset
+     @param format the given data's format
+     @param data   data to store
+     */
+    private void storeUnsafe(@NotNull Vector2i offset, @NotNull TextureFormat format, @NotNull ByteBuffer data){
+        GL45.glTextureSubImage2D(getId(), 0, offset.x, offset.y, getSize().x, getSize().y, format.getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
+    }
+
+    //
+    //copy--------------------------------------------------------------------------------------------------------------
+    //
+
+    /**
+     Copies data from this texture to the given texture.
+
+     @param destination copy data to this texture
+     @param size        copied data's width and height
+     */
+    public void copyTo(@NotNull DynamicTexture2D destination, @NotNull Vector2i size){
+        copyTo(destination, new Vector2i(0), new Vector2i(0), size);
+    }
+
+    /**
+     Copies data from this texture to the given texture.
+
+     @param destination       copy data to this texture
+     @param destinationOffset offset in the destination texture
+     @param sourceOffset      offset in the source (this) texture
+     @param size              copied data's width and height
+     */
+    public void copyTo(@NotNull DynamicTexture2D destination, @NotNull Vector2i destinationOffset, @NotNull Vector2i sourceOffset, @NotNull Vector2i size){
+        exceptionIfNull(destination, sourceOffset, destinationOffset, size);
+        exceptionIfNotAvailable(this);
+        exceptionIfNotAvailable(destination);
+        exceptionIfNotAllocated(this);
+        exceptionIfNotAllocated(destination);
+        exceptionIfAreaExceedsFromSize(size, destinationOffset, getSize());
+        exceptionIfAreaExceedsFromSize(size, sourceOffset, destination.getSize());
+        copyToUnsafe(destination, destinationOffset, sourceOffset, size);
+    }
+
+    /**
+     Copies data from this texture to the given texture.
+
+     @param destination       copy data to this texture
+     @param destinationOffset offset in the destination texture
+     @param sourceOffset      offset in the source (this) texture
+     @param size              copied data's width and height
+     */
+    private void copyToUnsafe(@NotNull DynamicTexture2D destination, @NotNull Vector2i destinationOffset, @NotNull Vector2i sourceOffset, @NotNull Vector2i size){
+        int sourceTarget = isMultisampled() ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D;
+        int destinationTarget = destination.isMultisampled() ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D;
+        GL43.glCopyImageSubData(getId(), sourceTarget, 0, sourceOffset.x, sourceOffset.y, 0,
+                destination.getId(), destinationTarget, 0, destinationOffset.x, destinationOffset.y, 0,
+                size.x, size.y, 1);
+    }
+
+    /**
+     Copies data from this texture to the given texture's specified side.
+
+     @param destination copy data to this texture's side
+     @param side        destination texture's side
+     @param size        copied data's width and height
+     */
+    public void copyTo(@NotNull DynamicCubeMapTexture destination, @NotNull CubeMapTexture.CubeMapSide side, @NotNull Vector2i size){
+        copyTo(destination, new Vector2i(0), side, new Vector2i(0), size);
+    }
+
+    /**
+     Copies data from this texture to the given texture's specified side.
+
+     @param destination       copy data to this texture's side
+     @param destinationOffset offset in the destination texture's side
+     @param side              destination texture's side
+     @param sourceOffset      offset in the source (this) texture
+     @param size              copied data's width and height
+     */
+    public void copyTo(@NotNull DynamicCubeMapTexture destination, @NotNull Vector2i destinationOffset, @NotNull CubeMapTexture.CubeMapSide side, @NotNull Vector2i sourceOffset, @NotNull Vector2i size){
+        exceptionIfNull(destination, sourceOffset, side, destinationOffset, size);
+        exceptionIfNotAvailable(this);
+        exceptionIfNotAvailable(destination);
+        exceptionIfNotAllocated(this);
+        exceptionIfNotAllocated(destination);
+        exceptionIfAreaExceedsFromSize(size, destinationOffset, getSize());
+        exceptionIfAreaExceedsFromSize(size, sourceOffset, destination.getSize());
+        copyToUnsafe(destination, destinationOffset, side, sourceOffset, size);
+    }
+
+    /**
+     Copies data from this texture to the given texture's specified side.
+
+     @param destination       copy data to this texture's side
+     @param destinationOffset offset in the destination texture's side
+     @param side              destination texture's side
+     @param sourceOffset      offset in the source (this) texture
+     @param size              copied data's width and height
+     */
+    private void copyToUnsafe(@NotNull DynamicCubeMapTexture destination, @NotNull Vector2i destinationOffset, @NotNull CubeMapTexture.CubeMapSide side, @NotNull Vector2i sourceOffset, @NotNull Vector2i size){
+        int sourceTarget = isMultisampled() ? GL32.GL_TEXTURE_2D_MULTISAMPLE : GL11.GL_TEXTURE_2D;
+        GL43.glCopyImageSubData(getId(), sourceTarget, 0, sourceOffset.x, sourceOffset.y, 0,
+                destination.getId(), GL13.GL_TEXTURE_CUBE_MAP, 0, destinationOffset.x, destinationOffset.y, side.getIndex(),
+                size.x, size.y, 1);
+    }
+
+    //
+    //resource pool-----------------------------------------------------------------------------------------------------
+    //
 
     /**
      Returns the texture pool's maximum size. When you create a new texture, the system first tries to get one from the
@@ -92,6 +235,15 @@ public abstract class Texture2D extends TextureBase{
     @NotNull
     protected static Texture2DMultisampledPool getTexture2DMultisampledPool(){
         return TEXTURE_2D_MULTISAMPLED_POOL;
+    }
+
+    //
+    //misc--------------------------------------------------------------------------------------------------------------
+    //
+
+    @Override
+    protected void initializeAfterAllocation(){
+        setFilter(getDefaultFilter());
     }
 
     @Override

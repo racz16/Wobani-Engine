@@ -61,7 +61,7 @@ public class DataStoreManager{
      @throws IllegalArgumentException size can't be negative
      */
     public void setDataSize(int size){
-        if(size <= 0){
+        if(size < 0){
             throw new IllegalArgumentException("Size can't be negative");
         }
         dataSize = size;

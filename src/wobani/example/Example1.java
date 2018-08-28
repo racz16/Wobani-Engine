@@ -83,7 +83,7 @@ public class Example1{
 
     private static Material createSphereMaterial(){
         DynamicEnvironmentProbe probe = createReflectionProbe();
-        //probe.setRenderingFrequency(10);
+        probe.setRenderingFrequency(10);
         Material sphereMaterial = new Material(BlinnPhongRenderer.class);
         sphereMaterial.setSlot(Material.SPECULAR, new MaterialSlot(new Vector4f(0.3f, 0.3f, 0.3f, 0.75f)));
         sphereMaterial.setSlot(Material.REFLECTION, new MaterialSlot(probe));
@@ -287,7 +287,7 @@ public class Example1{
     private static void createBox(){
         GameObject box = new GameObject();
         MeshComponent mc = new MeshComponent(StaticMesh.loadModel(new File("res/models/box.obj")).get(0));
-        StaticTexture2D tex = StaticTexture2D.loadTexture(new File("res/textures/diffuse1.png"), false);
+        StaticTexture2D tex = StaticTexture2D.loadTexture(new File("res/textures/diffuse1.png"), true);
         mc.getMaterial().setSlot(Material.DIFFUSE, new MaterialSlot(tex));
         //mc.getMaterial().setSlot(Material.NORMAL, new MaterialSlot(StaticTexture2D.loadTexture(new File("res/textures/normal6.png"), false)));
         //mc.getMaterial().getParameters().set(MaterialSlot.USE_POM, new Parameter<>(1f));

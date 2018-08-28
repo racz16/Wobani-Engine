@@ -4,6 +4,7 @@ import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.core.*;
 import wobani.resource.opengl.buffer.*;
+import wobani.resource.opengl.texture.*;
 import wobani.resource.opengl.texture.cubemaptexture.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
@@ -57,11 +58,11 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe{
 
     private void refreshCubeMap(){
         if(cubeMap == null || !cubeMap.isUsable()){
-            cubeMap = new DynamicCubeMapTexture(new Vector2i(resolution));
+            cubeMap = new DynamicCubeMapTexture(new Vector2i(resolution), Texture.TextureInternalFormat.RGBA8, false);
         }else{
             if(resolution != cubeMap.getSize().x){
                 releaseCubeMap();
-                cubeMap = new DynamicCubeMapTexture(new Vector2i(resolution));
+                cubeMap = new DynamicCubeMapTexture(new Vector2i(resolution), Texture.TextureInternalFormat.RGBA8, false);
             }
         }
     }

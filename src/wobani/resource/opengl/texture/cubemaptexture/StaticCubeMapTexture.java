@@ -2,6 +2,7 @@ package wobani.resource.opengl.texture.cubemaptexture;
 
 import org.joml.*;
 import wobani.resource.*;
+import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
@@ -14,7 +15,6 @@ import java.util.*;
 
  @see #loadTexture(List paths, boolean sRgb) */
 public class StaticCubeMapTexture extends CubeMapTexture{
-
     /**
      Stores meta data about this texture.
      */
@@ -35,7 +35,7 @@ public class StaticCubeMapTexture extends CubeMapTexture{
         meta.setPaths(paths);
         meta.setLastActiveToNow();
         meta.setDataStorePolicy(ResourceManager.ResourceState.ACTIVE);
-        setsRgb(sRgb);
+        setInternalFormat(sRgb ? TextureInternalFormat.SRGB8_A8 : TextureInternalFormat.RGBA8);
 
         hddToRam();
         ramToVram();
@@ -74,7 +74,6 @@ public class StaticCubeMapTexture extends CubeMapTexture{
 
      @throws IllegalStateException each image have to be the same size
      */
-
     private void hddToRam(){
         for(int i = 0; i < 6; i++){
             images[i] = new Image(getPath(i), false);
@@ -86,7 +85,7 @@ public class StaticCubeMapTexture extends CubeMapTexture{
                 }
             }
         }
-        //TODO compute data size
+        //TODO compute data size !! *6 !!
         //setCachedDataSize(-1);
         meta.setState(ResourceManager.ResourceState.CACHE);
     }
@@ -98,6 +97,7 @@ public class StaticCubeMapTexture extends CubeMapTexture{
         for(CubeMapSide side : CubeMapSide.values()){
             storeCubeMapSide(new Vector2i(0, 0), side, getSize(), TextureFormat.RGBA, images[side.getIndex()].getData());
         }
+        generateMipmaps();
         meta.setState(ResourceManager.ResourceState.ACTIVE);
         meta.setLastActiveToNow();
     }
@@ -119,6 +119,28 @@ public class StaticCubeMapTexture extends CubeMapTexture{
     //
     //misc----------------------------------------------------------------------
     //
+
+
+    @Override
+    public void copyTo(@NotNull DynamicTexture2D destination, @NotNull Vector2i destinationOffset, @NotNull CubeMapSide side, @NotNull Vector2i sourceOffset, @NotNull Vector2i size){
+        loadFromCache();
+        super.copyTo(destination, destinationOffset, side, sourceOffset, size);
+    }
+
+    @Override
+    public void copyTo(@NotNull CubeMapTexture destination, @NotNull Vector2i destinationOffset, @NotNull CubeMapSide destinationSide, @NotNull Vector2i sourceOffset, @NotNull CubeMapSide sourceSide, @NotNull Vector2i size){
+        loadFromCache();
+        super.copyTo(destination, destinationOffset, destinationSide, sourceOffset, sourceSide, size);
+    }
+
+    private void loadFromCache(){
+        if(meta.getState() == ResourceManager.ResourceState.STORAGE){
+            hddToRam();
+        }
+        if(meta.getState() == ResourceManager.ResourceState.CACHE){
+            ramToVram();
+        }
+    }
 
     /**
      Returns the texture's specified path.

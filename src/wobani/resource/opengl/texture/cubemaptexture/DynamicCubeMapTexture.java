@@ -2,23 +2,43 @@ package wobani.resource.opengl.texture.cubemaptexture;
 
 import org.joml.*;
 import wobani.resource.*;
-import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.annotation.*;
 
+import java.nio.*;
+
+/**
+ Dynamic cube map texture usually for rendering to it.
+ */
 public class DynamicCubeMapTexture extends CubeMapTexture{
 
-    public DynamicCubeMapTexture(@NotNull Vector2i size){
+    /**
+     Initializes a new DynamicCubeMapTexture to the given values.
+
+     @param size           one side's width and height
+     @param internalFormat texture's internal format
+     @param samples        number of samples
+     */
+    public DynamicCubeMapTexture(@NotNull Vector2i size, @NotNull TextureInternalFormat internalFormat, int samples){
+        super(new ResourceId(), samples > 1);
+        allocateImmutable2D(internalFormat, size, samples);
+    }
+
+    /**
+     Initializes a new DynamicCubeMapTexture to the given values.
+
+     @param size           one side's width and height
+     @param internalFormat texture's internal format
+     @param mipmaps        true if this texture should use mipmaps, false otherwise
+     */
+    public DynamicCubeMapTexture(@NotNull Vector2i size, @NotNull TextureInternalFormat internalFormat, boolean mipmaps){
         super(new ResourceId(), false);
-        //TODO: datasize now incorrect
-        allocateImmutable2D(TextureInternalFormat.RGBA8, size, false);
+        allocateImmutable2D(internalFormat, size, mipmaps);
     }
 
-    public void setSide(@NotNull CubeMapSide side, @NotNull DynamicTexture2D texture){
-        //TODO: instead of this glCopyImageSubData? both dynamic textures
-        //        GL11.glTexImage2D(side.getCode(), 0, GL11.GL_RGB, size.x, size.y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data[i]);
+    @Override
+    public void storeCubeMapSide(@NotNull Vector2i offset, @NotNull CubeMapSide side, @NotNull Vector2i size, @NotNull TextureFormat format, @NotNull ByteBuffer data){
+        super.storeCubeMapSide(offset, side, size, format, data);
     }
-
-    //TODO: make public clear?
 
     @Override
     protected String getTypeName(){
@@ -27,7 +47,7 @@ public class DynamicCubeMapTexture extends CubeMapTexture{
 
     @Override
     public boolean isUsable(){
-        return isIdValid();
+        return isAvailable();
     }
 
     @Override
