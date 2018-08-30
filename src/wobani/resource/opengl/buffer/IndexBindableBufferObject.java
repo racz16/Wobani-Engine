@@ -6,7 +6,7 @@ import wobani.toolbox.annotation.*;
 
 import java.util.*;
 
-import static wobani.resource.opengl.OpenGlHelper.*;
+import static wobani.resource.ExceptionHelper.*;
 
 /**
  Buffer Objects which you can bind to a binding point.
@@ -31,14 +31,10 @@ public abstract class IndexBindableBufferObject extends BufferObject{
      Checks whether the binding is possible.
 
      @param bindingPoint binding point
-
-     @throws IllegalArgumentException if binding point is lower than 0 or higher than the highest valid binding point
      */
     private void bindingGeneral(int bindingPoint){
         exceptionIfNotAvailable(this);
-        if(bindingPoint < 0 || bindingPoint > getHighestValidBindingPoint()){
-            throw new IllegalArgumentException("Binding point can't be lower than 0 or higher than the highest valid binding point");
-        }
+        exceptionIfNotInsideClosedInterval(0, getHighestValidBindingPoint(), bindingPoint);
     }
 
     /**

@@ -9,7 +9,7 @@ import wobani.toolbox.exceptions.*;
 
 import java.util.*;
 
-import static wobani.resource.opengl.OpenGlHelper.*;
+import static wobani.resource.ExceptionHelper.*;
 
 /**
  Object oriented wrapper class above the native Vertex Array Object.

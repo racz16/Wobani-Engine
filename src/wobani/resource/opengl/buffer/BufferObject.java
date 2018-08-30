@@ -10,7 +10,7 @@ import wobani.toolbox.annotation.*;
 import java.nio.*;
 
 import static org.lwjgl.system.MemoryStack.*;
-import static wobani.resource.opengl.OpenGlHelper.*;
+import static wobani.resource.ExceptionHelper.*;
 
 /**
  Object oriented wrapper class above the native OpenGL Buffer Object.
@@ -99,14 +99,12 @@ public abstract class BufferObject extends OpenGlObject{
      @param size  memory size to allocate (in bytes)
      @param usage usage hint
 
-     @throws IllegalArgumentException if size is negative or higher than the maximum
+     @see #getMaxDataSize()
      */
     protected void allocationGeneral(int size, @Nullable BufferObjectUsage usage){
         exceptionIfNotAvailable(this);
         exceptionIfAllocatedAndImmutable(this);
-        if(size < 0 || size > getMaxDataSize()){
-            throw new IllegalArgumentException("Size is negative or higher than the maximum");
-        }
+        exceptionIfNotInsideClosedInterval(0, getMaxDataSize(), size);
         setActiveDataSize(size);
         this.usage = usage;
         allocated = true;
@@ -263,20 +261,13 @@ public abstract class BufferObject extends OpenGlObject{
 
      @param offset data's offset (in bytes)
      @param size   data's size (in bytes)
-
-     @throws IllegalArgumentException if offset is negative or if the data exceeds from the Buffer Object (because of
-     it's size or the offset)
      */
     protected void storeGeneral(long offset, int size){
         exceptionIfNotAvailable(this);
         exceptionIfNotAllocated(this);
         checkDataModification();
-        if(offset < 0){
-            throw new IllegalArgumentException("Offset can't be negative");
-        }
-        if(getActiveDataSize() - offset < size){
-            throw new IllegalStateException("The data exceeds from the Buffer Object, data size or offset is too high");
-        }
+        exceptionIfLower(0, offset);
+        exceptionIfLower(size, getActiveDataSize() - offset);
     }
 
     /**
@@ -399,25 +390,19 @@ public abstract class BufferObject extends OpenGlObject{
 
     /**
      If one of the offsets are negative or the size is not positive it throws an IllegalArgumentException.
-
-     @throws IllegalArgumentException if one of the offsets are negative or the size is not positive
      */
     private void checkOffsetAndSize(int readOffset, int writeOffset, int size){
-        if(readOffset < 0 || writeOffset < 0 || size <= 0){
-            throw new IllegalArgumentException("One of the offsets are negative or the size is not positive");
-        }
+        exceptionIfLower(0, readOffset);
+        exceptionIfLower(0, writeOffset);
+        exceptionIfLowerOrEquals(0, size);
     }
 
     /**
      If the data exceeds from the write Buffer Object, it throws an IllegalArgumentException.
-
-     @throws IllegalArgumentException if the data exceeds from the write Buffer Object (because of it's size or the
-     offset)
      */
     private void checkDataExceed(@NotNull BufferObject writeTarget, int readOffset, int writeOffset, int size){
-        if(readOffset + size > getActiveDataSize() || writeOffset + size > writeTarget.getActiveDataSize()){
-            throw new IllegalArgumentException("The data exceeds from the write Buffer Object");
-        }
+        exceptionIfLower(readOffset + size, getActiveDataSize());
+        exceptionIfLower(writeOffset + size, writeTarget.getActiveDataSize());
     }
 
     /**

@@ -28,6 +28,7 @@ public interface Texture extends Resource{
     void bindToTextureUnit(int textureUnit);
 
     //FIXME: sRGB gamma correction problem
+
     /**
      Determines whether the texture is in sRGB color space.
 
@@ -355,6 +356,10 @@ public interface Texture extends Resource{
          RGBA32UI.
          */
         RGBA32UI(GL30.GL_RGBA32UI, 4, 128, COLOR),
+        /**
+         DEPTH32.
+         */
+        DEPTH32(GL30.GL_DEPTH_COMPONENT32, 1, 32, DEPTH),
         /**
          DEPTH32F.
          */

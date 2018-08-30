@@ -9,13 +9,13 @@ import wobani.toolbox.annotation.*;
 
 import java.io.*;
 
-import static wobani.resource.opengl.OpenGlHelper.*;
+import static wobani.resource.ExceptionHelper.*;
 
 /**
  Stores data about a loaded texture. You can load a texture only once, if you try to load it twice, you get reference to
  the already loaded one.
 
- @see #loadTexture(File path, boolean sRgb) */
+ @see #loadTexture(File path, boolean sRgb, boolean mipmaps) */
 public class StaticTexture2D extends Texture2D{
     /**
      Stores meta data about this texture.
@@ -25,20 +25,25 @@ public class StaticTexture2D extends Texture2D{
      Texture's pixel data.
      */
     private Image image;
-
+    /**
+     Determines whether the texture should use the default settings instead of it's own.
+     */
     private boolean useDefaults = true;
 
     /**
      Initializes a new StaticTexture to the given parameters.
 
-     @param path texture's relative path (with extension like "res/textures/myTexture.png")
-     @param sRgb determines whether the texture is in sRgb color space
+     @param path    texture's relative path (with extension like "res/textures/myTexture.png")
+     @param sRgb    determines whether the texture is in sRgb color space
+     @param mipmaps true if this texture should use mipmaps, false otherwise
      */
-    private StaticTexture2D(@NotNull File path, boolean sRgb){
+    private StaticTexture2D(@NotNull File path, boolean sRgb, boolean mipmaps){
         super(new ResourceId(path), false);
         setInternalFormat(sRgb ? TextureInternalFormat.SRGB8_A8 : TextureInternalFormat.RGBA8);
+        setMipmapCount(mipmaps);
         meta.setPaths(Utility.wrapObjectByList(path));
         meta.setDataStorePolicy(ResourceState.ACTIVE);
+        meta.setState(ResourceState.STORAGE);
         loadData();
     }
 
@@ -70,19 +75,20 @@ public class StaticTexture2D extends Texture2D{
      Loads a texture from the given path. You can load a texture only once, if you try to load it twice, you get
      reference to the already loaded one.
 
-     @param path texture's relative path (with extension like "res/textures/myTexture.png")
-     @param sRgb determines whether the texture is in sRGB color space
+     @param path    texture's relative path (with extension like "res/textures/myTexture.png")
+     @param sRgb    determines whether the texture is in sRGB color space
+     @param mipmaps true if this texture should use mipmaps, false otherwise
 
      @return texture
      */
     @NotNull
-    public static StaticTexture2D loadTexture(@NotNull File path, boolean sRgb){
+    public static StaticTexture2D loadTexture(@NotNull File path, boolean sRgb, boolean mipmaps){
         exceptionIfNull(path);
         StaticTexture2D tex = ResourceManager.getResource(new ResourceId(path), StaticTexture2D.class);
         if(tex != null){
             return tex;
         }
-        return new StaticTexture2D(path, sRgb);
+        return new StaticTexture2D(path, sRgb, mipmaps);
     }
 
     /**
@@ -100,7 +106,7 @@ public class StaticTexture2D extends Texture2D{
     private void ramToVram(){
         createTextureId();
         TextureInternalFormat internalFormat = issRgb() ? TextureInternalFormat.SRGB8_A8 : TextureInternalFormat.RGBA8;
-        allocateImmutable2D(internalFormat, image.getSize(), true);
+        allocateImmutable2D(internalFormat, image.getSize(), isMipmapped());
         store(TextureFormat.RGBA, image.getData());
         generateMipmaps();
         meta.setState(ResourceState.ACTIVE);
@@ -128,8 +134,6 @@ public class StaticTexture2D extends Texture2D{
     //
     //misc--------------------------------------------------------------------------------------------------------------
     //
-
-    //TODO: after recreation: set default values
 
     @Override
     public void copyTo(@NotNull DynamicTexture2D destination, @NotNull Vector2i destinationOffset, @NotNull Vector2i sourceOffset, @NotNull Vector2i size){
@@ -170,28 +174,52 @@ public class StaticTexture2D extends Texture2D{
      */
     public void setDataStorePolicy(@NotNull ResourceManager.ResourceState minState){
         meta.setDataStorePolicy(minState);
-
         if(minState != ResourceManager.ResourceState.STORAGE && meta.getState() == ResourceManager.ResourceState.STORAGE){
             hddToRam();
         }
         if(minState == ResourceManager.ResourceState.ACTIVE && meta.getState() != ResourceManager.ResourceState.ACTIVE){
-            useDefaults = false;
             ramToVram();
         }
     }
 
+    /**
+     Returns the active time limit. If the elapsed time since this resource's last use is higher than this value and the
+     resource's data store policy is cache or storage, the resource's data may be removed from the active state.
+
+     @return active time limit (in milliseconds)
+     */
     public long getActiveTimeLimit(){
         return meta.getActiveTimeLimit();
     }
 
+    /**
+     Sets the active time limit to the given value. If the elapsed time since this resource's last use is higher than
+     this value and the resource's data store policy is cache or storage, the resource's data may be removed from the
+     active state.
+
+     @param actionTimeLimit active time limit (in milliseconds)
+     */
     public void setActionTimeLimit(long actionTimeLimit){
         meta.setActionTimeLimit(actionTimeLimit);
     }
 
+    /**
+     Returns the cache time limit. If the elapsed time since this resource's last use is higher than this value and the
+     resource's data store policy is storage, the resource's data may be removed from active or even from cache state.
+
+     @return cache time limit (in milliseconds)
+     */
     public long getCacheTimeLimit(){
         return meta.getCacheTimeLimit();
     }
 
+    /**
+     Sets the cache time limit to the given value. If the elapsed time since this resource's last use is higher than this
+     value and the resource's data store policy is storage, the resource's data may be removed from active or even from
+     cache state.
+
+     @param cacheTimeLimit cache time limit (in milliseconds)
+     */
     public void setCacheTimeLimit(long cacheTimeLimit){
         meta.setCacheTimeLimit(cacheTimeLimit);
     }
@@ -281,6 +309,7 @@ public class StaticTexture2D extends Texture2D{
         return super.toString() + "\n" +
                 StaticTexture2D.class.getSimpleName() + "(" +
                 "meta: " + meta + ", " +
-                "image: " + image + ")";
+                "image: " + image + ", " +
+                "useDefaults: " + useDefaults + ")";
     }
 }

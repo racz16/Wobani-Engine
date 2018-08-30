@@ -5,7 +5,7 @@ import wobani.resource.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
-import static wobani.resource.opengl.OpenGlHelper.*;
+import static wobani.resource.ExceptionHelper.*;
 
 /**
  Super class of all OpenGL Objects.
@@ -62,13 +62,9 @@ public abstract class OpenGlObject implements Resource{
      Sets the OpenGL Object's id to the given value.
 
      @param id native OpenGL id
-
-     @throws IllegalArgumentException if the id id isn't higher than 0
      */
     protected void setId(int id){
-        if(id <= 0){
-            throw new IllegalArgumentException("The id id isn't higher than 0");
-        }
+        exceptionIfLowerOrEquals(0, id);
         this.id = id;
     }
 
@@ -88,13 +84,9 @@ public abstract class OpenGlObject implements Resource{
      Sets the OpenGL Object data size to the given value.
 
      @param dataSize data size (in bytes)
-
-     @throws IllegalArgumentException if data size is lower than 0
      */
     protected void setActiveDataSize(int dataSize){
-        if(dataSize < 0){
-            throw new IllegalArgumentException("Data size is lower than 0");
-        }
+        exceptionIfLower(0, dataSize);
         this.dataSize = dataSize;
     }
 
@@ -132,16 +124,12 @@ public abstract class OpenGlObject implements Resource{
 
      @param label label
 
-     @throws IllegalArgumentException if the parameter is longer than the maximum length
      @see #getMaxLabelLength()
      */
     public void setLabel(@NotNull String label){
         exceptionIfNotAvailable(this);
         exceptionIfNull(label);
-        if(getMaxLabelLength() < label.length()){
-            //FIXME: OpenGlConstraintException
-            throw new IllegalArgumentException("The parameter is longer than the maximum length");
-        }
+        exceptionIfLower(label.length(), getMaxLabelLength());
         setLabelUnsafe(label);
     }
 

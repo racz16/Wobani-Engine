@@ -1,9 +1,9 @@
 package wobani.resource.opengl.buffer;
 
 import org.lwjgl.opengl.*;
-import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
-import wobani.toolbox.exceptions.*;
+
+import static wobani.resource.ExceptionHelper.*;
 
 /**
  Object oriented wrapper above the native vertex attrib array.
@@ -53,13 +53,9 @@ public class VertexAttribArray{
      Sets the VAO to the given value.
 
      @param vao vao
-
-     @throws NullPointerException if the parameter is null
      */
     private void setVao(@NotNull Vao vao){
-        if(vao == null){
-            throw new NullPointerException();
-        }
+        exceptionIfNull(vao);
         this.vao = vao;
     }
 
@@ -77,13 +73,9 @@ public class VertexAttribArray{
      Sets the VBO to the given value.
 
      @param vbo vbo
-
-     @throws NullPointerException if the parameter is null
      */
     private void setVbo(@NotNull Vbo vbo){
-        if(vbo == null){
-            throw new NullPointerException();
-        }
+        exceptionIfNull(vbo);
         this.vbo = vbo;
     }
 
@@ -101,13 +93,9 @@ public class VertexAttribArray{
      Sets the vertex attrib pointer to the given value.
 
      @param pointer vertex attrib pointer
-
-     @throws NullPointerException if the parameter is null
      */
     private void setPointer(VertexAttribPointer pointer){
-        if(pointer == null){
-            throw new NullPointerException();
-        }
+        exceptionIfNull(pointer);
         this.pointer = pointer;
     }
 
@@ -140,15 +128,11 @@ public class VertexAttribArray{
 
     /**
      If the VAO or the VBO is released it throws a ReleasedException.
-
-     @throws ReleasedException if the VAO or the VBO is released
      */
     private void checkRelease(){
-        if(!Utility.isUsable(vao)){
-            throw new ReleasedException(vao);
-        }else if(!Utility.isUsable(vbo)){
-            throw new ReleasedException(vbo);
-        }
+        exceptionIfNull(vao, vbo);
+        exceptionIfNotUsable(vao);
+        exceptionIfNotUsable(vbo);
     }
 
     @Override

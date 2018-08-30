@@ -9,7 +9,7 @@ import wobani.toolbox.annotation.*;
 
 import java.nio.*;
 
-import static wobani.resource.opengl.OpenGlHelper.*;
+import static wobani.resource.ExceptionHelper.*;
 
 /**
  Abstract class for 2D textures.

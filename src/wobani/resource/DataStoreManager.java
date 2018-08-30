@@ -118,21 +118,21 @@ public class DataStoreManager{
     }
 
     /**
-     Returns the ACTIVE time limit. If the elapsed time since this resource's last use is higher than this value and the
-     resource's data store policy is CACHE or STORAGE, the resource's data may be removed from ACTIVE.
+     Returns the active time limit. If the elapsed time since this resource's last use is higher than this value and the
+     resource's data store policy is cache or storage, the resource's data may be removed from the active state.
 
-     @return VRAM time limit (in miliseconds)
+     @return active time limit (in milliseconds)
      */
     public long getActiveTimeLimit(){
         return actionTimeLimit;
     }
 
     /**
-     Sets the ACTIVE time limit to the given value. If the elapsed time since this resource's last use is higher than
-     this value and the resource's data store policy is CACHE or STORAGE, the resource's data may be removed from
-     ACTIVE.
+     Sets the active time limit to the given value. If the elapsed time since this resource's last use is higher than
+     this value and the resource's data store policy is cache or storage, the resource's data may be removed from the
+     active state.
 
-     @param actionTimeLimit ACTIVE time limit (in miliseconds)
+     @param actionTimeLimit active time limit (in milliseconds)
 
      @throws IllegalArgumentException ACTIVE time limit have to be higher than 0 and lower than CACHE time limit
      */
@@ -144,21 +144,21 @@ public class DataStoreManager{
     }
 
     /**
-     Returns the CACHE time limit. If the elapsed time since this resource's last use is higher than this value and the
-     resource's data store policy is STORAGE, the resource's data may be removed from ACTIVE or even from CACHE.
+     Returns the cache time limit. If the elapsed time since this resource's last use is higher than this value and the
+     resource's data store policy is storage, the resource's data may be removed from active or even from cache state.
 
-     @return CACHE time limit (in milliseconds)
+     @return cache time limit (in milliseconds)
      */
     public long getCacheTimeLimit(){
         return cacheTimeLimit;
     }
 
     /**
-     Sets the CACHE time limit to the given value. If the elapsed time since this resource's last use is higher than this
-     value and the resource's data store policy is STORAGE, the resource's data may be removed from ACTIVE or even from
-     CACHE.
+     Sets the cache time limit to the given value. If the elapsed time since this resource's last use is higher than this
+     value and the resource's data store policy is storage, the resource's data may be removed from active or even from
+     cache state.
 
-     @param cacheTimeLimit CACHE time limit (in milliseconds)
+     @param cacheTimeLimit cache time limit (in milliseconds)
 
      @throws IllegalArgumentException CACHE time limit have to be higher than ACTIVE time limit
      */

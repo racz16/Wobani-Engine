@@ -9,7 +9,7 @@ import wobani.toolbox.annotation.*;
 
 import java.lang.Math;
 
-import static wobani.resource.opengl.OpenGlHelper.*;
+import static wobani.resource.ExceptionHelper.*;
 
 /**
  Basic data and methods for implementing a texture.
@@ -216,19 +216,25 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
 
      @param samples number of samples in a single pixel
 
-     @throws IllegalArgumentException if samples are lower than 1 or higher than the maximum sample count, or if samples
-     are higher than 1 but this texture isn't multisampled
-     @see OpenGlConstants#MAX_SAMPLES
+     @throws IllegalArgumentException if samples are higher than 1 but this texture isn't multisampled
+     @see #getMaxSampleCount()
      @see #isMultisampled()
      */
     private void setSamples(int samples){
-        if(samples < 1 || samples > OpenGlConstants.MAX_SAMPLES){
-            throw new IllegalArgumentException("Samples are lower than 1 or higher than the maximum sample count");
-        }
+        exceptionIfNotInsideClosedInterval(1, getMaxSampleCount(), samples);
         if(samples > 1 && !isMultisampled()){
             throw new IllegalArgumentException("Samples are higher than 1 but this texture isn't multisampled");
         }
         this.sampleCount = samples;
+    }
+
+    /**
+     Returns the maximum number of samples.
+
+     @return the maximum number of samples
+     */
+    public static int getMaxSampleCount(){
+        return OpenGlConstants.MAX_SAMPLES;
     }
 
     //
@@ -260,7 +266,7 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
 
      @throws IllegalArgumentException if you try to use mipmaps with multisampling
      */
-    private void setMipmapCount(boolean mipmaps){
+    protected void setMipmapCount(boolean mipmaps){
         if(isMultisampled() && mipmaps){
             throw new IllegalArgumentException("You try to use mipmaps with multisampling");
         }
@@ -301,8 +307,7 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
 
      @param level anisotropic filter's level
 
-     @throws IllegalArgumentException if anisotropic filter is not enabled in your GPU or if the parameter is lower than
-     1
+     @throws IllegalArgumentException if anisotropic filter is not enabled in your GPU
      @see #isAnisotropicFilterEnabled()
      */
     public void setAnisotropicLevel(int level){
@@ -310,11 +315,18 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
         if(!isAnisotropicFilterEnabled()){
             throw new IllegalStateException("Anisotropic filter is not enabled in your GPU");
         }
-        if(level < 1){
-            throw new IllegalArgumentException("Anisotropic filter's level is lower than 1");
-        }
-        anisotropicLevel = Math.min(level, OpenGlConstants.ANISOTROPIC_FILTER_MAX_LEVEL);
+        exceptionIfNotInsideClosedInterval(1, getMaxAnisotropicLevel(), level);
+        anisotropicLevel = level;
         GL45.glTextureParameterf(getId(), EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropicLevel);
+    }
+
+    /**
+     Returns the maximum anisotropic level.
+
+     @return the maximum anisotropic level
+     */
+    public static int getMaxAnisotropicLevel(){
+        return (int) OpenGlConstants.ANISOTROPIC_FILTER_MAX_LEVEL;
     }
 
     //
@@ -455,9 +467,7 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
     public void setBorderColor(@NotNull Vector4f borderColor){
         exceptionIfNotAvailable(this);
         exceptionIfNull(borderColor);
-        if(!Utility.isHdrColor(new Vector3f(borderColor.x, borderColor.y, borderColor.z))){
-            throw new IllegalArgumentException("Border color is not a color");
-        }
+        exceptionIfNotLdrColor(borderColor);
         this.borderColor.set(borderColor);
         GL45.glTextureParameterfv(getId(), GL11.GL_TEXTURE_BORDER_COLOR, new float[]{borderColor.x, borderColor.y, borderColor.z, borderColor.w});
     }
@@ -507,15 +517,21 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
 
      @param size texture's width and height
 
-     @throws IllegalArgumentException if texture size is negative or higher than the maximum size
-     @see OpenGlConstants#MAX_TEXTURE_SIZE
+     @see #getMaxSize()
      */
     protected void setSize(@NotNull Vector2i size){
         exceptionIfNull(size);
-        if(size.x <= 0 || size.y <= 0 || size.x > OpenGlConstants.MAX_TEXTURE_SIZE || size.y > OpenGlConstants.MAX_TEXTURE_SIZE){
-            throw new IllegalArgumentException("Texture size is negative or higher than the maximum size");
-        }
+        exceptionIfNotInsideClosedInterval(1, getMaxSize(), size);
         this.size.set(size);
+    }
+
+    /**
+     Returns the max texture size.
+
+     @return the max texture size
+     */
+    public static int getMaxSize(){
+        return OpenGlConstants.MAX_TEXTURE_SIZE;
     }
 
     @Override
@@ -526,10 +542,7 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
     @Override
     public void bindToTextureUnit(int textureUnit){
         exceptionIfNotAvailable(this);
-        if(textureUnit < 0 || textureUnit > 31){
-            //FIXME: OpenGlConstraintException
-            throw new IllegalArgumentException("Texture unit is outside the (0;31) interval");
-        }
+        exceptionIfNotInsideClosedInterval(0, 31, textureUnit);
         GL45.glBindTextureUnit(textureUnit, getId());
     }
 

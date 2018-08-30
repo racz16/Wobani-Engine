@@ -114,7 +114,7 @@ public class Example1{
         paths.add(new File("res/textures/ely_hills/hills_dn.tga"));
         paths.add(new File("res/textures/ely_hills/hills_bk.tga"));
         paths.add(new File("res/textures/ely_hills/hills_ft.tga"));
-        skybox = new StaticCubeMapTexture(paths, true);
+        skybox = StaticCubeMapTexture.loadTexture(paths, true, false);
         StaticEnvironmentProbe skyboxProbe = new StaticEnvironmentProbe(skybox);
         Parameter<EnvironmentProbe> sky = new Parameter<>(skyboxProbe);
         Scene.getParameters().set(Scene.MAIN_SKYBOX, sky);
@@ -287,7 +287,7 @@ public class Example1{
     private static void createBox(){
         GameObject box = new GameObject();
         MeshComponent mc = new MeshComponent(StaticMesh.loadModel(new File("res/models/box.obj")).get(0));
-        StaticTexture2D tex = StaticTexture2D.loadTexture(new File("res/textures/diffuse1.png"), true);
+        StaticTexture2D tex = StaticTexture2D.loadTexture(new File("res/textures/diffuse1.png"), true, true);
         mc.getMaterial().setSlot(Material.DIFFUSE, new MaterialSlot(tex));
         //mc.getMaterial().setSlot(Material.NORMAL, new MaterialSlot(StaticTexture2D.loadTexture(new File("res/textures/normal6.png"), false)));
         //mc.getMaterial().getParameters().set(MaterialSlot.USE_POM, new Parameter<>(1f));

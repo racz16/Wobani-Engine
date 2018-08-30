@@ -4,6 +4,8 @@ import org.lwjgl.opengl.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
+import static wobani.resource.ExceptionHelper.*;
+
 /**
  Object oriented wrapper above the vertex attrib relativeOffset.
  */
@@ -188,13 +190,10 @@ public class VertexAttribPointer{
 
      @param index index, must be lower than the maximum vertex attribs
 
-     @throws IllegalArgumentException if index is not lower than the maximum vertex attribs
      @see OpenGlConstants#MAX_VERTEX_ATTRIBS
      */
     private void setIndex(int index){
-        if(index < 0 || index >= OpenGlConstants.MAX_VERTEX_ATTRIBS){
-            throw new IllegalArgumentException("Index is not lower than the maximum vertex attribs");
-        }
+        exceptionIfNotInsideLeftClosedRightOpenInterval(0, OpenGlConstants.MAX_VERTEX_ATTRIBS, index);
         this.index = index;
     }
 
@@ -211,13 +210,9 @@ public class VertexAttribPointer{
      Sets the size to the given value.
 
      @param size size, must be in the (1;4) interval
-
-     @throws IllegalArgumentException if size isn't in the (1;4) interval
      */
     private void setSize(int size){
-        if(size < 1 || size > 4){
-            throw new IllegalArgumentException("Size isn't in the (1;4) interval");
-        }
+        exceptionIfNotInsideClosedInterval(1, 4, size);
         this.size = size;
     }
 
@@ -235,13 +230,9 @@ public class VertexAttribPointer{
      Sets the type to the given value.
 
      @param type type
-
-     @throws NullPointerException if the parameter is null
      */
     private void setType(@NotNull VertexAttribPointerType type){
-        if(type == null){
-            throw new NullPointerException();
-        }
+        exceptionIfNull(type);
         this.type = type;
     }
 
@@ -276,13 +267,9 @@ public class VertexAttribPointer{
      Sets offset to the given value.
 
      @param offset offset, can't be negative
-
-     @throws IllegalArgumentException if offset is negative
      */
     private void setOffset(int offset){
-        if(offset < 0){
-            throw new IllegalArgumentException("Offset is negative");
-        }
+        exceptionIfLower(0, offset);
         this.offset = offset;
     }
 
@@ -299,13 +286,9 @@ public class VertexAttribPointer{
      Sets relative offset to the given value.
 
      @param relativeOffset relative offset, can't be negative
-
-     @throws IllegalArgumentException if relative offset is negative
      */
     private void setRelativeOffset(int relativeOffset){
-        if(relativeOffset < 0){
-            throw new IllegalArgumentException("Relative offset is negative");
-        }
+        exceptionIfLower(0, relativeOffset);
         this.relativeOffset = relativeOffset;
     }
 

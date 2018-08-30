@@ -258,7 +258,10 @@ vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVec
         if(tex.a == 0){
             discard;
         }
-        diffuse = tex.rgb;
+        if(!gamma){
+            diffuse = pow(diffuse, vec3(1.0f/2.2f));
+        }else
+            diffuse = tex.rgb;
     }else{
         if(gamma){
             diffuse = pow(material.diffuseColor, vec3(2.2f));
@@ -272,6 +275,7 @@ vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVec
         vec3 reflectionVector = reflect(-viewDirection, normalVector);
         if(material.isThereParallaxCorrection){
             reflectionVector = parallaxCorrectReflectionVector(reflectionVector);
+            //1/2.2 if no gamma correction
         }
         reflectionColor = texture(material.reflection, reflectionVector).rgb;
     }
@@ -279,6 +283,7 @@ vec3 getDiffuseColor(vec2 textureCoordinates, vec3 viewDirection, vec3 normalVec
     if(material.isThereRefractionMap){
         vec3 refractionVector = refract(-viewDirection, normalVector, material.refractionIndex);
         refractionColor = texture(material.refraction, refractionVector).rgb;
+        //1/2.2 if no gamma correction
     }
     vec3 intensity = getIntensity(textureCoordinates);
     return diffuse * intensity.r + reflectionColor * intensity.g + refractionColor * intensity.b;

@@ -9,12 +9,17 @@ import wobani.toolbox.annotation.*;
 
 import java.nio.*;
 
-import static wobani.resource.opengl.OpenGlHelper.*;
+import static wobani.resource.ExceptionHelper.*;
 
 /**
  Abstract class for the cube map textures.
  */
 public abstract class CubeMapTexture extends TextureBase{
+
+    /**
+     Number of sides in a cube map texture.
+     */
+    public static int SIDE_COUNT = 6;
 
     /**
      One side of a cube map texture.
@@ -250,7 +255,7 @@ public abstract class CubeMapTexture extends TextureBase{
 
     @Override
     public int getActiveDataSize(){
-        return super.getActiveDataSize() * CubeMapSide.values().length;
+        return super.getActiveDataSize() * SIDE_COUNT;
     }
 
     @Override
