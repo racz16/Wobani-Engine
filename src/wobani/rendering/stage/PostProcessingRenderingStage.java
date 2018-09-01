@@ -2,7 +2,7 @@ package wobani.rendering.stage;
 
 import wobani.rendering.*;
 import wobani.rendering.postprocessing.*;
-import wobani.resource.opengl.buffer.*;
+import wobani.resource.opengl.fbo.*;
 import wobani.resource.opengl.texture.*;
 import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
@@ -45,14 +45,14 @@ public class PostProcessingRenderingStage{
             }
             postProcessingFbo = new Fbo(RenderingPipeline.getRenderingSize(), false, 1, true);
             postProcessingFbo.bind();
-            postProcessingFbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
-            postProcessingFbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 1);
+            postProcessingFbo.addAttachment(Fbo.FboAttachmentSlotWrong.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
+            postProcessingFbo.addAttachment(Fbo.FboAttachmentSlotWrong.COLOR, Fbo.FboAttachmentType.TEXTURE, 1);
             DynamicTexture2D texture = (DynamicTexture2D) postProcessingFbo
-                    .getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 0);
+                    .getTextureAttachment(Fbo.FboAttachmentSlotWrong.COLOR, 0);
             texture.setFilter(Texture.TextureFilter.BILINEAR);
             //texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
             //texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
-            texture = (DynamicTexture2D) postProcessingFbo.getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 1);
+            texture = (DynamicTexture2D) postProcessingFbo.getTextureAttachment(Fbo.FboAttachmentSlotWrong.COLOR, 1);
             texture.setFilter(Texture.TextureFilter.BILINEAR);
             //texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
             //texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
@@ -81,7 +81,7 @@ public class PostProcessingRenderingStage{
         draw = notDraw;
         notDraw = temp;
         RenderingPipeline.getParameters().set(RenderingPipeline.WORK, new Parameter<>(postProcessingFbo
-                .getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, notDraw)));
+                .getTextureAttachment(Fbo.FboAttachmentSlotWrong.COLOR, notDraw)));
     }
 
     public boolean addRendererToTheEnd(@NotNull PostProcessingRenderer renderer){
@@ -153,7 +153,7 @@ public class PostProcessingRenderingStage{
     public void render(){
         renderStage();
         RenderingPipeline.getParameters().set(RenderingPipeline.WORK, new Parameter<>(postProcessingFbo
-                .getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, notDraw)));
+                .getTextureAttachment(Fbo.FboAttachmentSlotWrong.COLOR, notDraw)));
     }
 
     /**
@@ -161,9 +161,9 @@ public class PostProcessingRenderingStage{
      */
     public void beforeRender(Fbo geometryFbo){
         refresh();
-        geometryFbo.resolveFbo(postProcessingFbo, Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 0, 0);
+        geometryFbo.resolveFbo(postProcessingFbo, Fbo.FboAttachmentSlotWrong.COLOR, Fbo.FboAttachmentType.TEXTURE, 0, 0);
         RenderingPipeline.getParameters().set(RenderingPipeline.WORK, new Parameter<>(postProcessingFbo
-                .getTextureAttachment(Fbo.FboAttachmentSlot.COLOR, 0)));
+                .getTextureAttachment(Fbo.FboAttachmentSlotWrong.COLOR, 0)));
         notDraw = 0;
         draw = 1;
         bindFbo();

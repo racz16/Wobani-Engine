@@ -3,7 +3,7 @@ package wobani.resource.environmentprobe;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.core.*;
-import wobani.resource.opengl.buffer.*;
+import wobani.resource.opengl.fbo.*;
 import wobani.resource.opengl.texture.*;
 import wobani.resource.opengl.texture.cubemaptexture.*;
 import wobani.toolbox.*;
@@ -81,8 +81,8 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe{
     private void createFbo(){
         fbo = new Fbo(new Vector2i(resolution), false, 1, false);
         fbo.bind();
-        //                fbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
-        fbo.addAttachment(Fbo.FboAttachmentSlot.DEPTH, Fbo.FboAttachmentType.RBO, 0);
+        //                fbo.addAttachment(Fbo.FboAttachmentSlotWrong.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
+        fbo.addAttachment(Fbo.FboAttachmentSlotWrong.DEPTH, Fbo.FboAttachmentType.RBO, 0);
         GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X, cubeMap
                 .getId(), 0);
         GL11.glDrawBuffer(GL30.GL_COLOR_ATTACHMENT0);

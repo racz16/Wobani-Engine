@@ -7,7 +7,7 @@ import wobani.rendering.*;
 import wobani.rendering.geometry.*;
 import wobani.rendering.stage.*;
 import wobani.resource.*;
-import wobani.resource.opengl.buffer.*;
+import wobani.resource.opengl.fbo.*;
 import wobani.resource.opengl.shader.*;
 import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
@@ -304,7 +304,7 @@ public class ShadowRenderer extends PrepareRenderer{
         shader.stop();
         afterShader();
         RenderingPipeline.getParameters().set(RenderingPipeline.SHADOWMAP, new Parameter<>(fbo
-                .getTextureAttachment(Fbo.FboAttachmentSlot.DEPTH, 0)));
+                .getTextureAttachment(Fbo.FboAttachmentSlotWrong.DEPTH, 0)));
     }
 
     /**
@@ -371,7 +371,7 @@ public class ShadowRenderer extends PrepareRenderer{
         if(fbo == null || !fbo.isUsable()){
             fbo = new Fbo(new Vector2i(getResolution()), false, 1, false);
             fbo.bind();
-            fbo.addAttachment(Fbo.FboAttachmentSlot.DEPTH, Fbo.FboAttachmentType.TEXTURE, 0);
+            fbo.addAttachment(Fbo.FboAttachmentSlotWrong.DEPTH, Fbo.FboAttachmentType.TEXTURE, 0);
             fbo.setActiveDraw(false, 0);
             fbo.setActiveRead(false, 0);
             if(!fbo.isComplete()){

@@ -3,6 +3,7 @@ package wobani.resource;
 import org.joml.*;
 import wobani.resource.opengl.*;
 import wobani.resource.opengl.buffer.*;
+import wobani.resource.opengl.fbo.*;
 import wobani.resource.opengl.texture.*;
 
 public class ExceptionHelper{
@@ -34,6 +35,12 @@ public class ExceptionHelper{
 
     public static void exceptionIfAllocated(TextureBase texture){
         if(texture.isAllocated()){
+            throw new RuntimeException();
+        }
+    }
+
+    public static void exceptionIfAllocated(Rbo rbo){
+        if(rbo.isAllocated()){
             throw new RuntimeException();
         }
     }

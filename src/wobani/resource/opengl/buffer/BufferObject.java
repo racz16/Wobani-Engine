@@ -488,6 +488,7 @@ public abstract class BufferObject extends OpenGlObject{
         GL15.glDeleteBuffers(getId());
         setIdToInvalid();
         setActiveDataSize(0);
+        allocated = false;
     }
 
     @Override

@@ -8,7 +8,7 @@ import wobani.rendering.geometry.*;
 import wobani.rendering.postprocessing.*;
 import wobani.rendering.prepare.*;
 import wobani.rendering.stage.*;
-import wobani.resource.opengl.buffer.*;
+import wobani.resource.opengl.fbo.*;
 import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
@@ -141,8 +141,8 @@ public class RenderingPipeline{
             }
             fbo = new Fbo(getRenderingSize(), msaaLevel != 1, msaaLevel, true);
             fbo.bind();
-            fbo.addAttachment(Fbo.FboAttachmentSlot.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
-            fbo.addAttachment(Fbo.FboAttachmentSlot.DEPTH, Fbo.FboAttachmentType.RBO, 0);
+            fbo.addAttachment(Fbo.FboAttachmentSlotWrong.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
+            fbo.addAttachment(Fbo.FboAttachmentSlotWrong.DEPTH, Fbo.FboAttachmentType.RBO, 0);
             if(!fbo.isComplete()){
                 Utility.logError(fbo.getStatus().name());
                 throw new NativeException(OPENGL, "Incomplete FBO");

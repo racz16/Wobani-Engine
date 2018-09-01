@@ -18,7 +18,7 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
     /**
      Texture's width and height.
      */
-    private final Vector2i size = new Vector2i(0);
+    private final Vector2i size = new Vector2i();
     /**
      Determines whether the texture's data is allocated.
      */

@@ -3,10 +3,10 @@ package wobani.resource.opengl.texture;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.resource.*;
-import wobani.resource.opengl.buffer.*;
+import wobani.resource.opengl.fbo.*;
 import wobani.toolbox.annotation.*;
 
-import static wobani.resource.opengl.buffer.Fbo.FboAttachment.*;
+import static wobani.resource.opengl.fbo.Fbo.FboAttachmentSlot.*;
 
 /**
  Base interface for all types of textures.
@@ -400,7 +400,7 @@ public interface Texture extends Resource{
         /**
          The internal format's FBO attachment.
          */
-        private final Fbo.FboAttachment attachmentSlot;
+        private final Fbo.FboAttachmentSlot attachmentSlot;
 
         /**
          Initializes a new TextureInternalFormat to the given values.
@@ -410,7 +410,7 @@ public interface Texture extends Resource{
          @param bitDepth          internal format's bit depth
          @param attachmentSlot    the internal format's FBO attachment
          */
-        TextureInternalFormat(int code, int colorChannelCount, int bitDepth, Fbo.FboAttachment attachmentSlot){
+        TextureInternalFormat(int code, int colorChannelCount, int bitDepth, Fbo.FboAttachmentSlot attachmentSlot){
             this.code = code;
             this.colorChannelCount = colorChannelCount;
             this.bitDepth = bitDepth;
@@ -469,7 +469,7 @@ public interface Texture extends Resource{
          @return the internal format's FBO attachment
          */
         @NotNull
-        public Fbo.FboAttachment getAttachmentSlot(){
+        public Fbo.FboAttachmentSlot getAttachmentSlot(){
             return attachmentSlot;
         }
     }
@@ -505,15 +505,15 @@ public interface Texture extends Resource{
         /**
          Depth.
          */
-        DEPTH(GL11.GL_DEPTH_COMPONENT, 1, Fbo.FboAttachment.DEPTH),
+        DEPTH(GL11.GL_DEPTH_COMPONENT, 1, Fbo.FboAttachmentSlot.DEPTH),
         /**
          Stencil.
          */
-        STENCIL(GL11.GL_STENCIL_INDEX, 1, Fbo.FboAttachment.STENCIL),
+        STENCIL(GL11.GL_STENCIL_INDEX, 1, Fbo.FboAttachmentSlot.STENCIL),
         /**
          Depth-stencil.
          */
-        DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL, 2, Fbo.FboAttachment.DEPTH_STENCIL);
+        DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL, 2, Fbo.FboAttachmentSlot.DEPTH_STENCIL);
 
         /**
          Texture format's OpenGL code.
@@ -526,7 +526,7 @@ public interface Texture extends Resource{
         /**
          The texture format's FBO attachment.
          */
-        private final Fbo.FboAttachment attachmentSlot;
+        private final Fbo.FboAttachmentSlot attachmentSlot;
 
         /**
          Initializes a new TextureFormat to the given values.
@@ -535,7 +535,7 @@ public interface Texture extends Resource{
          @param colorChannelCount number of used color channels
          @param attachmentSlot    the texture format's FBO attachment
          */
-        TextureFormat(int code, int colorChannelCount, Fbo.FboAttachment attachmentSlot){
+        TextureFormat(int code, int colorChannelCount, Fbo.FboAttachmentSlot attachmentSlot){
             this.code = code;
             this.colorChannelCount = colorChannelCount;
             this.attachmentSlot = attachmentSlot;
@@ -584,7 +584,7 @@ public interface Texture extends Resource{
          @return the texture format's FBO attachment
          */
         @NotNull
-        public Fbo.FboAttachment getAttachmentSlot(){
+        public Fbo.FboAttachmentSlot getAttachmentSlot(){
             return attachmentSlot;
         }
     }
