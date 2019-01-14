@@ -97,6 +97,10 @@ public class Input{
         addJoystickCallbacks();
     }
 
+    //
+    //mouse---------------------------------------------------------------------
+    //
+
     /**
      Adds the given mouse event handler to the list of mouse event handlers.
 
@@ -141,10 +145,6 @@ public class Input{
             removeMouseCallbacks();
         }
     }
-
-    //
-    //mouse---------------------------------------------------------------------
-    //
 
     /**
      Removes the specified mouse event handler from the list of mouse event handlers.
@@ -365,6 +365,10 @@ public class Input{
         return glfwGetMouseButton(Window.getId(), button) == KeyStatus.PRESS.getCode();
     }
 
+    //
+    //keyboard------------------------------------------------------------------
+    //
+
     /**
      Adds the given keyboard event handler to the list of keyboard event handlers.
 
@@ -409,10 +413,6 @@ public class Input{
             removeKeyboardCallbacks();
         }
     }
-
-    //
-    //keyboard------------------------------------------------------------------
-    //
 
     /**
      Removes the specified keyboard event handler from the list of keyboard event handlers.
@@ -616,6 +616,10 @@ public class Input{
         return (mods & 8) == 8;
     }
 
+    //
+    //joystick------------------------------------------------------------------
+    //
+
     /**
      Adds the given joystick event handler to the list of joystick event handlers.
 
@@ -654,10 +658,6 @@ public class Input{
     public static void removeJoystickEventHandler(int index){
         joystickEventHandlers.remove(index);
     }
-
-    //
-    //joystick------------------------------------------------------------------
-    //
 
     /**
      Removes all the joystick event handlers.

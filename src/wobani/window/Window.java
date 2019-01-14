@@ -23,65 +23,14 @@ import static org.lwjgl.system.MemoryUtil.*;
  @see GLFW */
 public class Window{
 
-    //
-    //callbacks-----------------------------------------------------------------
-    //
-    /**
-     Temporary variable.
-     */
-    private static final int[] temp1 = new int[1];
-    /**
-     Temporary variable.
-     */
-    private static final int[] temp2 = new int[1];
-    /**
-     Temporary variable.
-     */
-    private static final int[] temp3 = new int[1];
-    /**
-     Temporary variable.
-     */
-    private static final int[] temp4 = new int[1];
-    /**
-     List of the registered window event handlers.
-     */
-    private final static List<WindowEventHandler> eventHandlers = new ArrayList<>();
     /**
      The class's logger.
      */
     private static final Logger LOG = Logger.getLogger(Window.class.getName());
     /**
-     Error callback.
+     List of the registered window event handlers.
      */
-    private static GLFWErrorCallback errorCallback;
-    //
-    //temp variables------------------------------------------------------------
-    //
-    /**
-     Window close callback.
-     */
-    private static GLFWWindowCloseCallback windowCloseCallback;
-    /**
-     Window size callback.
-     */
-    private static GLFWWindowSizeCallback windowSizeCallback;
-    /**
-     Framebuffer size callback.
-     */
-    private static GLFWFramebufferSizeCallback frameBufferSizeCallback;
-    /**
-     Window position callback.
-     */
-    private static GLFWWindowPosCallback windowPosCallback;
-    //misc----------------------------------------------------------------------
-    /**
-     Window minimization callback.
-     */
-    private static GLFWWindowIconifyCallback windowIconifyCallback;
-    /**
-     Window focus callback.
-     */
-    private static GLFWWindowFocusCallback windowFocusCallback;
+    private final static List<WindowEventHandler> eventHandlers = new ArrayList<>();
     /**
      The id of the window.
      */
@@ -102,6 +51,56 @@ public class Window{
      The vSync level.
      */
     private static int vSync;
+    //
+    //callbacks-----------------------------------------------------------------
+    //
+    /**
+     Error callback.
+     */
+    private static GLFWErrorCallback errorCallback;
+    /**
+     Window close callback.
+     */
+    private static GLFWWindowCloseCallback windowCloseCallback;
+    /**
+     Window size callback.
+     */
+    private static GLFWWindowSizeCallback windowSizeCallback;
+    /**
+     Framebuffer size callback.
+     */
+    private static GLFWFramebufferSizeCallback frameBufferSizeCallback;
+    /**
+     Window position callback.
+     */
+    private static GLFWWindowPosCallback windowPosCallback;
+    /**
+     Window minimization callback.
+     */
+    private static GLFWWindowIconifyCallback windowIconifyCallback;
+    /**
+     Window focus callback.
+     */
+    private static GLFWWindowFocusCallback windowFocusCallback;
+    //
+    //temp variables------------------------------------------------------------
+    //
+    /**
+     Temporary variable.
+     */
+    private static final int[] temp1 = new int[1];
+    /**
+     Temporary variable.
+     */
+    private static final int[] temp2 = new int[1];
+    /**
+     Temporary variable.
+     */
+    private static final int[] temp3 = new int[1];
+    /**
+     Temporary variable.
+     */
+    private static final int[] temp4 = new int[1];
 
     /**
      To can't create Window instance.

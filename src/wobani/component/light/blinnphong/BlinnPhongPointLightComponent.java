@@ -32,7 +32,7 @@ public class BlinnPhongPointLightComponent extends BlinnPhongPositionalLightComp
 
     @Override
     protected int getLightShaderType(){
-        return 1;
+        return BlinnPhongShaderHelper.LIGHT_TYPE_POINT;
     }
 
     @Override

@@ -15,10 +15,6 @@ import java.util.logging.*;
 public class RenderableBoundingShape implements Invalidatable{
 
     /**
-     The class's logger.
-     */
-    private static final Logger LOG = Logger.getLogger(RenderableBoundingShape.class.getName());
-    /**
      The Renderable's calculated axis aligned bounding box's minimum values.
      */
     private final Vector3f aabbMin = new Vector3f();
@@ -38,6 +34,10 @@ public class RenderableBoundingShape implements Invalidatable{
      RenderableComponent.
      */
     private RenderableComponent<? extends Renderable> renderableComponent;
+    /**
+     The class's logger.
+     */
+    private static final Logger LOG = Logger.getLogger(RenderableBoundingShape.class.getName());
 
     /**
      Initializes a new RenderableBoundingSphere to the given values.

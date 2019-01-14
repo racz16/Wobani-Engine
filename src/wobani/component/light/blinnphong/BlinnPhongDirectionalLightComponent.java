@@ -52,7 +52,7 @@ public class BlinnPhongDirectionalLightComponent extends BlinnPhongLightComponen
 
     @Override
     protected int getLightShaderType(){
-        return 0;
+        return BlinnPhongShaderHelper.LIGHT_TYPE_DIRECTIONAL;
     }
 
     /**

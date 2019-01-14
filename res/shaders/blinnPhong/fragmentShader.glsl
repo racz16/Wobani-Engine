@@ -62,24 +62,24 @@ layout(std140, binding = 2) uniform DirectionalLight{
 };
 
 layout(std140, binding = 3) buffer PositionalLights1 {
-    int count1;
-    Light lights1[];
-};
+    int count;
+    Light lights[];
+}pl1;
 
 layout(std140, binding = 4) buffer PositionalLights2 {
-    int count2;
-    Light lights2[];
-};
+    int count;
+    Light lights[];
+}pl2;
 
 layout(std140, binding = 5) buffer PositionalLights3 {
-    int count3;
-    Light lights3[];
-};
+    int count;
+    Light lights[];
+}pl3;
 
 layout(std140, binding = 6) buffer PositionalLights4 {
-    int count4;
-    Light lights4[];
-};
+    int count;
+    Light lights[];
+}pl4;
 
 in vec3 fragmentPositionF;
 in vec3 normalF;
@@ -133,24 +133,24 @@ void main(){
     //shadows
     result *= calculateShadow(receiveShadow, fragmentPositionLightSpace, normalVector);
     //point and spotlights
-    for(int i=0; i<count1; i++){
-        if(lights1[i].lightActive){
-            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights1[i]);
+    for(int i=0; i<pl1.count; i++){
+        if(pl1.lights[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, pl1.lights[i]);
         }
     }
-    for(int i=0; i<count2; i++){
-        if(lights2[i].lightActive){
-            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights2[i]);
+    for(int i=0; i<pl2.count; i++){
+        if(pl2.lights[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, pl2.lights[i]);
         }
     }
-    for(int i=0; i<count3; i++){
-        if(lights3[i].lightActive){
-            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights3[i]);
+    for(int i=0; i<pl3.count; i++){
+        if(pl3.lights[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, pl3.lights[i]);
         }
     }
-    for(int i=0; i<count4; i++){
-        if(lights4[i].lightActive){
-            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, lights4[i]);
+    for(int i=0; i<pl4.count; i++){
+        if(pl4.lights[i].lightActive){
+            result += calculateLight(diffuseColor, specularColor, viewDirection, normalVector, fragmentPosition, pl4.lights[i]);
         }
     }
 

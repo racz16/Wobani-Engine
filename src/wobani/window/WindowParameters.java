@@ -1,5 +1,6 @@
 package wobani.window;
 
+import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
 import java.util.*;
@@ -36,7 +37,7 @@ public class WindowParameters{
     /**
      The window's title at start.
      */
-    private String titleAtStart = "Wobani Engine";
+    private String titleAtStart = EngineInfo.getName();
 
     /**
      Determines whether the window is resizable.

@@ -7,6 +7,8 @@ import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
+import static wobani.resource.ExceptionHelper.*;
+
 public class FboAttachment{
 
     /**
@@ -42,9 +44,7 @@ public class FboAttachment{
      @throws IllegalArgumentException if the slot is color attachment, index have to be in the (0;7) interval
      */
     public FboAttachment(@NotNull Fbo fbo, @NotNull Fbo.FboAttachmentSlot slot, int index){
-        if(slot == null){
-            throw new NullPointerException();
-        }
+        exceptionIfNull(fbo, slot);
         this.fbo = fbo;
         if(slot == Fbo.FboAttachmentSlot.COLOR){
             if(index < 0 || index > 7){
@@ -53,11 +53,11 @@ public class FboAttachment{
             if(index == 0){
                 draw = true;
             }
+            this.index = index;
         }else{
-            index = 0;
+            this.index = 0;
         }
         this.slot = slot;
-        this.index = index;
     }
 
     /**
@@ -132,7 +132,7 @@ public class FboAttachment{
      */
     public boolean isThereAttachment(@NotNull Fbo.FboAttachmentType type){
         if(type == Fbo.FboAttachmentType.TEXTURE){
-            return texture != null && texture.isUsable();
+            return Utility.isUsable(texture);
         }else{
             return Utility.isUsable(rbo);
         }

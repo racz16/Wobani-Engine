@@ -17,6 +17,10 @@ import static wobani.component.light.blinnphong.BlinnPhongShaderHelper.*;
 public class BlinnPhongLightSources{
 
     /**
+     The class's logger.
+     */
+    private static final Logger LOG = Logger.getLogger(BlinnPhongLightSources.class.getName());
+    /**
      List of all Blinn-Phong directional light sources.
      */
     private static final List<BlinnPhongDirectionalLightComponent> DIRECTIONAL = new ArrayList<>();
@@ -32,10 +36,6 @@ public class BlinnPhongLightSources{
      List of all Blinn-Phong light sources need to update in the current frame.
      */
     private static final List<BlinnPhongLightComponent> DIRTY = new ArrayList<>();
-    /**
-     The class's logger.
-     */
-    private static final Logger LOG = Logger.getLogger(BlinnPhongLightSources.class.getName());
     /**
      The main directional light source.
      */

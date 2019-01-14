@@ -30,6 +30,18 @@ public class BlinnPhongShaderHelper{
      */
     public static final int LIGHT_SOURCES_OFFSET = 16;
     /**
+     The Blinn-Phong directional light's type.
+     */
+    public static final int LIGHT_TYPE_DIRECTIONAL = 0;
+    /**
+     The Blinn-Phong point light's type.
+     */
+    public static final int LIGHT_TYPE_POINT = 1;
+    /**
+     The Blinn-Phong spot light's type.
+     */
+    public static final int LIGHT_TYPE_SPOT = 2;
+    /**
      FloatBuffer for frequent shader updates.
      */
     private final FloatBuffer FLOAT_BUFFER;

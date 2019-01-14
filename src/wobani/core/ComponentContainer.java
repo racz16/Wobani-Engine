@@ -79,6 +79,17 @@ public class ComponentContainer{
     }
 
     /**
+     Return true if the GameObject contains the given Component, false otherwise.
+
+     @param component component
+
+     @return true if the GameObject contains the given Component, false otherwise
+     */
+    public boolean contains(@Nullable Component component){
+        return component != null && component.getGameObject() == gameObject;
+    }
+
+    /**
      Removes the given Component from the GameObject's Components.
 
      @param component Component you want to remove

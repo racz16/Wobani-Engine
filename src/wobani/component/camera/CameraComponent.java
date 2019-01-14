@@ -20,6 +20,10 @@ import java.util.logging.*;
  @see GameObject */
 public class CameraComponent extends Component implements Camera{
     /**
+     The class's logger.
+     */
+    private static final Logger LOG = Logger.getLogger(CameraComponent.class.getName());
+    /**
      The Matrices UBO.
      */
     private static Ubo ubo;
@@ -79,10 +83,6 @@ public class CameraComponent extends Component implements Camera{
      Determines whether the frustum culling is enabled.
      */
     private boolean frustumCulling = true;
-    /**
-     The class's logger.
-     */
-    private static final Logger LOG = Logger.getLogger(CameraComponent.class.getName());
 
     static{
         createUbo();
@@ -131,7 +131,8 @@ public class CameraComponent extends Component implements Camera{
      */
     private static void refreshUboUnsafe(){
         setMatricesBuffer();
-        refreshUbo();
+        ubo.store(temp, 0);
+        LOG.fine("Matrices UBO refreshed");
         camera = null;
     }
 
@@ -142,14 +143,6 @@ public class CameraComponent extends Component implements Camera{
         temp.position(0);
         camera.getViewMatrix().get(temp);
         camera.getProjectionMatrix().get(16, temp);
-    }
-
-    /**
-     Refreshes the Matrices UBO with the temporary FloatBuffer.
-     */
-    private static void refreshUbo(){
-        ubo.store(temp, 0);
-        LOG.fine("Matrices UBO refreshed");
     }
 
     /**
@@ -186,7 +179,7 @@ public class CameraComponent extends Component implements Camera{
     private static void createUboUnsafe(){
         ubo = new Ubo("Matrices");
         ubo.allocateImmutable(128);
-        ubo.bindToBindingPoint(1);
+        ubo.bindToBindingPoint(Constants.BP_MATRICES);
     }
 
     /**
