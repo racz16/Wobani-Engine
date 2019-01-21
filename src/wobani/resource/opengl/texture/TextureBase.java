@@ -326,7 +326,11 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      @return the maximum anisotropic level
      */
     public static int getMaxAnisotropicLevel(){
-        return (int) OpenGlConstants.ANISOTROPIC_FILTER_MAX_LEVEL;
+        return (int) OpenGlConstants.MAX_ANISOTROPIC_FILTER_LEVEL;
+    }
+
+    public static int getMaxAnisotropicLevelSafe(){
+        return (int) OpenGlConstants.MAX_ANISOTROPIC_FILTER_LEVEL_SAFE;
     }
 
     //
@@ -532,6 +536,10 @@ public abstract class TextureBase extends OpenGlObject implements Texture{
      */
     public static int getMaxSize(){
         return OpenGlConstants.MAX_TEXTURE_SIZE;
+    }
+
+    public static int getMaxSizeSafe(){
+        return OpenGlConstants.MAX_TEXTURE_SIZE_SAFE;
     }
 
     @Override

@@ -431,6 +431,24 @@ public class Utility{
         return list;
     }
 
+    @NotNull
+    public static float[] wrapValueByArray(float value){
+        float[] result = {value};
+        return result;
+    }
+
+    @NotNull
+    public static int[] wrapValueByArray(int value){
+        int[] result = {value};
+        return result;
+    }
+
+    @NotNull
+    public static float[] convert(@NotNull Vector4f vector){
+        float[] result = {vector.x, vector.y, vector.z, vector.w};
+        return result;
+    }
+
     /**
      Creates an int buffer and stores the given data in it.
 

@@ -9,6 +9,8 @@ import wobani.rendering.postprocessing.*;
 import wobani.rendering.prepare.*;
 import wobani.rendering.stage.*;
 import wobani.resource.opengl.fbo.*;
+import wobani.resource.opengl.fbo.fboenum.*;
+import wobani.resource.opengl.texture.*;
 import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
@@ -133,18 +135,18 @@ public class RenderingPipeline{
      */
     private static void refresh(){
         int msaaLevel = getParameters().getValueOrDefault(MSAA_LEVEL, 2);
-        if(fbo == null || !fbo.isUsable() || msaaLevel != fbo.getNumberOfSamples() || !getRenderingSize()
-                .equals(fbo.getSize())){
+        if(fbo == null || !fbo.isUsable() || msaaLevel != fbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 0).getAttachment().getSampleCount() || !getRenderingSize()
+                .equals(fbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 0).getAttachment().getSize())){
             //geometry FBO
             if(fbo != null){
                 fbo.release();
             }
-            fbo = new Fbo(getRenderingSize(), msaaLevel != 1, msaaLevel, true);
+            fbo = new Fbo();
             fbo.bind();
-            fbo.addAttachment(Fbo.FboAttachmentSlotWrong.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
-            fbo.addAttachment(Fbo.FboAttachmentSlotWrong.DEPTH, Fbo.FboAttachmentType.RBO, 0);
-            if(!fbo.isComplete()){
-                Utility.logError(fbo.getStatus().name());
+            fbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 0).attach(new DynamicTexture2D(getRenderingSize(), Texture.TextureInternalFormat.RGBA16F, msaaLevel));
+            fbo.getAttachmentContainer(FboAttachmentSlot.DEPTH, -1).attach(new Rbo(getRenderingSize(), Texture.TextureInternalFormat.DEPTH32F, msaaLevel));
+            if(!fbo.isDrawComplete()){
+                Utility.logError(fbo.getDrawStatus().name());
                 throw new NativeException(OPENGL, "Incomplete FBO");
             }
             fbo.unbind();

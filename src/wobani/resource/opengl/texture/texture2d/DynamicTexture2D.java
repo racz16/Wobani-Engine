@@ -2,6 +2,7 @@ package wobani.resource.opengl.texture.texture2d;
 
 import org.joml.*;
 import wobani.resource.*;
+import wobani.resource.opengl.fbo.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
 
@@ -11,7 +12,7 @@ import java.nio.*;
 /**
  Dynamic texture, usually for FBO attachments.
  */
-public class DynamicTexture2D extends Texture2D{
+public class DynamicTexture2D extends Texture2D implements FboAttachment{
 
     /**
      Initializes a new DynamicTexture to the given values.

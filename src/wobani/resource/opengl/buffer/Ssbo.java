@@ -33,13 +33,17 @@ public class Ssbo extends IndexBindableBufferObject{
     }
 
     @Override
-    protected int getMaxDataSize(){
+    public int getMaxDataSize(){
         return OpenGlConstants.MAX_SHADER_STORAGE_BLOCK_SIZE;
+    }
+
+    public int getMaxDataSizeSafe(){
+        return OpenGlConstants.MAX_SHADER_STORAGE_BLOCK_SIZE_SAFE;
     }
 
     @Override
     protected int getHighestValidBindingPoint(){
-        return getAvailableBindingPointCount() - 1;
+        return getMaxBindingPointCount() - 1;
     }
 
     /**
@@ -47,8 +51,12 @@ public class Ssbo extends IndexBindableBufferObject{
 
      @return the number of the valid binding points to the SSBOs
      */
-    public static int getAvailableBindingPointCount(){
+    public static int getMaxBindingPointCount(){
         return OpenGlConstants.MAX_SHADER_STORAGE_BUFFER_BINDINGS;
+    }
+
+    public static int getMaxBindingPointCountSafe(){
+        return OpenGlConstants.MAX_SHADER_STORAGE_BUFFER_BINDINGS_SAFE;
     }
 
     @Override

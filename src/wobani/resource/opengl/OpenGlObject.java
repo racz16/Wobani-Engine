@@ -109,6 +109,10 @@ public abstract class OpenGlObject implements Resource{
         return OpenGlConstants.MAX_LABEL_LENGTH;
     }
 
+    public static int getMaLabelLengthSafe(){
+        return OpenGlConstants.MAX_LABEL_LENGTH_SAFE;
+    }
+
     /**
      Returns the OpenGL Object's label.
 

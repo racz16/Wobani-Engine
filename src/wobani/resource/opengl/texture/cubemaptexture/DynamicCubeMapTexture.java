@@ -55,6 +55,14 @@ public class DynamicCubeMapTexture extends CubeMapTexture{
         return 0;
     }
 
+    @NotNull
+    public CubeMapSideTexture getSideTexture(@NotNull CubeMapSide side){
+        ExceptionHelper.exceptionIfNotUsable(this);
+        ExceptionHelper.exceptionIfNotAllocated(this);
+        ExceptionHelper.exceptionIfNull(side);
+        return new CubeMapSideTexture(this, side);
+    }
+
     @Override
     public String toString(){
         return super.toString() + "\n" +

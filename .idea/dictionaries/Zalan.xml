@@ -9,6 +9,7 @@
       <w>bilinear</w>
       <w>bindable</w>
       <w>blinn</w>
+      <w>blit</w>
       <w>catmull</w>
       <w>crosshair</w>
       <w>ebo</w>
@@ -51,6 +52,7 @@
       <w>renderers</w>
       <w>resized</w>
       <w>rgba</w>
+      <w>screenshot</w>
       <w>shaders</w>
       <w>skybox</w>
       <w>srgb</w>

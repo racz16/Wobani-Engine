@@ -33,13 +33,17 @@ public class Ubo extends IndexBindableBufferObject{
     }
 
     @Override
-    protected int getMaxDataSize(){
+    public int getMaxDataSize(){
         return OpenGlConstants.MAX_UNIFORM_BLOCK_SIZE;
+    }
+
+    public int getMaxDataSizeSafe(){
+        return OpenGlConstants.MAX_UNIFORM_BLOCK_SIZE_SAFE;
     }
 
     @Override
     protected int getHighestValidBindingPoint(){
-        return getAvailableBindingPointCount() - 1;
+        return getMaxBindingPointCount() - 1;
     }
 
     /**
@@ -47,8 +51,12 @@ public class Ubo extends IndexBindableBufferObject{
 
      @return the number of the valid binding points to the UBOs
      */
-    public static int getAvailableBindingPointCount(){
+    public static int getMaxBindingPointCount(){
         return OpenGlConstants.MAX_UNIFORM_BUFFER_BINDINGS;
+    }
+
+    public static int getMaxBindingPointCountSafe(){
+        return OpenGlConstants.MAX_UNIFORM_BUFFER_BINDINGS_SAFE;
     }
 
     @Override

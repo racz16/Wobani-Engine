@@ -10,12 +10,9 @@ import wobani.toolbox.annotation.*;
 
 import static wobani.resource.ExceptionHelper.*;
 
-public class Rbo extends OpenGlObject{
+public class Rbo extends OpenGlObject implements FboAttachment{
 
     private final Vector2i size = new Vector2i();
-    /**
-     The RBO's internal format.
-     */
     private Texture.TextureInternalFormat internalFormat;
     private int sampleCount = 1;
     private boolean allocated;
@@ -52,11 +49,6 @@ public class Rbo extends OpenGlObject{
         return allocated;
     }
 
-    /**
-     Returns the RBO's data size based on it's size, internal format and number of samples.
-
-     @return the RBO's data size (in bytes)
-     */
     private int computeActiveDataSize(){
         int pixelSizeInBits = getInternalFormat().getBitDepth() * sampleCount;
         int numberOfPixels = size.x * size.y;
@@ -65,21 +57,11 @@ public class Rbo extends OpenGlObject{
         return (int) (dataSizeInBytes);
     }
 
-    /**
-     Returns the RBO's internal format.
-
-     @return the RBO's internal format
-     */
     @Nullable
     public Texture.TextureInternalFormat getInternalFormat(){
         return internalFormat;
     }
 
-    /**
-     Sets the RBO's internal format to the given value.
-
-     @param internalFormat internal format
-     */
     private void setInternalFormat(@NotNull Texture.TextureInternalFormat internalFormat){
         exceptionIfNull(internalFormat);
         this.internalFormat = internalFormat;
@@ -101,7 +83,7 @@ public class Rbo extends OpenGlObject{
         return OpenGlConstants.MAX_RENDERBUFFER_SIZE;
     }
 
-    public static int getSafeSize(){
+    public static int getMaxSizeSafe(){
         return OpenGlConstants.MAX_RENDERBUFFER_SIZE_SAFE;
     }
 
@@ -118,16 +100,11 @@ public class Rbo extends OpenGlObject{
         this.sampleCount = sampleCount;
     }
 
-    /**
-     Returns the maximum number of samples.
-
-     @return the maximum number of samples
-     */
     public static int getMaxSampleCount(){
         return OpenGlConstants.MAX_SAMPLES;
     }
 
-    public static int getSafeSampleCount(){
+    public static int getMaxSampleCountSafe(){
         return OpenGlConstants.MAX_SAMPLES_SAFE;
     }
 

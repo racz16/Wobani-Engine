@@ -1,6 +1,7 @@
 package wobani.rendering.prepare;
 
 import org.joml.*;
+import org.lwjgl.opengl.*;
 import wobani.component.renderable.*;
 import wobani.core.*;
 import wobani.rendering.*;
@@ -8,7 +9,9 @@ import wobani.rendering.geometry.*;
 import wobani.rendering.stage.*;
 import wobani.resource.*;
 import wobani.resource.opengl.fbo.*;
+import wobani.resource.opengl.fbo.fboenum.*;
 import wobani.resource.opengl.shader.*;
+import wobani.resource.opengl.texture.*;
 import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
@@ -250,7 +253,7 @@ public class ShadowRenderer extends PrepareRenderer{
             frustum.set(projectionViewMatrix);
             RenderingPipeline.getParameters()
                     .set(RenderingPipeline.SHADOW_PROJECTION_VIEW_MATRIX, new Parameter<>(new Matrix4f(projectionViewMatrix)));
-            if(fbo == null || !fbo.isUsable() || getResolution() != fbo.getSize().x){
+            if(fbo == null || !fbo.isUsable() || getResolution() != fbo.getAttachmentContainer(FboAttachmentSlot.DEPTH, -1).getAttachment().getSize().x){
                 releaseFbo();
                 generateFbo();
             }
@@ -303,8 +306,7 @@ public class ShadowRenderer extends PrepareRenderer{
         }
         shader.stop();
         afterShader();
-        RenderingPipeline.getParameters().set(RenderingPipeline.SHADOWMAP, new Parameter<>(fbo
-                .getTextureAttachment(Fbo.FboAttachmentSlotWrong.DEPTH, 0)));
+        RenderingPipeline.getParameters().set(RenderingPipeline.SHADOWMAP, new Parameter<>(fbo.getAttachmentContainer(FboAttachmentSlot.DEPTH, -1).getTextureAttachment()));
     }
 
     /**
@@ -314,7 +316,7 @@ public class ShadowRenderer extends PrepareRenderer{
         if(shader == null || !shader.isUsable()){
             shader = ShadowShader.getInstance();
         }
-        OpenGl.setViewport(fbo.getSize(), new Vector2i());
+        OpenGl.setViewport(fbo.getAttachmentContainer(FboAttachmentSlot.DEPTH, -1).getAttachment().getSize(), new Vector2i());
         OpenGl.setFaceCullingMode(OpenGl.FaceCullingMode.FRONT);
         fbo.bind();
         OpenGl.clear(false, true, false);
@@ -354,7 +356,6 @@ public class ShadowRenderer extends PrepareRenderer{
     /**
      Prepares for rendering the Mesh.
 
-     @param renderableComponent  OldMeshComponent
      @param projectionViewMatrix projection view matrix
      @param modelMatrix          model matrix
      */
@@ -369,16 +370,19 @@ public class ShadowRenderer extends PrepareRenderer{
      */
     private void generateFbo(){
         if(fbo == null || !fbo.isUsable()){
-            fbo = new Fbo(new Vector2i(getResolution()), false, 1, false);
-            fbo.bind();
-            fbo.addAttachment(Fbo.FboAttachmentSlotWrong.DEPTH, Fbo.FboAttachmentType.TEXTURE, 0);
-            fbo.setActiveDraw(false, 0);
-            fbo.setActiveRead(false, 0);
-            if(!fbo.isComplete()){
-                Utility.logError(fbo.getStatus().name());
+            fbo = new Fbo();
+            //fbo.bind();
+            DynamicTexture2D texture = new DynamicTexture2D(new Vector2i(getResolution()), Texture.TextureInternalFormat.DEPTH16, false);
+            fbo.getAttachmentContainer(FboAttachmentSlot.DEPTH, -1).attach(texture);
+            //fbo.setActiveDraw(false, 0);
+            //fbo.setReadBuffer(false, 0);
+            GL45.glNamedFramebufferDrawBuffer(fbo.getId(), GL11.GL_NONE);
+            GL45.glNamedFramebufferReadBuffer(fbo.getId(), GL11.GL_NONE);
+            if(!fbo.isDrawComplete()){
+                Utility.logError(fbo.getDrawStatus().name());
                 throw new NativeException(OPENGL, "Incomplete FBO");
             }
-            fbo.unbind();
+            //fbo.unbind();
         }
     }
 

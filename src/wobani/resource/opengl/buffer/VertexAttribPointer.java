@@ -193,8 +193,16 @@ public class VertexAttribPointer{
      @see OpenGlConstants#MAX_VERTEX_ATTRIBS
      */
     private void setIndex(int index){
-        exceptionIfNotInsideLeftClosedRightOpenInterval(0, OpenGlConstants.MAX_VERTEX_ATTRIBS, index);
+        exceptionIfNotInsideLeftClosedRightOpenInterval(0, getMaxVertexAttribs(), index);
         this.index = index;
+    }
+
+    public static int getMaxVertexAttribs(){
+        return OpenGlConstants.MAX_VERTEX_ATTRIBS;
+    }
+
+    public static int getMaxVertexAttribsSafe(){
+        return OpenGlConstants.MAX_VERTEX_ATTRIBS_SAFE;
     }
 
     /**

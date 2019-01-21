@@ -28,40 +28,42 @@ public abstract class CubeMapTexture extends TextureBase{
         /**
          Right side.
          */
-        RIGHT(0),
+        RIGHT(0, GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X),
         /**
          Left side.
          */
-        LEFT(1),
+        LEFT(1, GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_X),
         /**
          Up side.
          */
-        UP(2),
+        UP(2, GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y),
         /**
          Down side.
          */
-        DOWN(3),
+        DOWN(3, GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y),
         /**
          Front side.
          */
-        FRONT(4),
+        FRONT(4, GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z),
         /**
          Back side.
          */
-        BACK(5);
+        BACK(5, GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
 
         /**
          The side's index.
          */
         private final int index;
+        private final int code;
 
         /**
          Initializes a new CubeMapSide to the given value.
 
          @param index side's index
          */
-        CubeMapSide(int index){
+        CubeMapSide(int index, int code){
             this.index = index;
+            this.code = code;
         }
 
         /**
@@ -71,6 +73,10 @@ public abstract class CubeMapTexture extends TextureBase{
          */
         public int getIndex(){
             return index;
+        }
+
+        public int getCode(){
+            return code;
         }
     }
 

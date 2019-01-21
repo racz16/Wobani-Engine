@@ -85,7 +85,8 @@ public class EnvironmentMapRenderer extends PrepareRenderer{
                 //                } else if (faceIndex == 5) {
                 //                    OpenGl.setClearColor(new Vector4f(0, 1, 1, 1));
                 //                }
-                OpenGl.clear(true, true, false);
+                //OpenGl.clear(true, true, false);
+                probe.clearFbo();
                 RenderableContainer renderables = RenderingPipeline.getRenderableComponents();
                 for(Class<? extends GeometryRenderer> renderer : renderers){
                     for(Renderable renderable : renderables.getRenderables(renderer)){

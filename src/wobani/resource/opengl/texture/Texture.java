@@ -3,10 +3,12 @@ package wobani.resource.opengl.texture;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.resource.*;
-import wobani.resource.opengl.fbo.*;
+import wobani.resource.opengl.fbo.fboenum.*;
 import wobani.toolbox.annotation.*;
 
-import static wobani.resource.opengl.fbo.Fbo.FboAttachmentSlot.*;
+import java.nio.*;
+
+import static wobani.resource.opengl.fbo.fboenum.FboAttachmentSlot.*;
 
 /**
  Base interface for all types of textures.
@@ -400,7 +402,7 @@ public interface Texture extends Resource{
         /**
          The internal format's FBO attachment.
          */
-        private final Fbo.FboAttachmentSlot attachmentSlot;
+        private final FboAttachmentSlot attachmentSlot;
 
         /**
          Initializes a new TextureInternalFormat to the given values.
@@ -410,7 +412,7 @@ public interface Texture extends Resource{
          @param bitDepth          internal format's bit depth
          @param attachmentSlot    the internal format's FBO attachment
          */
-        TextureInternalFormat(int code, int colorChannelCount, int bitDepth, Fbo.FboAttachmentSlot attachmentSlot){
+        TextureInternalFormat(int code, int colorChannelCount, int bitDepth, FboAttachmentSlot attachmentSlot){
             this.code = code;
             this.colorChannelCount = colorChannelCount;
             this.bitDepth = bitDepth;
@@ -469,9 +471,31 @@ public interface Texture extends Resource{
          @return the internal format's FBO attachment
          */
         @NotNull
-        public Fbo.FboAttachmentSlot getAttachmentSlot(){
+        public FboAttachmentSlot getAttachmentSlot(){
             return attachmentSlot;
         }
+
+        @NotNull
+        public Texture.TextureFormat convert(){
+            if(getAttachmentSlot() == DEPTH){
+                return Texture.TextureFormat.DEPTH;
+            }else if(getAttachmentSlot() == STENCIL){
+                return Texture.TextureFormat.STENCIL;
+            }else if(getAttachmentSlot() == DEPTH_STENCIL){
+                return Texture.TextureFormat.DEPTH_STENCIL;
+            }else{
+                if(getColorChannelCount() == 1){
+                    return Texture.TextureFormat.RED;
+                }else if(getColorChannelCount() == 2){
+                    return Texture.TextureFormat.RG;
+                }else if(getColorChannelCount() == 3){
+                    return Texture.TextureFormat.RGB;
+                }else{
+                    return Texture.TextureFormat.RGBA;
+                }
+            }
+        }
+
     }
 
     /**
@@ -505,15 +529,15 @@ public interface Texture extends Resource{
         /**
          Depth.
          */
-        DEPTH(GL11.GL_DEPTH_COMPONENT, 1, Fbo.FboAttachmentSlot.DEPTH),
+        DEPTH(GL11.GL_DEPTH_COMPONENT, 1, FboAttachmentSlot.DEPTH),
         /**
          Stencil.
          */
-        STENCIL(GL11.GL_STENCIL_INDEX, 1, Fbo.FboAttachmentSlot.STENCIL),
+        STENCIL(GL11.GL_STENCIL_INDEX, 1, FboAttachmentSlot.STENCIL),
         /**
          Depth-stencil.
          */
-        DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL, 2, Fbo.FboAttachmentSlot.DEPTH_STENCIL);
+        DEPTH_STENCIL(GL30.GL_DEPTH_STENCIL, 2, FboAttachmentSlot.DEPTH_STENCIL);
 
         /**
          Texture format's OpenGL code.
@@ -526,7 +550,7 @@ public interface Texture extends Resource{
         /**
          The texture format's FBO attachment.
          */
-        private final Fbo.FboAttachmentSlot attachmentSlot;
+        private final FboAttachmentSlot attachmentSlot;
 
         /**
          Initializes a new TextureFormat to the given values.
@@ -535,7 +559,7 @@ public interface Texture extends Resource{
          @param colorChannelCount number of used color channels
          @param attachmentSlot    the texture format's FBO attachment
          */
-        TextureFormat(int code, int colorChannelCount, Fbo.FboAttachmentSlot attachmentSlot){
+        TextureFormat(int code, int colorChannelCount, FboAttachmentSlot attachmentSlot){
             this.code = code;
             this.colorChannelCount = colorChannelCount;
             this.attachmentSlot = attachmentSlot;
@@ -584,7 +608,7 @@ public interface Texture extends Resource{
          @return the texture format's FBO attachment
          */
         @NotNull
-        public Fbo.FboAttachmentSlot getAttachmentSlot(){
+        public FboAttachmentSlot getAttachmentSlot(){
             return attachmentSlot;
         }
     }
@@ -596,44 +620,47 @@ public interface Texture extends Resource{
         /**
          Unsigned byte.
          */
-        UNSIGNED_BYTE(GL11.GL_UNSIGNED_BYTE),
+        UNSIGNED_BYTE(GL11.GL_UNSIGNED_BYTE, ByteBuffer.class),
         /**
          Byte.
          */
-        BYTE(GL11.GL_BYTE),
+        BYTE(GL11.GL_BYTE, ByteBuffer.class),
         /**
          Unsigned short.
          */
-        UNSIGNED_SHORT(GL11.GL_UNSIGNED_SHORT),
+        UNSIGNED_SHORT(GL11.GL_UNSIGNED_SHORT, ShortBuffer.class),
         /**
          Short.
          */
-        SHORT(GL11.GL_SHORT),
+        SHORT(GL11.GL_SHORT, ShortBuffer.class),
         /**
          Unsigned int.
          */
-        UNSIGNED_INT(GL11.GL_UNSIGNED_INT),
+        UNSIGNED_INT(GL11.GL_UNSIGNED_INT, IntBuffer.class),
+        UNSIGNED_INT_24_8(GL30.GL_UNSIGNED_INT_24_8, IntBuffer.class),
         /**
          Int.
          */
-        INT(GL11.GL_INT),
+        INT(GL11.GL_INT, IntBuffer.class),
         /**
          Float.
          */
-        FLOAT(GL11.GL_FLOAT);
+        FLOAT(GL11.GL_FLOAT, FloatBuffer.class);
 
         /**
          Texture data type's OpenGL code.
          */
         private final int code;
+        private final Class javaType;
 
         /**
          Initializes a new TextureDataType to the given value.
 
          @param code texture data type's OpenGL code
          */
-        TextureDataType(int code){
+        TextureDataType(int code, Class<? extends Buffer> javaType){
             this.code = code;
+            this.javaType = javaType;
         }
 
         /**
@@ -653,6 +680,10 @@ public interface Texture extends Resource{
                 }
             }
             throw new IllegalArgumentException("The given parameter is not a texture data type");
+        }
+
+        public Class<? extends Buffer> getJavaType(){
+            return javaType;
         }
 
         /**

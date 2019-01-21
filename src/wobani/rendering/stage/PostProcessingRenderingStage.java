@@ -1,8 +1,10 @@
 package wobani.rendering.stage;
 
+import org.joml.*;
 import wobani.rendering.*;
 import wobani.rendering.postprocessing.*;
 import wobani.resource.opengl.fbo.*;
+import wobani.resource.opengl.fbo.fboenum.*;
 import wobani.resource.opengl.texture.*;
 import wobani.resource.opengl.texture.texture2d.*;
 import wobani.toolbox.*;
@@ -38,26 +40,25 @@ public class PostProcessingRenderingStage{
      */
     private void refresh(){
         if(postProcessingFbo == null || !postProcessingFbo.isUsable() || !RenderingPipeline.getRenderingSize()
-                .equals(postProcessingFbo.getSize())){
+                .equals(postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 1).getAttachment().getSize())){
             //screen space FBO
             if(postProcessingFbo != null){
                 postProcessingFbo.release();
             }
-            postProcessingFbo = new Fbo(RenderingPipeline.getRenderingSize(), false, 1, true);
+            postProcessingFbo = new Fbo();
             postProcessingFbo.bind();
-            postProcessingFbo.addAttachment(Fbo.FboAttachmentSlotWrong.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
-            postProcessingFbo.addAttachment(Fbo.FboAttachmentSlotWrong.COLOR, Fbo.FboAttachmentType.TEXTURE, 1);
-            DynamicTexture2D texture = (DynamicTexture2D) postProcessingFbo
-                    .getTextureAttachment(Fbo.FboAttachmentSlotWrong.COLOR, 0);
+            postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 0).attach(new DynamicTexture2D(RenderingPipeline.getRenderingSize(), Texture.TextureInternalFormat.RGBA16F, false));
+            postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 1).attach(new DynamicTexture2D(RenderingPipeline.getRenderingSize(), Texture.TextureInternalFormat.RGBA16F, false));
+            DynamicTexture2D texture = postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 0).getTextureAttachment();
             texture.setFilter(Texture.TextureFilter.BILINEAR);
             //texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
             //texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
-            texture = (DynamicTexture2D) postProcessingFbo.getTextureAttachment(Fbo.FboAttachmentSlotWrong.COLOR, 1);
+            texture = postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 1).getTextureAttachment();
             texture.setFilter(Texture.TextureFilter.BILINEAR);
             //texture.setFilter(Texture.TextureFilterType.MINIFICATION, Texture.TextureFilter.LINEAR);
             //texture.setFilter(Texture.TextureFilterType.MAGNIFICATION, Texture.TextureFilter.LINEAR);
-            if(!postProcessingFbo.isComplete()){
-                Utility.logError(postProcessingFbo.getStatus().name());
+            if(!postProcessingFbo.isDrawComplete()){
+                Utility.logError(postProcessingFbo.getDrawStatus().name());
                 throw new NativeException(OPENGL, "Incomplete FBO");
             }
         }
@@ -68,8 +69,7 @@ public class PostProcessingRenderingStage{
      */
     public void bindFbo(){
         postProcessingFbo.bind();
-        postProcessingFbo.setActiveDraw(false, notDraw);
-        postProcessingFbo.setActiveDraw(true, draw);
+        postProcessingFbo.setDrawBuffers(draw);
     }
 
     /**
@@ -80,8 +80,7 @@ public class PostProcessingRenderingStage{
         int temp = draw;
         draw = notDraw;
         notDraw = temp;
-        RenderingPipeline.getParameters().set(RenderingPipeline.WORK, new Parameter<>(postProcessingFbo
-                .getTextureAttachment(Fbo.FboAttachmentSlotWrong.COLOR, notDraw)));
+        RenderingPipeline.getParameters().set(RenderingPipeline.WORK, new Parameter<>(postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, notDraw).getTextureAttachment()));
     }
 
     public boolean addRendererToTheEnd(@NotNull PostProcessingRenderer renderer){
@@ -101,8 +100,7 @@ public class PostProcessingRenderingStage{
     /**
      Returns the indexth renderer of the specified stage.
 
-     @param geometry specifies the list of Renderers
-     @param index    index
+     @param index index
 
      @return the indexth renderer of the specified stage
      */
@@ -114,8 +112,6 @@ public class PostProcessingRenderingStage{
     /**
      Returns the number of the renderers in the specified stage.
 
-     @param geometry specifies the list of Renderers
-
      @return the number of the renderers in the specified stage
      */
     public int getNumberOfRenderers(){
@@ -125,8 +121,7 @@ public class PostProcessingRenderingStage{
     /**
      Removes the specified stage's indexth renderer.
 
-     @param geometry specifies the list of Renderers
-     @param index    index
+     @param index index
 
      @throws NullPointerException stage can't be null
      */
@@ -152,8 +147,7 @@ public class PostProcessingRenderingStage{
      */
     public void render(){
         renderStage();
-        RenderingPipeline.getParameters().set(RenderingPipeline.WORK, new Parameter<>(postProcessingFbo
-                .getTextureAttachment(Fbo.FboAttachmentSlotWrong.COLOR, notDraw)));
+        RenderingPipeline.getParameters().set(RenderingPipeline.WORK, new Parameter<>(postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, notDraw).getTextureAttachment()));
     }
 
     /**
@@ -161,9 +155,27 @@ public class PostProcessingRenderingStage{
      */
     public void beforeRender(Fbo geometryFbo){
         refresh();
-        geometryFbo.resolveFbo(postProcessingFbo, Fbo.FboAttachmentSlotWrong.COLOR, Fbo.FboAttachmentType.TEXTURE, 0, 0);
-        RenderingPipeline.getParameters().set(RenderingPipeline.WORK, new Parameter<>(postProcessingFbo
-                .getTextureAttachment(Fbo.FboAttachmentSlotWrong.COLOR, 0)));
+        postProcessingFbo.setDrawBuffers(0);
+        FboAttachmentContainer from = geometryFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 0);
+        FboAttachmentContainer to = postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 0);
+        geometryFbo.blitTo(postProcessingFbo, new Vector2i(0), from.getAttachment().getSize(), new Vector2i(0), to.getAttachment().getSize(), FboAttachmentSlot.COLOR);
+
+        /*if(!rendered){
+            DynamicTexture2D texture = postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 0).getTextureAttachment();
+            ByteBuffer data = texture.getByteSubImage(new Vector2i(0), texture.getSize(), Texture.TextureDataType.UNSIGNED_BYTE);
+            STBImageWrite.stbi_flip_vertically_on_write(true);
+            STBImageWrite.stbi_write_bmp("att0.bmp", texture.getSize().x, texture.getSize().y, 4, data);
+
+            texture = postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 1).getTextureAttachment();
+            data = texture.getByteSubImage(new Vector2i(0), texture.getSize(), Texture.TextureDataType.UNSIGNED_BYTE);
+            STBImageWrite.stbi_flip_vertically_on_write(true);
+            STBImageWrite.stbi_write_bmp("att1.bmp", texture.getSize().x, texture.getSize().y, 4, data);
+
+            rendered = true;
+        }*/
+
+
+        RenderingPipeline.getParameters().set(RenderingPipeline.WORK, new Parameter<>(postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 0).getTextureAttachment()));
         notDraw = 0;
         draw = 1;
         bindFbo();
@@ -171,10 +183,10 @@ public class PostProcessingRenderingStage{
         OpenGl.setDepthTest(false);
     }
 
+    private static boolean rendered;
+
     /**
      Renders with the list of given renderers.
-
-     @param stage list of renderers
      */
     private void renderStage(){
         for(PostProcessingRenderer renderer : postProcessingRenderers){
@@ -183,5 +195,14 @@ public class PostProcessingRenderingStage{
                 swapFboAttachments();
             }
         }
+
+        /*
+        if(!rendered && Time.getTime() > 5){
+            rendered = true;
+            DynamicTexture2D texture = postProcessingFbo.getAttachmentContainer(FboAttachmentSlot.COLOR, notDraw).getTextureAttachment();
+            ByteBuffer data = texture.getByteSubImage(new Vector2i(0), texture.getSize(), Texture.TextureDataType.UNSIGNED_BYTE);
+            STBImageWrite.stbi_flip_vertically_on_write(true);
+            STBImageWrite.stbi_write_bmp("save.bmp", texture.getSize().x, texture.getSize().y, 4, data);
+        }*/
     }
 }

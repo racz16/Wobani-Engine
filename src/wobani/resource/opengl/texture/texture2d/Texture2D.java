@@ -1,6 +1,7 @@
 package wobani.resource.opengl.texture.texture2d;
 
 import org.joml.*;
+import org.lwjgl.*;
 import org.lwjgl.opengl.*;
 import wobani.resource.*;
 import wobani.resource.opengl.texture.*;
@@ -170,6 +171,49 @@ public abstract class Texture2D extends TextureBase{
         GL43.glCopyImageSubData(getId(), sourceTarget, 0, sourceOffset.x, sourceOffset.y, 0,
                 destination.getId(), GL13.GL_TEXTURE_CUBE_MAP, 0, destinationOffset.x, destinationOffset.y, side.getIndex(),
                 size.x, size.y, 1);
+    }
+
+    @NotNull
+    public ByteBuffer getByteSubImage(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureDataType type){
+        checkGetSubImage(offset, size, type, ByteBuffer.class);
+        ByteBuffer data = BufferUtils.createByteBuffer(size.x * size.y * getInternalFormat().getColorChannelCount());
+        GL45.glGetTextureSubImage(getId(), 0, offset.x, offset.y, 0, size.x, size.y, 1, getInternalFormat().convert().getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
+        return data;
+    }
+
+    @NotNull
+    public ShortBuffer getShortSubImage(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureDataType type){
+        checkGetSubImage(offset, size, type, ShortBuffer.class);
+        ShortBuffer data = BufferUtils.createShortBuffer(size.x * size.y * getInternalFormat().getColorChannelCount());
+        GL45.glGetTextureSubImage(getId(), 0, offset.x, offset.y, 0, size.x, size.y, 1, getInternalFormat().convert().getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
+        return data;
+    }
+
+    @NotNull
+    public IntBuffer getIntSubImage(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureDataType type){
+        checkGetSubImage(offset, size, type, IntBuffer.class);
+        IntBuffer data = BufferUtils.createIntBuffer(size.x * size.y * getInternalFormat().getColorChannelCount());
+        GL45.glGetTextureSubImage(getId(), 0, offset.x, offset.y, 0, size.x, size.y, 1, getInternalFormat().convert().getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
+        return data;
+    }
+
+    @NotNull
+    public FloatBuffer getFloatSubImage(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureDataType type){
+        checkGetSubImage(offset, size, type, FloatBuffer.class);
+        FloatBuffer data = BufferUtils.createFloatBuffer(size.x * size.y * getInternalFormat().getColorChannelCount());
+        GL45.glGetTextureSubImage(getId(), 0, offset.x, offset.y, 0, size.x, size.y, 1, getInternalFormat().convert().getCode(), TextureDataType.UNSIGNED_BYTE.getCode(), data);
+        return data;
+    }
+
+    private void checkGetSubImage(@NotNull Vector2i offset, @NotNull Vector2i size, @NotNull TextureDataType type, @NotNull Class<? extends Buffer> returnType){
+        ExceptionHelper.exceptionIfNotUsable(this);
+        ExceptionHelper.exceptionIfNull(offset, size);
+        ExceptionHelper.exceptionIfAnyLowerThan(offset, 0);
+        ExceptionHelper.exceptionIfAnyLowerThan(size, 0);
+        exceptionIfAreaExceedsFromSize(size, offset, getSize());
+        if(!type.getJavaType().equals(returnType)){
+            throw new IllegalArgumentException("TextureDataType and return type don't match");
+        }
     }
 
     //

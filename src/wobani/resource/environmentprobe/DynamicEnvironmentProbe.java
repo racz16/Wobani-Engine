@@ -4,10 +4,14 @@ import org.joml.*;
 import org.lwjgl.opengl.*;
 import wobani.core.*;
 import wobani.resource.opengl.fbo.*;
+import wobani.resource.opengl.fbo.fboenum.*;
 import wobani.resource.opengl.texture.*;
 import wobani.resource.opengl.texture.cubemaptexture.*;
 import wobani.toolbox.*;
 import wobani.toolbox.annotation.*;
+import wobani.toolbox.exceptions.*;
+
+import static wobani.toolbox.EngineInfo.Library.*;
 
 public class DynamicEnvironmentProbe implements EnvironmentProbe{
 
@@ -19,7 +23,7 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe{
 
     private final Vector3f position;
     private final Matrix4f[] viewMatrices;
-    private CubeMapTexture cubeMap;
+    private DynamicCubeMapTexture cubeMap;
     private float maxDistance = 1000;
     private float minSize = 0;
     private int resolution = 128;
@@ -47,6 +51,11 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe{
         refreshFbo();
     }
 
+    public void clearFbo(){
+        fbo.clearColor(0, new Vector4f(0, 1, 0, 1));
+        fbo.clearDepth(1);
+    }
+
     public boolean shouldRenderNow(){
         if(renderingFrequency == 0){
             return true;
@@ -71,7 +80,8 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe{
         if(fbo == null || !fbo.isUsable()){
             createFbo();
         }else{
-            if(resolution != fbo.getSize().x){
+            FboAttachmentContainer fboa = fbo.getAttachmentContainer(FboAttachmentSlot.DEPTH, -1);
+            if(fboa != null && fboa.isThereAttachment() && resolution != fboa.getAttachment().getSize().x){
                 releaseFbo();
                 createFbo();
             }
@@ -79,15 +89,15 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe{
     }
 
     private void createFbo(){
-        fbo = new Fbo(new Vector2i(resolution), false, 1, false);
+        fbo = new Fbo();
         fbo.bind();
         //                fbo.addAttachment(Fbo.FboAttachmentSlotWrong.COLOR, Fbo.FboAttachmentType.TEXTURE, 0);
-        fbo.addAttachment(Fbo.FboAttachmentSlotWrong.DEPTH, Fbo.FboAttachmentType.RBO, 0);
-        GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X, cubeMap
-                .getId(), 0);
+        fbo.getAttachmentContainer(FboAttachmentSlot.DEPTH, -1).attach(new Rbo(new Vector2i(resolution), Texture.TextureInternalFormat.DEPTH24, 1));
+        GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X, cubeMap.getId(), 0);
         GL11.glDrawBuffer(GL30.GL_COLOR_ATTACHMENT0);
-        if(!fbo.isComplete()){
-            System.out.println("ERROR");
+        if(!fbo.isDrawComplete()){
+            Utility.logError(fbo.getDrawStatus().name());
+            throw new NativeException(OPENGL, "Incomplete FBO");
         }
         fbo.unbind();
     }
@@ -207,8 +217,37 @@ public class DynamicEnvironmentProbe implements EnvironmentProbe{
     }
 
     public void fboTexture(int index){
-        GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + index, cubeMap
-                .getId(), 0);
+        /**/
+        FboAttachmentContainer fac = fbo.getAttachmentContainer(FboAttachmentSlot.COLOR, 0);
+        fac.detach();
+        CubeMapTexture.CubeMapSide cms = null;
+        switch(index){
+            case 0:
+                cms = CubeMapTexture.CubeMapSide.RIGHT;
+                break;
+            case 1:
+                cms = CubeMapTexture.CubeMapSide.LEFT;
+                break;
+            case 2:
+                cms = CubeMapTexture.CubeMapSide.UP;
+                break;
+            case 3:
+                cms = CubeMapTexture.CubeMapSide.DOWN;
+                break;
+            case 4:
+                cms = CubeMapTexture.CubeMapSide.FRONT;
+                break;
+            case 5:
+                cms = CubeMapTexture.CubeMapSide.BACK;
+                break;
+        }
+        if(!fbo.isUsable() || !cubeMap.isUsable()){
+            throw new IllegalStateException();
+        }
+        fac.attach(cubeMap.getSideTexture(cms));
+
+        //GL30.glFramebufferTextureLayer(GL30.GL_FRAMEBUFFER,GL30.GL_COLOR_ATTACHMENT0,cubeMap.getId(),1,GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + index);
+        //GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + index, cubeMap.getId(), 0);
     }
 
     @Override
